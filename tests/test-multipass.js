@@ -1,4 +1,4 @@
-import { chunkText } from './src/index.js';
+import { chunkText } from '../src/index.js';
 
 // Mock embedding function for "Drift Correction"
 // Geometry:
@@ -78,7 +78,7 @@ async function runTest() {
 		dynamicThresholdLowerBound: 0.6,
 		logging: true,
 		combineChunks: true,
-		maxPasses: 5
+		maxUncappedPasses: 5
 	});
 	console.log(`Chunks: ${chunks5.length}`);
 	chunks5.forEach(c => console.log(` - ${c.text}`));

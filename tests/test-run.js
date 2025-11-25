@@ -1,4 +1,4 @@
-import { chunkText } from './src/index.js';
+import { chunkText } from '../src/index.js';
 import { parseSentences } from 'sentence-parse';
 
 // Mock embedding function that returns vectors based on content
