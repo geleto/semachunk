@@ -1,11 +1,11 @@
-import { tokenizer } from './embeddingUtils.js';
 import { cosineSimilarity } from './similarityUtils.js';
+
 // import { createEmbedding } from './embeddingUtils.js'; // REMOVED
 
 // -----------------------------------------------------------
 // -- Function to create chunks of text based on similarity --
 // -----------------------------------------------------------
-export function createChunks(sentences, similarities, maxTokenSize, similarityThreshold, logging) {
+export function createChunks(sentences, similarities, maxChunkSize, similarityThreshold, logging) {
     let chunks = [];
     let currentChunk = [sentences[0]];
 
@@ -16,13 +16,13 @@ export function createChunks(sentences, similarities, maxTokenSize, similarityTh
     for (let i = 1; i < sentences.length; i++) {
         const nextSentence = sentences[i];
 
-        // For cramit (when similarities is null), only check token size
+        // For cramit (when similarities is null), only check chunk size
         if (!similarities) {
             const currentChunkText = currentChunk.join(" ");
-            const currentChunkSize = tokenizer(currentChunkText).input_ids.size;
-            const nextSentenceTokenCount = tokenizer(nextSentence).input_ids.size;
+            const currentChunkSize = currentChunkText.length;
+            const nextSentenceSize = nextSentence.length;
 
-            if (currentChunkSize + nextSentenceTokenCount <= maxTokenSize) {
+            if (currentChunkSize + nextSentenceSize <= maxChunkSize) {
                 currentChunk.push(nextSentence);
             } else {
                 chunks.push(currentChunkText);
@@ -37,12 +37,12 @@ export function createChunks(sentences, similarities, maxTokenSize, similarityTh
                 console.log(`Adding sentence ${i} with similarity ${similarities[i - 1]}`);
             }
 
-            // Then check token size
+            // Then check chunk size
             const currentChunkText = currentChunk.join(" ");
-            const currentChunkSize = tokenizer(currentChunkText).input_ids.size;
-            const nextSentenceTokenCount = tokenizer(nextSentence).input_ids.size;
+            const currentChunkSize = currentChunkText.length;
+            const nextSentenceSize = nextSentence.length;
 
-            if (currentChunkSize + nextSentenceTokenCount <= maxTokenSize) {
+            if (currentChunkSize + nextSentenceSize <= maxChunkSize) {
                 currentChunk.push(nextSentence);
             } else {
                 chunks.push(currentChunkText);
@@ -70,8 +70,7 @@ export function createChunks(sentences, similarities, maxTokenSize, similarityTh
 export async function optimizeAndRebalanceChunks(
     combinedChunks,
     embedBatchCallback,
-    tokenizer,
-    maxTokenSize,
+    maxChunkSize,
     combineChunksSimilarityThreshold = 0.5,
     maxUncappedPasses = 5,
     maxMergesPerPass = 50,
@@ -81,7 +80,7 @@ export async function optimizeAndRebalanceChunks(
     let currentChunks = combinedChunks.map(text => ({
         text,
         embedding: null,
-        tokenCount: tokenizer(text).input_ids.size
+        size: text.length
     }));
 
     let pass = 1;
@@ -105,7 +104,7 @@ export async function optimizeAndRebalanceChunks(
             const chunkB = currentChunks[i + 1];
 
             // Skip if combined size exceeds limit
-            if (chunkA.tokenCount + chunkB.tokenCount > maxTokenSize) continue;
+            if (chunkA.size + chunkB.size > maxChunkSize) continue;
 
             const similarity = cosineSimilarity(chunkA.embedding, chunkB.embedding);
 
@@ -204,7 +203,7 @@ export async function optimizeAndRebalanceChunks(
                 const mergedText = merge.chunkA.text + " " + merge.chunkB.text;
                 const mergedChunk = {
                     text: mergedText,
-                    tokenCount: merge.chunkA.tokenCount + merge.chunkB.tokenCount, // Approx sum
+                    size: mergedText.length,
                     embedding: null, // Needs re-embedding
                 };
                 newChunks.push(mergedChunk);

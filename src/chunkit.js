@@ -1,6 +1,6 @@
 import { parseSentences } from 'sentence-parse';
 import { DEFAULT_CONFIG } from '../config.js';
-import { tokenizer } from './embeddingUtils.js';
+
 import { computeAdvancedSimilarities, adjustThreshold } from './similarityUtils.js';
 import { createChunks, optimizeAndRebalanceChunks, applyPrefixToChunk } from './chunkingUtils.js';
 
@@ -16,7 +16,7 @@ export async function chunkit(
     embedBatchCallback,
     {
         logging = DEFAULT_CONFIG.LOGGING,
-        maxTokenSize = DEFAULT_CONFIG.MAX_TOKEN_SIZE,
+        maxChunkSize = DEFAULT_CONFIG.MAX_CHUNK_SIZE,
         similarityThreshold = DEFAULT_CONFIG.SIMILARITY_THRESHOLD,
         dynamicThresholdLowerBound = DEFAULT_CONFIG.DYNAMIC_THRESHOLD_LOWER_BOUND,
         dynamicThresholdUpperBound = DEFAULT_CONFIG.DYNAMIC_THRESHOLD_UPPER_BOUND,
@@ -25,7 +25,6 @@ export async function chunkit(
         combineChunksSimilarityThreshold = DEFAULT_CONFIG.COMBINE_CHUNKS_SIMILARITY_THRESHOLD,
         maxUncappedPasses = DEFAULT_CONFIG.MAX_UNCAPPED_PASSES,
         returnEmbedding = DEFAULT_CONFIG.RETURN_EMBEDDING,
-        returnTokenLength = DEFAULT_CONFIG.RETURN_TOKEN_LENGTH,
         chunkPrefix = DEFAULT_CONFIG.CHUNK_PREFIX,
         excludeChunkPrefixInResults = false,
         maxMergesPerPass = DEFAULT_CONFIG.MAX_MERGES_PER_PASS,
@@ -73,7 +72,7 @@ export async function chunkit(
         }
 
         // Create the initial chunks
-        const initialChunks = createChunks(sentences, similarities, maxTokenSize, dynamicThreshold, logging);
+        const initialChunks = createChunks(sentences, similarities, maxChunkSize, dynamicThreshold, logging);
 
         if (logging) {
             console.log('\n=============\ninitialChunks\n=============');
@@ -90,8 +89,7 @@ export async function chunkit(
             finalChunks = await optimizeAndRebalanceChunks(
                 initialChunks,
                 embedBatchCallback,
-                tokenizer,
-                maxTokenSize,
+                maxChunkSize,
                 combineChunksSimilarityThreshold,
                 maxUncappedPasses,
                 maxMergesPerPass,
@@ -135,14 +133,7 @@ export async function chunkit(
                 result.embedding = finalEmbeddings[index];
             }
 
-            if (returnTokenLength) {
-                try {
-                    const encoded = tokenizer(prefixedChunk);
-                    result.token_length = encoded.input_ids.size;
-                } catch (error) {
-                    result.token_length = 0;
-                }
-            }
+
 
             if (excludeChunkPrefixInResults && chunkPrefix && chunkPrefix.trim()) {
                 const prefixPattern = new RegExp(`^${chunkPrefix}:\\s*`);

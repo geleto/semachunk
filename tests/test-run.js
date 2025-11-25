@@ -59,7 +59,7 @@ async function runTest() {
 		chunks.forEach((chunk, i) => {
 			console.log(`\nChunk ${i + 1}:`);
 			console.log(chunk.text);
-			console.log('Embedding length:', chunk.embedding ? chunk.embedding.length : 'None');
+
 		});
 
 		// 3. Verify Final State

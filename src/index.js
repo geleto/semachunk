@@ -11,11 +11,10 @@ import { DEFAULT_CONFIG } from '../config.js';
 export async function chunkText(text, embedBatchCallback, options = {}) {
 	const defaultOptions = {
 		similarityThreshold: DEFAULT_CONFIG.SIMILARITY_THRESHOLD,
-		maxTokenSize: DEFAULT_CONFIG.MAX_TOKEN_SIZE,
+		maxChunkSize: DEFAULT_CONFIG.MAX_CHUNK_SIZE,
 		dynamicThresholdLowerBound: DEFAULT_CONFIG.DYNAMIC_THRESHOLD_LOWER_BOUND,
 		dynamicThresholdUpperBound: DEFAULT_CONFIG.DYNAMIC_THRESHOLD_UPPER_BOUND,
 		combineChunks: DEFAULT_CONFIG.COMBINE_CHUNKS,
-		combineChunksSimilarityThreshold: DEFAULT_CONFIG.COMBINE_CHUNKS_SIMILARITY_THRESHOLD,
 		combineChunksSimilarityThreshold: DEFAULT_CONFIG.COMBINE_CHUNKS_SIMILARITY_THRESHOLD,
 		maxUncappedPasses: DEFAULT_CONFIG.MAX_UNCAPPED_PASSES,
 		maxMergesPerPass: DEFAULT_CONFIG.MAX_MERGES_PER_PASS,
@@ -32,8 +31,11 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
 	const chunks = await chunkit(documents, embedBatchCallback, mergedOptions);
 
 	// Return simplified format: [{ text, embedding }, ...]
-	return chunks.map(chunk => ({
-		text: chunk.text,
-		embedding: chunk.embedding
-	}));
+	return chunks.map(chunk => {
+		const result = {
+			text: chunk.text,
+			embedding: chunk.embedding
+		};
+		return result;
+	});
 }
