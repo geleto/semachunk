@@ -73,7 +73,7 @@ export async function optimizeAndRebalanceChunks(
     tokenizer,
     maxTokenSize,
     combineChunksSimilarityThreshold = 0.5,
-    maxPasses = 5,
+    maxUncappedPasses = 5,
     maxMergesPerPass = 50,
     maxMergesPerPassPercentage = 0.4
 ) {
@@ -85,8 +85,10 @@ export async function optimizeAndRebalanceChunks(
     }));
 
     let pass = 1;
+    let numCappedPasses = 0;
 
-    while (pass <= maxPasses) {
+    // Loop until we exceed the allowed number of UNCAPPED passes
+    while ((pass - numCappedPasses) <= maxUncappedPasses) {
         // 2. Batch Embed (Only for chunks missing embeddings)
         const chunksToEmbed = currentChunks.filter(c => c.embedding === null);
         if (chunksToEmbed.length > 0) {
@@ -175,7 +177,13 @@ export async function optimizeAndRebalanceChunks(
         // If no valid merges could be executed (e.g. conflicts), break
         if (mergesToExecute.length === 0) break;
 
-        // 7. Execute Merges
+        // Check if this pass was capped (throttled)
+        // A pass is capped if we hit the effective limit AND there were more valid candidates we could have processed
+        if (mergesToExecute.length >= effectiveLimit) {
+            numCappedPasses++;
+        }
+
+        // 8. Execute Merges
         // Create a Map for O(1) lookup of merges by index
         const mergesMap = new Map();
         for (const merge of mergesToExecute) {

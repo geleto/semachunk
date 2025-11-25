@@ -23,7 +23,7 @@ export async function chunkit(
         numSimilaritySentencesLookahead = DEFAULT_CONFIG.NUM_SIMILARITY_SENTENCES_LOOKAHEAD,
         combineChunks = DEFAULT_CONFIG.COMBINE_CHUNKS,
         combineChunksSimilarityThreshold = DEFAULT_CONFIG.COMBINE_CHUNKS_SIMILARITY_THRESHOLD,
-        maxPasses = DEFAULT_CONFIG.MAX_PASSES,
+        maxUncappedPasses = DEFAULT_CONFIG.MAX_UNCAPPED_PASSES,
         returnEmbedding = DEFAULT_CONFIG.RETURN_EMBEDDING,
         returnTokenLength = DEFAULT_CONFIG.RETURN_TOKEN_LENGTH,
         chunkPrefix = DEFAULT_CONFIG.CHUNK_PREFIX,
@@ -93,7 +93,7 @@ export async function chunkit(
                 tokenizer,
                 maxTokenSize,
                 combineChunksSimilarityThreshold,
-                maxPasses,
+                maxUncappedPasses,
                 maxMergesPerPass,
                 maxMergesPerPassPercentage
             );

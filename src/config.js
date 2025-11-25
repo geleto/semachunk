@@ -8,7 +8,7 @@ export const DEFAULT_CONFIG = {
     // Iterative Optimization
     COMBINE_CHUNKS: true,
     COMBINE_CHUNKS_SIMILARITY_THRESHOLD: 0.5,
-    MAX_PASSES: 16,
+    MAX_UNCAPPED_PASSES: 16,
     MAX_MERGES_PER_PASS: 50, // Absolute limit
     MAX_MERGES_PER_PASS_PERCENTAGE: 0.4, // 40% of valid candidates
 

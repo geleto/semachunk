@@ -16,7 +16,8 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
 		dynamicThresholdUpperBound: DEFAULT_CONFIG.DYNAMIC_THRESHOLD_UPPER_BOUND,
 		combineChunks: DEFAULT_CONFIG.COMBINE_CHUNKS,
 		combineChunksSimilarityThreshold: DEFAULT_CONFIG.COMBINE_CHUNKS_SIMILARITY_THRESHOLD,
-		maxPasses: DEFAULT_CONFIG.MAX_PASSES,
+		combineChunksSimilarityThreshold: DEFAULT_CONFIG.COMBINE_CHUNKS_SIMILARITY_THRESHOLD,
+		maxUncappedPasses: DEFAULT_CONFIG.MAX_UNCAPPED_PASSES,
 		maxMergesPerPass: DEFAULT_CONFIG.MAX_MERGES_PER_PASS,
 		maxMergesPerPassPercentage: DEFAULT_CONFIG.MAX_MERGES_PER_PASS_PERCENTAGE,
 		returnEmbedding: DEFAULT_CONFIG.RETURN_EMBEDDING
