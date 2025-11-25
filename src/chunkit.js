@@ -1,5 +1,5 @@
 import { parseSentences } from 'sentence-parse';
-import { DEFAULT_CONFIG } from './config.js';
+import { DEFAULT_CONFIG } from '../config.js';
 import { tokenizer } from './embeddingUtils.js';
 import { computeAdvancedSimilarities, adjustThreshold } from './similarityUtils.js';
 import { createChunks, optimizeAndRebalanceChunks, applyPrefixToChunk } from './chunkingUtils.js';

@@ -1,5 +1,5 @@
 import { chunkit } from './chunkit.js';
-import { DEFAULT_CONFIG } from './config.js';
+import { DEFAULT_CONFIG } from '../config.js';
 
 /**
  * Chunk text semantically using batch embeddings
