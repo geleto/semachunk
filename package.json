@@ -1,0 +1,13 @@
+{
+  "name": "semachunk",
+  "version": "0.0.1",
+  "description": "A minimal semantic chunking library",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "node test-run.js"
+  },
+  "dependencies": {
+    "sentence-parse": "^1.3.1"
+  }
+}
