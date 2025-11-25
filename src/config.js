@@ -7,11 +7,6 @@ export const DEFAULT_CONFIG = {
     NUM_SIMILARITY_SENTENCES_LOOKAHEAD: 3,
     COMBINE_CHUNKS: true,
     COMBINE_CHUNKS_SIMILARITY_THRESHOLD: 0.5,
-    ONNX_EMBEDDING_MODEL: "Xenova/all-MiniLM-L6-v2",
-    DTYPE: 'q8',
-    DEVICE: 'cpu', // webgpu
-    LOCAL_MODEL_PATH: "./models",
-    MODEL_CACHE_DIR: "./models",
     RETURN_EMBEDDING: false,
     RETURN_TOKEN_LENGTH: true,
     CHUNK_PREFIX: null,

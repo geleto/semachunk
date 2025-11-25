@@ -125,16 +125,8 @@ export async function chunkit(
 
             if (returnTokenLength) {
                 try {
-                    const encoded = tokenizer(prefixedChunk); // Stub tokenizer is synchronous? No, original was async?
-                    // Wait, original tokenizer usage: await tokenizer(prefixedChunk, { padding: true });
-                    // My stub in embeddingUtils.js is synchronous function but throws error.
-                    // I should check if I need to make it async or if the stub is fine.
-                    // The stub throws error, so it doesn't matter much.
-                    // But for correctness, I'll keep it as is or wrap in try/catch.
-                    // The original code had await.
-
-                    // result.token_length = encoded.input_ids.size;
-                    result.token_length = 0; // Stub
+                    const encoded = tokenizer(prefixedChunk);
+                    result.token_length = encoded.input_ids.size;
                 } catch (error) {
                     result.token_length = 0;
                 }
