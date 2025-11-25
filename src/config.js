@@ -5,9 +5,12 @@ export const DEFAULT_CONFIG = {
     DYNAMIC_THRESHOLD_LOWER_BOUND: 0.4,
     DYNAMIC_THRESHOLD_UPPER_BOUND: 0.8,
     NUM_SIMILARITY_SENTENCES_LOOKAHEAD: 3,
+    // Iterative Optimization
     COMBINE_CHUNKS: true,
     COMBINE_CHUNKS_SIMILARITY_THRESHOLD: 0.5,
-    MAX_PASSES: 5, // Default max passes for iterative optimization
+    MAX_PASSES: 16,
+    MAX_MERGES_PER_PASS: 50, // Absolute limit
+    MAX_MERGES_PER_PASS_PERCENTAGE: 0.4, // 40% of valid candidates
 
     // Output
     RETURN_EMBEDDING: true,

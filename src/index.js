@@ -1,4 +1,5 @@
 import { chunkit } from './chunkit.js';
+import { DEFAULT_CONFIG } from './config.js';
 
 /**
  * Chunk text semantically using batch embeddings
@@ -9,14 +10,16 @@ import { chunkit } from './chunkit.js';
  */
 export async function chunkText(text, embedBatchCallback, options = {}) {
 	const defaultOptions = {
-		similarityThreshold: 0.4,
-		maxTokenSize: 500,
-		dynamicThresholdLowerBound: 0.3,
-		dynamicThresholdUpperBound: 0.5,
-		combineChunks: true,
-		combineChunksSimilarityThreshold: 0.5,
-		maxPasses: 5,
-		returnEmbedding: true // Default to true for this API
+		similarityThreshold: DEFAULT_CONFIG.SIMILARITY_THRESHOLD,
+		maxTokenSize: DEFAULT_CONFIG.MAX_TOKEN_SIZE,
+		dynamicThresholdLowerBound: DEFAULT_CONFIG.DYNAMIC_THRESHOLD_LOWER_BOUND,
+		dynamicThresholdUpperBound: DEFAULT_CONFIG.DYNAMIC_THRESHOLD_UPPER_BOUND,
+		combineChunks: DEFAULT_CONFIG.COMBINE_CHUNKS,
+		combineChunksSimilarityThreshold: DEFAULT_CONFIG.COMBINE_CHUNKS_SIMILARITY_THRESHOLD,
+		maxPasses: DEFAULT_CONFIG.MAX_PASSES,
+		maxMergesPerPass: DEFAULT_CONFIG.MAX_MERGES_PER_PASS,
+		maxMergesPerPassPercentage: DEFAULT_CONFIG.MAX_MERGES_PER_PASS_PERCENTAGE,
+		returnEmbedding: DEFAULT_CONFIG.RETURN_EMBEDDING
 	};
 
 	const mergedOptions = { ...defaultOptions, ...options };

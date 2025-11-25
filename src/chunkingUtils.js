@@ -65,104 +65,123 @@ export function createChunks(sentences, similarities, maxTokenSize, similarityTh
 }
 
 // --------------------------------------------------------------
-// -- Optimize and Rebalance Chunks (optionally use Similarity) --
+// -- Optimize and Rebalance Chunks (Global Priority Merge) --
 // --------------------------------------------------------------
-export async function optimizeAndRebalanceChunks(combinedChunks, embedBatchCallback, tokenizer, maxTokenSize, combineChunksSimilarityThreshold = 0.5, maxPasses = 5) {
-    // Initialize chunks with versioning
-    // version 0 means "initial state"
+export async function optimizeAndRebalanceChunks(
+    combinedChunks,
+    embedBatchCallback,
+    tokenizer,
+    maxTokenSize,
+    combineChunksSimilarityThreshold = 0.5,
+    maxPasses = 5,
+    maxMergesPerPass = 50,
+    maxMergesPerPassPercentage = 0.4
+) {
+    // 1. Initialize chunks
     let currentChunks = combinedChunks.map(text => ({
         text,
         embedding: null,
-        version: 0
+        tokenCount: tokenizer(text).input_ids.size
     }));
 
-    let mergesHappened = false;
     let pass = 1;
 
-    do {
-        mergesHappened = false;
-
-        // 1. Batch Embed (Only for chunks missing embeddings)
+    while (pass <= maxPasses) {
+        // 2. Batch Embed (Only for chunks missing embeddings)
         const chunksToEmbed = currentChunks.filter(c => c.embedding === null);
         if (chunksToEmbed.length > 0) {
             const newEmbeddings = await embedBatchCallback(chunksToEmbed.map(c => c.text));
-            // Assign back to objects
             chunksToEmbed.forEach((chunk, index) => {
                 chunk.embedding = newEmbeddings[index];
             });
         }
 
-        const newChunks = [];
-        let i = 0;
+        // 3. Calculate all pairwise similarities
+        const candidates = [];
+        for (let i = 0; i < currentChunks.length - 1; i++) {
+            const chunkA = currentChunks[i];
+            const chunkB = currentChunks[i + 1];
 
-        while (i < currentChunks.length) {
-            let currentGroup = { ...currentChunks[i] }; // Shallow copy to start a potential new group
-            // If we start merging, this group becomes "new" (version = pass)
-            // But initially, it keeps its old version.
+            // Skip if combined size exceeds limit
+            if (chunkA.tokenCount + chunkB.tokenCount > maxTokenSize) continue;
 
-            let currentGroupSize = tokenizer(currentGroup.text).input_ids.size;
+            const similarity = cosineSimilarity(chunkA.embedding, chunkB.embedding);
 
-            // We need to track the embedding of the *last added chunk* for the chain similarity check.
-            // Initially, it's the embedding of the current chunk itself.
-            let lastAddedEmbedding = currentGroup.embedding;
+            if (similarity >= combineChunksSimilarityThreshold) {
+                candidates.push({
+                    index: i,
+                    similarity: similarity,
+                    chunkA: chunkA,
+                    chunkB: chunkB
+                });
+            }
+        }
 
-            let j = i + 1;
+        // If no candidates, we are done
+        if (candidates.length === 0) break;
 
-            // Try to merge subsequent chunks
-            while (j < currentChunks.length) {
-                const nextChunk = currentChunks[j];
-                const nextChunkSize = tokenizer(nextChunk.text).input_ids.size;
+        // 4. Sort by similarity (descending) - Global Priority
+        candidates.sort((a, b) => b.similarity - a.similarity);
 
-                // Check size limit
-                if (currentGroupSize + nextChunkSize > maxTokenSize) {
-                    break;
-                }
+        // 5. Calculate Throttle Limit
+        // Limit based on percentage of VALID candidates
+        const percentageLimit = Math.max(1, Math.floor(candidates.length * maxMergesPerPassPercentage));
+        // Absolute limit
+        const absoluteLimit = maxMergesPerPass;
+        // Effective limit is the minimum of both (but at least 1 if there are candidates)
+        const effectiveLimit = Math.min(percentageLimit, absoluteLimit);
 
-                // OPTIMIZATION: Skip check if both are "old" and failed to merge previously
-                // If currentGroup hasn't been modified in this pass (it's just chunks[i]),
-                // AND chunks[i] is old (version < pass - 1)
-                // AND nextChunk is old (version < pass - 1)
-                // THEN they must have been compared in the previous pass and failed.
-                const currentIsOld = currentGroup.version < pass - 1;
-                const nextIsOld = nextChunk.version < pass - 1;
+        // 6. Select merges (greedy but globally prioritized AND throttled)
+        const mergedIndices = new Set();
+        const mergesToExecute = [];
 
-                // Only skip if we haven't started merging yet.
-                // If we already merged i and i+1, currentGroup.version would be updated to `pass`.
-                // So checking `currentGroup.version` is sufficient.
+        for (const candidate of candidates) {
+            // Stop if we hit the throttle limit
+            if (mergesToExecute.length >= effectiveLimit) break;
 
-                if (currentIsOld && nextIsOld) {
-                    // They failed to merge last time. Skip.
-                    break;
-                }
-                // Check similarity
-                // Compare last added embedding with candidate
-                const similarity = cosineSimilarity(lastAddedEmbedding, nextChunk.embedding);
-
-                if (similarity >= combineChunksSimilarityThreshold) {
-                    // Merge!
-                    currentGroup.text += " " + nextChunk.text;
-                    currentGroupSize += nextChunkSize;
-
-                    // Update state for next iteration of inner loop
-                    lastAddedEmbedding = nextChunk.embedding;
-                    currentGroup.version = pass; // Mark as modified in this pass
-                    currentGroup.embedding = null; // Invalidate embedding (will be re-calced next pass)
-
-                    mergesHappened = true;
-                    j++;
-                } else {
-                    break;
-                }
+            // If either chunk is already involved in a merge this pass, skip
+            if (mergedIndices.has(candidate.index) || mergedIndices.has(candidate.index + 1)) {
+                continue;
             }
 
-            newChunks.push(currentGroup);
-            i = j;
+            mergesToExecute.push(candidate);
+            mergedIndices.add(candidate.index);
+            mergedIndices.add(candidate.index + 1);
+        }
+
+        // If no valid merges could be executed (e.g. conflicts), break
+        if (mergesToExecute.length === 0) break;
+
+        // 7. Execute Merges
+        // We rebuild the array. Chunks not in 'mergesToExecute' are kept.
+        // Merged chunks are created new.
+        const newChunks = [];
+
+        let i = 0;
+        while (i < currentChunks.length) {
+            // Check if this index is the start of a merge
+            const merge = mergesToExecute.find(m => m.index === i);
+
+            if (merge) {
+                // Create merged chunk
+                const mergedText = merge.chunkA.text + " " + merge.chunkB.text;
+                const mergedChunk = {
+                    text: mergedText,
+                    tokenCount: merge.chunkA.tokenCount + merge.chunkB.tokenCount, // Approx sum
+                    embedding: null, // Needs re-embedding
+                };
+                newChunks.push(mergedChunk);
+                i += 2; // Skip next chunk as it's merged
+            } else {
+                // Keep existing chunk
+                newChunks.push(currentChunks[i]);
+                i++;
+            }
         }
 
         currentChunks = newChunks;
         pass++;
-
-    } while (mergesHappened && pass < maxPasses);
+    }
 
     // Return just the text strings
     return currentChunks.map(c => c.text);

@@ -28,6 +28,8 @@ export async function chunkit(
         returnTokenLength = DEFAULT_CONFIG.RETURN_TOKEN_LENGTH,
         chunkPrefix = DEFAULT_CONFIG.CHUNK_PREFIX,
         excludeChunkPrefixInResults = false,
+        maxMergesPerPass = DEFAULT_CONFIG.MAX_MERGES_PER_PASS,
+        maxMergesPerPassPercentage = DEFAULT_CONFIG.MAX_MERGES_PER_PASS_PERCENTAGE
     } = {}) {
 
     if (logging) { printVersion(); }
@@ -85,7 +87,16 @@ export async function chunkit(
 
         // Combine similar chunks
         if (combineChunks) {
-            finalChunks = await optimizeAndRebalanceChunks(initialChunks, embedBatchCallback, tokenizer, maxTokenSize, combineChunksSimilarityThreshold, maxPasses);
+            finalChunks = await optimizeAndRebalanceChunks(
+                initialChunks,
+                embedBatchCallback,
+                tokenizer,
+                maxTokenSize,
+                combineChunksSimilarityThreshold,
+                maxPasses,
+                maxMergesPerPass,
+                maxMergesPerPassPercentage
+            );
             if (logging) {
                 console.log('\n\n=============\ncombinedChunks\n=============');
                 finalChunks.forEach((chunk, index) => {
