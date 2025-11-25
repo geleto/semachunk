@@ -68,41 +68,105 @@ export function createChunks(sentences, similarities, maxTokenSize, similarityTh
 // -- Optimize and Rebalance Chunks (optionally use Similarity) --
 // --------------------------------------------------------------
 export async function optimizeAndRebalanceChunks(combinedChunks, embedBatchCallback, tokenizer, maxTokenSize, combineChunksSimilarityThreshold = 0.5) {
-    let optimizedChunks = [];
-    let currentChunkText = "";
-    let currentChunkTokenCount = 0;
-    let currentEmbedding = null;
+    // Initialize chunks with versioning
+    // version 0 means "initial state"
+    let currentChunks = combinedChunks.map(text => ({
+        text,
+        embedding: null,
+        version: 0
+    }));
 
-    // Pre-calculate embeddings for all chunks
-    const allEmbeddings = await embedBatchCallback(combinedChunks);
+    let mergesHappened = false;
+    let pass = 1;
 
-    for (let index = 0; index < combinedChunks.length; index++) {
-        const chunk = combinedChunks[index];
-        const chunkTokenCount = tokenizer(chunk).input_ids.size;
+    do {
+        mergesHappened = false;
 
-        if (currentChunkText && (currentChunkTokenCount + chunkTokenCount <= maxTokenSize)) {
-            const nextEmbedding = allEmbeddings[index];
-            // const nextEmbedding = await createEmbedding(chunk);
-            const similarity = currentEmbedding ? cosineSimilarity(currentEmbedding, nextEmbedding) : 0;
-
-            if (similarity >= combineChunksSimilarityThreshold) {
-                currentChunkText += " " + chunk;
-                currentChunkTokenCount += chunkTokenCount;
-                currentEmbedding = nextEmbedding;
-                continue;
-            }
+        // 1. Batch Embed (Only for chunks missing embeddings)
+        const chunksToEmbed = currentChunks.filter(c => c.embedding === null);
+        if (chunksToEmbed.length > 0) {
+            const newEmbeddings = await embedBatchCallback(chunksToEmbed.map(c => c.text));
+            // Assign back to objects
+            chunksToEmbed.forEach((chunk, index) => {
+                chunk.embedding = newEmbeddings[index];
+            });
         }
 
-        if (currentChunkText) optimizedChunks.push(currentChunkText);
-        currentChunkText = chunk;
-        currentChunkTokenCount = chunkTokenCount;
-        currentEmbedding = allEmbeddings[index];
-        // currentEmbedding = await createEmbedding(chunk);
-    }
+        const newChunks = [];
+        let i = 0;
 
-    if (currentChunkText) optimizedChunks.push(currentChunkText);
+        while (i < currentChunks.length) {
+            let currentGroup = { ...currentChunks[i] }; // Shallow copy to start a potential new group
+            // If we start merging, this group becomes "new" (version = pass)
+            // But initially, it keeps its old version.
 
-    return optimizedChunks.filter(chunk => chunk);
+            let currentGroupSize = tokenizer(currentGroup.text).input_ids.size;
+
+            // We need to track the embedding of the *last added chunk* for the chain similarity check.
+            // Initially, it's the embedding of the current chunk itself.
+            let lastAddedEmbedding = currentGroup.embedding;
+
+            let j = i + 1;
+
+            // Try to merge subsequent chunks
+            while (j < currentChunks.length) {
+                const nextChunk = currentChunks[j];
+                const nextChunkSize = tokenizer(nextChunk.text).input_ids.size;
+
+                // Check size limit
+                if (currentGroupSize + nextChunkSize > maxTokenSize) {
+                    break;
+                }
+
+                // OPTIMIZATION: Skip check if both are "old" and failed to merge previously
+                // If currentGroup hasn't been modified in this pass (it's just chunks[i]),
+                // AND chunks[i] is old (version < pass - 1)
+                // AND nextChunk is old (version < pass - 1)
+                // THEN they must have been compared in the previous pass and failed.
+                const currentIsOld = currentGroup.version < pass - 1;
+                const nextIsOld = nextChunk.version < pass - 1;
+
+                // Only skip if we haven't started merging yet.
+                // If we already merged i and i+1, currentGroup.version would be updated to `pass`.
+                // So checking `currentGroup.version` is sufficient.
+
+                if (currentIsOld && nextIsOld) {
+                    // They failed to merge last time. Skip.
+                    break;
+                }
+
+                // Check similarity
+                // Compare last added embedding with candidate
+                const similarity = cosineSimilarity(lastAddedEmbedding, nextChunk.embedding);
+
+                if (similarity >= combineChunksSimilarityThreshold) {
+                    // Merge!
+                    currentGroup.text += " " + nextChunk.text;
+                    currentGroupSize += nextChunkSize;
+
+                    // Update state for next iteration of inner loop
+                    lastAddedEmbedding = nextChunk.embedding;
+                    currentGroup.version = pass; // Mark as modified in this pass
+                    currentGroup.embedding = null; // Invalidate embedding (will be re-calced next pass)
+
+                    mergesHappened = true;
+                    j++;
+                } else {
+                    break;
+                }
+            }
+
+            newChunks.push(currentGroup);
+            i = j;
+        }
+
+        currentChunks = newChunks;
+        pass++;
+
+    } while (mergesHappened);
+
+    // Return just the text strings
+    return currentChunks.map(c => c.text);
 }
 
 
