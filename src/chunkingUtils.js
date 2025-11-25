@@ -67,7 +67,7 @@ export function createChunks(sentences, similarities, maxTokenSize, similarityTh
 // --------------------------------------------------------------
 // -- Optimize and Rebalance Chunks (optionally use Similarity) --
 // --------------------------------------------------------------
-export async function optimizeAndRebalanceChunks(combinedChunks, embedBatchCallback, tokenizer, maxTokenSize, combineChunksSimilarityThreshold = 0.5) {
+export async function optimizeAndRebalanceChunks(combinedChunks, embedBatchCallback, tokenizer, maxTokenSize, combineChunksSimilarityThreshold = 0.5, maxPasses = 5) {
     // Initialize chunks with versioning
     // version 0 means "initial state"
     let currentChunks = combinedChunks.map(text => ({
@@ -134,7 +134,6 @@ export async function optimizeAndRebalanceChunks(combinedChunks, embedBatchCallb
                     // They failed to merge last time. Skip.
                     break;
                 }
-
                 // Check similarity
                 // Compare last added embedding with candidate
                 const similarity = cosineSimilarity(lastAddedEmbedding, nextChunk.embedding);
@@ -163,7 +162,7 @@ export async function optimizeAndRebalanceChunks(combinedChunks, embedBatchCallb
         currentChunks = newChunks;
         pass++;
 
-    } while (mergesHappened);
+    } while (mergesHappened && pass < maxPasses);
 
     // Return just the text strings
     return currentChunks.map(c => c.text);

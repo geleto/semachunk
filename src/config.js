@@ -7,8 +7,11 @@ export const DEFAULT_CONFIG = {
     NUM_SIMILARITY_SENTENCES_LOOKAHEAD: 3,
     COMBINE_CHUNKS: true,
     COMBINE_CHUNKS_SIMILARITY_THRESHOLD: 0.5,
-    RETURN_EMBEDDING: false,
+    MAX_PASSES: 5, // Default max passes for iterative optimization
+
+    // Output
+    RETURN_EMBEDDING: true,
     RETURN_TOKEN_LENGTH: true,
-    CHUNK_PREFIX: null,
+    CHUNK_PREFIX: '',
     EXCLUDE_CHUNK_PREFIX_IN_RESULTS: false,
 };

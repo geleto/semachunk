@@ -15,6 +15,7 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
 		dynamicThresholdUpperBound: 0.5,
 		combineChunks: true,
 		combineChunksSimilarityThreshold: 0.5,
+		maxPasses: 5,
 		returnEmbedding: true // Default to true for this API
 	};
 

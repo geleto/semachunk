@@ -23,6 +23,7 @@ export async function chunkit(
         numSimilaritySentencesLookahead = DEFAULT_CONFIG.NUM_SIMILARITY_SENTENCES_LOOKAHEAD,
         combineChunks = DEFAULT_CONFIG.COMBINE_CHUNKS,
         combineChunksSimilarityThreshold = DEFAULT_CONFIG.COMBINE_CHUNKS_SIMILARITY_THRESHOLD,
+        maxPasses = DEFAULT_CONFIG.MAX_PASSES,
         returnEmbedding = DEFAULT_CONFIG.RETURN_EMBEDDING,
         returnTokenLength = DEFAULT_CONFIG.RETURN_TOKEN_LENGTH,
         chunkPrefix = DEFAULT_CONFIG.CHUNK_PREFIX,
@@ -84,7 +85,7 @@ export async function chunkit(
 
         // Combine similar chunks
         if (combineChunks) {
-            finalChunks = await optimizeAndRebalanceChunks(initialChunks, embedBatchCallback, tokenizer, maxTokenSize, combineChunksSimilarityThreshold);
+            finalChunks = await optimizeAndRebalanceChunks(initialChunks, embedBatchCallback, tokenizer, maxTokenSize, combineChunksSimilarityThreshold, maxPasses);
             if (logging) {
                 console.log('\n\n=============\ncombinedChunks\n=============');
                 finalChunks.forEach((chunk, index) => {
