@@ -107,14 +107,13 @@ export async function optimizeAndRebalanceChunks(
 
             const similarity = cosineSimilarity(chunkA.embedding, chunkB.embedding);
 
-            if (similarity >= combineChunksSimilarityThreshold) {
-                candidates.push({
-                    index: i,
-                    similarity: similarity,
-                    chunkA: chunkA,
-                    chunkB: chunkB
-                });
-            }
+            // Store ALL candidates (no threshold check yet)
+            candidates.push({
+                index: i,
+                similarity: similarity,
+                chunkA: chunkA,
+                chunkB: chunkB
+            });
         }
 
         // If no candidates, we are done
@@ -123,19 +122,43 @@ export async function optimizeAndRebalanceChunks(
         // 4. Sort by similarity (descending) - Global Priority
         candidates.sort((a, b) => b.similarity - a.similarity);
 
-        // 5. Calculate Throttle Limit
+        // 5. Binary Search for Threshold Cutoff
+        // Find the index of the last candidate that meets the threshold
+        let low = 0;
+        let high = candidates.length - 1;
+        let cutoffIndex = -1;
+
+        while (low <= high) {
+            const mid = Math.floor((low + high) / 2);
+            if (candidates[mid].similarity >= combineChunksSimilarityThreshold) {
+                cutoffIndex = mid;
+                low = mid + 1; // Try to find a later index (lower similarity but still >= threshold)
+            } else {
+                high = mid - 1;
+            }
+        }
+
+        // If no candidates meet the threshold, break
+        if (cutoffIndex === -1) break;
+
+        // The number of valid candidates is cutoffIndex + 1
+        const validCandidateCount = cutoffIndex + 1;
+
+        // 6. Calculate Throttle Limit
         // Limit based on percentage of VALID candidates
-        const percentageLimit = Math.max(1, Math.floor(candidates.length * maxMergesPerPassPercentage));
+        const percentageLimit = Math.max(1, Math.floor(validCandidateCount * maxMergesPerPassPercentage));
         // Absolute limit
         const absoluteLimit = maxMergesPerPass;
-        // Effective limit is the minimum of both (but at least 1 if there are candidates)
+        // Effective limit is the minimum of both
         const effectiveLimit = Math.min(percentageLimit, absoluteLimit);
 
-        // 6. Select merges (greedy but globally prioritized AND throttled)
+        // 7. Select merges (greedy but globally prioritized AND throttled)
         const mergedIndices = new Set();
         const mergesToExecute = [];
 
-        for (const candidate of candidates) {
+        for (let i = 0; i < validCandidateCount; i++) {
+            const candidate = candidates[i];
+
             // Stop if we hit the throttle limit
             if (mergesToExecute.length >= effectiveLimit) break;
 
@@ -153,6 +176,12 @@ export async function optimizeAndRebalanceChunks(
         if (mergesToExecute.length === 0) break;
 
         // 7. Execute Merges
+        // Create a Map for O(1) lookup of merges by index
+        const mergesMap = new Map();
+        for (const merge of mergesToExecute) {
+            mergesMap.set(merge.index, merge);
+        }
+
         // We rebuild the array. Chunks not in 'mergesToExecute' are kept.
         // Merged chunks are created new.
         const newChunks = [];
@@ -160,7 +189,7 @@ export async function optimizeAndRebalanceChunks(
         let i = 0;
         while (i < currentChunks.length) {
             // Check if this index is the start of a merge
-            const merge = mergesToExecute.find(m => m.index === i);
+            const merge = mergesMap.get(i);
 
             if (merge) {
                 // Create merged chunk
