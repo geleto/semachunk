@@ -1,4 +1,4 @@
-import { splitSentences } from './utils.js';
+import { parseSentences } from 'sentence-parse';
 import { DEFAULT_CONFIG } from './config.js';
 import { tokenizer } from './embeddingUtils.js';
 import { computeAdvancedSimilarities, adjustThreshold } from './similarityUtils.js';
@@ -51,7 +51,7 @@ export async function chunkit(
         doc.document_text = normalizedText;
 
         // Split the text into sentences
-        const sentences = await splitSentences(doc.document_text);
+        const sentences = await parseSentences(doc.document_text);
 
         // Compute similarities and create chunks
         const { similarities, average, variance } = await computeAdvancedSimilarities(
