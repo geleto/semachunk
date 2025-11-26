@@ -36,15 +36,16 @@ export async function mergeChunks(
     let candidates = [];
     if (initialEmbeddings) {
         // Use the embeddings provided
-        for (chunk of currentChunks) {
-            const candidate = _getMergeCandidate(chunk, chunk.next, chunk.index, maxChunkSize, combineChunksSimilarityThreshold);
-            if (candidate) {
-                candidates.push(candidate);
+        for (const chunk of currentChunks) {
+            if (chunk.next) {
+                const candidate = _getMergeCandidate(chunk, chunk.next, chunk.index, maxChunkSize, combineChunksSimilarityThreshold);
+                if (candidate) {
+                    candidates.push(candidate);
+                }
             }
-            // Mark as processed for this pass (pass 1 hasn't started yet, but we can init)
-            chunk.candidatePass = 0;
         }
-    } else {
+    }
+    else {
         chunksToEmbed = currentChunks;//all need to be embedded
     }
 
@@ -164,8 +165,8 @@ export async function mergeChunks(
         chunk = chunk.next;
     }
 
-    // Return just the text strings
-    return currentChunks.map(c => c.text);
+    // Return the chunk objects
+    return currentChunks;
 }
 
 // --------------------------------------------------------------

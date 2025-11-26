@@ -1,6 +1,8 @@
-import { _chunkit } from './_chunkit.js';
 import { adjustThreshold, computeAdvancedSimilarities } from './similarity.js';
+import { parseSentences } from 'sentence-parse';
+import { mergeChunks } from './merge.js';
 import { DEFAULT_CONFIG } from '../config.js';
+import { readFileSync } from 'fs';
 
 /**
  * Chunk text semantically using batch embeddings
@@ -83,11 +85,12 @@ async function _chunkit(
 
 	// Create the initial chunks (just the sentences)
 
+	logging = true;
 	if (logging) {
 		console.log('\n=============\ninitialChunks (Sentences)\n=============');
-		initialChunks.forEach((chunk, index) => {
-			console.log(`-- Chunk ${(index + 1)} --`);
-			console.log(chunk.substring(0, 50) + '...');
+		sentences.forEach((sentence, index) => {
+			console.log(`-- Sentence ${(index + 1)} --`);
+			console.log(sentence.substring(0, 50) + '...');
 		});
 	}
 
@@ -109,7 +112,7 @@ async function _chunkit(
 			console.log('\n\n=============\ncombinedChunks\n=============');
 			mergedChunks.forEach((chunk, index) => {
 				console.log(`Chunk ${index + 1}`);
-				console.log(chunk.substring(0, 50) + '...');
+				console.log(chunk.text.substring(0, 100) + '...');
 			});
 		}
 	} else {
@@ -138,4 +141,12 @@ async function _chunkit(
 
 		return result;
 	});
+}
+
+const packageJson = JSON.parse(readFileSync(new URL('../package.json', import.meta.url)));
+const VERSION = packageJson.version;
+export async function _printVersion() {
+	const versionText = `-- semantic-chunking v${VERSION} --`;
+	const lineLength = versionText.length;
+	console.log(`\n${'-'.repeat(lineLength)}\n${versionText}\n${'-'.repeat(lineLength)}`);
 }
