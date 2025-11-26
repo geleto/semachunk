@@ -143,6 +143,7 @@ export async function optimizeAndRebalanceChunks(
         const mergesToExecute = [];
 
 
+        // Sorted, The most high-similarity candidates are processed first
         for (let i = 0; i < candidates.length; i++) {
             const candidate = candidates[i];
 
@@ -154,7 +155,7 @@ export async function optimizeAndRebalanceChunks(
                 break;
             }
 
-            // If either chunk is already involved in a merge this pass, skip
+            // If either chunk is already involved in a merge this pass, skip (mergeB shall not be possible?)
             if (candidate.chunkA.mergePass === pass || candidate.chunkB.mergePass === pass) {
                 continue;
             }
@@ -162,26 +163,22 @@ export async function optimizeAndRebalanceChunks(
             mergesToExecute.push(candidate);
             candidate.chunkA.mergePass = pass;
             candidate.chunkB.mergePass = pass;
+            candidate.chunkA.candidate = candidate;
+            candidate.chunkB.candidate = null;
         }
 
         // If no valid merges could be executed (e.g. conflicts), break
         if (mergesToExecute.length === 0) break;
 
         // 8. Execute Merges
-        // Create a Map for O(1) lookup of merges by index
-        const mergesMap = new Map();
-        for (const merge of mergesToExecute) {
-            mergesMap.set(merge.index, merge);
-        }
-
         // We rebuild the array. Chunks not in 'mergesToExecute' are kept.
         // Merged chunks are created new.
         const newChunks = [];
 
         let i = 0;
         while (i < currentChunks.length) {
-            // Check if this index is the start of a merge
-            const merge = mergesMap.get(i);
+            // Check if this index is the start of a merge pair
+            const merge = currentChunks[i].candidate;
 
             if (merge) {
                 // Create merged chunk
