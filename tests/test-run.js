@@ -9,8 +9,8 @@ async function mockBatchEmbed(texts) {
 		// Create a 384-dimensional vector (standard size)
 		const vector = new Array(384).fill(0.01); // Fill with small noise
 
-		// Topic 1: Dogs/Intro (Sentences 1 & 2)
-		if (text.includes("first sentence") || text.includes("second sentence")) {
+		// Topic 1: Dogs/Intro (Sentences 1, 2 & 3)
+		if (text.includes("first sentence") || text.includes("second sentence") || text.includes("third sentence")) {
 			vector[0] = 1;
 		}
 		// Topic 2: Physics (Sentences 3 & 4)
@@ -22,18 +22,17 @@ async function mockBatchEmbed(texts) {
 			vector[20] = 1;
 		}
 
-		if (text.includes("first sentence") || text.includes("second sentence")) vector[0] = 1;
-		if (text.includes("quantum") || text.includes("mechanics")) vector[10] = 1;
-		if (text.includes("pets") || text.includes("companions")) vector[20] = 1;
+
 
 		return vector;
 	});
 }
 
-// Adjusted to have exactly 6 sentences
+// Adjusted to have exactly 7 sentences
 const testText =
 	`This is the first sentence about dogs.
 The second sentence also discusses dogs and their behavior.
+This is the third sentence about dogs.
 Now we switch topics entirely to talk about quantum physics.
 Quantum mechanics is a fascinating subject.
 Let's go back to talking about pets and animals.
@@ -46,8 +45,8 @@ async function runTest() {
 		// 1. Verify Initial State
 		const initialSentences = await parseSentences(testText);
 		console.log(`Initial sentences: ${initialSentences.length}`);
-		if (initialSentences.length !== 6) {
-			throw new Error(`Expected 6 initial sentences, found ${initialSentences.length}`);
+		if (initialSentences.length !== 7) {
+			throw new Error(`Expected 7 initial sentences, found ${initialSentences.length}`);
 		}
 
 		// 2. Run Chunking
@@ -57,9 +56,8 @@ async function runTest() {
 
 		console.log('Generated chunks:', chunks.length);
 		chunks.forEach((chunk, i) => {
-			console.log(`\nChunk ${i + 1}:`);
-			console.log(chunk.text);
-
+			console.log(`\n-- Chunk ${i + 1} --`);
+			console.log(chunk);
 		});
 
 		// 3. Verify Final State
@@ -67,7 +65,7 @@ async function runTest() {
 			throw new Error(`Expected 3 final chunks, found ${chunks.length}`);
 		}
 
-		console.log('\n✅ TEST PASSED: 6 Sentences -> 3 Chunks');
+		console.log('\n✅ TEST PASSED: 7 Sentences -> 3 Chunks');
 
 	} catch (error) {
 		console.error('❌ TEST FAILED:', error);
