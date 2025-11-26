@@ -160,44 +160,25 @@ export async function optimizeAndRebalanceChunks(
                 continue;
             }
 
-            mergesToExecute.push(candidate);
+            // Mark chunks as merged
             candidate.chunkA.mergePass = pass;
             candidate.chunkB.mergePass = pass;
-            candidate.chunkA.candidate = candidate;
-            candidate.chunkB.candidate = null;
+
+            // Merge chunks
+            candidate.chunkA.text = candidate.chunkA.text + " " + candidate.chunkB.text;
+            candidate.chunkA.embedding = null;
+
+            // Remove the second merged chunk
+            candidate.chunkB.text = null;
+            candidate.chunkB.embedding = null;
         }
 
         // If no valid merges could be executed (e.g. conflicts), break
         if (mergesToExecute.length === 0) break;
 
-        // 8. Execute Merges
-        // We rebuild the array. Chunks not in 'mergesToExecute' are kept.
-        // Merged chunks are created new.
-        const newChunks = [];
+        // Remove null chunks
+        currentChunks = currentChunks.filter(c => c.text !== null);
 
-        let i = 0;
-        while (i < currentChunks.length) {
-            // Check if this index is the start of a merge pair
-            const merge = currentChunks[i].candidate;
-
-            if (merge) {
-                // Create merged chunk
-                const mergedText = merge.chunkA.text + " " + merge.chunkB.text;
-                const mergedChunk = {
-                    text: mergedText,
-                    embedding: null, // Needs re-embedding
-                };
-                newChunks.push(mergedChunk);
-                chunksToEmbed.push(mergedChunk); // Add to queue for embedding in next pass
-                i += 2; // Skip next chunk as it's merged
-            } else {
-                // Keep existing chunk
-                newChunks.push(currentChunks[i]);
-                i++;
-            }
-        }
-
-        currentChunks = newChunks;
         pass++;
     }
 
