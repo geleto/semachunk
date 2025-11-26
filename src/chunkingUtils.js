@@ -143,11 +143,15 @@ export async function optimizeAndRebalanceChunks(
         const mergedIndices = new Set();
         const mergesToExecute = [];
 
+
         for (let i = 0; i < candidates.length; i++) {
             const candidate = candidates[i];
 
             // Stop if we hit the throttle limit
-            if (mergesToExecute.length >= effectiveLimit) break;
+            if (mergesToExecute.length >= effectiveLimit) {
+                numCappedPasses++;
+                break;
+            }
 
             // If either chunk is already involved in a merge this pass, skip
             if (mergedIndices.has(candidate.index) || mergedIndices.has(candidate.index + 1)) {
@@ -162,11 +166,7 @@ export async function optimizeAndRebalanceChunks(
         // If no valid merges could be executed (e.g. conflicts), break
         if (mergesToExecute.length === 0) break;
 
-        // Check if this pass was capped (throttled)
-        // A pass is capped if we hit the effective limit AND there were more valid candidates we could have processed
-        if (mergesToExecute.length >= effectiveLimit) {
-            numCappedPasses++;
-        }
+
 
         // 8. Execute Merges
         // Create a Map for O(1) lookup of merges by index
