@@ -1,13 +1,13 @@
 # Minimal Semantic Chunker
 
-A lightweight, dependency-free (almost) library for semantically chunking text. This library is designed to be model-agnostic, allowing you to plug in any embedding provider (OpenAI, HuggingFace, etc.) via a simple batch callback. Batches embeddings for efficiency and API rate limiting.
+A lightweight, dependency-free (almost) library for semantically chunking text.
 
 ## Features
 
-- Zero Heavy Dependencies
-- Model Agnostic
+- Zero Heavy Dependencies (only `sentence-parse`)
+- Model Agnostic, plug in any embedding provider (OpenAI, HuggingFace, etc.) via a simple callback
 - Batch Embeddings for Efficiency and handling API Rate Limiting
-- Optimized Chunk Merging Algorithm
+- Optimized Sentence/Chunk Merging Algorithm
 
 ## Usage
 
@@ -16,17 +16,15 @@ import { chunkText } from 'semachunk';
 
 // 1. Define your embedding callback
 async function myEmbedder(texts) {
-    // Call OpenAI, local model, etc.
-    // Return array of vectors: [[0.1, ...], [0.2, ...]]
-    return await openai.embeddings.create({ input: texts });
+    // Return array of vectors:
+    return await openai.embeddings.create({ input: texts, model: "text-embedding-3-small" });
 }
 
 // 2. Chunk your text
 const text = "Your long document text...";
 const chunks = await chunkText(text, myEmbedder, {
     maxChunkSize: 500,
-    similarityThreshold: 0.5,
-    maxUncappedPasses: 10
+    similarityThreshold: 0.5
 });
 
 console.log(chunks);
@@ -48,7 +46,6 @@ console.log(chunks);
 | `maxMergesPerPass` | `50` | Absolute limit on the number of merges per pass. |
 | `maxMergesPerPassPercentage` | `40` | Percentage of valid merge candidates to execute per pass. |
 | `returnEmbedding` | `true` | Include embeddings in the output |
-
 | `chunkPrefix` | `''` | Prefix to add to each chunk before embedding |
 | `excludeChunkPrefixInResults` | `false` | Exclude the prefix from the returned text |
 
