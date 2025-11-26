@@ -1,12 +1,41 @@
 {
   "name": "semachunk",
   "version": "0.0.1",
-  "description": "A minimal semantic chunking library",
+  "description": "Semantic chunking of large texts. Plug any embedding provider/API. Batch embeddings for efficiency and handling API rate limits.",
+  "homepage": "https://geleto.github.io/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/geleto/semachunk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/geleto/semachunk/issues",
+    "email": "geleto@gmail.com"
+  },
   "main": "src/index.js",
   "type": "module",
   "scripts": {
     "test": "node tests/test-run.js"
   },
+  "keywords": [
+    "semantic",
+    "chunking",
+    "sentence",
+    "similarity",
+    "cosine",
+    "chunk",
+    "rag",
+    "splitting",
+    "transformers",
+    "transformers.js",
+    "emmbeddings",
+    "xenova",
+    "text-processing",
+    "nlp",
+    "ml",
+    "BERT"
+  ],
+  "author": "Angel Popov <geleto@gmail.com>",
+  "license": "MIT",
   "dependencies": {
     "sentence-parse": "^1.3.1"
   }
