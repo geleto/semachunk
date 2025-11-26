@@ -22,7 +22,7 @@ export function createChunks(sentences, similarities, maxChunkSize, similarityTh
             const currentChunkSize = currentChunkText.length;
             const nextSentenceSize = nextSentence.length;
 
-            if (currentChunkSize + nextSentenceSize <= maxChunkSize) {
+            if (currentChunkSize + nextSentenceSize + 1 <= maxChunkSize) {
                 currentChunk.push(nextSentence);
             } else {
                 chunks.push(currentChunkText);
@@ -70,7 +70,7 @@ export function createChunks(sentences, similarities, maxChunkSize, similarityTh
 function _getMergeCandidate(chunkA, chunkB, index, maxChunkSize, combineChunksSimilarityThreshold) {
     // Skip if combined size exceeds limit
     // account for the added space between the merged sentences
-    const aLength = chunkA.text.charAt(chunkA.legth - 1) === ' ' ? chunkA.legth : chunkA.legth + 1;
+    const aLength = chunkA.text.charAt(chunkA.text.length - 1) === ' ' ? chunkA.text.length : chunkA.text.length + 1;
     if (aLength + chunkB.text.length > maxChunkSize) return null;
 
     const similarity = cosineSimilarity(chunkA.embedding, chunkB.embedding);
