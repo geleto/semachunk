@@ -140,7 +140,6 @@ export async function optimizeAndRebalanceChunks(
         const effectiveLimit = Math.min(percentageLimit, absoluteLimit);
 
         // 7. Select merges (greedy but globally prioritized AND throttled)
-        const mergedIndices = new Set();
         const mergesToExecute = [];
 
 
@@ -149,24 +148,24 @@ export async function optimizeAndRebalanceChunks(
 
             // Stop if we hit the throttle limit
             if (mergesToExecute.length >= effectiveLimit) {
+                // Capped passes are ignored in the max passes counting
+                // as with big documents it can take many passes to go under the merge limit
                 numCappedPasses++;
                 break;
             }
 
             // If either chunk is already involved in a merge this pass, skip
-            if (mergedIndices.has(candidate.index) || mergedIndices.has(candidate.index + 1)) {
+            if (candidate.chunkA.mergePass === pass || candidate.chunkB.mergePass === pass) {
                 continue;
             }
 
             mergesToExecute.push(candidate);
-            mergedIndices.add(candidate.index);
-            mergedIndices.add(candidate.index + 1);
+            candidate.chunkA.mergePass = pass;
+            candidate.chunkB.mergePass = pass;
         }
 
         // If no valid merges could be executed (e.g. conflicts), break
         if (mergesToExecute.length === 0) break;
-
-
 
         // 8. Execute Merges
         // Create a Map for O(1) lookup of merges by index
