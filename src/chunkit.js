@@ -1,8 +1,8 @@
 import { parseSentences } from 'sentence-parse';
 import { DEFAULT_CONFIG } from '../config.js';
 
-import { computeAdvancedSimilarities, adjustThreshold } from './similarityUtils.js';
-import { createChunks, optimizeAndRebalanceChunks, applyPrefixToChunk } from './chunkingUtils.js';
+import { computeAdvancedSimilarities, adjustThreshold } from './similarity.js';
+import { mergeChunks, applyPrefixToChunk } from './merge.js';
 
 export async function printVersion() {
     // Stub
@@ -12,7 +12,7 @@ export async function printVersion() {
 // -- Main chunkit function --
 // ---------------------------
 export async function chunkit(
-    documents,
+    text,
     embedBatchCallback,
     {
         logging = DEFAULT_CONFIG.LOGGING,
@@ -34,115 +34,89 @@ export async function chunkit(
     if (logging) { printVersion(); }
 
     // Input validation
-    if (!Array.isArray(documents)) {
-        throw new Error('Input must be an array of document objects');
+    if (!text || typeof text !== 'string') {
+        throw new Error('Input must be a string');
     }
 
-    const modelName = "custom-model";
-    const usedDtype = "float32";
+    // Normalize document text
+    let normalizedText = text.replace(/([^\n])\n([^\n])/g, '$1 $2');
+    normalizedText = normalizedText.replace(/\s{2,}/g, ' ');
+    text = normalizedText;
 
-    // Process each documents
-    const allResults = await Promise.all(documents.map(async (doc) => {
-        if (!doc.document_text) {
-            throw new Error('Each document must have a document_text property');
+    // Split the text into sentences
+    const sentences = await parseSentences(text);
+
+    // Compute variance and initial embeddings
+    const { average, variance, embeddings } = await computeAdvancedSimilarities(
+        sentences,
+        embedBatchCallback,
+        {
+            numSimilaritySentencesLookahead,
+            logging,
         }
+    );
 
-        // Normalize document text
-        let normalizedText = doc.document_text.replace(/([^\n])\n([^\n])/g, '$1 $2');
-        normalizedText = normalizedText.replace(/\s{2,}/g, ' ');
-        doc.document_text = normalizedText;
+    // Dynamically adjust the similarity threshold
+    let dynamicThreshold = similarityThreshold;
+    if (average != null && variance != null) {
+        dynamicThreshold = adjustThreshold(average, variance, similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound);
+    }
 
-        // Split the text into sentences
-        const sentences = await parseSentences(doc.document_text);
+    // Create the initial chunks (just the sentences)
 
-        // Compute similarities and create chunks
-        const { similarities, average, variance } = await computeAdvancedSimilarities(
+    if (logging) {
+        console.log('\n=============\ninitialChunks (Sentences)\n=============');
+        initialChunks.forEach((chunk, index) => {
+            console.log(`-- Chunk ${(index + 1)} --`);
+            console.log(chunk.substring(0, 50) + '...');
+        });
+    }
+
+    let mergedChunks;
+
+    // Combine similar chunks
+    if (combineChunks) {
+        mergedChunks = await mergeChunks(
             sentences,
             embedBatchCallback,
-            {
-                numSimilaritySentencesLookahead,
-                logging,
-            }
+            maxChunkSize,
+            combineChunksSimilarityThreshold,
+            maxUncappedPasses,
+            maxMergesPerPass,
+            maxMergesPerPassPercentage,
+            embeddings // Pass the pre-calculated embeddings
         );
-
-        // Dynamically adjust the similarity threshold
-        let dynamicThreshold = similarityThreshold;
-        if (average != null && variance != null) {
-            dynamicThreshold = adjustThreshold(average, variance, similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound);
-        }
-
-        // Create the initial chunks
-        const initialChunks = createChunks(sentences, similarities, maxChunkSize, dynamicThreshold, logging);
-
         if (logging) {
-            console.log('\n=============\ninitialChunks\n=============');
-            initialChunks.forEach((chunk, index) => {
-                console.log(`-- Chunk ${(index + 1)} --`);
+            console.log('\n\n=============\ncombinedChunks\n=============');
+            mergedChunks.forEach((chunk, index) => {
+                console.log(`Chunk ${index + 1}`);
                 console.log(chunk.substring(0, 50) + '...');
             });
         }
-
-        let finalChunks;
-
-        // Combine similar chunks
-        if (combineChunks) {
-            finalChunks = await optimizeAndRebalanceChunks(
-                initialChunks,
-                embedBatchCallback,
-                maxChunkSize,
-                combineChunksSimilarityThreshold,
-                maxUncappedPasses,
-                maxMergesPerPass,
-                maxMergesPerPassPercentage
-            );
-            if (logging) {
-                console.log('\n\n=============\ncombinedChunks\n=============');
-                finalChunks.forEach((chunk, index) => {
-                    console.log(`Chunk ${index + 1}`);
-                    console.log(chunk.substring(0, 50) + '...');
-                });
-            }
-        } else {
-            finalChunks = initialChunks;
-        }
-
-        const documentName = doc.document_name || "";
-        const documentId = Date.now();
-        const numberOfChunks = finalChunks.length;
-
-        // Batch embed final chunks if requested
-        let finalEmbeddings = [];
-        if (returnEmbedding) {
-            const chunksToEmbed = finalChunks.map(chunk => applyPrefixToChunk(chunkPrefix, chunk));
-            finalEmbeddings = await embedBatchCallback(chunksToEmbed);
-        }
-
-        return Promise.all(finalChunks.map(async (chunk, index) => {
-            const prefixedChunk = applyPrefixToChunk(chunkPrefix, chunk);
-            const result = {
-                document_id: documentId,
-                document_name: documentName,
-                number_of_chunks: numberOfChunks,
-                chunk_number: index + 1,
-                model_name: modelName,
-                dtype: usedDtype,
-                text: prefixedChunk
+    } else {
+        mergedChunks = sentences.map((text, index) => {
+            return {
+                text,
+                embedding: embeddings[index]
             };
+        });
+    }
 
-            if (returnEmbedding) {
-                result.embedding = finalEmbeddings[index];
-            }
+    const prefixPattern = (excludeChunkPrefixInResults && chunkPrefix && chunkPrefix.trim()) ? new RegExp(`^${chunkPrefix}:\\s*`) : null;
+    return mergedChunks.map((chunk) => {
+        const result = {
+            text: chunk.text,
+        };
+        if (returnEmbedding) {
+            result.embedding = chunk.embedding;
+        }
 
+        if (prefixPattern) {
+            result.text = result.text.replace(prefixPattern, '');
+        } else if (chunkPrefix) {
+            result.text = chunkPrefix + ': ' + result.text;
+        }
 
-
-            if (excludeChunkPrefixInResults && chunkPrefix && chunkPrefix.trim()) {
-                const prefixPattern = new RegExp(`^${chunkPrefix}:\\s*`);
-                result.text = result.text.replace(prefixPattern, '');
-            }
-
-            return result;
-        }));
-    }));
-
-    return allResults.flat();
+        return result;
+    });
 }

@@ -14,7 +14,7 @@ This project is derived from the original [semantic-chunking](https://github.com
 ## Usage
 
 ```javascript
-import { chunkText } from './src/index.js';
+import { chunkText } from 'semachunk';
 
 // 1. Define your embedding callback
 async function myEmbedder(texts) {

@@ -1,114 +1,26 @@
-import { cosineSimilarity } from './similarityUtils.js';
-
-// -----------------------------------------------------------
-// -- Function to create chunks of text based on similarity --
-// -----------------------------------------------------------
-export function createChunks(sentences, similarities, maxChunkSize, similarityThreshold, logging) {
-    if (sentences.length === 0) return [];
-
-    let chunks = [];
-    let currentChunk = [sentences[0]];
-
-    if (logging) {
-        console.log('Initial sentence:', sentences[0]);
-    }
-
-    for (let i = 1; i < sentences.length; i++) {
-        const nextSentence = sentences[i];
-
-        // For cramit (when similarities is null), only check chunk size
-        if (!similarities) {
-            const currentChunkText = currentChunk.join(" ");
-            const currentChunkSize = currentChunkText.length;
-            const nextSentenceSize = nextSentence.length;
-
-            if (currentChunkSize + nextSentenceSize + 1 <= maxChunkSize) {
-                currentChunk.push(nextSentence);
-            } else {
-                chunks.push(currentChunkText);
-                currentChunk = [nextSentence];
-            }
-            continue;
-        }
-
-        // Check similarity first for chunkit
-        if (similarities[i - 1] >= similarityThreshold) {
-            if (logging) {
-                console.log(`Adding sentence ${i} with similarity ${similarities[i - 1]}`);
-            }
-
-            // Then check chunk size
-            const currentChunkText = currentChunk.join(" ");
-            const currentChunkSize = currentChunkText.length;
-            const nextSentenceSize = nextSentence.length;
-
-            if (currentChunkSize + nextSentenceSize <= maxChunkSize) {
-                currentChunk.push(nextSentence);
-            } else {
-                chunks.push(currentChunkText);
-                currentChunk = [nextSentence];
-            }
-        } else {
-            if (logging) {
-                console.log(`Starting new chunk at sentence ${i}, similarity was ${similarities[i - 1]}`);
-            }
-            chunks.push(currentChunk.join(" "));
-            currentChunk = [nextSentence];
-        }
-    }
-
-    if (currentChunk.length > 0) {
-        chunks.push(currentChunk.join(" "));
-    }
-
-    return chunks;
-}
-
-// --------------------------------------------------------------
-// -- Get Merge Candidate if requirements are met (Helper Function) --
-// --------------------------------------------------------------
-function _getMergeCandidate(chunkA, chunkB, index, maxChunkSize, combineChunksSimilarityThreshold) {
-    // Skip if combined size exceeds limit
-    // account for the added space between the merged sentences
-    const aLength = chunkA.text.charAt(chunkA.text.length - 1) === ' ' ? chunkA.text.length : chunkA.text.length + 1;
-    if (aLength + chunkB.text.length > maxChunkSize) return null;
-
-    const similarity = cosineSimilarity(chunkA.embedding, chunkB.embedding);
-
-    if (similarity < combineChunksSimilarityThreshold) return null;
-
-    // Return merge candidate
-    return {
-        index: index,
-        similarity: similarity,
-        chunkA: chunkA,
-        chunkB: chunkB
-    };
-}
+import { cosineSimilarity } from './similarity.js';
 
 // --------------------------------------------------------------
 // -- Optimize and Rebalance Chunks (Global Priority Merge) --
 // --------------------------------------------------------------
-export async function optimizeAndRebalanceChunks(
-    combinedChunks,
+export async function mergeChunks(
+    sentences,
     embedBatchCallback,
     maxChunkSize,
     combineChunksSimilarityThreshold = 0.5,
     maxUncappedPasses = 5,
     maxMergesPerPass = 50,
-    maxMergesPerPassPercentage = 0.4
+    maxMergesPerPassPercentage = 0.4,
+    initialEmbeddings = null // Optional: Pre-calculated embeddings for the input chunks
 ) {
     // 1. Initialize chunks
-    let currentChunks = combinedChunks.map(text => ({
+    let currentChunks = sentences.map((text, index) => ({
         text,
-        embedding: null
+        embedding: initialEmbeddings ? initialEmbeddings[index] : null
     }));
 
-    // All chunks need to be embedded
-    let chunksToEmbed = [...currentChunks];
 
     // Construct the linked list of chunks
-    let candidates = [];
     for (let i = 0; i < currentChunks.length; i++) {
         const chunkA = currentChunks[i];
         const chunkB = (i < currentChunks.length - 1 ? currentChunks[i + 1] : null);
@@ -117,6 +29,23 @@ export async function optimizeAndRebalanceChunks(
             chunkA.next = chunkB;
         }
         chunkA.index = i;
+    }
+
+    // If we have initial embeddings, we need to generate the initial candidates now
+    let chunksToEmbed = [];
+    let candidates = [];
+    if (initialEmbeddings) {
+        // Use the embeddings provided
+        for (chunk of currentChunks) {
+            const candidate = _getMergeCandidate(chunk, chunk.next, chunk.index, maxChunkSize, combineChunksSimilarityThreshold);
+            if (candidate) {
+                candidates.push(candidate);
+            }
+            // Mark as processed for this pass (pass 1 hasn't started yet, but we can init)
+            chunk.candidatePass = 0;
+        }
+    } else {
+        chunksToEmbed = currentChunks;//all need to be embedded
     }
 
     let pass = 1;
@@ -228,7 +157,7 @@ export async function optimizeAndRebalanceChunks(
 
     // Reconstruct the final chunks from the linked list
     // Find the first active chunk in the currentChunks array
-    chunk = currentChunks[0];// The very first element will never become null (A always stays)
+    let chunk = currentChunks[0];// The very first element will never become null (A always stays)
     currentChunks = [];
     while (chunk) {
         currentChunks.push(chunk);
@@ -239,13 +168,24 @@ export async function optimizeAndRebalanceChunks(
     return currentChunks.map(c => c.text);
 }
 
+// --------------------------------------------------------------
+// -- Get Merge Candidate if requirements are met (Helper Function) --
+// --------------------------------------------------------------
+function _getMergeCandidate(chunkA, chunkB, index, maxChunkSize, combineChunksSimilarityThreshold) {
+    // Skip if combined size exceeds limit
+    // account for the added space between the merged sentences
+    const aLength = chunkA.text.charAt(chunkA.text.length - 1) === ' ' ? chunkA.text.length : chunkA.text.length + 1;
+    if (aLength + chunkB.text.length > maxChunkSize) return null;
 
-// ------------------------------------------------
-// -- Helper function to apply prefix to a chunk --
-// ------------------------------------------------
-export function applyPrefixToChunk(chunkPrefix, chunk) {
-    if (chunkPrefix && chunkPrefix.trim()) {
-        return `${chunkPrefix}: ${chunk}`;
-    }
-    return chunk;
-};
+    const similarity = cosineSimilarity(chunkA.embedding, chunkB.embedding);
+
+    if (similarity < combineChunksSimilarityThreshold) return null;
+
+    // Return merge candidate
+    return {
+        index: index,
+        similarity: similarity,
+        chunkA: chunkA,
+        chunkB: chunkB
+    };
+}

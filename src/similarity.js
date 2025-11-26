@@ -56,7 +56,7 @@ export async function computeAdvancedSimilarities(sentences, embedBatchCallback,
     const average = similaritySum / similarities.length;
     const variance = similarities.reduce((acc, sim) => acc + (sim - average) ** 2, 0) / similarities.length;
 
-    return { similarities, average, variance };
+    return { similarities, average, variance, embeddings };
 }
 
 // -----------------------------------------------------------

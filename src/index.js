@@ -25,17 +25,15 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
 	const mergedOptions = { ...defaultOptions, ...options };
 
 	// Wrap text in document object
-	const documents = [{ document_text: text }];
 
 	// Call the refactored core function
-	const chunks = await chunkit(documents, embedBatchCallback, mergedOptions);
+	const chunks = await chunkit(text, embedBatchCallback, mergedOptions);
 
-	// Return simplified format: [{ text, embedding }, ...]
+	// Return the final chunks format without additional properties: [{ text, embedding }, ...]
 	return chunks.map(chunk => {
-		const result = {
+		return {
 			text: chunk.text,
 			embedding: chunk.embedding
 		};
-		return result;
 	});
 }
