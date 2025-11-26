@@ -7,16 +7,20 @@ export async function mergeChunks(
     sentences,
     embedBatchCallback,
     maxChunkSize,
-    combineChunksSimilarityThreshold = 0.5,
-    maxUncappedPasses = 5,
-    maxMergesPerPass = 50,
-    maxMergesPerPassPercentage = 0.4,
-    initialEmbeddings = null // Optional: Pre-calculated embeddings for the input chunks
+    combineChunksSimilarityThreshold,
+    maxUncappedPasses,
+    maxMergesPerPass,
+    maxMergesPerPassPercentage,
+    initialEmbeddings
 ) {
+    if (!initialEmbeddings || initialEmbeddings.length !== sentences.length) {
+        throw new Error('initialEmbeddings must be provided and match sentences length');
+    }
+
     // 1. Initialize chunks
     let currentChunks = sentences.map((text, index) => ({
         text,
-        embedding: initialEmbeddings ? initialEmbeddings[index] : null
+        embedding: initialEmbeddings[index]
     }));
 
 
@@ -30,39 +34,32 @@ export async function mergeChunks(
         }
     }
 
-    // If we have initial embeddings, we need to generate the initial candidates now
-    let chunksToEmbed = [];
+    // Generate the initial candidates now
     let candidates = [];
-    if (initialEmbeddings) {
-        // Use the embeddings provided
-        for (const chunk of currentChunks) {
-            if (chunk.next) {
-                const candidate = _getMergeCandidate(chunk, chunk.next, maxChunkSize, combineChunksSimilarityThreshold);
-                if (candidate) {
-                    candidates.push(candidate);
-                }
+    for (const chunk of currentChunks) {
+        if (chunk.next) {
+            const candidate = _getMergeCandidate(chunk, chunk.next, maxChunkSize, combineChunksSimilarityThreshold);
+            if (candidate) {
+                candidates.push(candidate);
             }
         }
-    }
-    else {
-        chunksToEmbed = currentChunks;//all need to be embedded
     }
 
     let pass = 1;
     let numCappedPasses = 0;
+    let chunksToEmbed = [];
 
     // Loop until we exceed the allowed number of UNCAPPED passes
     while ((pass - numCappedPasses) <= maxUncappedPasses) {
         // 2. Batch Embed (Only for chunks missing embeddings)
-        // const chunksToEmbed = currentChunks.filter(c => c.embedding === null); // REMOVED optimization
         if (chunksToEmbed.length > 0) {
-            // Update chunk embeddings
+            // Update chunk embeddings for new chunks
             const newEmbeddings = await embedBatchCallback(chunksToEmbed.map(c => c.text));
             chunksToEmbed.forEach((chunk, index) => {
                 chunk.embedding = newEmbeddings[index];
             });
 
-            // Add candidates for the newly embedded chunks if they meet criteria
+            // Add candidates with the newly embedded chunks if they meet criteria
             chunksToEmbed.forEach((chunk) => {
                 if (chunk.next && chunk.candidatePass !== pass) {
                     // Recalculate the chunk's similarity with the next chunk
@@ -95,7 +92,7 @@ export async function mergeChunks(
 
         // 5. Calculate Throttle Limit
         // Limit based on percentage of VALID candidates
-        const percentageLimit = Math.max(1, Math.floor(candidates.length * maxMergesPerPassPercentage));
+        const percentageLimit = Math.max(1, Math.floor(candidates.length * maxMergesPerPassPercentage / 100));
         // Absolute limit
         const absoluteLimit = maxMergesPerPass;
         // Effective limit is the minimum of both

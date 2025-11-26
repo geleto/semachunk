@@ -48,7 +48,7 @@ console.log(chunks);
 | `combineChunksSimilarityThreshold` | 0.5 | Threshold for merging chunks during optimization pass |
 | `maxUncappedPasses` | 16 | Max number of passes where merges are NOT throttled (capped passes are unlimited) |
 | `maxMergesPerPass` | `50` | Absolute limit on the number of merges per pass. |
-| `maxMergesPerPassPercentage` | `0.4` | Percentage of valid merge candidates to execute per pass (0.4 = 40%). |
+| `maxMergesPerPassPercentage` | `40` | Percentage of valid merge candidates to execute per pass (0.4 = 40%). |
 | `returnEmbedding` | `true` | Include embeddings in the output |
 
 | `chunkPrefix` | `''` | Prefix to add to each chunk before embedding |
