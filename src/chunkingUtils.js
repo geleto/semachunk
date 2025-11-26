@@ -1,7 +1,5 @@
 import { cosineSimilarity } from './similarityUtils.js';
 
-// import { createEmbedding } from './embeddingUtils.js'; // REMOVED
-
 // -----------------------------------------------------------
 // -- Function to create chunks of text based on similarity --
 // -----------------------------------------------------------
@@ -79,9 +77,11 @@ export async function optimizeAndRebalanceChunks(
     // 1. Initialize chunks
     let currentChunks = combinedChunks.map(text => ({
         text,
-        embedding: null,
-        size: text.length
+        embedding: null
     }));
+
+    // Initialize chunksToEmbed with all initial chunks since they lack embeddings
+    let chunksToEmbed = [...currentChunks];
 
     let pass = 1;
     let numCappedPasses = 0;
@@ -89,12 +89,14 @@ export async function optimizeAndRebalanceChunks(
     // Loop until we exceed the allowed number of UNCAPPED passes
     while ((pass - numCappedPasses) <= maxUncappedPasses) {
         // 2. Batch Embed (Only for chunks missing embeddings)
-        const chunksToEmbed = currentChunks.filter(c => c.embedding === null);
+        // const chunksToEmbed = currentChunks.filter(c => c.embedding === null); // REMOVED optimization
         if (chunksToEmbed.length > 0) {
             const newEmbeddings = await embedBatchCallback(chunksToEmbed.map(c => c.text));
             chunksToEmbed.forEach((chunk, index) => {
                 chunk.embedding = newEmbeddings[index];
             });
+            // Clear the list after embedding
+            chunksToEmbed = [];
         }
 
         // 3. Calculate all pairwise similarities
@@ -104,7 +106,7 @@ export async function optimizeAndRebalanceChunks(
             const chunkB = currentChunks[i + 1];
 
             // Skip if combined size exceeds limit
-            if (chunkA.size + chunkB.size > maxChunkSize) continue;
+            if (chunkA.text.length + chunkB.text.length > maxChunkSize) continue;
 
             const similarity = cosineSimilarity(chunkA.embedding, chunkB.embedding);
 
@@ -203,10 +205,10 @@ export async function optimizeAndRebalanceChunks(
                 const mergedText = merge.chunkA.text + " " + merge.chunkB.text;
                 const mergedChunk = {
                     text: mergedText,
-                    size: mergedText.length,
                     embedding: null, // Needs re-embedding
                 };
                 newChunks.push(mergedChunk);
+                chunksToEmbed.push(mergedChunk); // Add to queue for embedding in next pass
                 i += 2; // Skip next chunk as it's merged
             } else {
                 // Keep existing chunk

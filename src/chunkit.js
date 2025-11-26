@@ -41,7 +41,7 @@ export async function chunkit(
     const modelName = "custom-model";
     const usedDtype = "float32";
 
-    // Process each document
+    // Process each documents
     const allResults = await Promise.all(documents.map(async (doc) => {
         if (!doc.document_text) {
             throw new Error('Each document must have a document_text property');
