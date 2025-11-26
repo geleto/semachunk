@@ -1,6 +1,6 @@
-# Minimal Semantic Chunker
+# 🍱semachunk - a Minimal Semantic Chunker
 
-A lightweight, dependency-free (almost) library for semantically chunking text.
+A lightweight, dependency-free (almost) TypeScript/JavaScript library for semantically chunking text.
 
 ## Features
 
