@@ -12,7 +12,12 @@
     "email": "geleto@gmail.com"
   },
   "main": "src/index.js",
+  "types": "src/index.d.ts",
   "type": "module",
+  "files": [
+    "src",
+    "config.js"
+  ],
   "scripts": {
     "test": "node tests/test-run.js"
   },
