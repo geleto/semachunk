@@ -1,15 +1,13 @@
 # Minimal Semantic Chunker
 
-A lightweight, dependency-free (almost) library for semantically chunking text. This library is designed to be model-agnostic, allowing you to plug in any embedding provider (OpenAI, HuggingFace, etc.) via a simple batch callback.
+A lightweight, dependency-free (almost) library for semantically chunking text. This library is designed to be model-agnostic, allowing you to plug in any embedding provider (OpenAI, HuggingFace, etc.) via a simple batch callback. Batches embeddings for efficiency and API rate limiting.
 
-## Origin
+## Features
 
-This project is derived from the original [semantic-chunking](https://github.com/jparkerweb/semantic-chunking) library by `jparkerweb`.
-
-### Key Changes from Original
-1.  **Zero Heavy Dependencies**: Removed `@xenova/transformers`, `fs`, and all built-in model handling. The only remaining dependency is `sentence-parse` for robust sentence splitting.
-2.  **Model Agnostic**: Instead of managing ONNX models internally, this library accepts an `embedBatchCallback` function. You control the embeddings; we control the chunking.
-3.  **Optimized Merging Algorithm**: Uses a more optimal algorithm than the original. Instead of linear merges, it selects the best chunk pairs from the text to merge first. It also recalculates embeddings in batches for significantly better speed, especially with external embedding models.
+- Zero Heavy Dependencies
+- Model Agnostic
+- Batch Embeddings for Efficiency and handling API Rate Limiting
+- Optimized Chunk Merging Algorithm
 
 ## Usage
 
@@ -46,10 +44,19 @@ console.log(chunks);
 | `numSimilaritySentencesLookahead` | 3 | Number of future sentences to look ahead for similarity context |
 | `combineChunks` | `true` | Enable the iterative merging optimization |
 | `combineChunksSimilarityThreshold` | 0.5 | Threshold for merging chunks during optimization pass |
-| `maxUncappedPasses` | 16 | Max number of passes where merges are NOT throttled (capped passes are unlimited) |
+| `maxUncappedPasses` | `100` | Max number of passes where merges are NOT throttled (capped passes are unlimited) |
 | `maxMergesPerPass` | `50` | Absolute limit on the number of merges per pass. |
-| `maxMergesPerPassPercentage` | `40` | Percentage of valid merge candidates to execute per pass (0.4 = 40%). |
+| `maxMergesPerPassPercentage` | `40` | Percentage of valid merge candidates to execute per pass. |
 | `returnEmbedding` | `true` | Include embeddings in the output |
 
 | `chunkPrefix` | `''` | Prefix to add to each chunk before embedding |
 | `excludeChunkPrefixInResults` | `false` | Exclude the prefix from the returned text |
+
+# Acknowledgements
+
+This project is derived from the original [semantic-chunking](https://github.com/jparkerweb/semantic-chunking) library by `jparkerweb` with these changes:
+- Zero Heavy Dependencies (only `sentence-parse`)
+- Stripped down to the core functionality
+- Model Agnostic
+- Batch Embeddings for Efficiency and handling API Rate Limiting
+- New optimized chunk merging algorithm
