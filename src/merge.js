@@ -28,7 +28,6 @@ export async function mergeChunks(
             chunkB.prev = chunkA;
             chunkA.next = chunkB;
         }
-        chunkA.index = i;
     }
 
     // If we have initial embeddings, we need to generate the initial candidates now
@@ -38,7 +37,7 @@ export async function mergeChunks(
         // Use the embeddings provided
         for (const chunk of currentChunks) {
             if (chunk.next) {
-                const candidate = _getMergeCandidate(chunk, chunk.next, chunk.index, maxChunkSize, combineChunksSimilarityThreshold);
+                const candidate = _getMergeCandidate(chunk, chunk.next, maxChunkSize, combineChunksSimilarityThreshold);
                 if (candidate) {
                     candidates.push(candidate);
                 }
@@ -67,7 +66,7 @@ export async function mergeChunks(
             chunksToEmbed.forEach((chunk) => {
                 if (chunk.next && chunk.candidatePass !== pass) {
                     // Recalculate the chunk's similarity with the next chunk
-                    const candidate = _getMergeCandidate(chunk, chunk.next, chunk.index, maxChunkSize, combineChunksSimilarityThreshold);
+                    const candidate = _getMergeCandidate(chunk, chunk.next, maxChunkSize, combineChunksSimilarityThreshold);
                     if (candidate) {
                         // Add to candidates if it meets criteria
                         candidates.push(candidate);
@@ -76,7 +75,7 @@ export async function mergeChunks(
                 }
                 if (chunk.prev && chunk.prev.candidatePass !== pass) {
                     // Recalculate the chunk's similarity with the previous chunk
-                    const candidate = _getMergeCandidate(chunk.prev, chunk, chunk.prev.index, maxChunkSize, combineChunksSimilarityThreshold);
+                    const candidate = _getMergeCandidate(chunk.prev, chunk, maxChunkSize, combineChunksSimilarityThreshold);
                     if (candidate) {
                         // Add to candidates if it meets criteria
                         candidates.push(candidate);
@@ -172,7 +171,7 @@ export async function mergeChunks(
 // --------------------------------------------------------------
 // -- Get Merge Candidate if requirements are met (Helper Function) --
 // --------------------------------------------------------------
-function _getMergeCandidate(chunkA, chunkB, index, maxChunkSize, combineChunksSimilarityThreshold) {
+function _getMergeCandidate(chunkA, chunkB, maxChunkSize, combineChunksSimilarityThreshold) {
     // Skip if combined size exceeds limit
     // account for the added space between the merged sentences
     const aLength = chunkA.text.charAt(chunkA.text.length - 1) === ' ' ? chunkA.text.length : chunkA.text.length + 1;
@@ -184,7 +183,6 @@ function _getMergeCandidate(chunkA, chunkB, index, maxChunkSize, combineChunksSi
 
     // Return merge candidate
     return {
-        index: index,
         similarity: similarity,
         chunkA: chunkA,
         chunkB: chunkB
