@@ -5,7 +5,7 @@
   "homepage": "https://geleto.github.io/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/geleto/semachunk.git"
+    "url": "git+https://github.com/geleto/semachunk.git"
   },
   "bugs": {
     "url": "https://github.com/geleto/semachunk/issues",
