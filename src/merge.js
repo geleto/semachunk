@@ -10,7 +10,8 @@ export async function mergeChunks(
     combineChunksSimilarityThreshold,
     maxUncappedPasses,
     maxMergesPerPass,
-    maxMergesPerPassPercentage,
+    candiateMergesPercentageCap,
+    uncappedCandidateMerges,
     initialEmbeddings
 ) {
     if (!initialEmbeddings || initialEmbeddings.length !== sentences.length) {
@@ -92,7 +93,7 @@ export async function mergeChunks(
 
         // 5. Calculate Throttle Limit
         // Limit based on percentage of VALID candidates
-        const percentageLimit = Math.max(1, Math.floor(candidates.length * maxMergesPerPassPercentage / 100));
+        const percentageLimit = Math.max(uncappedCandidateMerges, Math.floor(candidates.length * candiateMergesPercentageCap / 100));
         // Absolute limit
         const absoluteLimit = maxMergesPerPass;
         // Effective limit is the minimum of both

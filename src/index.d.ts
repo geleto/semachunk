@@ -9,7 +9,7 @@ export interface ChunkingOptions {
 	combineChunksSimilarityThreshold?: number;
 	maxUncappedPasses?: number;
 	maxMergesPerPass?: number;
-	maxMergesPerPassPercentage?: number;
+	candiateMergesPercentageCap?: number;
 	returnEmbedding?: boolean;
 	chunkPrefix?: string;
 	excludeChunkPrefixInResults?: boolean;

@@ -21,7 +21,8 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
 		combineChunksSimilarityThreshold: DEFAULT_CONFIG.COMBINE_CHUNKS_SIMILARITY_THRESHOLD,
 		maxUncappedPasses: DEFAULT_CONFIG.MAX_UNCAPPED_PASSES,
 		maxMergesPerPass: DEFAULT_CONFIG.MAX_MERGES_PER_PASS,
-		maxMergesPerPassPercentage: DEFAULT_CONFIG.MAX_MERGES_PER_PASS_PERCENTAGE,
+		candiateMergesPercentageCap: DEFAULT_CONFIG.MAX_MERGES_PER_PASS_PERCENTAGE,
+		uncappedCandidateMerges: DEFAULT_CONFIG.UNCAPPED_CANDIDATE_MERGES,
 		returnEmbedding: DEFAULT_CONFIG.RETURN_EMBEDDING
 	};
 
@@ -49,10 +50,11 @@ async function _chunkit(
 		chunkPrefix = DEFAULT_CONFIG.CHUNK_PREFIX,
 		excludeChunkPrefixInResults = false,
 		maxMergesPerPass = DEFAULT_CONFIG.MAX_MERGES_PER_PASS,
-		maxMergesPerPassPercentage = DEFAULT_CONFIG.MAX_MERGES_PER_PASS_PERCENTAGE
+		candiateMergesPercentageCap = DEFAULT_CONFIG.MAX_MERGES_PER_PASS_PERCENTAGE,
+		uncappedCandidateMerges = DEFAULT_CONFIG.UNCAPPED_CANDIDATE_MERGES
 	} = {}) {
 
-	if (logging) { printVersion(); }
+	if (logging) { _printVersion(); }
 
 	// Input validation
 	if (!text || typeof text !== 'string') {
@@ -84,8 +86,6 @@ async function _chunkit(
 	}
 
 	// Create the initial chunks (just the sentences)
-
-	logging = true;
 	if (logging) {
 		console.log('\n=============\ninitialChunks (Sentences)\n=============');
 		sentences.forEach((sentence, index) => {
@@ -105,7 +105,8 @@ async function _chunkit(
 			combineChunksSimilarityThreshold,
 			maxUncappedPasses,
 			maxMergesPerPass,
-			maxMergesPerPassPercentage,
+			candiateMergesPercentageCap,
+			uncappedCandidateMerges,
 			embeddings // Pass the pre-calculated embeddings
 		);
 		if (logging) {

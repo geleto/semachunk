@@ -11,6 +11,7 @@ export const DEFAULT_CONFIG = {
     MAX_UNCAPPED_PASSES: 100,
     MAX_MERGES_PER_PASS: 500, // Absolute limit
     MAX_MERGES_PER_PASS_PERCENTAGE: 40, // 40% of valid candidates
+    UNCAPPED_CANDIDATE_MERGES: 12, // Soft-minimum number of merges per pass (overrides percentage cap)
 
     // Output
     RETURN_EMBEDDING: true,
