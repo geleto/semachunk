@@ -1,6 +1,8 @@
 import { chunkText } from '../src/index.js';
 import { parseSentences } from 'sentence-parse';
 
+// This is a very basic and non-preactical test
+
 // Mock embedding function that returns vectors based on content
 // to simulate semantic similarity
 async function mockBatchEmbed(texts) {
@@ -21,8 +23,6 @@ async function mockBatchEmbed(texts) {
 		else if (text.includes("pets") || text.includes("companions")) {
 			vector[20] = 1;
 		}
-
-
 
 		return vector;
 	});
