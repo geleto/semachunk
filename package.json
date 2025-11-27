@@ -1,6 +1,6 @@
 {
   "name": "semachunk",
-  "version": "0.0.1",
+  "version": "0.3.2",
   "description": "Semantic chunking of large texts. Plug any embedding provider/API. Batch embeddings for efficiency and handling API rate limits.",
   "homepage": "https://geleto.github.io/",
   "repository": {
@@ -32,7 +32,7 @@
     "splitting",
     "transformers",
     "transformers.js",
-    "emmbeddings",
+    "embeddings",
     "xenova",
     "text-processing",
     "nlp",
