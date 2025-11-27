@@ -9,6 +9,12 @@ A lightweight, dependency-free (almost) TypeScript/JavaScript library for semant
 - Batch Embeddings for Efficiency and handling API Rate Limiting
 - Optimized Sentence/Chunk Merging Algorithm
 
+## Installation
+
+```bash
+npm install semachunk
+```
+
 ## Usage
 
 ```javascript
