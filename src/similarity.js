@@ -1,85 +1,144 @@
-// -----------------------------------------------------
-// -- Calculate cosine similarity between two vectors --
-// -----------------------------------------------------
+import { createJoinCheck } from './token-limit.js';
+
+// Cache the length on each live scoring node and preserve the provider's vector.
+export function vectorDirection(vector) {
+    let squared = 0;
+    for (let i = 0; i < vector.length; i++) squared += vector[i] * vector[i];
+    if (squared > 0 && Number.isFinite(squared) && Number.isFinite(1 / squared)) {
+        return { vector, scale: Math.sqrt(squared), length: 1 };
+    }
+    // Extreme inputs can overflow or underflow when squared. Keep their
+    // largest component separate so even their normalized length is representable.
+    let scale = 0;
+    for (let i = 0; i < vector.length; i++) scale = Math.max(scale, Math.abs(vector[i]));
+    if (!scale) return { vector, scale: 1, length: 1 };
+    squared = 0;
+    for (let i = 0; i < vector.length; i++) squared += (vector[i] / scale) ** 2;
+    return { vector, scale, length: Math.sqrt(squared) };
+}
+
+export function directionCosine(a, b) {
+    let dot = 0;
+    for (let i = 0; i < a.vector.length; i++) {
+        dot += (a.vector[i] / a.scale) * (b.vector[i] / b.scale);
+    }
+    const cosine = dot / (a.length * b.length);
+    // Preserve inclusive cutoffs for parallel directions despite rounding at the endpoints.
+    if (cosine >= 1 - 2 * Number.EPSILON) return 1;
+    if (cosine <= -1 + 2 * Number.EPSILON) return -1;
+    return cosine;
+}
+
 export function cosineSimilarity(vecA, vecB) {
-    let dotProduct = 0.0;
-    let normA = 0.0;
-    let normB = 0.0;
+    return directionCosine(vectorDirection(vecA), vectorDirection(vecB));
+}
 
-    for (let i = 0; i < vecA.length; i++) {
-        dotProduct += vecA[i] * vecB[i];
-        normA += vecA[i] ** 2;
-        normB += vecB[i] ** 2;
+// Online mean and population variance over size-eligible boundaries.
+export class SimilarityStatistics {
+    boundaryCount = 0;
+    average = 0;
+    squaredDeviations = 0;
+
+    add(score) {
+        const delta = score - this.average;
+        this.boundaryCount++;
+        this.average += delta / this.boundaryCount;
+        this.squaredDeviations += delta * (score - this.average);
     }
 
-    normA = Math.sqrt(normA);
-    normB = Math.sqrt(normB);
-
-    if (normA === 0 || normB === 0) {
-        return 0; // To avoid division by zero
-    } else {
-        return dotProduct / (normA * normB);
+    get variance() {
+        return this.boundaryCount ? this.squaredDeviations / this.boundaryCount : 0;
     }
 }
 
-// ---------------------------------------------------------------
-// -- Function to compute advanced similarities with statistics --
-// ---------------------------------------------------------------
-export async function computeAdvancedSimilarities(sentences, embedBatchCallback, { numSimilaritySentencesLookahead = 2, logging = false } = {}) {
-    if (logging) console.log('numSimilaritySentencesLookahead', numSimilaritySentencesLookahead);
+export function documentMergeThreshold({ boundaryCount, average, variance }, fallback) {
+    return boundaryCount >= 2 ? average - 0.5 * Math.sqrt(variance) : fallback;
+}
 
-    // Use batch callback
-    const embeddings = await embedBatchCallback(sentences);
-    let similarities = [];
-    let similaritySum = 0;
+// Keep scores at their original boundary indices. A pair that cannot fit
+// provides no evidence for the cutoff, even when both endpoints have vectors.
+export async function computeAdvancedSimilarities(sentences, embedBatch, { maxChunkSize = Infinity, canJoin = createJoinCheck(maxChunkSize), logging = false } = {}) {
+    const boundaries = [];
+    const endpoints = [];
+    for (let i = 0; i + 1 < sentences.length; i++) {
+        const left = sentences[i], right = sentences[i + 1];
+        if (!canJoin(left, right)) continue;
+        boundaries.push(i);
+        if (endpoints.at(-1) !== i) endpoints.push(i);
+        endpoints.push(i + 1);
+    }
+    let embeddings = [];
+    const similarities = [];
+    if (endpoints.length === sentences.length || sentences.length === 1) {
+        embeddings = await embedBatch(sentences);
+    } else if (endpoints.length) {
+        const vectors = await embedBatch(endpoints.map(i => sentences[i]));
+        endpoints.forEach((index, j) => { embeddings[index] = vectors[j]; });
+    }
+    const stats = new SimilarityStatistics();
+    const directions = embeddings.map(vectorDirection);
+    for (let j = 0; j < boundaries.length; j++) {
+        const i = boundaries[j];
+        const score = directionCosine(directions[i], directions[i + 1]);
+        similarities[i] = score;
+        if (logging) console.log(`Similarity between sentences ${i + 1} and ${i + 2}`, score);
+        stats.add(score);
+    }
+    return { similarities, embeddings, directions, average: stats.average, variance: stats.variance, boundaryCount: stats.boundaryCount };
+}
 
-    for (let i = 0; i < embeddings.length - 1; i++) {
-        let maxSimilarity = cosineSimilarity(embeddings[i], embeddings[i + 1]);
+export function adjustThreshold(average, variance, baseThreshold = 0.5, lowerBound = 0.2, upperBound = 0.8, boundaryCount = 2) {
+    let change = 0;
+    // A lone boundary gives no estimate of the document's score spread.
+    if (boundaryCount >= 2) {
+        if (variance < 0.01) change -= 10;
+        else if (variance > 0.05) change += 10;
+        if (average < 0.3) change += 5;
+        else if (average > 0.7) change -= 5;
+    }
+    const adjusted = change ? (baseThreshold * 100 + change) / 100 : baseThreshold;
+    return Math.min(Math.max(adjusted, lowerBound), upperBound);
+}
 
-        if (logging) {
-            console.log(`\nSimilarity scores for sentence ${i}:`);
-            console.log(`Base similarity with next sentence: ${maxSimilarity}`);
-        }
+function addUnitVector(sum, { vector, scale, length }) {
+    for (let i = 0; i < vector.length; i++) sum[i] += (vector[i] / scale) / length;
+}
 
-        for (let j = i + 2; j <= i + numSimilaritySentencesLookahead && j < embeddings.length; j++) {
-            const sim = cosineSimilarity(embeddings[i], embeddings[j]);
-            if (logging) {
-                console.log(`Similarity with sentence ${j}: ${sim}`);
+export async function groupAdjacentSentences(sentences, embedBatch, options, analysis) {
+    const { maxChunkSize, canJoin = createJoinCheck(maxChunkSize), similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound, logging } = options;
+    if (sentences.length < 2) return sentences;
+    const { similarities, embeddings, directions = embeddings.map(vectorDirection), average, variance, boundaryCount } =
+        analysis ?? await computeAdvancedSimilarities(sentences, embedBatch, options);
+    if (!boundaryCount) return sentences;
+    const threshold = adjustThreshold(average, variance, similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound, boundaryCount);
+    if (logging) console.log('Initial grouping threshold', threshold);
+
+    const groups = [];
+    let current = sentences[0];
+    let groupStart = 0;
+    let directionSum = null;
+    for (let i = 1; i < sentences.length; i++) {
+        const sentence = sentences[i];
+        let joins = similarities[i - 1] >= threshold && canJoin(current, sentence);
+        // A singleton's centroid test is its boundary test. Start accumulating
+        // unit directions only when a third sentence could join this group.
+        if (joins && i > groupStart + 1) {
+            if (!directionSum) {
+                directionSum = new Float64Array(directions[i].vector.length);
+                addUnitVector(directionSum, directions[groupStart]);
             }
-            maxSimilarity = Math.max(maxSimilarity, sim);
+            addUnitVector(directionSum, directions[i - 1]);
+            joins = directionCosine(vectorDirection(directionSum), directions[i]) >= threshold;
         }
-
-        similarities.push(maxSimilarity);
-        similaritySum += maxSimilarity;
+        if (joins) {
+            current += ' ' + sentence;
+        } else {
+            groups.push(current);
+            current = sentence;
+            groupStart = i;
+            directionSum = null;
+        }
     }
-
-    const average = similaritySum / similarities.length;
-    const variance = similarities.reduce((acc, sim) => acc + (sim - average) ** 2, 0) / similarities.length;
-
-    return { similarities, average, variance, embeddings };
-}
-
-// -----------------------------------------------------------
-// -- Function to dynamically adjust the similarity threshold --
-// -----------------------------------------------------------
-export function adjustThreshold(average, variance, baseThreshold = 0.5, lowerBound = 0.2, upperBound = 0.8) {
-    if (lowerBound >= upperBound) {
-        console.error("Invalid bounds: lowerBound must be less than upperBound.");
-        return baseThreshold;
-    }
-
-    let adjustedThreshold = baseThreshold;
-    if (variance < 0.01) {
-        adjustedThreshold -= 0.1;
-    } else if (variance > 0.05) {
-        adjustedThreshold += 0.1;
-    }
-
-    if (average < 0.3) {
-        adjustedThreshold += 0.05;
-    } else if (average > 0.7) {
-        adjustedThreshold -= 0.05;
-    }
-
-    return Math.min(Math.max(adjustedThreshold, lowerBound), upperBound);
+    groups.push(current);
+    return groups;
 }

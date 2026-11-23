@@ -1,5 +1,4 @@
 import { chunkText } from '../src/index.js';
-import { parseSentences } from 'sentence-parse';
 
 // This is a very basic and non-preactical test
 
@@ -43,7 +42,7 @@ console.log('Starting chunking...');
 async function runTest() {
 	try {
 		// 1. Verify Initial State
-		const initialSentences = await parseSentences(testText);
+		const initialSentences = await chunkText(testText, mockBatchEmbed, { combineChunks: false, returnEmbedding: false });
 		console.log(`Initial sentences: ${initialSentences.length}`);
 		if (initialSentences.length !== 7) {
 			throw new Error(`Expected 7 initial sentences, found ${initialSentences.length}`);

@@ -1,188 +1,187 @@
-import { cosineSimilarity } from './similarity.js';
+import { directionCosine, documentMergeThreshold, SimilarityStatistics, vectorDirection } from './similarity.js';
+import { createJoinCheck } from './token-limit.js';
 
-// --------------------------------------------------------------
-// -- Optimize and Rebalance Chunks (Global Priority Merge) --
-// --------------------------------------------------------------
-export async function mergeChunks(
-    sentences,
-    embedBatchCallback,
-    maxChunkSize,
-    combineChunksSimilarityThreshold,
-    maxUncappedPasses,
-    maxMergesPerPass,
-    candiateMergesPercentageCap,
-    uncappedCandidateMerges,
-    initialEmbeddings
-) {
-    if (!initialEmbeddings || initialEmbeddings.length !== sentences.length) {
-        throw new Error('initialEmbeddings must be provided and match sentences length');
+export async function mergeChunks(texts, embedBatch, options) {
+    const { maxPasses = Infinity, maxUncappedPasses, maxMergesPerPass, candidateMergesPercentageCap, uncappedCandidateMerges } = options;
+    let cutoff = options.combineChunksSimilarityThreshold;
+    function mergeLimit(candidateCount) {
+        const percent = Math.floor(candidateCount * candidateMergesPercentageCap / 100 + 1e-9);
+        return Math.min(maxMergesPerPass, Math.max(uncappedCandidateMerges, percent));
+    }
+    if (maxPasses < 1 || maxUncappedPasses < 1 || (!options.calibrate && cutoff > 1) || mergeLimit(texts.length - 1) <= 0) {
+        return texts;
     }
 
-    // 1. Initialize chunks
-    let currentChunks = sentences.map((text, index) => ({
-        text,
-        embedding: initialEmbeddings[index]
-    }));
-
-
-    // Construct the linked list of chunks
-    for (let i = 0; i < currentChunks.length; i++) {
-        const chunkA = currentChunks[i];
-        const chunkB = (i < currentChunks.length - 1 ? currentChunks[i + 1] : null);
-        if (chunkB) {
-            chunkB.prev = chunkA;
-            chunkA.next = chunkB;
-        }
+    // 1. Link chunks in document order. Each node represents the boundary with its next neighbor.
+    let changed = texts.map(text => ({ text, prev: null, next: null, embedding: null, candidate: null, scoredPass: 0 }));
+    const head = changed[0];
+    for (let i = 1; i < changed.length; i++) {
+        changed[i - 1].next = changed[i];
+        changed[i].prev = changed[i - 1];
     }
 
-    // Generate the initial candidates now
-    let candidates = [];
-    for (const chunk of currentChunks) {
-        if (chunk.next) {
-            const candidate = _getMergeCandidate(chunk, chunk.next, maxChunkSize, combineChunksSimilarityThreshold);
-            if (candidate) {
-                candidates.push(candidate);
-            }
-        }
-    }
+    const queue = new CandidateQueue();
+    let pass = 0;
+    let remainingPasses = maxUncappedPasses;
+    while (pass < maxPasses && remainingPasses >= 1) {
+        // 2. Batch-embed missing texts and score adjacent pairs that fit. On later passes,
+        //    only boundaries touching a merged chunk need a new score.
+        cutoff = await scoreChangedChunks(changed, ++pass, queue, embedBatch, options, cutoff);
+        if (options.logging && pass === 1) console.log('Priority merge cosine cutoff', cutoff);
 
-    let pass = 1;
-    let numCappedPasses = 0;
-    let chunksToEmbed = [];
+        // 3. Set this pass's cap from the number of live candidates. Take the highest
+        //    cosine first, with earlier candidates winning ties just as in a stable sort.
+        const limit = mergeLimit(queue.size);
+        if (!queue.size || !(limit > 0)) break;
 
-    // Loop until we exceed the allowed number of UNCAPPED passes
-    while ((pass - numCappedPasses) <= maxUncappedPasses) {
-        // 2. Batch Embed (Only for chunks missing embeddings)
-        if (chunksToEmbed.length > 0) {
-            // Update chunk embeddings for new chunks
-            const newEmbeddings = await embedBatchCallback(chunksToEmbed.map(c => c.text));
-            chunksToEmbed.forEach((chunk, index) => {
-                chunk.embedding = newEmbeddings[index];
-            });
-
-            // Add candidates with the newly embedded chunks if they meet criteria
-            chunksToEmbed.forEach((chunk) => {
-                if (chunk.next && chunk.candidatePass !== pass) {
-                    // Recalculate the chunk's similarity with the next chunk
-                    const candidate = _getMergeCandidate(chunk, chunk.next, maxChunkSize, combineChunksSimilarityThreshold);
-                    if (candidate) {
-                        // Add to candidates if it meets criteria
-                        candidates.push(candidate);
-                    }
-                    chunk.candidatePass = pass;//make sure it is not added twice
-                }
-                if (chunk.prev && chunk.prev.candidatePass !== pass) {
-                    // Recalculate the chunk's similarity with the previous chunk
-                    const candidate = _getMergeCandidate(chunk.prev, chunk, maxChunkSize, combineChunksSimilarityThreshold);
-                    if (candidate) {
-                        // Add to candidates if it meets criteria
-                        candidates.push(candidate);
-                    }
-                    chunk.prev.candidatePass = pass;//make sure it is not added twice
-                }
-            });
-            // Clear the list after embedding
-            chunksToEmbed = [];
+        // 4. Merge disjoint pairs and collect the surviving left nodes for the next embedding batch.
+        changed = [];
+        while (queue.size && changed.length < limit) {
+            const left = queue.takeBest();
+            const right = left.next;
+            // takeBest removed the selected boundary. Drop its two overlapping neighbors
+            // so each chunk participates in at most one merge in this pass.
+            queue.invalidate(left.prev);
+            queue.invalidate(right);
+            left.text += ' ' + right.text;
+            left.embedding = null;
+            left.next = right.next;
+            if (left.next) left.next.prev = left;
+            // A stale heap entry can still reference the retired node.
+            right.embedding = right.prev = right.next = null;
+            changed.push(left);
         }
 
-        // If no candidates, we are done
-        if (candidates.length === 0) break;
-
-        // 4. Sort by similarity (descending) - Global Priority
-        candidates.sort((a, b) => b.similarity - a.similarity);
-
-        // 5. Calculate Throttle Limit
-        // Limit based on percentage of VALID candidates
-        const percentageLimit = Math.max(uncappedCandidateMerges, Math.floor(candidates.length * candiateMergesPercentageCap / 100));
-        // Absolute limit
-        const absoluteLimit = maxMergesPerPass;
-        // Effective limit is the minimum of both
-        const effectiveMergeLimit = Math.min(percentageLimit, absoluteLimit);
-
-        let mergeCount = 0;
-
-        // Sorted, The most high-similarity candidates are processed first
-        for (let i = 0; i < candidates.length; i++) {
-            const candidate = candidates[i];
-
-            // If any of the chunks has already been merged in this pass, skip it
-            if (candidate.chunkA.mergePass === pass || candidate.chunkB.mergePass === pass) {
-                continue;
-            }
-
-            // Merge chunks
-            const divider = candidate.chunkA.text.charAt(candidate.chunkA.text.length - 1) === ' ' ? '' : ' ';
-            candidate.chunkA.text = candidate.chunkA.text + divider + candidate.chunkB.text;
-            candidate.chunkA.embedding = null; // no longer valid
-
-            // Mark chunks as merged
-            candidate.chunkA.mergePass = pass;
-            candidate.chunkB.mergePass = pass;
-
-            // Remove the second merged chunk from the linked list
-            if (candidate.chunkB.next) {
-                candidate.chunkB.next.prev = candidate.chunkA;
-            }
-            candidate.chunkA.next = candidate.chunkB.next;
-
-            // Add to bulk re-embed list
-            chunksToEmbed.push(candidate.chunkA);
-
-            // Clear the second merged chunk (just in case)
-            candidate.chunkB.text = null;
-            candidate.chunkB.embedding = null; // will be removed from candidates if there
-
-
-            // Stop if we hit the merge limit
-            mergeCount++;
-            if (mergeCount >= effectiveMergeLimit) {
-                // Capped passes are ignored in the max passes counting
-                // as with big documents we can have the max batch of merges for a long time before we are under the limit
-                // This allows the algorithm to scale to documents of any size without premature termination.
-                numCappedPasses++;
-                break;
-            }
-        }
-
-        // If no merges were executed, break
-        if (mergeCount === 0) break;
-
-        // Clean up candidates of chunks with unknown embeddings
-        candidates = candidates.filter(c => c.chunkA.embedding !== null && c.chunkB.embedding !== null);
-
-        pass++;
+        // 5. Charge the pass budget once all available disjoint pairs have been processed.
+        //    A surviving candidate means the cap deferred a merge.
+        if (!queue.size) remainingPasses--;
     }
 
-    // Reconstruct the final chunks from the linked list
-    // Find the first active chunk in the currentChunks array
-    let chunk = currentChunks[0];// The very first element will never become null (A always stays)
-    currentChunks = [];
-    while (chunk) {
-        currentChunks.push(chunk);
-        chunk = chunk.next;
-    }
-
-    // Return the chunk objects
-    return currentChunks;
+    // 6. Read out the surviving chunks in source order. chunkText handles final embeddings.
+    const chunks = [];
+    for (let node = head; node; node = node.next) chunks.push(node.text);
+    return chunks;
 }
 
-// --------------------------------------------------------------
-// -- Get Merge Candidate if requirements are met (Helper Function) --
-// --------------------------------------------------------------
-function _getMergeCandidate(chunkA, chunkB, maxChunkSize, combineChunksSimilarityThreshold) {
-    // Skip if combined size exceeds limit
-    // account for the added space between the merged sentences
-    const aLength = chunkA.text.charAt(chunkA.text.length - 1) === ' ' ? chunkA.text.length : chunkA.text.length + 1;
-    if (aLength + chunkB.text.length > maxChunkSize) return null;
+async function scoreChangedChunks(changed, pass, queue, embedBatch, options, cutoff) {
+    const { maxChunkSize, canJoin = createJoinCheck(maxChunkSize), tokenLimit, finalEmbeddingText } = options;
+    const pending = [], finalTexts = [];
+    for (const chunk of changed) {
+        if (fitsNext(chunk) || fitsNext(chunk.prev)) pending.push(chunk);
+        else if (finalEmbeddingText) {
+            const pieces = tokenLimit?.oversized.get(chunk.text);
+            if (pieces) {
+                for (const part of pieces) finalTexts.push(finalEmbeddingText(part));
+            } else if (!tokenLimit || !(fitsLength(chunk) || fitsLength(chunk.prev))) {
+                // Character length only grows; a tokenizer can change its count at a join.
+                finalTexts.push(finalEmbeddingText(chunk.text));
+            }
+        }
+    }
+    if (!pending.length) return cutoff;
+    let needed = pending;
+    if (tokenLimit && pass > 1) {
+        // A changed neighbor can make a previously token-ineligible edge fit.
+        const endpoints = new Set(pending);
+        for (const chunk of pending) {
+            if (fitsNext(chunk) && !chunk.next.embedding) endpoints.add(chunk.next);
+            if (fitsNext(chunk.prev) && !chunk.prev.embedding) endpoints.add(chunk.prev);
+        }
+        needed = [...endpoints];
+    }
+    const vectors = await embedBatch(needed.map(chunk => chunk.text), finalTexts);
+    needed.forEach((chunk, i) => { chunk.embedding = vectorDirection(vectors[i]); });
 
-    const similarity = cosineSimilarity(chunkA.embedding, chunkB.embedding);
+    // Calibrate once, on the original eligible sentence boundaries and the same
+    // embedding batch. Keep their scores so each cosine is computed only once.
+    const initial = options.calibrate && pass === 1 ? new Map() : null;
+    const stats = initial ? new SimilarityStatistics() : null;
+    for (const chunk of pending) {
+        scoreBoundary(chunk);
+        scoreBoundary(chunk.prev);
+    }
+    if (initial) {
+        cutoff = documentMergeThreshold(stats, cutoff);
+        for (const [left, score] of initial) if (score >= cutoff) queue.add(left, score);
+    }
+    return cutoff;
 
-    if (similarity < combineChunksSimilarityThreshold) return null;
+    function fitsLength(left) {
+        return left?.next && left.text.length + 1 + left.next.text.length <= maxChunkSize;
+    }
 
-    // Return merge candidate
-    return {
-        similarity: similarity,
-        chunkA: chunkA,
-        chunkB: chunkB
-    };
+    function fitsNext(left) {
+        return left?.next && canJoin(left.text, left.next.text);
+    }
+
+    function scoreBoundary(left) {
+        if (!left || left.scoredPass === pass) return;
+        left.scoredPass = pass; // Neighboring merges share a boundary.
+        if (!fitsNext(left)) return;
+        const score = directionCosine(left.embedding, left.next.embedding);
+        if (initial) {
+            initial.set(left, score);
+            stats.add(score);
+        } else if (score >= cutoff) queue.add(left, score);
+    }
+}
+
+// Each live boundary belongs to its left node. Invalidation drops it from the
+// live count immediately. Its heap entry can be discarded when it reaches the top.
+class CandidateQueue {
+    heap = [];
+    size = 0;
+    nextOrder = 0;
+
+    add(left, score) {
+        const entry = { left, score, order: this.nextOrder++ };
+        left.candidate = entry;
+        this.size++;
+
+        let index = this.heap.length;
+        while (index > 0) {
+            const parent = Math.floor((index - 1) / 2);
+            if (!takesPriority(entry, this.heap[parent])) break;
+            this.heap[index] = this.heap[parent];
+            index = parent;
+        }
+        this.heap[index] = entry;
+    }
+
+    invalidate(left) {
+        if (left?.candidate) {
+            left.candidate = null;
+            this.size--;
+        }
+    }
+
+    takeBest() {
+        while (this.size > 0) {
+            const entry = this.heap[0];
+            const tail = this.heap.pop();
+            if (this.heap.length) this.restoreHeap(tail);
+            if (entry.left.candidate === entry) {
+                this.invalidate(entry.left);
+                return entry.left;
+            }
+        }
+    }
+
+    restoreHeap(tail) {
+        let index = 0;
+        let child = 1;
+        while (child < this.heap.length) {
+            const right = child + 1;
+            if (right < this.heap.length && takesPriority(this.heap[right], this.heap[child])) child = right;
+            if (!takesPriority(this.heap[child], tail)) break;
+            this.heap[index] = this.heap[child];
+            index = child;
+            child = 2 * index + 1;
+        }
+        this.heap[index] = tail;
+    }
+}
+
+function takesPriority(a, b) {
+    return a.score > b.score || (a.score === b.score && a.order < b.order);
 }

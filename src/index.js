@@ -1,8 +1,9 @@
-import { adjustThreshold, computeAdvancedSimilarities } from './similarity.js';
-import { parseSentences } from 'sentence-parse';
+import { computeAdvancedSimilarities, documentMergeThreshold, groupAdjacentSentences } from './similarity.js';
+import { parseSentences } from './sentences.js';
+import { copyEmbedding, createBatchEmbedder } from './embeddings.js';
 import { mergeChunks } from './merge.js';
 import { DEFAULT_CONFIG } from '../config.js';
-import { readFileSync } from 'fs';
+import { createJoinCheck, createTokenLimit } from './token-limit.js';
 
 /**
  * Chunk text semantically using batch embeddings
@@ -12,142 +13,117 @@ import { readFileSync } from 'fs';
  * @returns {Array} chunks - [{ text, embedding }, ...]
  */
 export async function chunkText(text, embedBatchCallback, options = {}) {
-	const defaultOptions = {
-		similarityThreshold: DEFAULT_CONFIG.SIMILARITY_THRESHOLD,
-		maxChunkSize: DEFAULT_CONFIG.MAX_CHUNK_SIZE,
-		dynamicThresholdLowerBound: DEFAULT_CONFIG.DYNAMIC_THRESHOLD_LOWER_BOUND,
-		dynamicThresholdUpperBound: DEFAULT_CONFIG.DYNAMIC_THRESHOLD_UPPER_BOUND,
-		combineChunks: DEFAULT_CONFIG.COMBINE_CHUNKS,
-		combineChunksSimilarityThreshold: DEFAULT_CONFIG.COMBINE_CHUNKS_SIMILARITY_THRESHOLD,
-		maxUncappedPasses: DEFAULT_CONFIG.MAX_UNCAPPED_PASSES,
-		maxMergesPerPass: DEFAULT_CONFIG.MAX_MERGES_PER_PASS,
-		candiateMergesPercentageCap: DEFAULT_CONFIG.MAX_MERGES_PER_PASS_PERCENTAGE,
-		uncappedCandidateMerges: DEFAULT_CONFIG.UNCAPPED_CANDIDATE_MERGES,
-		returnEmbedding: DEFAULT_CONFIG.RETURN_EMBEDDING
-	};
-
-	const mergedOptions = { ...defaultOptions, ...options };
-	return await _chunkit(text, embedBatchCallback, mergedOptions);
-}
-
-// ---------------------------
-// -- The _chunkit function --
-// ---------------------------
-async function _chunkit(
-	text,
-	embedBatchCallback,
-	{
+	const {
 		logging = DEFAULT_CONFIG.LOGGING,
+		inputFormat = DEFAULT_CONFIG.INPUT_FORMAT,
+		locale = DEFAULT_CONFIG.LOCALE,
 		maxChunkSize = DEFAULT_CONFIG.MAX_CHUNK_SIZE,
+		maxChunkTokens = DEFAULT_CONFIG.MAX_CHUNK_TOKENS,
+		countTokens,
+		maxEmbeddingBatchSize = DEFAULT_CONFIG.MAX_EMBEDDING_BATCH_SIZE,
+		maxCachedEmbeddings = DEFAULT_CONFIG.MAX_CACHED_EMBEDDINGS,
 		similarityThreshold = DEFAULT_CONFIG.SIMILARITY_THRESHOLD,
+		groupSentences = DEFAULT_CONFIG.GROUP_SENTENCES,
+		excludeNonLetterSentences = DEFAULT_CONFIG.EXCLUDE_NON_LETTER_SENTENCES,
 		dynamicThresholdLowerBound = DEFAULT_CONFIG.DYNAMIC_THRESHOLD_LOWER_BOUND,
 		dynamicThresholdUpperBound = DEFAULT_CONFIG.DYNAMIC_THRESHOLD_UPPER_BOUND,
-		numSimilaritySentencesLookahead = DEFAULT_CONFIG.NUM_SIMILARITY_SENTENCES_LOOKAHEAD,
 		combineChunks = DEFAULT_CONFIG.COMBINE_CHUNKS,
-		combineChunksSimilarityThreshold = DEFAULT_CONFIG.COMBINE_CHUNKS_SIMILARITY_THRESHOLD,
+		combineChunksSimilarityThreshold = options?.similarityThreshold ?? DEFAULT_CONFIG.COMBINE_CHUNKS_SIMILARITY_THRESHOLD,
+		mergeThresholdMode = DEFAULT_CONFIG.MERGE_THRESHOLD_MODE,
+		maxPasses = DEFAULT_CONFIG.MAX_PASSES,
 		maxUncappedPasses = DEFAULT_CONFIG.MAX_UNCAPPED_PASSES,
 		returnEmbedding = DEFAULT_CONFIG.RETURN_EMBEDDING,
 		chunkPrefix = DEFAULT_CONFIG.CHUNK_PREFIX,
-		excludeChunkPrefixInResults = false,
+		excludeChunkPrefixInResults = DEFAULT_CONFIG.EXCLUDE_CHUNK_PREFIX_IN_RESULTS,
 		maxMergesPerPass = DEFAULT_CONFIG.MAX_MERGES_PER_PASS,
 		candiateMergesPercentageCap = DEFAULT_CONFIG.MAX_MERGES_PER_PASS_PERCENTAGE,
+		candidateMergesPercentageCap = candiateMergesPercentageCap,
 		uncappedCandidateMerges = DEFAULT_CONFIG.UNCAPPED_CANDIDATE_MERGES
-	} = {}) {
+	} = options ?? {};
 
-	if (logging) { _printVersion(); }
-
-	// Input validation
-	if (!text || typeof text !== 'string') {
-		throw new Error('Input must be a string');
+	if (typeof text !== 'string') {
+		throw new TypeError('Input must be a string');
 	}
-
-	// Normalize document text
-	let normalizedText = text.replace(/([^\n])\n([^\n])/g, '$1 $2');
-	normalizedText = normalizedText.replace(/\s{2,}/g, ' ');
-	text = normalizedText;
-
-	// Split the text into sentences
-	const sentences = await parseSentences(text);
-
-	// Compute variance and initial embeddings
-	const { average, variance, embeddings } = await computeAdvancedSimilarities(
-		sentences,
-		embedBatchCallback,
-		{
-			numSimilaritySentencesLookahead,
-			logging,
+	for (const [name, value] of Object.entries({
+		similarityThreshold, combineChunksSimilarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound
+	})) {
+		if (!Number.isFinite(value)) throw new RangeError(`${name} must be finite.`);
+	}
+	if (dynamicThresholdLowerBound > dynamicThresholdUpperBound) {
+		throw new RangeError('dynamicThresholdLowerBound must be at most dynamicThresholdUpperBound.');
+	}
+	for (const [name, value] of Object.entries({ maxChunkSize, maxPasses, maxUncappedPasses, maxMergesPerPass, uncappedCandidateMerges })) {
+		if (value !== Infinity && !(Number.isSafeInteger(value) && value >= 0)) {
+			throw new RangeError(`${name} must be a nonnegative safe integer or Infinity.`);
 		}
-	);
-
-	// Dynamically adjust the similarity threshold
-	let dynamicThreshold = similarityThreshold;
-	if (average != null && variance != null) {
-		dynamicThreshold = adjustThreshold(average, variance, similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound);
 	}
-
-	// Create the initial chunks (just the sentences)
-	if (logging) {
-		console.log('\n=============\ninitialChunks (Sentences)\n=============');
-		sentences.forEach((sentence, index) => {
-			console.log(`-- Sentence ${(index + 1)} --`);
-			console.log(sentence.substring(0, 50) + '...');
-		});
+	if (mergeThresholdMode !== 'fixed' && mergeThresholdMode !== 'document') {
+		throw new TypeError("mergeThresholdMode must be 'fixed' or 'document'.");
 	}
+	if (maxChunkTokens !== Infinity && !(Number.isSafeInteger(maxChunkTokens) && maxChunkTokens > 0)) {
+		throw new RangeError('maxChunkTokens must be a positive safe integer or Infinity.');
+	}
+	if ((maxChunkTokens !== Infinity || countTokens !== undefined) && typeof countTokens !== 'function') {
+		throw new TypeError('A finite maxChunkTokens requires a countTokens function.');
+	}
+	if (!Number.isFinite(candidateMergesPercentageCap) || candidateMergesPercentageCap < 0 || candidateMergesPercentageCap > 100) {
+		throw new RangeError('candidateMergesPercentageCap (legacy candiateMergesPercentageCap) must be between 0 and 100.');
+	}
+	const embedBatch = createBatchEmbedder(embedBatchCallback, maxEmbeddingBatchSize, maxCachedEmbeddings);
+	if (logging) await _printVersion();
+	const sentences = await parseSentences(text, { inputFormat, locale, excludeNonLetterSentences });
+	if (sentences.length === 0) return [];
 
-	let mergedChunks;
+	const prefix = chunkPrefix?.trim() ? chunkPrefix + ': ' : '';
+	const tokenLimit = maxChunkTokens === Infinity ? undefined : createTokenLimit(sentences, maxChunkTokens, countTokens, prefix);
+	const canJoin = createJoinCheck(maxChunkSize, tokenLimit);
+	let cutoff = combineChunksSimilarityThreshold;
+	let calibrate = mergeThresholdMode === 'document' && options?.combineChunksSimilarityThreshold === undefined;
+	let chunks = sentences;
+	if (groupSentences && sentences.length > 1) {
+		const grouping = { maxChunkSize, canJoin, similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound, logging };
+		const analysis = await computeAdvancedSimilarities(sentences, embedBatch, grouping);
+		chunks = await groupAdjacentSentences(sentences, embedBatch, grouping, analysis);
+		if (calibrate) {
+			cutoff = documentMergeThreshold(analysis, cutoff);
+			calibrate = false;
+		}
+	}
+	if (logging) console.log('Initial chunks', chunks.map(chunk => chunk.slice(0, 50)));
 
-	// Combine similar chunks
-	if (combineChunks) {
-		mergedChunks = await mergeChunks(
-			sentences,
-			embedBatchCallback,
-			maxChunkSize,
-			combineChunksSimilarityThreshold,
+	const outputText = text => prefix + text;
+	if (combineChunks && chunks.length > 1) {
+		chunks = await mergeChunks(chunks, embedBatch, {
+			maxChunkSize, canJoin, tokenLimit, logging,
+			combineChunksSimilarityThreshold: cutoff, calibrate,
+			maxPasses,
 			maxUncappedPasses,
 			maxMergesPerPass,
-			candiateMergesPercentageCap,
+			candidateMergesPercentageCap,
 			uncappedCandidateMerges,
-			embeddings // Pass the pre-calculated embeddings
-		);
-		if (logging) {
-			console.log('\n\n=============\ncombinedChunks\n=============');
-			mergedChunks.forEach((chunk, index) => {
-				console.log(`Chunk ${index + 1}`);
-				console.log(chunk.text.substring(0, 100) + '...');
-			});
-		}
-	} else {
-		mergedChunks = sentences.map((text, index) => {
-			return {
-				text,
-				embedding: embeddings[index]
-			};
+			finalEmbeddingText: returnEmbedding && maxCachedEmbeddings === Infinity ? outputText : undefined
 		});
+		if (logging) console.log('Combined chunks', chunks.map(chunk => chunk.slice(0, 100)));
 	}
 
-	const prefixPattern = (excludeChunkPrefixInResults && chunkPrefix && chunkPrefix.trim()) ? new RegExp(`^${chunkPrefix}:\\s*`) : null;
-	return mergedChunks.map((chunk) => {
-		const result = {
-			text: chunk.text,
-		};
-		if (returnEmbedding) {
-			result.embedding = chunk.embedding;
-		}
-
-		if (prefixPattern) {
-			result.text = result.text.replace(prefixPattern, '');
-		} else if (chunkPrefix) {
-			result.text = chunkPrefix + ': ' + result.text;
-		}
-
-		return result;
+	if (tokenLimit?.oversized.size) chunks = chunks.flatMap(text => tokenLimit.oversized.get(text) ?? [text]);
+	const prefixedChunks = prefix ? chunks.map(outputText) : chunks;
+	const output = excludeChunkPrefixInResults ? chunks : prefixedChunks;
+	if (!returnEmbedding) return output.map(text => ({ text }));
+	const embeddings = await embedBatch(prefixedChunks);
+	const seen = new Set();
+	return output.map((text, i) => {
+		const vector = embeddings[i];
+		const embedding = seen.has(vector) ? copyEmbedding(vector) : vector;
+		seen.add(vector);
+		return { text, embedding };
 	});
 }
 
-const packageJson = JSON.parse(readFileSync(new URL('../package.json', import.meta.url)));
-const VERSION = packageJson.version;
 export async function _printVersion() {
-	const versionText = `-- semantic-chunking v${VERSION} --`;
+	const { readFile } = await import('node:fs/promises');
+	const { version } = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
+	const versionText = `-- semachunk v${version} --`;
 	const lineLength = versionText.length;
 	console.log(`\n${'-'.repeat(lineLength)}\n${versionText}\n${'-'.repeat(lineLength)}`);
 }
