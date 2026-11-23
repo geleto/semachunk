@@ -1,0 +1,2602 @@
+{
+  "experiment": "context",
+  "split": "calibration",
+  "samplesSHA256": "5c55dd3bf5cc25477a784b9a8a38c72abe1d791d1657e302b78aa42efe2a74b2",
+  "metric": "literal-context-v1",
+  "model": "text-embedding-3-small",
+  "dimension": 1536,
+  "encodingName": "cl100k_base",
+  "budgets": [
+    256,
+    512,
+    1024
+  ],
+  "node": "v24.14.1",
+  "startedUTC": "2026-11-23T19:52:42.856Z",
+  "policies": {
+    "baseline": {
+      "policy": {
+        "method": "fixed",
+        "tokens": 256,
+        "adaptive": true
+      },
+      "tasks": {
+        "cuad": {
+          "questions": 86,
+          "bodyHash": "d49fc8cb4aa62a0ff37537a04baf2795c39aa805fedec1244aef685fa012f890",
+          "chunkTokens": {
+            "count": 1348,
+            "min": 1,
+            "p10": 5,
+            "median": 84,
+            "p90": 225,
+            "max": 256
+          },
+          "calls": 21,
+          "texts": 3111,
+          "singletons": 1,
+          "embeddedTokens": 224816,
+          "indexTexts": 1348,
+          "indexTokens": 133671,
+          "eligibleCosines": {
+            "count": 2372,
+            "min": 0.029504771427178462,
+            "p10": 0.18031903088715684,
+            "median": 0.45046450034124297,
+            "p90": 0.7179442047766652,
+            "max": 1
+          },
+          "retrieval": {
+            "document/dense": {
+              "256": {
+                "complete": 20,
+                "recall": 0.30766490984633527,
+                "precision": 0.1335033980201131,
+                "deliveredTokens": 253.5232558139538
+              },
+              "512": {
+                "complete": 22,
+                "recall": 0.335384535283188,
+                "precision": 0.08676466255499685,
+                "deliveredTokens": 500.59302325581456
+              },
+              "1024": {
+                "complete": 29,
+                "recall": 0.44297982070265085,
+                "precision": 0.05997732607243871,
+                "deliveredTokens": 994.7325581395361
+              }
+            },
+            "document/bm25": {
+              "256": {
+                "complete": 19,
+                "recall": 0.27463321773369687,
+                "precision": 0.10416110150848525,
+                "deliveredTokens": 253.5232558139538
+              },
+              "512": {
+                "complete": 22,
+                "recall": 0.30950022093869434,
+                "precision": 0.06396306371778755,
+                "deliveredTokens": 500.59302325581456
+              },
+              "1024": {
+                "complete": 26,
+                "recall": 0.3773075364236656,
+                "precision": 0.04489738421197359,
+                "deliveredTokens": 994.7325581395361
+              }
+            }
+          },
+          "complete512": {
+            "document/dense": "11100001110001100000000000000000000000000111111100000110000000000000000100000110000011"
+          },
+          "examples": {
+            "document": {
+              "id": "RMRGROUPINC_01_22_2020-EX-99.1-JOINT FILING AGREEMENT__Document Name",
+              "first": [
+                {
+                  "start": 0,
+                  "end": 645,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 0,
+              "deliveredSHA256": "970873275c228d4c10c4944fcec4dcb4c9cbd52fb5f01f667e74bcfc43a69868",
+              "recall": 1,
+              "precision": 0.032432432432432434,
+              "complete": 1
+            }
+          },
+          "milliseconds": 9840.525099999999,
+          "peakRSSKiB": 468164,
+          "encoder": {
+            "apiRequests": 0,
+            "apiInputs": 0,
+            "apiInputTokens": 0,
+            "diskTexts": 3111,
+            "memoryTexts": 1306,
+            "replayMs": 603.8776000000034
+          }
+        },
+        "qasper": {
+          "questions": 29,
+          "bodyHash": "53e715bbffa88ab987c928a9db010a8f1e33bedae67bc46201ba3608088b105b",
+          "chunkTokens": {
+            "count": 462,
+            "min": 1,
+            "p10": 21,
+            "median": 126,
+            "p90": 231,
+            "max": 256
+          },
+          "calls": 24,
+          "texts": 1011,
+          "singletons": 0,
+          "embeddedTokens": 87777,
+          "indexTexts": 462,
+          "indexTokens": 57352,
+          "eligibleCosines": {
+            "count": 587,
+            "min": 0.0351534515957253,
+            "p10": 0.23452471371303918,
+            "median": 0.4560790566099455,
+            "p90": 0.6602095071009457,
+            "max": 0.9940437776292204
+          },
+          "retrieval": {
+            "document/dense": {
+              "256": {
+                "complete": 7,
+                "recall": 0.35494948632638484,
+                "precision": 0.21875000000000003,
+                "deliveredTokens": 255.9999999999999
+              },
+              "512": {
+                "complete": 13,
+                "recall": 0.5927603475617339,
+                "precision": 0.20871497844827586,
+                "deliveredTokens": 511.9999999999998
+              },
+              "1024": {
+                "complete": 16,
+                "recall": 0.6886727006582583,
+                "precision": 0.1393453663793103,
+                "deliveredTokens": 1023.9999999999995
+              }
+            },
+            "document/bm25": {
+              "256": {
+                "complete": 3,
+                "recall": 0.15590833449693534,
+                "precision": 0.09496228448275863,
+                "deliveredTokens": 255.9999999999999
+              },
+              "512": {
+                "complete": 7,
+                "recall": 0.3087907473856917,
+                "precision": 0.09819504310344829,
+                "deliveredTokens": 511.9999999999998
+              },
+              "1024": {
+                "complete": 13,
+                "recall": 0.5587908572318172,
+                "precision": 0.10045123922413791,
+                "deliveredTokens": 1023.9999999999995
+              }
+            }
+          },
+          "complete512": {
+            "document/dense": "10100000110111111101000001000"
+          },
+          "examples": {
+            "document": {
+              "id": "014830892d93e3c01cb659ad31c90de4518d48f3",
+              "first": [
+                {
+                  "start": 23973,
+                  "end": 24563,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 0,
+              "deliveredSHA256": "34e5c66445b5354908fb8f19a24156d84ed2cbf1495f2b5ba53827fae7811901",
+              "recall": 1,
+              "precision": 0.259765625,
+              "complete": 1
+            }
+          },
+          "milliseconds": 2921.1300999999985,
+          "peakRSSKiB": 468164,
+          "encoder": {
+            "apiRequests": 0,
+            "apiInputs": 0,
+            "apiInputTokens": 0,
+            "diskTexts": 1011,
+            "memoryTexts": 490,
+            "replayMs": 93.53959999999643
+          }
+        },
+        "finqa": {
+          "questions": 43,
+          "bodyHash": "ccb260904515b6d5ce821fe32d8e0b1f8fc5e78f2ef4832b8c90236ebd8c8a44",
+          "chunkTokens": {
+            "count": 294,
+            "min": 1,
+            "p10": 8,
+            "median": 70,
+            "p90": 182,
+            "max": 256
+          },
+          "calls": 55,
+          "texts": 790,
+          "singletons": 0,
+          "embeddedTokens": 42203,
+          "indexTexts": 294,
+          "indexTokens": 24901,
+          "eligibleCosines": {
+            "count": 562,
+            "min": 0.09993554804454034,
+            "p10": 0.2857208179527481,
+            "median": 0.47748221990972173,
+            "p90": 0.6846599343019271,
+            "max": 0.9791061511139512
+          },
+          "retrieval": {
+            "document/dense": {
+              "256": {
+                "complete": 10,
+                "recall": 0.6811810332220591,
+                "precision": 0.22865775037509378,
+                "deliveredTokens": 255.81395348837228
+              },
+              "512": {
+                "complete": 27,
+                "recall": 0.8698083150337907,
+                "precision": 0.15302482548739257,
+                "deliveredTokens": 501.0697674418608
+              },
+              "1024": {
+                "complete": 41,
+                "recall": 0.9858042942108083,
+                "precision": 0.11109172200969232,
+                "deliveredTokens": 829
+              }
+            },
+            "document/bm25": {
+              "256": {
+                "complete": 7,
+                "recall": 0.5916426889858377,
+                "precision": 0.19159379688672168,
+                "deliveredTokens": 255.81395348837228
+              },
+              "512": {
+                "complete": 27,
+                "recall": 0.8760102306337175,
+                "precision": 0.1499361626966949,
+                "deliveredTokens": 501.0697674418608
+              },
+              "1024": {
+                "complete": 42,
+                "recall": 0.9923890063424954,
+                "precision": 0.11281773945155281,
+                "deliveredTokens": 829
+              }
+            }
+          },
+          "complete512": {
+            "document/dense": "0101101011011111010011010011111101111011000"
+          },
+          "examples": {
+            "document": {
+              "id": "ETR/2015/page_131.pdf-1",
+              "first": [
+                {
+                  "start": 1389,
+                  "end": 1602,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 0,
+              "deliveredSHA256": "2bf47bf61aaaae561e678941ad15d46fd05aa6ba8563625472a09faa4125d450",
+              "recall": 0.3508771929824561,
+              "precision": 0.0390625,
+              "complete": 0
+            }
+          },
+          "milliseconds": 4112.463499999998,
+          "peakRSSKiB": 477580,
+          "encoder": {
+            "apiRequests": 0,
+            "apiInputs": 0,
+            "apiInputTokens": 0,
+            "diskTexts": 775,
+            "memoryTexts": 328,
+            "replayMs": 695.6743999999962
+          }
+        },
+        "hotpotqa": {
+          "questions": 32,
+          "bodyHash": "ff1bb18fa4700df77a1716c56c487deed887f48179dd49b55e74465a939a633e",
+          "chunkTokens": {
+            "count": 371,
+            "min": 7,
+            "p10": 39,
+            "median": 101,
+            "p90": 192,
+            "max": 254
+          },
+          "calls": 327,
+          "texts": 531,
+          "singletons": 296,
+          "embeddedTokens": 44409,
+          "indexTexts": 371,
+          "indexTokens": 39254,
+          "eligibleCosines": {
+            "count": 177,
+            "min": 0.11824677173706813,
+            "p10": 0.27406676216921,
+            "median": 0.44425504210085537,
+            "p90": 0.6204141603592703,
+            "max": 0.8524804425284084
+          },
+          "retrieval": {
+            "shortlist/dense": {
+              "256": {
+                "complete": 18,
+                "recall": 0.7871439741047828,
+                "precision": 0.2911376953125,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 29,
+                "recall": 0.9421067946452752,
+                "precision": 0.17558226700906449,
+                "deliveredTokens": 507.1875
+              },
+              "1024": {
+                "complete": 31,
+                "recall": 0.9825487012987013,
+                "precision": 0.10334020699649676,
+                "deliveredTokens": 940.4375
+              }
+            },
+            "shortlist/bm25": {
+              "256": {
+                "complete": 11,
+                "recall": 0.6269396879617078,
+                "precision": 0.2161865234375,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 24,
+                "recall": 0.8608726257944399,
+                "precision": 0.15690550919656449,
+                "deliveredTokens": 507.1875
+              },
+              "1024": {
+                "complete": 29,
+                "recall": 0.9403631654567454,
+                "precision": 0.09848791207462176,
+                "deliveredTokens": 940.4375
+              }
+            },
+            "pooled/dense": {
+              "256": {
+                "complete": 18,
+                "recall": 0.7871439741047828,
+                "precision": 0.2911376953125,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 29,
+                "recall": 0.9421067946452752,
+                "precision": 0.17364501953125,
+                "deliveredTokens": 512
+              },
+              "1024": {
+                "complete": 30,
+                "recall": 0.9625015314873806,
+                "precision": 0.088714599609375,
+                "deliveredTokens": 1024
+              }
+            },
+            "pooled/bm25": {
+              "256": {
+                "complete": 9,
+                "recall": 0.6131318493642879,
+                "precision": 0.2044677734375,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 19,
+                "recall": 0.7744272466868347,
+                "precision": 0.13299560546875,
+                "deliveredTokens": 512
+              },
+              "1024": {
+                "complete": 26,
+                "recall": 0.908934939777759,
+                "precision": 0.08251953125,
+                "deliveredTokens": 1024
+              }
+            }
+          },
+          "complete512": {
+            "shortlist/dense": "11111111100101111111111111111111",
+            "pooled/dense": "11111111100101111111111111111111"
+          },
+          "examples": {
+            "shortlist": {
+              "id": "5ab720685542993667793f44",
+              "first": [
+                {
+                  "start": 0,
+                  "end": 242,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 9,
+              "deliveredSHA256": "a25550d0c2c7d57b9c6d7b146043b26812988a8efd884a47043880bc39cf3852",
+              "recall": 1,
+              "precision": 0.263671875,
+              "complete": 1
+            },
+            "pooled": {
+              "id": "5ab720685542993667793f44",
+              "first": [
+                {
+                  "start": 0,
+                  "end": 242,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 9,
+              "deliveredSHA256": "a25550d0c2c7d57b9c6d7b146043b26812988a8efd884a47043880bc39cf3852",
+              "recall": 1,
+              "precision": 0.263671875,
+              "complete": 1
+            }
+          },
+          "milliseconds": 4760.676899999999,
+          "peakRSSKiB": 494788,
+          "encoder": {
+            "apiRequests": 0,
+            "apiInputs": 0,
+            "apiInputTokens": 0,
+            "diskTexts": 531,
+            "memoryTexts": 403,
+            "replayMs": 157.4557999999961
+          }
+        }
+      },
+      "macroComplete512": 0.5595616980753809
+    },
+    "title-256": {
+      "policy": {
+        "method": "fixed",
+        "tokens": 256,
+        "adaptive": true,
+        "context": "title",
+        "contextCap": 256
+      },
+      "tasks": {
+        "cuad": {
+          "questions": 86,
+          "bodyHash": "d49fc8cb4aa62a0ff37537a04baf2795c39aa805fedec1244aef685fa012f890",
+          "chunkTokens": {
+            "count": 1348,
+            "min": 1,
+            "p10": 5,
+            "median": 84,
+            "p90": 225,
+            "max": 256
+          },
+          "calls": 21,
+          "texts": 3111,
+          "singletons": 1,
+          "embeddedTokens": 224816,
+          "indexTexts": 1348,
+          "indexTokens": 133671,
+          "context": {
+            "retained": 0,
+            "shortened": 0,
+            "omitted": 0,
+            "alreadyPresentOrUnavailable": 1348
+          },
+          "eligibleCosines": {
+            "count": 2372,
+            "min": 0.029504771427178462,
+            "p10": 0.18031903088715684,
+            "median": 0.45046450034124297,
+            "p90": 0.7179442047766652,
+            "max": 1
+          },
+          "retrieval": {
+            "document/dense": {
+              "256": {
+                "complete": 20,
+                "recall": 0.30766490984633527,
+                "precision": 0.1335033980201131,
+                "deliveredTokens": 253.5232558139538
+              },
+              "512": {
+                "complete": 22,
+                "recall": 0.335384535283188,
+                "precision": 0.08676466255499685,
+                "deliveredTokens": 500.59302325581456
+              },
+              "1024": {
+                "complete": 29,
+                "recall": 0.44297982070265085,
+                "precision": 0.05997732607243871,
+                "deliveredTokens": 994.7325581395361
+              }
+            },
+            "document/bm25": {
+              "256": {
+                "complete": 19,
+                "recall": 0.27463321773369687,
+                "precision": 0.10416110150848525,
+                "deliveredTokens": 253.5232558139538
+              },
+              "512": {
+                "complete": 22,
+                "recall": 0.30950022093869434,
+                "precision": 0.06396306371778755,
+                "deliveredTokens": 500.59302325581456
+              },
+              "1024": {
+                "complete": 26,
+                "recall": 0.3773075364236656,
+                "precision": 0.04489738421197359,
+                "deliveredTokens": 994.7325581395361
+              }
+            }
+          },
+          "complete512": {
+            "document/dense": "11100001110001100000000000000000000000000111111100000110000000000000000100000110000011"
+          },
+          "examples": {
+            "document": {
+              "id": "RMRGROUPINC_01_22_2020-EX-99.1-JOINT FILING AGREEMENT__Document Name",
+              "first": [
+                {
+                  "start": 0,
+                  "end": 645,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 0,
+              "deliveredSHA256": "970873275c228d4c10c4944fcec4dcb4c9cbd52fb5f01f667e74bcfc43a69868",
+              "recall": 1,
+              "precision": 0.032432432432432434,
+              "complete": 1
+            }
+          },
+          "milliseconds": 2963.619700000003,
+          "peakRSSKiB": 524332,
+          "encoder": {
+            "apiRequests": 0,
+            "apiInputs": 0,
+            "apiInputTokens": 0,
+            "diskTexts": 0,
+            "memoryTexts": 4417,
+            "replayMs": 4.701000000008207
+          }
+        },
+        "qasper": {
+          "questions": 29,
+          "bodyHash": "53e715bbffa88ab987c928a9db010a8f1e33bedae67bc46201ba3608088b105b",
+          "chunkTokens": {
+            "count": 462,
+            "min": 1,
+            "p10": 21,
+            "median": 126,
+            "p90": 231,
+            "max": 256
+          },
+          "calls": 24,
+          "texts": 1154,
+          "singletons": 0,
+          "embeddedTokens": 102580,
+          "indexTexts": 462,
+          "indexTokens": 63957,
+          "context": {
+            "retained": 430,
+            "shortened": 0,
+            "omitted": 20,
+            "alreadyPresentOrUnavailable": 12
+          },
+          "eligibleCosines": {
+            "count": 587,
+            "min": 0.0351534515957253,
+            "p10": 0.23452471371303918,
+            "median": 0.4560790566099455,
+            "p90": 0.6602095071009457,
+            "max": 0.9940437776292204
+          },
+          "retrieval": {
+            "document/dense": {
+              "256": {
+                "complete": 9,
+                "recall": 0.4398392744205567,
+                "precision": 0.2722252155172414,
+                "deliveredTokens": 255.9999999999999
+              },
+              "512": {
+                "complete": 14,
+                "recall": 0.6144804480965373,
+                "precision": 0.2262257543103448,
+                "deliveredTokens": 511.9999999999998
+              },
+              "1024": {
+                "complete": 17,
+                "recall": 0.7714141498322657,
+                "precision": 0.14786503232758616,
+                "deliveredTokens": 1023.9999999999995
+              }
+            },
+            "document/bm25": {
+              "256": {
+                "complete": 3,
+                "recall": 0.15590833449693534,
+                "precision": 0.09496228448275863,
+                "deliveredTokens": 255.9999999999999
+              },
+              "512": {
+                "complete": 7,
+                "recall": 0.3087907473856917,
+                "precision": 0.09819504310344829,
+                "deliveredTokens": 511.9999999999998
+              },
+              "1024": {
+                "complete": 13,
+                "recall": 0.5587908572318172,
+                "precision": 0.10045123922413791,
+                "deliveredTokens": 1023.9999999999995
+              }
+            }
+          },
+          "complete512": {
+            "document/dense": "10110000110111111100000011000"
+          },
+          "examples": {
+            "document": {
+              "id": "014830892d93e3c01cb659ad31c90de4518d48f3",
+              "first": [
+                {
+                  "start": 23973,
+                  "end": 24563,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 0,
+              "deliveredSHA256": "542f101105ee0311fea15073f548cf0ae340692c7230644e638adf7e294364f0",
+              "recall": 1,
+              "precision": 0.259765625,
+              "complete": 1
+            }
+          },
+          "milliseconds": 2898.4231999999975,
+          "peakRSSKiB": 567104,
+          "encoder": {
+            "apiRequests": 1,
+            "apiInputs": 253,
+            "apiInputTokens": 26906,
+            "diskTexts": 176,
+            "memoryTexts": 1215,
+            "replayMs": 101.324099999998
+          }
+        },
+        "finqa": {
+          "questions": 43,
+          "bodyHash": "ccb260904515b6d5ce821fe32d8e0b1f8fc5e78f2ef4832b8c90236ebd8c8a44",
+          "chunkTokens": {
+            "count": 294,
+            "min": 1,
+            "p10": 8,
+            "median": 70,
+            "p90": 182,
+            "max": 256
+          },
+          "calls": 55,
+          "texts": 790,
+          "singletons": 0,
+          "embeddedTokens": 42203,
+          "indexTexts": 294,
+          "indexTokens": 24901,
+          "context": {
+            "retained": 0,
+            "shortened": 0,
+            "omitted": 0,
+            "alreadyPresentOrUnavailable": 294
+          },
+          "eligibleCosines": {
+            "count": 562,
+            "min": 0.09993554804454034,
+            "p10": 0.2857208179527481,
+            "median": 0.47748221990972173,
+            "p90": 0.6846599343019271,
+            "max": 0.9791061511139512
+          },
+          "retrieval": {
+            "document/dense": {
+              "256": {
+                "complete": 10,
+                "recall": 0.6811810332220591,
+                "precision": 0.22865775037509378,
+                "deliveredTokens": 255.81395348837228
+              },
+              "512": {
+                "complete": 27,
+                "recall": 0.8698083150337907,
+                "precision": 0.15302482548739257,
+                "deliveredTokens": 501.0697674418608
+              },
+              "1024": {
+                "complete": 41,
+                "recall": 0.9858042942108083,
+                "precision": 0.11109172200969232,
+                "deliveredTokens": 829
+              }
+            },
+            "document/bm25": {
+              "256": {
+                "complete": 7,
+                "recall": 0.5916426889858377,
+                "precision": 0.19159379688672168,
+                "deliveredTokens": 255.81395348837228
+              },
+              "512": {
+                "complete": 27,
+                "recall": 0.8760102306337175,
+                "precision": 0.1499361626966949,
+                "deliveredTokens": 501.0697674418608
+              },
+              "1024": {
+                "complete": 42,
+                "recall": 0.9923890063424954,
+                "precision": 0.11281773945155281,
+                "deliveredTokens": 829
+              }
+            }
+          },
+          "complete512": {
+            "document/dense": "0101101011011111010011010011111101111011000"
+          },
+          "examples": {
+            "document": {
+              "id": "ETR/2015/page_131.pdf-1",
+              "first": [
+                {
+                  "start": 1389,
+                  "end": 1602,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 0,
+              "deliveredSHA256": "2bf47bf61aaaae561e678941ad15d46fd05aa6ba8563625472a09faa4125d450",
+              "recall": 0.3508771929824561,
+              "precision": 0.0390625,
+              "complete": 0
+            }
+          },
+          "milliseconds": 1795.3315000000002,
+          "peakRSSKiB": 575656,
+          "encoder": {
+            "apiRequests": 0,
+            "apiInputs": 0,
+            "apiInputTokens": 0,
+            "diskTexts": 0,
+            "memoryTexts": 1103,
+            "replayMs": 0.70509999999922
+          }
+        },
+        "hotpotqa": {
+          "questions": 32,
+          "bodyHash": "ff1bb18fa4700df77a1716c56c487deed887f48179dd49b55e74465a939a633e",
+          "chunkTokens": {
+            "count": 371,
+            "min": 7,
+            "p10": 39,
+            "median": 101,
+            "p90": 192,
+            "max": 254
+          },
+          "calls": 327,
+          "texts": 559,
+          "singletons": 293,
+          "embeddedTokens": 45550,
+          "indexTexts": 371,
+          "indexTokens": 39585,
+          "context": {
+            "retained": 62,
+            "shortened": 0,
+            "omitted": 0,
+            "alreadyPresentOrUnavailable": 309
+          },
+          "eligibleCosines": {
+            "count": 177,
+            "min": 0.11824677173706813,
+            "p10": 0.27406676216921,
+            "median": 0.44425504210085537,
+            "p90": 0.6204141603592703,
+            "max": 0.8524804425284084
+          },
+          "retrieval": {
+            "shortlist/dense": {
+              "256": {
+                "complete": 18,
+                "recall": 0.7871439741047828,
+                "precision": 0.2911376953125,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 29,
+                "recall": 0.9421067946452752,
+                "precision": 0.17558226700906449,
+                "deliveredTokens": 507.1875
+              },
+              "1024": {
+                "complete": 31,
+                "recall": 0.9825487012987013,
+                "precision": 0.10334020699649676,
+                "deliveredTokens": 940.4375
+              }
+            },
+            "shortlist/bm25": {
+              "256": {
+                "complete": 11,
+                "recall": 0.6269396879617078,
+                "precision": 0.2161865234375,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 24,
+                "recall": 0.8608726257944399,
+                "precision": 0.15690550919656449,
+                "deliveredTokens": 507.1875
+              },
+              "1024": {
+                "complete": 29,
+                "recall": 0.9403631654567454,
+                "precision": 0.09848791207462176,
+                "deliveredTokens": 940.4375
+              }
+            },
+            "pooled/dense": {
+              "256": {
+                "complete": 18,
+                "recall": 0.7871439741047828,
+                "precision": 0.2911376953125,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 29,
+                "recall": 0.9421067946452752,
+                "precision": 0.17364501953125,
+                "deliveredTokens": 512
+              },
+              "1024": {
+                "complete": 30,
+                "recall": 0.9625015314873806,
+                "precision": 0.088714599609375,
+                "deliveredTokens": 1024
+              }
+            },
+            "pooled/bm25": {
+              "256": {
+                "complete": 9,
+                "recall": 0.6131318493642879,
+                "precision": 0.2044677734375,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 19,
+                "recall": 0.7744272466868347,
+                "precision": 0.13299560546875,
+                "deliveredTokens": 512
+              },
+              "1024": {
+                "complete": 26,
+                "recall": 0.908934939777759,
+                "precision": 0.08251953125,
+                "deliveredTokens": 1024
+              }
+            }
+          },
+          "complete512": {
+            "shortlist/dense": "11111111100101111111111111111111",
+            "pooled/dense": "11111111100101111111111111111111"
+          },
+          "examples": {
+            "shortlist": {
+              "id": "5ab720685542993667793f44",
+              "first": [
+                {
+                  "start": 0,
+                  "end": 242,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 9,
+              "deliveredSHA256": "a25550d0c2c7d57b9c6d7b146043b26812988a8efd884a47043880bc39cf3852",
+              "recall": 1,
+              "precision": 0.263671875,
+              "complete": 1
+            },
+            "pooled": {
+              "id": "5ab720685542993667793f44",
+              "first": [
+                {
+                  "start": 0,
+                  "end": 242,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 9,
+              "deliveredSHA256": "a25550d0c2c7d57b9c6d7b146043b26812988a8efd884a47043880bc39cf3852",
+              "recall": 1,
+              "precision": 0.263671875,
+              "complete": 1
+            }
+          },
+          "milliseconds": 3801.3411999999953,
+          "peakRSSKiB": 627676,
+          "encoder": {
+            "apiRequests": 1,
+            "apiInputs": 56,
+            "apiInputTokens": 4322,
+            "diskTexts": 6,
+            "memoryTexts": 900,
+            "replayMs": 108.21229999999923
+          }
+        }
+      },
+      "macroComplete512": 0.5681823877305534
+    },
+    "headings-256": {
+      "policy": {
+        "method": "fixed",
+        "tokens": 256,
+        "adaptive": true,
+        "context": "headings",
+        "contextCap": 256
+      },
+      "tasks": {
+        "cuad": {
+          "questions": 86,
+          "bodyHash": "d49fc8cb4aa62a0ff37537a04baf2795c39aa805fedec1244aef685fa012f890",
+          "chunkTokens": {
+            "count": 1348,
+            "min": 1,
+            "p10": 5,
+            "median": 84,
+            "p90": 225,
+            "max": 256
+          },
+          "calls": 21,
+          "texts": 3111,
+          "singletons": 1,
+          "embeddedTokens": 224816,
+          "indexTexts": 1348,
+          "indexTokens": 133671,
+          "context": {
+            "retained": 0,
+            "shortened": 0,
+            "omitted": 0,
+            "alreadyPresentOrUnavailable": 1348
+          },
+          "eligibleCosines": {
+            "count": 2372,
+            "min": 0.029504771427178462,
+            "p10": 0.18031903088715684,
+            "median": 0.45046450034124297,
+            "p90": 0.7179442047766652,
+            "max": 1
+          },
+          "retrieval": {
+            "document/dense": {
+              "256": {
+                "complete": 20,
+                "recall": 0.30766490984633527,
+                "precision": 0.1335033980201131,
+                "deliveredTokens": 253.5232558139538
+              },
+              "512": {
+                "complete": 22,
+                "recall": 0.335384535283188,
+                "precision": 0.08676466255499685,
+                "deliveredTokens": 500.59302325581456
+              },
+              "1024": {
+                "complete": 29,
+                "recall": 0.44297982070265085,
+                "precision": 0.05997732607243871,
+                "deliveredTokens": 994.7325581395361
+              }
+            },
+            "document/bm25": {
+              "256": {
+                "complete": 19,
+                "recall": 0.27463321773369687,
+                "precision": 0.10416110150848525,
+                "deliveredTokens": 253.5232558139538
+              },
+              "512": {
+                "complete": 22,
+                "recall": 0.30950022093869434,
+                "precision": 0.06396306371778755,
+                "deliveredTokens": 500.59302325581456
+              },
+              "1024": {
+                "complete": 26,
+                "recall": 0.3773075364236656,
+                "precision": 0.04489738421197359,
+                "deliveredTokens": 994.7325581395361
+              }
+            }
+          },
+          "complete512": {
+            "document/dense": "11100001110001100000000000000000000000000111111100000110000000000000000100000110000011"
+          },
+          "examples": {
+            "document": {
+              "id": "RMRGROUPINC_01_22_2020-EX-99.1-JOINT FILING AGREEMENT__Document Name",
+              "first": [
+                {
+                  "start": 0,
+                  "end": 645,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 0,
+              "deliveredSHA256": "970873275c228d4c10c4944fcec4dcb4c9cbd52fb5f01f667e74bcfc43a69868",
+              "recall": 1,
+              "precision": 0.032432432432432434,
+              "complete": 1
+            }
+          },
+          "milliseconds": 3145.548999999999,
+          "peakRSSKiB": 628920,
+          "encoder": {
+            "apiRequests": 0,
+            "apiInputs": 0,
+            "apiInputTokens": 0,
+            "diskTexts": 0,
+            "memoryTexts": 4417,
+            "replayMs": 3.9957000000140397
+          }
+        },
+        "qasper": {
+          "questions": 29,
+          "bodyHash": "53e715bbffa88ab987c928a9db010a8f1e33bedae67bc46201ba3608088b105b",
+          "chunkTokens": {
+            "count": 462,
+            "min": 1,
+            "p10": 21,
+            "median": 126,
+            "p90": 231,
+            "max": 256
+          },
+          "calls": 24,
+          "texts": 1155,
+          "singletons": 0,
+          "embeddedTokens": 104254,
+          "indexTexts": 462,
+          "indexTokens": 65599,
+          "context": {
+            "retained": 423,
+            "shortened": 7,
+            "omitted": 20,
+            "alreadyPresentOrUnavailable": 12
+          },
+          "eligibleCosines": {
+            "count": 587,
+            "min": 0.0351534515957253,
+            "p10": 0.23452471371303918,
+            "median": 0.4560790566099455,
+            "p90": 0.6602095071009457,
+            "max": 0.9940437776292204
+          },
+          "retrieval": {
+            "document/dense": {
+              "256": {
+                "complete": 6,
+                "recall": 0.3283177183097114,
+                "precision": 0.22979525862068972,
+                "deliveredTokens": 255.9999999999999
+              },
+              "512": {
+                "complete": 13,
+                "recall": 0.5864156161591938,
+                "precision": 0.2209725215517241,
+                "deliveredTokens": 511.9999999999998
+              },
+              "1024": {
+                "complete": 17,
+                "recall": 0.7644070768667341,
+                "precision": 0.14395878232758616,
+                "deliveredTokens": 1023.9999999999995
+              }
+            },
+            "document/bm25": {
+              "256": {
+                "complete": 3,
+                "recall": 0.15590833449693534,
+                "precision": 0.09496228448275863,
+                "deliveredTokens": 255.9999999999999
+              },
+              "512": {
+                "complete": 7,
+                "recall": 0.3087907473856917,
+                "precision": 0.09819504310344829,
+                "deliveredTokens": 511.9999999999998
+              },
+              "1024": {
+                "complete": 13,
+                "recall": 0.5587908572318172,
+                "precision": 0.10045123922413791,
+                "deliveredTokens": 1023.9999999999995
+              }
+            }
+          },
+          "complete512": {
+            "document/dense": "10110000110111111100000001000"
+          },
+          "examples": {
+            "document": {
+              "id": "014830892d93e3c01cb659ad31c90de4518d48f3",
+              "first": [
+                {
+                  "start": 23973,
+                  "end": 24563,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 0,
+              "deliveredSHA256": "a560e25d6728744e24ee8ba8c1723912c5354f84eab25d19eb7ec46756d32a1c",
+              "recall": 1,
+              "precision": 0.259765625,
+              "complete": 1
+            }
+          },
+          "milliseconds": 2000.5413999999946,
+          "peakRSSKiB": 651724,
+          "encoder": {
+            "apiRequests": 1,
+            "apiInputs": 207,
+            "apiInputTokens": 22755,
+            "diskTexts": 109,
+            "memoryTexts": 1330,
+            "replayMs": 81.61899999999878
+          }
+        },
+        "finqa": {
+          "questions": 43,
+          "bodyHash": "ccb260904515b6d5ce821fe32d8e0b1f8fc5e78f2ef4832b8c90236ebd8c8a44",
+          "chunkTokens": {
+            "count": 294,
+            "min": 1,
+            "p10": 8,
+            "median": 70,
+            "p90": 182,
+            "max": 256
+          },
+          "calls": 55,
+          "texts": 790,
+          "singletons": 0,
+          "embeddedTokens": 42203,
+          "indexTexts": 294,
+          "indexTokens": 24901,
+          "context": {
+            "retained": 0,
+            "shortened": 0,
+            "omitted": 0,
+            "alreadyPresentOrUnavailable": 294
+          },
+          "eligibleCosines": {
+            "count": 562,
+            "min": 0.09993554804454034,
+            "p10": 0.2857208179527481,
+            "median": 0.47748221990972173,
+            "p90": 0.6846599343019271,
+            "max": 0.9791061511139512
+          },
+          "retrieval": {
+            "document/dense": {
+              "256": {
+                "complete": 10,
+                "recall": 0.6811810332220591,
+                "precision": 0.22865775037509378,
+                "deliveredTokens": 255.81395348837228
+              },
+              "512": {
+                "complete": 27,
+                "recall": 0.8698083150337907,
+                "precision": 0.15302482548739257,
+                "deliveredTokens": 501.0697674418608
+              },
+              "1024": {
+                "complete": 41,
+                "recall": 0.9858042942108083,
+                "precision": 0.11109172200969232,
+                "deliveredTokens": 829
+              }
+            },
+            "document/bm25": {
+              "256": {
+                "complete": 7,
+                "recall": 0.5916426889858377,
+                "precision": 0.19159379688672168,
+                "deliveredTokens": 255.81395348837228
+              },
+              "512": {
+                "complete": 27,
+                "recall": 0.8760102306337175,
+                "precision": 0.1499361626966949,
+                "deliveredTokens": 501.0697674418608
+              },
+              "1024": {
+                "complete": 42,
+                "recall": 0.9923890063424954,
+                "precision": 0.11281773945155281,
+                "deliveredTokens": 829
+              }
+            }
+          },
+          "complete512": {
+            "document/dense": "0101101011011111010011010011111101111011000"
+          },
+          "examples": {
+            "document": {
+              "id": "ETR/2015/page_131.pdf-1",
+              "first": [
+                {
+                  "start": 1389,
+                  "end": 1602,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 0,
+              "deliveredSHA256": "2bf47bf61aaaae561e678941ad15d46fd05aa6ba8563625472a09faa4125d450",
+              "recall": 0.3508771929824561,
+              "precision": 0.0390625,
+              "complete": 0
+            }
+          },
+          "milliseconds": 751.5337,
+          "peakRSSKiB": 651724,
+          "encoder": {
+            "apiRequests": 0,
+            "apiInputs": 0,
+            "apiInputTokens": 0,
+            "diskTexts": 0,
+            "memoryTexts": 1103,
+            "replayMs": 1.2155000000057044
+          }
+        },
+        "hotpotqa": {
+          "questions": 32,
+          "bodyHash": "ff1bb18fa4700df77a1716c56c487deed887f48179dd49b55e74465a939a633e",
+          "chunkTokens": {
+            "count": 371,
+            "min": 7,
+            "p10": 39,
+            "median": 101,
+            "p90": 192,
+            "max": 254
+          },
+          "calls": 327,
+          "texts": 559,
+          "singletons": 293,
+          "embeddedTokens": 45550,
+          "indexTexts": 371,
+          "indexTokens": 39585,
+          "context": {
+            "retained": 62,
+            "shortened": 0,
+            "omitted": 0,
+            "alreadyPresentOrUnavailable": 309
+          },
+          "eligibleCosines": {
+            "count": 177,
+            "min": 0.11824677173706813,
+            "p10": 0.27406676216921,
+            "median": 0.44425504210085537,
+            "p90": 0.6204141603592703,
+            "max": 0.8524804425284084
+          },
+          "retrieval": {
+            "shortlist/dense": {
+              "256": {
+                "complete": 18,
+                "recall": 0.7871439741047828,
+                "precision": 0.2911376953125,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 29,
+                "recall": 0.9421067946452752,
+                "precision": 0.17558226700906449,
+                "deliveredTokens": 507.1875
+              },
+              "1024": {
+                "complete": 31,
+                "recall": 0.9825487012987013,
+                "precision": 0.10334020699649676,
+                "deliveredTokens": 940.4375
+              }
+            },
+            "shortlist/bm25": {
+              "256": {
+                "complete": 11,
+                "recall": 0.6269396879617078,
+                "precision": 0.2161865234375,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 24,
+                "recall": 0.8608726257944399,
+                "precision": 0.15690550919656449,
+                "deliveredTokens": 507.1875
+              },
+              "1024": {
+                "complete": 29,
+                "recall": 0.9403631654567454,
+                "precision": 0.09848791207462176,
+                "deliveredTokens": 940.4375
+              }
+            },
+            "pooled/dense": {
+              "256": {
+                "complete": 18,
+                "recall": 0.7871439741047828,
+                "precision": 0.2911376953125,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 29,
+                "recall": 0.9421067946452752,
+                "precision": 0.17364501953125,
+                "deliveredTokens": 512
+              },
+              "1024": {
+                "complete": 30,
+                "recall": 0.9625015314873806,
+                "precision": 0.088714599609375,
+                "deliveredTokens": 1024
+              }
+            },
+            "pooled/bm25": {
+              "256": {
+                "complete": 9,
+                "recall": 0.6131318493642879,
+                "precision": 0.2044677734375,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 19,
+                "recall": 0.7744272466868347,
+                "precision": 0.13299560546875,
+                "deliveredTokens": 512
+              },
+              "1024": {
+                "complete": 26,
+                "recall": 0.908934939777759,
+                "precision": 0.08251953125,
+                "deliveredTokens": 1024
+              }
+            }
+          },
+          "complete512": {
+            "shortlist/dense": "11111111100101111111111111111111",
+            "pooled/dense": "11111111100101111111111111111111"
+          },
+          "examples": {
+            "shortlist": {
+              "id": "5ab720685542993667793f44",
+              "first": [
+                {
+                  "start": 0,
+                  "end": 242,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 9,
+              "deliveredSHA256": "a25550d0c2c7d57b9c6d7b146043b26812988a8efd884a47043880bc39cf3852",
+              "recall": 1,
+              "precision": 0.263671875,
+              "complete": 1
+            },
+            "pooled": {
+              "id": "5ab720685542993667793f44",
+              "first": [
+                {
+                  "start": 0,
+                  "end": 242,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 9,
+              "deliveredSHA256": "a25550d0c2c7d57b9c6d7b146043b26812988a8efd884a47043880bc39cf3852",
+              "recall": 1,
+              "precision": 0.263671875,
+              "complete": 1
+            }
+          },
+          "milliseconds": 1394.8470000000016,
+          "peakRSSKiB": 651724,
+          "encoder": {
+            "apiRequests": 0,
+            "apiInputs": 0,
+            "apiInputTokens": 0,
+            "diskTexts": 0,
+            "memoryTexts": 962,
+            "replayMs": 0.5737000000008265
+          }
+        }
+      },
+      "macroComplete512": 0.5595616980753809
+    },
+    "title-8192": {
+      "policy": {
+        "method": "fixed",
+        "tokens": 256,
+        "adaptive": true,
+        "context": "title",
+        "contextCap": 8192
+      },
+      "tasks": {
+        "cuad": {
+          "questions": 86,
+          "bodyHash": "d49fc8cb4aa62a0ff37537a04baf2795c39aa805fedec1244aef685fa012f890",
+          "chunkTokens": {
+            "count": 1348,
+            "min": 1,
+            "p10": 5,
+            "median": 84,
+            "p90": 225,
+            "max": 256
+          },
+          "calls": 21,
+          "texts": 3111,
+          "singletons": 1,
+          "embeddedTokens": 224816,
+          "indexTexts": 1348,
+          "indexTokens": 133671,
+          "context": {
+            "retained": 0,
+            "shortened": 0,
+            "omitted": 0,
+            "alreadyPresentOrUnavailable": 1348
+          },
+          "eligibleCosines": {
+            "count": 2372,
+            "min": 0.029504771427178462,
+            "p10": 0.18031903088715684,
+            "median": 0.45046450034124297,
+            "p90": 0.7179442047766652,
+            "max": 1
+          },
+          "retrieval": {
+            "document/dense": {
+              "256": {
+                "complete": 20,
+                "recall": 0.30766490984633527,
+                "precision": 0.1335033980201131,
+                "deliveredTokens": 253.5232558139538
+              },
+              "512": {
+                "complete": 22,
+                "recall": 0.335384535283188,
+                "precision": 0.08676466255499685,
+                "deliveredTokens": 500.59302325581456
+              },
+              "1024": {
+                "complete": 29,
+                "recall": 0.44297982070265085,
+                "precision": 0.05997732607243871,
+                "deliveredTokens": 994.7325581395361
+              }
+            },
+            "document/bm25": {
+              "256": {
+                "complete": 19,
+                "recall": 0.27463321773369687,
+                "precision": 0.10416110150848525,
+                "deliveredTokens": 253.5232558139538
+              },
+              "512": {
+                "complete": 22,
+                "recall": 0.30950022093869434,
+                "precision": 0.06396306371778755,
+                "deliveredTokens": 500.59302325581456
+              },
+              "1024": {
+                "complete": 26,
+                "recall": 0.3773075364236656,
+                "precision": 0.04489738421197359,
+                "deliveredTokens": 994.7325581395361
+              }
+            }
+          },
+          "complete512": {
+            "document/dense": "11100001110001100000000000000000000000000111111100000110000000000000000100000110000011"
+          },
+          "examples": {
+            "document": {
+              "id": "RMRGROUPINC_01_22_2020-EX-99.1-JOINT FILING AGREEMENT__Document Name",
+              "first": [
+                {
+                  "start": 0,
+                  "end": 645,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 0,
+              "deliveredSHA256": "970873275c228d4c10c4944fcec4dcb4c9cbd52fb5f01f667e74bcfc43a69868",
+              "recall": 1,
+              "precision": 0.032432432432432434,
+              "complete": 1
+            }
+          },
+          "milliseconds": 2276.0896000000066,
+          "peakRSSKiB": 666748,
+          "encoder": {
+            "apiRequests": 0,
+            "apiInputs": 0,
+            "apiInputTokens": 0,
+            "diskTexts": 0,
+            "memoryTexts": 4417,
+            "replayMs": 3.132400000002235
+          }
+        },
+        "qasper": {
+          "questions": 29,
+          "bodyHash": "53e715bbffa88ab987c928a9db010a8f1e33bedae67bc46201ba3608088b105b",
+          "chunkTokens": {
+            "count": 462,
+            "min": 1,
+            "p10": 21,
+            "median": 126,
+            "p90": 231,
+            "max": 256
+          },
+          "calls": 24,
+          "texts": 1154,
+          "singletons": 0,
+          "embeddedTokens": 102911,
+          "indexTexts": 462,
+          "indexTokens": 64288,
+          "context": {
+            "retained": 450,
+            "shortened": 0,
+            "omitted": 0,
+            "alreadyPresentOrUnavailable": 12
+          },
+          "eligibleCosines": {
+            "count": 587,
+            "min": 0.0351534515957253,
+            "p10": 0.23452471371303918,
+            "median": 0.4560790566099455,
+            "p90": 0.6602095071009457,
+            "max": 0.9940437776292204
+          },
+          "retrieval": {
+            "document/dense": {
+              "256": {
+                "complete": 10,
+                "recall": 0.47384764617452935,
+                "precision": 0.3046875,
+                "deliveredTokens": 255.9999999999999
+              },
+              "512": {
+                "complete": 13,
+                "recall": 0.5989509787886381,
+                "precision": 0.2242726293103448,
+                "deliveredTokens": 511.9999999999998
+              },
+              "1024": {
+                "complete": 18,
+                "recall": 0.7817455727436178,
+                "precision": 0.14705684267241373,
+                "deliveredTokens": 1023.9999999999995
+              }
+            },
+            "document/bm25": {
+              "256": {
+                "complete": 3,
+                "recall": 0.15590833449693534,
+                "precision": 0.09496228448275863,
+                "deliveredTokens": 255.9999999999999
+              },
+              "512": {
+                "complete": 7,
+                "recall": 0.3087907473856917,
+                "precision": 0.09819504310344829,
+                "deliveredTokens": 511.9999999999998
+              },
+              "1024": {
+                "complete": 13,
+                "recall": 0.5587908572318172,
+                "precision": 0.10045123922413791,
+                "deliveredTokens": 1023.9999999999995
+              }
+            }
+          },
+          "complete512": {
+            "document/dense": "10110000110111111000000011000"
+          },
+          "examples": {
+            "document": {
+              "id": "014830892d93e3c01cb659ad31c90de4518d48f3",
+              "first": [
+                {
+                  "start": 23973,
+                  "end": 24563,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 0,
+              "deliveredSHA256": "542f101105ee0311fea15073f548cf0ae340692c7230644e638adf7e294364f0",
+              "recall": 1,
+              "precision": 0.259765625,
+              "complete": 1
+            }
+          },
+          "milliseconds": 1155.9608000000007,
+          "peakRSSKiB": 666748,
+          "encoder": {
+            "apiRequests": 1,
+            "apiInputs": 5,
+            "apiInputTokens": 1316,
+            "diskTexts": 15,
+            "memoryTexts": 1624,
+            "replayMs": 12.26249999999709
+          }
+        },
+        "finqa": {
+          "questions": 43,
+          "bodyHash": "ccb260904515b6d5ce821fe32d8e0b1f8fc5e78f2ef4832b8c90236ebd8c8a44",
+          "chunkTokens": {
+            "count": 294,
+            "min": 1,
+            "p10": 8,
+            "median": 70,
+            "p90": 182,
+            "max": 256
+          },
+          "calls": 55,
+          "texts": 790,
+          "singletons": 0,
+          "embeddedTokens": 42203,
+          "indexTexts": 294,
+          "indexTokens": 24901,
+          "context": {
+            "retained": 0,
+            "shortened": 0,
+            "omitted": 0,
+            "alreadyPresentOrUnavailable": 294
+          },
+          "eligibleCosines": {
+            "count": 562,
+            "min": 0.09993554804454034,
+            "p10": 0.2857208179527481,
+            "median": 0.47748221990972173,
+            "p90": 0.6846599343019271,
+            "max": 0.9791061511139512
+          },
+          "retrieval": {
+            "document/dense": {
+              "256": {
+                "complete": 10,
+                "recall": 0.6811810332220591,
+                "precision": 0.22865775037509378,
+                "deliveredTokens": 255.81395348837228
+              },
+              "512": {
+                "complete": 27,
+                "recall": 0.8698083150337907,
+                "precision": 0.15302482548739257,
+                "deliveredTokens": 501.0697674418608
+              },
+              "1024": {
+                "complete": 41,
+                "recall": 0.9858042942108083,
+                "precision": 0.11109172200969232,
+                "deliveredTokens": 829
+              }
+            },
+            "document/bm25": {
+              "256": {
+                "complete": 7,
+                "recall": 0.5916426889858377,
+                "precision": 0.19159379688672168,
+                "deliveredTokens": 255.81395348837228
+              },
+              "512": {
+                "complete": 27,
+                "recall": 0.8760102306337175,
+                "precision": 0.1499361626966949,
+                "deliveredTokens": 501.0697674418608
+              },
+              "1024": {
+                "complete": 42,
+                "recall": 0.9923890063424954,
+                "precision": 0.11281773945155281,
+                "deliveredTokens": 829
+              }
+            }
+          },
+          "complete512": {
+            "document/dense": "0101101011011111010011010011111101111011000"
+          },
+          "examples": {
+            "document": {
+              "id": "ETR/2015/page_131.pdf-1",
+              "first": [
+                {
+                  "start": 1389,
+                  "end": 1602,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 0,
+              "deliveredSHA256": "2bf47bf61aaaae561e678941ad15d46fd05aa6ba8563625472a09faa4125d450",
+              "recall": 0.3508771929824561,
+              "precision": 0.0390625,
+              "complete": 0
+            }
+          },
+          "milliseconds": 842.2369000000035,
+          "peakRSSKiB": 666748,
+          "encoder": {
+            "apiRequests": 0,
+            "apiInputs": 0,
+            "apiInputTokens": 0,
+            "diskTexts": 0,
+            "memoryTexts": 1103,
+            "replayMs": 0.6626999999934924
+          }
+        },
+        "hotpotqa": {
+          "questions": 32,
+          "bodyHash": "ff1bb18fa4700df77a1716c56c487deed887f48179dd49b55e74465a939a633e",
+          "chunkTokens": {
+            "count": 371,
+            "min": 7,
+            "p10": 39,
+            "median": 101,
+            "p90": 192,
+            "max": 254
+          },
+          "calls": 327,
+          "texts": 559,
+          "singletons": 293,
+          "embeddedTokens": 45550,
+          "indexTexts": 371,
+          "indexTokens": 39585,
+          "context": {
+            "retained": 62,
+            "shortened": 0,
+            "omitted": 0,
+            "alreadyPresentOrUnavailable": 309
+          },
+          "eligibleCosines": {
+            "count": 177,
+            "min": 0.11824677173706813,
+            "p10": 0.27406676216921,
+            "median": 0.44425504210085537,
+            "p90": 0.6204141603592703,
+            "max": 0.8524804425284084
+          },
+          "retrieval": {
+            "shortlist/dense": {
+              "256": {
+                "complete": 18,
+                "recall": 0.7871439741047828,
+                "precision": 0.2911376953125,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 29,
+                "recall": 0.9421067946452752,
+                "precision": 0.17558226700906449,
+                "deliveredTokens": 507.1875
+              },
+              "1024": {
+                "complete": 31,
+                "recall": 0.9825487012987013,
+                "precision": 0.10334020699649676,
+                "deliveredTokens": 940.4375
+              }
+            },
+            "shortlist/bm25": {
+              "256": {
+                "complete": 11,
+                "recall": 0.6269396879617078,
+                "precision": 0.2161865234375,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 24,
+                "recall": 0.8608726257944399,
+                "precision": 0.15690550919656449,
+                "deliveredTokens": 507.1875
+              },
+              "1024": {
+                "complete": 29,
+                "recall": 0.9403631654567454,
+                "precision": 0.09848791207462176,
+                "deliveredTokens": 940.4375
+              }
+            },
+            "pooled/dense": {
+              "256": {
+                "complete": 18,
+                "recall": 0.7871439741047828,
+                "precision": 0.2911376953125,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 29,
+                "recall": 0.9421067946452752,
+                "precision": 0.17364501953125,
+                "deliveredTokens": 512
+              },
+              "1024": {
+                "complete": 30,
+                "recall": 0.9625015314873806,
+                "precision": 0.088714599609375,
+                "deliveredTokens": 1024
+              }
+            },
+            "pooled/bm25": {
+              "256": {
+                "complete": 9,
+                "recall": 0.6131318493642879,
+                "precision": 0.2044677734375,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 19,
+                "recall": 0.7744272466868347,
+                "precision": 0.13299560546875,
+                "deliveredTokens": 512
+              },
+              "1024": {
+                "complete": 26,
+                "recall": 0.908934939777759,
+                "precision": 0.08251953125,
+                "deliveredTokens": 1024
+              }
+            }
+          },
+          "complete512": {
+            "shortlist/dense": "11111111100101111111111111111111",
+            "pooled/dense": "11111111100101111111111111111111"
+          },
+          "examples": {
+            "shortlist": {
+              "id": "5ab720685542993667793f44",
+              "first": [
+                {
+                  "start": 0,
+                  "end": 242,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 9,
+              "deliveredSHA256": "a25550d0c2c7d57b9c6d7b146043b26812988a8efd884a47043880bc39cf3852",
+              "recall": 1,
+              "precision": 0.263671875,
+              "complete": 1
+            },
+            "pooled": {
+              "id": "5ab720685542993667793f44",
+              "first": [
+                {
+                  "start": 0,
+                  "end": 242,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 9,
+              "deliveredSHA256": "a25550d0c2c7d57b9c6d7b146043b26812988a8efd884a47043880bc39cf3852",
+              "recall": 1,
+              "precision": 0.263671875,
+              "complete": 1
+            }
+          },
+          "milliseconds": 2052.316199999994,
+          "peakRSSKiB": 666748,
+          "encoder": {
+            "apiRequests": 0,
+            "apiInputs": 0,
+            "apiInputTokens": 0,
+            "diskTexts": 0,
+            "memoryTexts": 962,
+            "replayMs": 0.3861999999935506
+          }
+        }
+      },
+      "macroComplete512": 0.5595616980753809
+    },
+    "headings-8192": {
+      "policy": {
+        "method": "fixed",
+        "tokens": 256,
+        "adaptive": true,
+        "context": "headings",
+        "contextCap": 8192
+      },
+      "tasks": {
+        "cuad": {
+          "questions": 86,
+          "bodyHash": "d49fc8cb4aa62a0ff37537a04baf2795c39aa805fedec1244aef685fa012f890",
+          "chunkTokens": {
+            "count": 1348,
+            "min": 1,
+            "p10": 5,
+            "median": 84,
+            "p90": 225,
+            "max": 256
+          },
+          "calls": 21,
+          "texts": 3111,
+          "singletons": 1,
+          "embeddedTokens": 224816,
+          "indexTexts": 1348,
+          "indexTokens": 133671,
+          "context": {
+            "retained": 0,
+            "shortened": 0,
+            "omitted": 0,
+            "alreadyPresentOrUnavailable": 1348
+          },
+          "eligibleCosines": {
+            "count": 2372,
+            "min": 0.029504771427178462,
+            "p10": 0.18031903088715684,
+            "median": 0.45046450034124297,
+            "p90": 0.7179442047766652,
+            "max": 1
+          },
+          "retrieval": {
+            "document/dense": {
+              "256": {
+                "complete": 20,
+                "recall": 0.30766490984633527,
+                "precision": 0.1335033980201131,
+                "deliveredTokens": 253.5232558139538
+              },
+              "512": {
+                "complete": 22,
+                "recall": 0.335384535283188,
+                "precision": 0.08676466255499685,
+                "deliveredTokens": 500.59302325581456
+              },
+              "1024": {
+                "complete": 29,
+                "recall": 0.44297982070265085,
+                "precision": 0.05997732607243871,
+                "deliveredTokens": 994.7325581395361
+              }
+            },
+            "document/bm25": {
+              "256": {
+                "complete": 19,
+                "recall": 0.27463321773369687,
+                "precision": 0.10416110150848525,
+                "deliveredTokens": 253.5232558139538
+              },
+              "512": {
+                "complete": 22,
+                "recall": 0.30950022093869434,
+                "precision": 0.06396306371778755,
+                "deliveredTokens": 500.59302325581456
+              },
+              "1024": {
+                "complete": 26,
+                "recall": 0.3773075364236656,
+                "precision": 0.04489738421197359,
+                "deliveredTokens": 994.7325581395361
+              }
+            }
+          },
+          "complete512": {
+            "document/dense": "11100001110001100000000000000000000000000111111100000110000000000000000100000110000011"
+          },
+          "examples": {
+            "document": {
+              "id": "RMRGROUPINC_01_22_2020-EX-99.1-JOINT FILING AGREEMENT__Document Name",
+              "first": [
+                {
+                  "start": 0,
+                  "end": 645,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 0,
+              "deliveredSHA256": "970873275c228d4c10c4944fcec4dcb4c9cbd52fb5f01f667e74bcfc43a69868",
+              "recall": 1,
+              "precision": 0.032432432432432434,
+              "complete": 1
+            }
+          },
+          "milliseconds": 2830.5453000000125,
+          "peakRSSKiB": 666748,
+          "encoder": {
+            "apiRequests": 0,
+            "apiInputs": 0,
+            "apiInputTokens": 0,
+            "diskTexts": 0,
+            "memoryTexts": 4417,
+            "replayMs": 6.621400000003632
+          }
+        },
+        "qasper": {
+          "questions": 29,
+          "bodyHash": "53e715bbffa88ab987c928a9db010a8f1e33bedae67bc46201ba3608088b105b",
+          "chunkTokens": {
+            "count": 462,
+            "min": 1,
+            "p10": 21,
+            "median": 126,
+            "p90": 231,
+            "max": 256
+          },
+          "calls": 24,
+          "texts": 1155,
+          "singletons": 0,
+          "embeddedTokens": 104702,
+          "indexTexts": 462,
+          "indexTokens": 66047,
+          "context": {
+            "retained": 450,
+            "shortened": 0,
+            "omitted": 0,
+            "alreadyPresentOrUnavailable": 12
+          },
+          "eligibleCosines": {
+            "count": 587,
+            "min": 0.0351534515957253,
+            "p10": 0.23452471371303918,
+            "median": 0.4560790566099455,
+            "p90": 0.6602095071009457,
+            "max": 0.9940437776292204
+          },
+          "retrieval": {
+            "document/dense": {
+              "256": {
+                "complete": 7,
+                "recall": 0.3784430315929194,
+                "precision": 0.2738415948275862,
+                "deliveredTokens": 255.9999999999999
+              },
+              "512": {
+                "complete": 12,
+                "recall": 0.5708861468512945,
+                "precision": 0.2190193965517241,
+                "deliveredTokens": 511.9999999999998
+              },
+              "1024": {
+                "complete": 18,
+                "recall": 0.7788360326016326,
+                "precision": 0.14793238146551718,
+                "deliveredTokens": 1023.9999999999995
+              }
+            },
+            "document/bm25": {
+              "256": {
+                "complete": 3,
+                "recall": 0.15590833449693534,
+                "precision": 0.09496228448275863,
+                "deliveredTokens": 255.9999999999999
+              },
+              "512": {
+                "complete": 7,
+                "recall": 0.3087907473856917,
+                "precision": 0.09819504310344829,
+                "deliveredTokens": 511.9999999999998
+              },
+              "1024": {
+                "complete": 13,
+                "recall": 0.5587908572318172,
+                "precision": 0.10045123922413791,
+                "deliveredTokens": 1023.9999999999995
+              }
+            }
+          },
+          "complete512": {
+            "document/dense": "10110000110111111000000001000"
+          },
+          "examples": {
+            "document": {
+              "id": "014830892d93e3c01cb659ad31c90de4518d48f3",
+              "first": [
+                {
+                  "start": 23973,
+                  "end": 24563,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 0,
+              "deliveredSHA256": "a560e25d6728744e24ee8ba8c1723912c5354f84eab25d19eb7ec46756d32a1c",
+              "recall": 1,
+              "precision": 0.259765625,
+              "complete": 1
+            }
+          },
+          "milliseconds": 1157.665200000003,
+          "peakRSSKiB": 666748,
+          "encoder": {
+            "apiRequests": 1,
+            "apiInputs": 5,
+            "apiInputTokens": 1326,
+            "diskTexts": 17,
+            "memoryTexts": 1624,
+            "replayMs": 4.238899999982095
+          }
+        },
+        "finqa": {
+          "questions": 43,
+          "bodyHash": "ccb260904515b6d5ce821fe32d8e0b1f8fc5e78f2ef4832b8c90236ebd8c8a44",
+          "chunkTokens": {
+            "count": 294,
+            "min": 1,
+            "p10": 8,
+            "median": 70,
+            "p90": 182,
+            "max": 256
+          },
+          "calls": 55,
+          "texts": 790,
+          "singletons": 0,
+          "embeddedTokens": 42203,
+          "indexTexts": 294,
+          "indexTokens": 24901,
+          "context": {
+            "retained": 0,
+            "shortened": 0,
+            "omitted": 0,
+            "alreadyPresentOrUnavailable": 294
+          },
+          "eligibleCosines": {
+            "count": 562,
+            "min": 0.09993554804454034,
+            "p10": 0.2857208179527481,
+            "median": 0.47748221990972173,
+            "p90": 0.6846599343019271,
+            "max": 0.9791061511139512
+          },
+          "retrieval": {
+            "document/dense": {
+              "256": {
+                "complete": 10,
+                "recall": 0.6811810332220591,
+                "precision": 0.22865775037509378,
+                "deliveredTokens": 255.81395348837228
+              },
+              "512": {
+                "complete": 27,
+                "recall": 0.8698083150337907,
+                "precision": 0.15302482548739257,
+                "deliveredTokens": 501.0697674418608
+              },
+              "1024": {
+                "complete": 41,
+                "recall": 0.9858042942108083,
+                "precision": 0.11109172200969232,
+                "deliveredTokens": 829
+              }
+            },
+            "document/bm25": {
+              "256": {
+                "complete": 7,
+                "recall": 0.5916426889858377,
+                "precision": 0.19159379688672168,
+                "deliveredTokens": 255.81395348837228
+              },
+              "512": {
+                "complete": 27,
+                "recall": 0.8760102306337175,
+                "precision": 0.1499361626966949,
+                "deliveredTokens": 501.0697674418608
+              },
+              "1024": {
+                "complete": 42,
+                "recall": 0.9923890063424954,
+                "precision": 0.11281773945155281,
+                "deliveredTokens": 829
+              }
+            }
+          },
+          "complete512": {
+            "document/dense": "0101101011011111010011010011111101111011000"
+          },
+          "examples": {
+            "document": {
+              "id": "ETR/2015/page_131.pdf-1",
+              "first": [
+                {
+                  "start": 1389,
+                  "end": 1602,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 0,
+              "deliveredSHA256": "2bf47bf61aaaae561e678941ad15d46fd05aa6ba8563625472a09faa4125d450",
+              "recall": 0.3508771929824561,
+              "precision": 0.0390625,
+              "complete": 0
+            }
+          },
+          "milliseconds": 764.5701999999874,
+          "peakRSSKiB": 680828,
+          "encoder": {
+            "apiRequests": 0,
+            "apiInputs": 0,
+            "apiInputTokens": 0,
+            "diskTexts": 0,
+            "memoryTexts": 1103,
+            "replayMs": 0.8043000000034226
+          }
+        },
+        "hotpotqa": {
+          "questions": 32,
+          "bodyHash": "ff1bb18fa4700df77a1716c56c487deed887f48179dd49b55e74465a939a633e",
+          "chunkTokens": {
+            "count": 371,
+            "min": 7,
+            "p10": 39,
+            "median": 101,
+            "p90": 192,
+            "max": 254
+          },
+          "calls": 327,
+          "texts": 559,
+          "singletons": 293,
+          "embeddedTokens": 45550,
+          "indexTexts": 371,
+          "indexTokens": 39585,
+          "context": {
+            "retained": 62,
+            "shortened": 0,
+            "omitted": 0,
+            "alreadyPresentOrUnavailable": 309
+          },
+          "eligibleCosines": {
+            "count": 177,
+            "min": 0.11824677173706813,
+            "p10": 0.27406676216921,
+            "median": 0.44425504210085537,
+            "p90": 0.6204141603592703,
+            "max": 0.8524804425284084
+          },
+          "retrieval": {
+            "shortlist/dense": {
+              "256": {
+                "complete": 18,
+                "recall": 0.7871439741047828,
+                "precision": 0.2911376953125,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 29,
+                "recall": 0.9421067946452752,
+                "precision": 0.17558226700906449,
+                "deliveredTokens": 507.1875
+              },
+              "1024": {
+                "complete": 31,
+                "recall": 0.9825487012987013,
+                "precision": 0.10334020699649676,
+                "deliveredTokens": 940.4375
+              }
+            },
+            "shortlist/bm25": {
+              "256": {
+                "complete": 11,
+                "recall": 0.6269396879617078,
+                "precision": 0.2161865234375,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 24,
+                "recall": 0.8608726257944399,
+                "precision": 0.15690550919656449,
+                "deliveredTokens": 507.1875
+              },
+              "1024": {
+                "complete": 29,
+                "recall": 0.9403631654567454,
+                "precision": 0.09848791207462176,
+                "deliveredTokens": 940.4375
+              }
+            },
+            "pooled/dense": {
+              "256": {
+                "complete": 18,
+                "recall": 0.7871439741047828,
+                "precision": 0.2911376953125,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 29,
+                "recall": 0.9421067946452752,
+                "precision": 0.17364501953125,
+                "deliveredTokens": 512
+              },
+              "1024": {
+                "complete": 30,
+                "recall": 0.9625015314873806,
+                "precision": 0.088714599609375,
+                "deliveredTokens": 1024
+              }
+            },
+            "pooled/bm25": {
+              "256": {
+                "complete": 9,
+                "recall": 0.6131318493642879,
+                "precision": 0.2044677734375,
+                "deliveredTokens": 256
+              },
+              "512": {
+                "complete": 19,
+                "recall": 0.7744272466868347,
+                "precision": 0.13299560546875,
+                "deliveredTokens": 512
+              },
+              "1024": {
+                "complete": 26,
+                "recall": 0.908934939777759,
+                "precision": 0.08251953125,
+                "deliveredTokens": 1024
+              }
+            }
+          },
+          "complete512": {
+            "shortlist/dense": "11111111100101111111111111111111",
+            "pooled/dense": "11111111100101111111111111111111"
+          },
+          "examples": {
+            "shortlist": {
+              "id": "5ab720685542993667793f44",
+              "first": [
+                {
+                  "start": 0,
+                  "end": 242,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 9,
+              "deliveredSHA256": "a25550d0c2c7d57b9c6d7b146043b26812988a8efd884a47043880bc39cf3852",
+              "recall": 1,
+              "precision": 0.263671875,
+              "complete": 1
+            },
+            "pooled": {
+              "id": "5ab720685542993667793f44",
+              "first": [
+                {
+                  "start": 0,
+                  "end": 242,
+                  "outputStart": 0
+                }
+              ],
+              "doc": 9,
+              "deliveredSHA256": "a25550d0c2c7d57b9c6d7b146043b26812988a8efd884a47043880bc39cf3852",
+              "recall": 1,
+              "precision": 0.263671875,
+              "complete": 1
+            }
+          },
+          "milliseconds": 1597.1786999999895,
+          "peakRSSKiB": 686888,
+          "encoder": {
+            "apiRequests": 0,
+            "apiInputs": 0,
+            "apiInputTokens": 0,
+            "diskTexts": 0,
+            "memoryTexts": 962,
+            "replayMs": 0.5455999999976484
+          }
+        }
+      },
+      "macroComplete512": 0.5509410084202084
+    }
+  },
+  "tokens": 256,
+  "winner": {
+    "method": "fixed",
+    "tokens": 256,
+    "adaptive": true
+  },
+  "shortlist": {
+    "pack": {
+      "method": "pack",
+      "tokens": 256
+    },
+    "pack-lead": {
+      "method": "pack",
+      "tokens": 256,
+      "leadIn": true
+    },
+    "fixed-document": {
+      "method": "fixed",
+      "tokens": 256,
+      "adaptive": true
+    },
+    "rescore-0.7": {
+      "method": "rescore",
+      "tokens": 256,
+      "cutoff": 0.7
+    },
+    "fixed-document-lead": {
+      "method": "fixed",
+      "tokens": 256,
+      "adaptive": true,
+      "leadIn": true
+    }
+  },
+  "comparisons": {
+    "title-256": {
+      "deltaPer100": 0.8620689655172487,
+      "ci95": [
+        -1.7241379310344827,
+        4
+      ],
+      "perTask": {
+        "cuad": {
+          "winsPer100": 0,
+          "lossesPer100": 0,
+          "wins": [],
+          "losses": []
+        },
+        "qasper": {
+          "winsPer100": 6.896551724137931,
+          "lossesPer100": 3.4482758620689653,
+          "wins": [
+            "036c400424357457e42b22df477b7c3cdc2eefe9",
+            "9b1382b44dc69f7ee20acf952f7ceb1c3ef83965"
+          ],
+          "losses": [
+            "7ece07a84635269bb19796497847e4517d1e3e61"
+          ]
+        },
+        "finqa": {
+          "winsPer100": 0,
+          "lossesPer100": 0,
+          "wins": [],
+          "losses": []
+        },
+        "hotpotqa": {
+          "winsPer100": 0,
+          "lossesPer100": 0,
+          "wins": [],
+          "losses": []
+        }
+      }
+    },
+    "headings-256": {
+      "deltaPer100": -0.8620689655172487,
+      "ci95": [
+        -2.7777777777777777,
+        0
+      ],
+      "perTask": {
+        "cuad": {
+          "winsPer100": 0,
+          "lossesPer100": 0,
+          "wins": [],
+          "losses": []
+        },
+        "qasper": {
+          "winsPer100": 0,
+          "lossesPer100": 3.4482758620689653,
+          "wins": [],
+          "losses": [
+            "9b1382b44dc69f7ee20acf952f7ceb1c3ef83965"
+          ]
+        },
+        "finqa": {
+          "winsPer100": 0,
+          "lossesPer100": 0,
+          "wins": [],
+          "losses": []
+        },
+        "hotpotqa": {
+          "winsPer100": 0,
+          "lossesPer100": 0,
+          "wins": [],
+          "losses": []
+        }
+      }
+    },
+    "title-8192": {
+      "deltaPer100": 0,
+      "ci95": [
+        -4.285714285714286,
+        4
+      ],
+      "perTask": {
+        "cuad": {
+          "winsPer100": 0,
+          "lossesPer100": 0,
+          "wins": [],
+          "losses": []
+        },
+        "qasper": {
+          "winsPer100": 6.896551724137931,
+          "lossesPer100": 6.896551724137931,
+          "wins": [
+            "036c400424357457e42b22df477b7c3cdc2eefe9",
+            "9b1382b44dc69f7ee20acf952f7ceb1c3ef83965"
+          ],
+          "losses": [
+            "5522a9eeb06221722052e3c38f9b0d0dbe7c13e6",
+            "7ece07a84635269bb19796497847e4517d1e3e61"
+          ]
+        },
+        "finqa": {
+          "winsPer100": 0,
+          "lossesPer100": 0,
+          "wins": [],
+          "losses": []
+        },
+        "hotpotqa": {
+          "winsPer100": 0,
+          "lossesPer100": 0,
+          "wins": [],
+          "losses": []
+        }
+      }
+    },
+    "headings-8192": {
+      "deltaPer100": -0.8620689655172487,
+      "ci95": [
+        -2.7777777777777777,
+        0
+      ],
+      "perTask": {
+        "cuad": {
+          "winsPer100": 0,
+          "lossesPer100": 0,
+          "wins": [],
+          "losses": []
+        },
+        "qasper": {
+          "winsPer100": 0,
+          "lossesPer100": 3.4482758620689653,
+          "wins": [],
+          "losses": [
+            "9b1382b44dc69f7ee20acf952f7ceb1c3ef83965"
+          ]
+        },
+        "finqa": {
+          "winsPer100": 0,
+          "lossesPer100": 0,
+          "wins": [],
+          "losses": []
+        },
+        "hotpotqa": {
+          "winsPer100": 0,
+          "lossesPer100": 0,
+          "wins": [],
+          "losses": []
+        }
+      }
+    }
+  },
+  "encoder": {
+    "apiRequests": 5,
+    "apiInputs": 526,
+    "apiInputTokens": 56625,
+    "diskTexts": 5889,
+    "memoryTexts": 34186,
+    "replayMs": 1910.896299999993
+  }
+}

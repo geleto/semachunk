@@ -6,8 +6,8 @@ import { DEFAULT_CONFIG as defaults } from '../config.js';
 // The comparison uses a stable sorted list of live boundaries each pass.
 export async function combineMarkdown(source, units, embed, options, initialScores = []) {
     const { method, maxChunkSize, fits, leadIn, maxPasses = Infinity, maxUncappedPasses = defaults.MAX_UNCAPPED_PASSES,
-        maxMergesPerPass = defaults.MAX_MERGES_PER_PASS, percentage = defaults.MAX_MERGES_PER_PASS_PERCENTAGE,
-        minimum = defaults.UNCAPPED_CANDIDATE_MERGES } = options;
+        maxMergesPerPass = defaults.MAX_MERGES_PER_PASS, candidateMergesPercentageCap = defaults.MAX_MERGES_PER_PASS_PERCENTAGE,
+        uncappedCandidateMerges = defaults.UNCAPPED_CANDIDATE_MERGES } = options;
     if (method === 'pack' && !leadIn) return packMarkdown(source, units, maxChunkSize, fits);
     let live = units.map((u, i) => ({ ...u, first: i, last: i }));
     function eligible(a, b) {
@@ -53,9 +53,9 @@ export async function combineMarkdown(source, units, embed, options, initialScor
             for (const { score } of edges) { initialScores.push(score); stats.add(score); }
             if (options.adaptive) threshold = documentMergeThreshold(stats, threshold);
         }
-        const candidates = edges.filter(e => e.score >= threshold)
-            .sort((a, b) => options.reverse ? a.score - b.score : b.score - a.score);
-        const cap = Math.min(maxMergesPerPass, Math.max(minimum, Math.floor(candidates.length * percentage / 100 + 1e-9)));
+        const candidates = edges.filter(e => e.score >= threshold).sort((a, b) => b.score - a.score);
+        const percent = Math.floor(candidates.length * candidateMergesPercentageCap / 100 + 1e-9);
+        const cap = Math.min(maxMergesPerPass, Math.max(uncappedCandidateMerges, percent));
         if (!candidates.length || !cap) break;
         const starts = new Set();
         let capped = false;
@@ -65,7 +65,12 @@ export async function combineMarkdown(source, units, embed, options, initialScor
             starts.add(i);
         }
         const next = [];
-        for (let i = 0; i < live.length; i++) next.push(starts.has(i) ? join(live[i], live[++i]) : live[i]);
+        for (let i = 0; i < live.length; i++) {
+            if (starts.has(i)) {
+                next.push(join(live[i], live[i + 1]));
+                i++;
+            } else next.push(live[i]);
+        }
         live = next;
         if (!capped) uncapped++;
     }

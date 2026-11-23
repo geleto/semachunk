@@ -1,8 +1,8 @@
 import { dimension } from './encoder.mjs';
 import { createJoinCheck, sentenceTokenLimit, tokenBudget } from '../src/token-limit.js';
 
-export function packSentences(parts, maxChunkSize, maxChunkTokens = Infinity, countTokens) {
-    const limit = sentenceTokenLimit(parts, tokenBudget(maxChunkTokens, countTokens, ''));
+export function packSentences(parts, maxChunkSize, maxChunkTokens = Infinity, countTokens, prefix = '') {
+    const limit = sentenceTokenLimit(parts, tokenBudget(maxChunkTokens, countTokens, prefix));
     const canJoin = createJoinCheck(maxChunkSize, limit);
     const output = [];
     for (const part of parts) {

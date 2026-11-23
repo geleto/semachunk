@@ -97,7 +97,7 @@ Character size and merge counts accept nonnegative safe integers or `Infinity`. 
 |---|---|---|
 | `inputFormat` | `'text'` | Split plain text, extract text from `'html'`, or preserve structure in `'markdown'`. |
 | `locale` | `'en'` | Language tag passed to the sentence segmenter. Its English and Spanish abbreviation lists use `en` and `es`. |
-| `maxChunkSize` | 500 | Maximum UTF-16 code units (`text.length`) in a join, including the separating space. A longer individual sentence is kept whole unless a token budget requires splitting it. The character limit excludes the prefix. |
+| `maxChunkSize` | 500 | Maximum UTF-16 code units in a join. Count the separating space for text and HTML or the actual intervening whitespace for Markdown. An indivisible leaf can exceed this target. The character limit excludes the caller prefix. |
 | `maxChunkTokens` | `Infinity` | Hard model-token budget for each chunk and provider input, including any prefix. A finite value enables splitting oversized sentences. |
 | `countTokens` | — | Synchronous tokenizer callback required for a finite token budget. Returns a nonnegative safe integer. |
 | `maxEmbeddingBatchSize` | `Infinity` | Maximum distinct texts per provider request. Use a positive integer to set a limit. |
@@ -106,7 +106,7 @@ Character size and merge counts accept nonnegative safe integers or `Infinity`. 
 | `groupSentences` | `false` | Enable initial grouping using the document's similarity scores |
 | `dynamicThresholdLowerBound` | 0.4 | Minimum cutoff for initial grouping |
 | `dynamicThresholdUpperBound` | 0.8 | Maximum cutoff for initial grouping |
-| `combineChunks` | `true` | Run the priority merge on the initial sentences or groups |
+| `combineChunks` | `true` | Combine initial units using the input format's strategy. Set to `false` to keep those units. |
 | `combineChunksSimilarityThreshold` | `similarityThreshold` in fixed mode | Supply a fixed priority cutoff, overriding document calibration and the base cutoff. |
 | `mergeThresholdMode` | `'fixed'` | Use a fixed priority cutoff or calibrate once per document with `'document'`. |
 | `excludeNonLetterSentences` | `false` | Skip sentences containing no Unicode letters before embedding |

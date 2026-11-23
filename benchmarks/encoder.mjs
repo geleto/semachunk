@@ -12,7 +12,7 @@ export const dimension = 1536;
 export const encodingName = 'cl100k_base';
 export const modelInputTokens = 8192;
 const rowBytes = dimension * Float32Array.BYTES_PER_ELEMENT;
-const replaySuffix = '.' + model + '-' + dimension + '.keys';
+const replaySuffix = '.' + model + '-' + dimension + '.inputs';
 const vectorDirectory = join(cache, 'openai-embeddings');
 
 export function openTokenizer() {
@@ -108,7 +108,7 @@ async function readBatch(path, expectedLength) {
 
 // A completed request is reusable even if a later request fails. The first
 // writer publishes the cache entry atomically and concurrent readers reuse it.
-export async function cachedVectors(texts, countTokens, request, directory, recordKeys = false) {
+export async function cachedVectors(texts, countTokens, request, directory, recordInputs = false) {
     const batches = embeddingBatches(texts, countTokens);
     const matrixBytes = Buffer.alloc(texts.length * rowBytes);
     const precomputation = { apiRequests: 0, apiInputs: 0, apiInputTokens: 0, cachedBatches: 0 };
@@ -135,10 +135,10 @@ export async function cachedVectors(texts, countTokens, request, directory, reco
                 }
             } finally { await rm(tmp, { force: true }); }
         }
-        if (recordKeys) {
+        if (recordInputs) {
             const temp = path + '.' + randomUUID();
             try {
-                await writeFile(temp, JSON.stringify(input.map(sha256)), { flag: 'wx' });
+                await writeFile(temp, JSON.stringify(input), { flag: 'wx' });
                 try { await link(temp, path + replaySuffix); } catch (error) { if (error.code !== 'EEXIST') throw error; }
             } finally { await rm(temp, { force: true }); }
         }
@@ -163,8 +163,8 @@ export function openEncoder(envFile, directory = vectorDirectory) {
             throw error;
         }
     }
-    return { ...tokenizer, vectors: (texts, recordKeys) =>
-        cachedVectors(texts, tokenizer.countTokens, request, directory, recordKeys) };
+    return { ...tokenizer, vectors: (texts, recordInputs) =>
+        cachedVectors(texts, tokenizer.countTokens, request, directory, recordInputs) };
 }
 
 // Index recorded provider batches by exact input. A new candidate order or
@@ -175,8 +175,10 @@ export async function openReplay(envFile, directory = vectorDirectory) {
     const disk = new Map(), memory = new Map();
     for (const name of await readdir(directory)) {
         if (!name.endsWith('.f32' + replaySuffix)) continue;
-        const keys = JSON.parse(await readFile(join(directory, name), 'utf8'));
-        keys.forEach((key, row) => disk.set(key, { file: name.slice(0, -replaySuffix.length), row, count: keys.length }));
+        const input = JSON.parse(await readFile(join(directory, name), 'utf8'));
+        const file = sha256(JSON.stringify([model, dimension, input])) + '.f32';
+        if (file + replaySuffix !== name) throw new Error('Damaged embedding input record: ' + name);
+        input.forEach((text, row) => disk.set(text, { file, row, count: input.length }));
     }
     const stats = { apiRequests: 0, apiInputs: 0, apiInputTokens: 0, diskTexts: 0, memoryTexts: 0, replayMs: 0 };
     let pending = [], flushing = false;
@@ -190,7 +192,7 @@ export async function openReplay(envFile, directory = vectorDirectory) {
                 const unique = new Set(requests.flatMap(r => r.texts));
                 for (const text of unique) {
                     if (memory.has(text)) { stats.memoryTexts++; continue; }
-                    const hit = disk.get(sha256(text));
+                    const hit = disk.get(text);
                     if (!hit) { missing.push(text); continue; }
                     if (!files.has(hit.file)) files.set(hit.file, []);
                     files.get(hit.file).push({ text, ...hit });

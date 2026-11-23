@@ -84,9 +84,13 @@ node benchmarks/markdown-study.mjs size size.json
 node benchmarks/markdown-study.mjs compare comparison.json size.json
 node benchmarks/markdown-study.mjs context context.json comparison.json
 node benchmarks/markdown-study.mjs final final.json context.json
+node benchmarks/markdown-study.mjs confirm confirmation.json final.json fixed-document
+node benchmarks/markdown-study.mjs context fixed-context.json comparison.json fixed-document
 ```
 
-Each command takes a new output path. The study uses the same model, tokenizer, credentials and provider limits as the historical RAG suite. It records exact input keys alongside checksummed vector batches so different merge orders and batch compositions can replay individual texts. Logical cold indexing costs count each policy's own calls, including singleton batches and repeated scoring inputs. Provider usage records paid cache misses separately. Peak RSS is the process high-water mark through that measurement. Timing includes retrieval, replay and any API calls.
+Each command takes a new output path. The study uses the same model, tokenizer, credentials and provider limits as the historical RAG suite. It records the literal inputs alongside each checksummed vector batch and verifies the model, dimension and input order against the batch key on replay. Different merge orders and batch compositions can reuse individual texts. Logical cold indexing costs count each policy's own calls, including singleton batches and repeated scoring inputs. Provider usage records paid cache misses separately. Peak RSS is the process high-water mark through that measurement. Timing includes retrieval, replay and any API calls.
+
+The confirmation command evaluates the already-selected original-boundary strategy at both the public character setting and the matched token setting on a third, group-disjoint sample. The final context command reuses its calibration bodies for the predeclared heading comparison.
 
 All arms search the same sources. QASPER uses the paper's heading hierarchy. FinQA includes pre-table prose, the table and post-table prose with offsets keyed by the annotation IDs. A financial hit requires every annotated row and prose span. The primary score averages the four dataset complete-evidence rates at 512 delivered tokens with pooled HotpotQA. The diagnostic shortlist searches each question's supplied articles. The report also records both rankers at 256 and 1,024 tokens, per-question paired outcomes and group bootstrap intervals. [Frozen sample IDs](results/2026-11-23-markdown-samples.json)
 

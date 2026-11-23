@@ -36,6 +36,9 @@ test('section occurrences, active heading text and omitted blocks use original U
     assert.deepEqual(rows.map(c => c.sectionId), [null, ...Array(3).fill(source.indexOf('## [New]')), source.indexOf('More')]);
     assert.deepEqual(rows.map(c => c.headingPath), [[], ['Root', 'New'], ['Root', 'New'], ['Root', 'New'], ['More here']]);
     assert.equal((await chunks('# A\n## B\nBody'))[0].text, '# A\n## B\nBody');
+    const duplicates = await chunks('# A\nBody\n\n# A\nBody');
+    assert.deepEqual(duplicates.map(c => c.text), ['# A\nBody', '# A\nBody']);
+    assert.deepEqual(duplicates.map(c => c.sectionId), [0, 10]);
     assert.equal((await chunks('---\nnot closed\nstill prose'))[0].text, 'not closed\nstill prose');
     for (const input of ['', ' \r\n', '\uFEFF---\ninvalid: [:\n---', '# A\n## B', '[p]: /private', '[^empty]:']) {
         assert.deepEqual(await chunkText(input, assert.fail, { inputFormat: 'markdown' }), []);
@@ -106,6 +109,7 @@ test('split tables repeat the literal header and delimiter, oversized rows retai
     const split = await chunks(long, { maxChunkSize: Infinity, maxChunkTokens: 44, countTokens: length });
     assert.equal(original(long, split), long);
     assert.ok(split.slice(1).every(c => !c.text.includes('---')));
+    assert.equal(original(long, await chunks(long, { maxChunkTokens: 3, countTokens: length })), long);
 });
 
 test('fenced and indented continuations retain source, line endings and container syntax under hard budgets', async () => {

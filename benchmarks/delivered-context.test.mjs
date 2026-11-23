@@ -4,6 +4,7 @@ import { openTokenizer } from './encoder.mjs';
 import { alignPlain, deliver, evidenceScore, goldReference } from './delivered-context.mjs';
 import { packSentences } from './chunking.mjs';
 import { combineMarkdown } from './markdown-merging.mjs';
+import { indexDocument } from './markdown-index.mjs';
 import { parseMarkdown } from '../src/markdown.js';
 
 test('sentence packing budgets an oversized first sentence and the serialized join', () => {
@@ -64,4 +65,34 @@ test('both priority experiments batch eligible endpoints across sections and mer
         assert.equal(calls.length, method === 'fixed' ? 1 : 2);
         if (method === 'rescore') assert.deepEqual(calls[1], ['A\n\nB', 'C\n\nD']);
     }
+});
+
+test('original-boundary scoring can discover a newly token-eligible gap without scoring a merged body', async () => {
+    const source = 'A\n\nB\n\nC', units = parseMarkdown(source, { maxChunkSize: Infinity });
+    const batches = [], initial = [];
+    const result = await combineMarkdown(source, units, texts => {
+        batches.push(texts);
+        return texts.map(() => [1]);
+    }, { method: 'fixed', maxChunkSize: Infinity, fits: s => s !== 'A\n\nB', adaptive: true }, initial);
+    assert.deepEqual(initial, [1]);
+    assert.deepEqual(batches, [['B', 'C'], ['A']]);
+    assert.equal(result.length, 1);
+    assert.equal(source.slice(result[0].start, result[0].end), source);
+});
+
+test('fixed-body context preserves a hidden required prefix and omits optional headings at the deployment cap', async () => {
+    const doc = { source: '# A long heading\nsame', title: 'Book', chunkPrefix: 'P', parsed: new Map() };
+    const calls = [];
+    const encoder = { countTokens: s => s.length, embed: texts => { calls.push(texts); return texts.map(() => [1]); } };
+    function run(extra) {
+        return indexDocument(doc, { method: 'pack', tokens: 7, ...extra }, {}, [], {}, encoder);
+    }
+    const [baseline] = await run({});
+    const [tight] = await run({ context: 'headings', contextCap: 7 });
+    const [wide] = await run({ context: 'headings', contextCap: 100 });
+    for (const c of [baseline, tight, wide]) {
+        assert.deepEqual(c.sourceRanges, [{ start: doc.source.indexOf('same'), end: doc.source.length, outputStart: 0 }]);
+        assert.equal(c.text, 'same');
+    }
+    assert.deepEqual(calls, [['P: same'], ['P: same'], ['P: Book > A long heading: same']]);
 });

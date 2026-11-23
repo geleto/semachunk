@@ -1,5 +1,33 @@
 # Chunking improvements and benchmark results
 
+## 2026-11-23 · Fresh confirmation at both size settings
+
+At **500 UTF-16 code units**, greedy packing scored **57.78%**, original-boundary scoring at the document cutoff **57.57%** (−0.22 per 100, paired 95% interval −2.57 to +1.47), and a fixed 0.5 cutoff **56.40%**. Greedy used 365 logical calls and 210,282 tokens. The document cutoff used 530 calls and 295,668 tokens.
+
+At **256 body tokens**, greedy scored **56.51%** and the document cutoff **62.53%** (+6.02 per 100, +2.14 to +10.66). Original-boundary scoring recovered eight more complete contract answers, two more paper answers and five more financial answers, and lost one pooled multi-hop answer. Its 421 calls and 306,974 tokens compare with 363 calls and 209,507 tokens for packing. This independently reproduces the benefit at the matched token setting and locates the tradeoff at the public character setting. [Complete confirmation results](results/2026-11-23-markdown-confirmation.json)
+
+On the semantic candidate's fixed calibration bodies, heading paths added zero complete answers at the 256-token deployment cap and lost one paper answer at the provider ceiling. The title control gained one paper answer at the deployment cap with an interval spanning zero. The release has no automatic heading-indexing option. [Context results for original-boundary scoring](results/2026-11-23-markdown-fixed-context.json)
+
+The complete study used **373 paid requests, 35,718 distinct inputs and 3,412,695 provider-reported tokens**, including the query preload, calibration, both context studies and both independent evaluations. A subsequent offline replay reproduced the body and source-range hash of every reported configuration on every sample and verified all 373 ordered provider input lists against their batch keys.
+
+An isolated repeat of the synthetic performance run produced the same boundary hashes, call counts and embedded token counts as the initial run. Median warm times were 279 ms for the long section and 559 ms for 2,048 sections. Peak process RSS was 324 and 415 MiB. The first measurement overlapped other verification work, so the time difference includes machine load. [Repeat timings and memory](results/2026-11-23-markdown-performance-repeat.json)
+
+## 2026-11-23 · Independent Markdown retrieval evaluation
+
+The frozen finalists produced the following complete-evidence counts at 512 delivered tokens. Each mean gives equal weight to the four tasks. Calls and tokens include scoring and final indexing across all documents. [All costs, budget curves and paired outcomes](results/2026-11-23-markdown-final.json)
+
+| Markdown combination | CUAD / 72 | QASPER / 36 | FinQA / 35 | Pooled HotpotQA / 32 | Mean | Logical calls | Embedded tokens |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Greedy | 34 | 17 | 16 | 28 | 56.91% | 358 | 146,228 |
+| Original boundaries, document cutoff | 35 | 19 | 20 | 29 | 62.29% | 420 | 206,385 |
+| Rescored bodies, cutoff 0.7 | 35 | 18 | 22 | 29 | 63.02% | 466 | 160,138 |
+
+Original-boundary scoring gained 5.37 complete answers per 100 over packing (paired 95% interval +1.00 to +10.45). Rescoring gained 0.73 over original-boundary scoring (−3.05 to +4.66). The lead-in rule changed zero complete outcomes for either finalist tested with it. On the public 500-character settings, the plain priority control scored 49.39% and the Markdown packer scored 55.52%. Matched plain packing scored 58.42%, plain priority 50.78%, the 128/32 window 51.40% and the 256/64 window 55.40%.
+
+This result favors testing the simpler semantic candidate at the public character default before deciding which combination to integrate. Freeze a third, independent sample using the next groups in the original seeded ordering. At 500 characters compare packing, original boundaries at 0.5, and original boundaries at the document cutoff. Repeat the already-selected 256-token comparison. Recheck title and heading context on the original-boundary candidate's calibration chunks. [Confirmation sample and source hashes](results/2026-11-23-markdown-samples.json)
+
+The historical quality and RAG suites replayed offline. Both quality reports matched the published scoring, samples and vector hashes. All twelve RAG methods matched in each of the three datasets, including both HotpotQA pools and every indexing cost. This verification read 177 cached batches and used zero paid requests. [Historical quality](results/2026-11-23-openai-quality.json) · [Historical RAG](results/2026-11-23-openai-rag.json)
+
 ## 2026-11-23 · Heading context on fixed Markdown bodies
 
 All five calibration arms produced identical body and source-range hashes, and identical BM25 scores at every context budget. The baseline recovered complete dense evidence at 512 tokens for 52.77% of questions averaged across the four tasks. At the deployment cap of 256 tokens, titles alone added one complete paper answer (53.63% overall). Adding the heading path brought the count back to baseline. At the provider ceiling of 8,192 tokens all three means were 52.77%. The paired intervals include zero. Keep the existing caller prefix and leave automatic heading context out of the public API.

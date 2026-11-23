@@ -1,25 +1,21 @@
 import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
-import { fromMarkdown } from 'mdast-util-from-markdown';
 import { chunkText } from '../src/index.js';
-import { createBatchEmbedder } from '../src/embeddings.js';
-import { markdownResult, parseMarkdown } from '../src/markdown.js';
-import { tokenBudget } from '../src/token-limit.js';
-import { denseRanker, packSentences, split as splitPlain, vocabulary } from './chunking.mjs';
+import { denseRanker, split as splitPlain, vocabulary } from './chunking.mjs';
 import { sha256 } from './corpora.mjs';
-import { alignPlain, deliver, evidenceScore, goldReference, tokenWindows } from './delivered-context.mjs';
+import { deliver, evidenceScore, goldReference } from './delivered-context.mjs';
 import { dimension, encodingName, model, modelInputTokens, openReplay } from './encoder.mjs';
+import { indexDocument } from './markdown-index.mjs';
 import { macro, paired, selectCombination } from './markdown-decisions.mjs';
 import { manifest, markdownCorpora } from './markdown-corpora.mjs';
-import { combineMarkdown } from './markdown-merging.mjs';
 import { bm25Ranker, budgets, wordCounts } from './rag.mjs';
 
 const read = async path => JSON.parse(await readFile(path, 'utf8'));
-const [experiment, output, previous] = process.argv.slice(2);
-const split = experiment === 'final' ? 'final' : 'calibration';
-if (!['size', 'compare', 'context', 'final'].includes(experiment) || !output) {
-    throw new Error('Use markdown-study.mjs size|compare|context|final NEW-OUTPUT.json [PREVIOUS-REPORT.json]');
+const [experiment, output, previous, candidate] = process.argv.slice(2);
+const split = experiment === 'confirm' ? 'confirmation' : experiment === 'final' ? 'final' : 'calibration';
+if (!['size', 'compare', 'context', 'final', 'confirm'].includes(experiment) || !output) {
+    throw new Error('Use markdown-study.mjs size|compare|context|final|confirm NEW-OUTPUT.json [PREVIOUS-REPORT.json] [CANDIDATE]');
 }
 if (existsSync(output)) throw new Error('Result already exists: ' + output);
 const prior = previous ? await read(previous) : {};
@@ -38,42 +34,6 @@ function distribution(values) {
         p90: v[Math.floor(v.length * 0.9)], max: v.at(-1) };
 }
 
-// Only the indexing input changes across context arms. Drop the outermost
-// heading first, then the title. An existing caller prefix is always required.
-function contextualize(chunk, doc, policy, counts) {
-    const base = chunk.embeddingText ?? chunk.text, required = doc.prefix ?? '';
-    assert.ok(base.startsWith(required));
-    const body = base.slice(required.length);
-    const path = policy.context === 'headings' ? [...(chunk.headingPath ?? [])] : [];
-    let title = doc.title;
-    if (title && path[0] === title) path.shift();
-    if (title || path.length) {
-        const leading = /^ {0,3}#|^[^\r\n]+\r?\n[=-]+\s*(?:\r?\n|$)/.test(body) ? fromMarkdown(body).children : [];
-        const visible = n => n.children ? n.children.map(visible).join('') : n.alt ?? (n.type === 'html' ? '' : n.value ?? '');
-        for (const head of leading) {
-            if (head.type !== 'heading') break;
-            const name = visible(head).trim();
-            if (title === name) title = '';
-            const i = path.indexOf(name);
-            if (i >= 0) path.splice(i, 1);
-        }
-    }
-    const available = Boolean(title || path.length);
-    let shortened = false;
-    while (title || path.length) {
-        const index = required + [title, ...path].filter(Boolean).join(' > ') + ': ' + body;
-        if (countTokens(index) <= policy.contextCap) {
-            counts[shortened ? 'shortened' : 'retained']++;
-            return index;
-        }
-        if (path.length) path.shift();
-        else title = '';
-        shortened = true;
-    }
-    counts[available ? 'omitted' : 'alreadyPresentOrUnavailable']++;
-    return base;
-}
-
 async function prepare() {
     for (const dataset of Object.values(data)) {
         const { docs, questions } = dataset;
@@ -88,51 +48,12 @@ async function prepare() {
     }
 }
 
-async function index(doc, policy, costs, initial, context) {
-    const maxChunkSize = policy.chars ?? Infinity, maxChunkTokens = policy.tokens ?? Infinity;
-    const fits = tokenBudget(maxChunkTokens, countTokens, doc.prefix ?? '');
-    function record(texts) {
-        costs.calls++;
-        costs.texts += texts.length;
-        costs.singletons += Number(texts.length === 1);
-        for (const text of texts) {
-            costs.embeddedTokens += countTokens(text);
-            if (countTokens(text) > (policy.contextCap ?? maxChunkTokens)) throw new Error('Index input exceeds cap');
-        }
-        return encoder.embed(texts);
-    }
-    const embed = createBatchEmbedder(record, 256);
-    let chunks;
-    if (policy.method === 'plain-priority') {
-        const output = await chunkText(doc.source, record, { maxChunkSize, maxChunkTokens, countTokens, maxEmbeddingBatchSize: 256 });
-        chunks = alignPlain(doc.source, output.map(c => c.text));
-    } else if (policy.method === 'plain-pack') {
-        chunks = alignPlain(doc.source, packSentences(doc.parts, maxChunkSize, maxChunkTokens, countTokens));
-    } else if (policy.method === 'window') {
-        chunks = tokenWindows(doc, doc.offsets, policy.tokens, policy.tokens / 4);
-    } else {
-        const key = [maxChunkSize, maxChunkTokens, Boolean(policy.sentences)].join('/');
-        if (!doc.parsed.has(key)) doc.parsed.set(key, parseMarkdown(doc.source,
-            { maxChunkSize, fits, sentenceUnits: policy.sentences }));
-        const units = await combineMarkdown(doc.source, doc.parsed.get(key), embed, { ...policy, maxChunkSize, fits }, initial);
-        chunks = units.map(u => markdownResult(doc.source, u));
-    }
-    if (policy.context) {
-        for (const c of chunks) c.embeddingText = contextualize(c, doc, policy, context);
-    }
-    const inputs = chunks.map(c => c.embeddingText ?? c.text);
-    costs.indexTexts += chunks.length;
-    costs.indexTokens += inputs.reduce((n, s) => n + countTokens(s), 0);
-    if (policy.method !== 'plain-priority') await embed(inputs);
-    return chunks;
-}
-
 async function evaluate(task, policy) {
     const { docs, questions } = data[task];
     const start = performance.now(), paid = { ...encoder.stats };
     const costs = { calls: 0, texts: 0, singletons: 0, embeddedTokens: 0, indexTexts: 0, indexTokens: 0 };
     const initial = [], context = { retained: 0, shortened: 0, omitted: 0, alreadyPresentOrUnavailable: 0 };
-    const byDoc = await Promise.all(docs.map((doc, d) => index(doc, policy, costs, initial, context)
+    const byDoc = await Promise.all(docs.map((doc, d) => indexDocument(doc, policy, costs, initial, context, encoder)
         .then(rows => rows.map(row => ({ ...row, doc: d })))));
     const bodyHash = sha256(JSON.stringify(byDoc.map(rows => rows.map(c => [c.text, c.sourceRanges]))));
     const vocab = vocabulary();
@@ -186,7 +107,7 @@ async function run(name, policy, subset = tasks) {
 
 async function main() {
     await prepare();
-    let tokens = prior.tokens;
+    const tokens = prior.tokens;
     if (experiment === 'size') {
         for (const size of [128, 256, 512]) await run('plain-' + size, { method: 'plain-pack', tokens: size });
         const best = Object.values(report.policies).sort((a, b) => macro(b) - macro(a) || b.policy.tokens - a.policy.tokens)[0];
@@ -216,8 +137,24 @@ async function main() {
         return;
     }
     assert.ok(prior.winner && prior.shortlist, 'Previous report is missing the calibration shortlist');
-    report.winner = prior.winner;
-    report.shortlist = prior.shortlist;
+    report.winner = candidate ? prior.shortlist[candidate] : prior.winner;
+    assert.ok(report.winner, 'Select a candidate from the frozen shortlist');
+    report.shortlist = { ...prior.shortlist };
+    if (experiment === 'confirm') {
+        assert.ok(candidate && report.winner.method === 'fixed');
+        for (const size of [{ chars: 500 }, { tokens }]) {
+            const suffix = size.chars ? '-chars' : '-tokens';
+            const base = await run('pack' + suffix, { method: 'pack', ...size });
+            const adaptive = await run('fixed-document' + suffix, { method: 'fixed', adaptive: true, ...size });
+            report.comparisons ??= {};
+            report.comparisons['adaptive' + suffix] = paired(adaptive, base, data);
+            if (size.chars) {
+                const fixed = await run('fixed-0.5-chars', { method: 'fixed', cutoff: 0.5, ...size });
+                report.comparisons['fixed-0.5-chars'] = paired(fixed, base, data);
+            }
+        }
+        return;
+    }
     if (experiment === 'context') {
         const base = await run('baseline', report.winner);
         const frozenWinner = Object.values(prior.policies).find(r => JSON.stringify(r.policy) === JSON.stringify(report.winner));
@@ -240,10 +177,6 @@ async function main() {
                 control = row;
             }
         }
-        if (report.winner.method === 'rescore') {
-            const reverse = await run('reversed', { ...report.winner, reverse: true });
-            report.comparisons.reversed = paired(reverse, base, data);
-        }
         return;
     }
     for (const [name, policy] of Object.entries(report.shortlist)) await run(name, policy);
@@ -255,6 +188,12 @@ async function main() {
     report.comparisons = {};
     for (const name of Object.keys(report.policies).filter(n => n !== 'pack')) {
         report.comparisons[name + ' vs pack'] = paired(report.policies[name], report.policies.pack, data);
+    }
+    const original = Object.keys(report.shortlist).find(k => report.shortlist[k].method === 'fixed' && !report.shortlist[k].leadIn);
+    for (const [name, policy] of Object.entries(report.shortlist)) {
+        if (original && (policy.method === 'rescore' || (policy.method === 'fixed' && policy.leadIn))) {
+            report.comparisons[name + ' vs ' + original] = paired(report.policies[name], report.policies[original], data);
+        }
     }
 }
 

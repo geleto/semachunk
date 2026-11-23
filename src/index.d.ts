@@ -4,7 +4,7 @@ export interface ChunkingOptions {
 	inputFormat?: 'text' | 'html' | 'markdown';
 	/** BCP 47 language tag for sentence segmentation. Defaults to 'en'. */
 	locale?: string;
-	/** Maximum UTF-16 code units per join, including its space. Nonnegative safe integer or Infinity. */
+	/** Maximum UTF-16 code units per join, including its separator. Nonnegative safe integer or Infinity. */
 	maxChunkSize?: number;
 	/** Maximum tokens in raw and prefixed texts. A finite positive integer enables the tokenizer fallback. */
 	maxChunkTokens?: number;
