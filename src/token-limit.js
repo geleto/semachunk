@@ -1,58 +1,72 @@
-// Split only an oversized sentence. Work with source offsets so a fallback
-// inside a long word or a script without spaces never inserts or drops text.
-function splitToFit(text, fits) {
-    const spans = [];
-    function visit(start, end) {
-        const part = text.slice(start, end);
-        if (fits(part)) {
-            const last = spans.at(-1);
-            if (last && fits(text.slice(last.start, end))) last.end = end;
-            else spans.push({ start, end });
-            return;
-        }
-
-        const middle = Math.floor(part.length / 2);
-        const before = part.lastIndexOf(' ', middle), after = part.indexOf(' ', middle);
-        const space = before >= 0 && (after < 0 || middle - before <= after - middle) ? before : after;
-        if (space >= 0) {
-            visit(start, start + space);
-            visit(start + space + 1, end);
-            return;
-        }
-
-        let cut = middle;
-        if (cut && /[\uD800-\uDBFF]/.test(part[cut - 1]) && /[\uDC00-\uDFFF]/.test(part[cut])) cut++;
-        if (cut === 0 || cut === part.length) {
-            throw new RangeError('maxChunkTokens cannot fit one Unicode code point with the configured tokenizer and prefix.');
-        }
-        visit(start, start + cut);
-        visit(start + cut, end);
-    }
-    visit(0, text.length);
-    return spans.map(({ start, end }) => text.slice(start, end));
-}
-
-export function createTokenLimit(sentences, maxChunkTokens, countTokens, prefix) {
-    const cache = new Map();
-    function withinBudget(text) {
+export function tokenBudget(maxTokens, countTokens, prefix) {
+    if (maxTokens === Infinity) return undefined;
+    function fits(text) {
         const count = countTokens(text);
         if (!Number.isSafeInteger(count) || count < 0) {
             throw new TypeError('countTokens must return a nonnegative safe integer.');
         }
-        return count <= maxChunkTokens;
+        return count <= maxTokens;
     }
-    function fits(text) {
-        if (!cache.has(text)) {
-            cache.set(text, withinBudget(text) && (!prefix || withinBudget(prefix + text)));
+    return text => fits(text) && (!prefix || fits(prefix + text));
+}
+
+export class TokenLimitError extends RangeError {
+    constructor() {
+        super('maxChunkTokens cannot fit one Unicode code point with the configured tokenizer and prefix.');
+    }
+}
+
+// Bisect near whitespace and coalesce fitting neighbors. The normalized plain
+// text path consumes a separating space. Markdown assigns it to a source span.
+export function splitSpans(source, start, end, fits, keepWhitespace = true, protectedSpans = []) {
+    const spans = [];
+    function visit(a, b) {
+        if (fits(a, b)) {
+            const last = spans.at(-1);
+            if (last && fits(last[0], b)) last[1] = b;
+            else spans.push([a, b]);
+            return;
         }
+        const mid = a + Math.floor((b - a) / 2);
+        let cut = mid, skip = 0;
+        search: for (let delta = 0; mid - delta >= a || mid + delta < b; delta++) {
+            for (const i of [mid - delta, mid + delta]) {
+                if (i < a || i >= b) continue;
+                if (keepWhitespace ? !/\s/u.test(source[i]) : source[i] !== ' ') continue;
+                const boundary = keepWhitespace && i < mid ? i + 1 : i;
+                if (keepWhitespace && (boundary === a || boundary === b)) continue;
+                cut = boundary;
+                skip = keepWhitespace ? 0 : 1;
+                break search;
+            }
+        }
+        for (const [from, to] of protectedSpans) {
+            if (from >= cut) break;
+            if (cut < to && (from > a || to < b)) {
+                cut = from > a && (to >= b || cut - from <= to - cut) ? from : to;
+                break;
+            }
+        }
+        if (cut > a && /[\uD800-\uDBFF]/.test(source[cut - 1]) && /[\uDC00-\uDFFF]/.test(source[cut])) cut++;
+        if ((!skip && cut === a) || cut === b) throw new TokenLimitError();
+        visit(a, cut);
+        visit(cut + skip, b);
+    }
+    visit(start, end);
+    return spans;
+}
+
+export function sentenceTokenLimit(sentences, withinBudget) {
+    if (!withinBudget) return undefined;
+    const cache = new Map(), oversized = new Map();
+    function fits(text) {
+        if (!cache.has(text)) cache.set(text, withinBudget(text));
         return cache.get(text);
     }
-
-    // Oversized sentences are final boundaries. Their pieces go directly to the
-    // output batch; neither a truncated sentence nor a partial word gets scored.
-    const oversized = new Map();
-    for (const sentence of sentences) {
-        if (!fits(sentence) && !oversized.has(sentence)) oversized.set(sentence, splitToFit(sentence, fits));
+    for (const text of sentences) {
+        if (fits(text) || oversized.has(text)) continue;
+        const spans = splitSpans(text, 0, text.length, (a, b) => fits(text.slice(a, b)), false);
+        oversized.set(text, spans.map(([a, b]) => text.slice(a, b)));
     }
     return { oversized, fits };
 }

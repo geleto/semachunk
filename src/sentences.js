@@ -72,7 +72,7 @@ export async function parseSentences(text, { inputFormat, locale = 'en', exclude
     if (inputFormat === 'html') {
         text = await htmlToText(text);
     } else if (inputFormat !== 'text') {
-        throw new TypeError("inputFormat must be 'text' or 'html'.");
+        throw new TypeError("inputFormat must be 'text', 'html' or 'markdown'.");
     }
 
     const sentences = [];

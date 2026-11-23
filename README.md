@@ -50,6 +50,22 @@ For large documents, `maxCachedEmbeddings` limits how many vectors the cache ret
 
 Input is plain text by default. Strings such as `Array<T>` and `&amp;` stay literal. Blank lines, Markdown headings and new bulleted or numbered items start separate units. A single line break inside prose wraps the same unit. For HTML, pass `inputFormat: 'html'`. Headings, paragraphs, list items and other blocks start separate units, inline tags preserve word continuity, and entities are decoded. The chunker normalizes whitespace inside each unit. Related units can subsequently merge.
 
+### Markdown
+
+Install the optional parser dependencies in applications that use Markdown.
+
+```sh
+npm install mdast-util-from-markdown mdast-util-gfm mdast-util-frontmatter micromark-extension-gfm micromark-extension-frontmatter
+```
+
+Pass `inputFormat: 'markdown'` to preserve source spelling, whitespace, tables, code, and the heading hierarchy. Greedy packing joins adjacent bodies in the same section while their exact source slice fits. A thematic break or skipped definition ends a run. Tables and code have their own chunks. Set `combineChunks: false` for the initial units. The Markdown path only requests embeddings for the final indexing strings, and `returnEmbedding: false` skips that call. Similarity thresholds and priority pass limits apply to text and HTML. Markdown rejects `groupSentences: true`.
+
+Each Markdown result has a `sectionId` (heading offset, or `null` in the preamble), a `headingPath` of visible titles, and `sourceRanges`. For each `{ start, end, outputStart }`, the input slice from `start` to `end` appears verbatim at `outputStart` in the returned text. Offsets count UTF-16 code units. Repeated table headers map to the same input. Generated continuation markers and visible caller prefixes occupy gaps in the mapping. A hidden caller prefix is included in `embeddingText`, the exact string for external indexing.
+
+Closed leading YAML, link definitions and empty sections are omitted. Reference links and footnotes keep their spelling for display with the original document. The first body carries its consecutive headings when the hard token budget permits. The character target guides splits by sentence, item, child block or table row. Code stays intact until a hard token cap requires line splitting. If a complete table row or a fence wrapper cannot fit, source fragments preserve the material within the cap.
+
+For structural HTML ingestion, convert HTML to Markdown upstream with `rehype-parse`, `rehype-remark`, `remark-gfm` and `remark-stringify`. Pass that string to the Markdown path. Its ranges address the converted string.
+
 ### Fitting an embedding model’s input
 
 For a rough size target, set `maxChunkSize`. It compares JavaScript string lengths and needs no tokenizer. For a hard model-token limit, set `maxChunkTokens` and supply a synchronous `countTokens(text)` using the same tokenizer and special tokens as your provider. The chunker checks each join and both the raw and prefixed forms. A sentence over budget is split at word boundaries when possible, then at Unicode code point boundaries if a single word is too long. Those pieces go directly into the final embedding batch. An input that cannot fit even one code point with its prefix raises a `RangeError` before embedding.
@@ -79,7 +95,7 @@ Character size and merge counts accept nonnegative safe integers or `Infinity`. 
 
 | Option | Default | Description |
 |---|---|---|
-| `inputFormat` | `'text'` | Treat input as plain text or extract text from `'html'` |
+| `inputFormat` | `'text'` | Split plain text, extract text from `'html'`, or preserve structure in `'markdown'`. |
 | `locale` | `'en'` | Language tag passed to the sentence segmenter. Its English and Spanish abbreviation lists use `en` and `es`. |
 | `maxChunkSize` | 500 | Maximum UTF-16 code units (`text.length`) in a join, including the separating space. A longer individual sentence is kept whole unless a token budget requires splitting it. The character limit excludes the prefix. |
 | `maxChunkTokens` | `Infinity` | Hard model-token budget for each chunk and provider input, including any prefix. A finite value enables splitting oversized sentences. |

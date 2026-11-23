@@ -1,7 +1,7 @@
 export interface ChunkingOptions {
 	logging?: boolean;
-	/** Interpret input literally by default. Use 'html' to extract document text. */
-	inputFormat?: 'text' | 'html';
+	/** Extract HTML text, pack Markdown sections, or split literal text (the default). */
+	inputFormat?: 'text' | 'html' | 'markdown';
 	/** BCP 47 language tag for sentence segmentation. Defaults to 'en'. */
 	locale?: string;
 	/** Maximum UTF-16 code units per join, including its space. Nonnegative safe integer or Infinity. */
@@ -50,6 +50,16 @@ export interface Chunk<Vector extends Embedding = number[]> {
 	embedding?: Vector;
 }
 
+export interface MarkdownChunk<Vector extends Embedding = number[]> extends Chunk<Vector> {
+	/** UTF-16 offset of the section heading. The preamble has a null sectionId. */
+	sectionId: number | null;
+	headingPath: string[];
+	/** Half-open input offsets and the corresponding offset in the returned text. */
+	sourceRanges: { start: number; end: number; outputStart: number }[];
+	/** Exact indexing string when it differs from the displayed text. */
+	embeddingText?: string;
+}
+
 export type EmbedBatchCallback<Vector extends Embedding = number[]> = (texts: string[]) => Promise<Vector[]>;
 
 /**
@@ -62,7 +72,17 @@ export type EmbedBatchCallback<Vector extends Embedding = number[]> = (texts: st
 export function chunkText<Vector extends Embedding = number[]>(
 	text: string,
 	embedBatchCallback: EmbedBatchCallback<Vector>,
-	options?: ChunkingOptions
+	options: ChunkingOptions & { inputFormat: 'markdown' }
+): Promise<MarkdownChunk<Vector>[]>;
+export function chunkText<Vector extends Embedding = number[]>(
+	text: string,
+	embedBatchCallback: EmbedBatchCallback<Vector>,
+	options?: ChunkingOptions & { inputFormat?: 'text' | 'html' }
 ): Promise<Chunk<Vector>[]>;
+export function chunkText<Vector extends Embedding = number[]>(
+	text: string,
+	embedBatchCallback: EmbedBatchCallback<Vector>,
+	options?: ChunkingOptions
+): Promise<(Chunk<Vector> | MarkdownChunk<Vector>)[]>;
 
 export function _printVersion(): Promise<void>;

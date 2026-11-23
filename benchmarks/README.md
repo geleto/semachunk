@@ -77,6 +77,8 @@ Retrieval benchmarks such as BEIR also use rank-based metrics including nDCG and
 
 ## Run the large-document benchmark
 
+Run `node benchmarks/markdown-performance.mjs` for the Markdown packer. An optional output path saves a new JSON report. Each workload runs in its own process with one warmup and three timed iterations. The inputs include repeated and unique paragraphs, fenced code and tables in either one long section or 2,048 short sections.
+
 ```sh
 npm run benchmark:merge
 npm run benchmark:merge -- --compare ../semachunk-reference --output benchmarks/results/merge-comparison.json

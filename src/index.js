@@ -3,7 +3,7 @@ import { parseSentences } from './sentences.js';
 import { copyEmbedding, createBatchEmbedder } from './embeddings.js';
 import { mergeChunks } from './merge.js';
 import { DEFAULT_CONFIG } from '../config.js';
-import { createJoinCheck, createTokenLimit } from './token-limit.js';
+import { createJoinCheck, sentenceTokenLimit, tokenBudget } from './token-limit.js';
 
 /**
  * Chunk text semantically using batch embeddings
@@ -71,53 +71,77 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
 	}
 	const embedBatch = createBatchEmbedder(embedBatchCallback, maxEmbeddingBatchSize, maxCachedEmbeddings);
 	if (logging) await _printVersion();
-	const sentences = await parseSentences(text, { inputFormat, locale, excludeNonLetterSentences });
-	if (sentences.length === 0) return [];
-
 	const prefix = chunkPrefix?.trim() ? chunkPrefix + ': ' : '';
-	const tokenLimit = maxChunkTokens === Infinity ? undefined : createTokenLimit(sentences, maxChunkTokens, countTokens, prefix);
-	const canJoin = createJoinCheck(maxChunkSize, tokenLimit);
-	let cutoff = combineChunksSimilarityThreshold;
-	let calibrate = mergeThresholdMode === 'document' && options?.combineChunksSimilarityThreshold === undefined;
-	let chunks = sentences;
-	if (groupSentences && sentences.length > 1) {
-		const grouping = { maxChunkSize, canJoin, similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound, logging };
-		const analysis = await computeAdvancedSimilarities(sentences, embedBatch, grouping);
-		chunks = await groupAdjacentSentences(sentences, embedBatch, grouping, analysis);
-		if (calibrate) {
-			cutoff = documentMergeThreshold(analysis, cutoff);
-			calibrate = false;
-		}
-	}
-	if (logging) console.log('Initial chunks', chunks.map(chunk => chunk.slice(0, 50)));
-
-	const outputText = text => prefix + text;
-	if (combineChunks && chunks.length > 1) {
-		chunks = await mergeChunks(chunks, embedBatch, {
-			maxChunkSize, canJoin, tokenLimit, logging,
-			combineChunksSimilarityThreshold: cutoff, calibrate,
-			maxPasses,
-			maxUncappedPasses,
-			maxMergesPerPass,
-			candidateMergesPercentageCap,
-			uncappedCandidateMerges,
-			finalEmbeddingText: returnEmbedding && maxCachedEmbeddings === Infinity ? outputText : undefined
+	const fits = tokenBudget(maxChunkTokens, countTokens, prefix);
+	let output;
+	if (inputFormat === 'markdown') {
+		if (groupSentences) throw new TypeError('Markdown does not support groupSentences.');
+		const { parseMarkdown, packMarkdown, markdownResult } = await import('./markdown.js').catch(error => {
+			if (error.code === 'ERR_MODULE_NOT_FOUND' && /package '(?:mdast-util|micromark-extension)-/.test(error.message)) {
+				throw new Error('Markdown input requires optional packages. Run npm install mdast-util-from-markdown mdast-util-gfm mdast-util-frontmatter micromark-extension-gfm micromark-extension-frontmatter.', { cause: error });
+			}
+			throw error;
 		});
-		if (logging) console.log('Combined chunks', chunks.map(chunk => chunk.slice(0, 100)));
-	}
+		let units = parseMarkdown(text, { maxChunkSize, fits, locale, excludeNonLetterSentences });
+		if (combineChunks) units = packMarkdown(text, units, maxChunkSize, fits);
+		output = units.map(unit => markdownResult(text, unit));
+	} else {
+		const sentences = await parseSentences(text, { inputFormat, locale, excludeNonLetterSentences });
+		if (sentences.length === 0) return [];
 
-	if (tokenLimit?.oversized.size) chunks = chunks.flatMap(text => tokenLimit.oversized.get(text) ?? [text]);
-	const prefixedChunks = prefix ? chunks.map(outputText) : chunks;
-	const output = excludeChunkPrefixInResults ? chunks : prefixedChunks;
-	if (!returnEmbedding) return output.map(text => ({ text }));
-	const embeddings = await embedBatch(prefixedChunks);
-	const seen = new Set();
-	return output.map((text, i) => {
-		const vector = embeddings[i];
-		const embedding = seen.has(vector) ? copyEmbedding(vector) : vector;
-		seen.add(vector);
-		return { text, embedding };
-	});
+		const tokenLimit = sentenceTokenLimit(sentences, fits);
+		const canJoin = createJoinCheck(maxChunkSize, tokenLimit);
+		let cutoff = combineChunksSimilarityThreshold;
+		let calibrate = mergeThresholdMode === 'document' && options?.combineChunksSimilarityThreshold === undefined;
+		let chunks = sentences;
+		if (groupSentences && sentences.length > 1) {
+			const grouping = { maxChunkSize, canJoin, similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound, logging };
+			const analysis = await computeAdvancedSimilarities(sentences, embedBatch, grouping);
+			chunks = await groupAdjacentSentences(sentences, embedBatch, grouping, analysis);
+			if (calibrate) {
+				cutoff = documentMergeThreshold(analysis, cutoff);
+				calibrate = false;
+			}
+		}
+		if (logging) console.log('Initial chunks', chunks.map(chunk => chunk.slice(0, 50)));
+
+		const outputText = text => prefix + text;
+		if (combineChunks && chunks.length > 1) {
+			chunks = await mergeChunks(chunks, embedBatch, {
+				maxChunkSize, canJoin, tokenLimit, logging,
+				combineChunksSimilarityThreshold: cutoff, calibrate,
+				maxPasses,
+				maxUncappedPasses,
+				maxMergesPerPass,
+				candidateMergesPercentageCap,
+				uncappedCandidateMerges,
+				finalEmbeddingText: returnEmbedding && maxCachedEmbeddings === Infinity ? outputText : undefined
+			});
+			if (logging) console.log('Combined chunks', chunks.map(chunk => chunk.slice(0, 100)));
+		}
+
+		if (tokenLimit?.oversized.size) chunks = chunks.flatMap(text => tokenLimit.oversized.get(text) ?? [text]);
+		output = chunks.map(text => ({ text }));
+	}
+	const indexed = output.map(chunk => prefix + chunk.text);
+	if (prefix) {
+		output.forEach((chunk, i) => {
+			if (!excludeChunkPrefixInResults) {
+				chunk.text = indexed[i];
+				for (const range of chunk.sourceRanges ?? []) range.outputStart += prefix.length;
+			} else if (inputFormat === 'markdown') chunk.embeddingText = indexed[i];
+		});
+	}
+	if (returnEmbedding) {
+		const embeddings = await embedBatch(indexed);
+		const seen = new Set();
+		output.forEach((chunk, i) => {
+			const vector = embeddings[i];
+			chunk.embedding = seen.has(vector) ? copyEmbedding(vector) : vector;
+			seen.add(vector);
+		});
+	}
+	return output;
 }
 
 export async function _printVersion() {

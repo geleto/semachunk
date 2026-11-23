@@ -1,5 +1,11 @@
 # Chunking improvements and benchmark results
 
+## 2026-11-23 · Markdown source parsing and greedy packing
+
+The public API now packs contiguous source slices within a heading occurrence. Tables and code close a packing run. Only a split that needs repeated markup carries multiple pieces. A shared offset splitter handles hard token limits. The plain-text path still consumes normalized word separators. The Markdown path keeps them. Parser dependencies load on demand. No external splitter source was copied.
+
+With a 500-character target and batches of at most 256 distinct texts, the long section yielded 1,025 chunks and made three final embedding calls (515 distinct texts, 17,199 tokens). Across 2,048 sections the same API yielded 2,560 chunks in seven calls (1,539 texts, 20,804 tokens). Neither case needed a singleton. Median warm times were 1.22 s and 1.38 s. Peak process RSS was 344 and 401 MiB respectively. These synthetic workloads measure parsing, packing and batching with a deterministic callback. [Raw timings, sizes and boundary checksums](results/2026-11-23-markdown-performance.json)
+
 ## 2026-11-23 · Simplified benchmark dataset loading
 
 Removed the benchmark development dependencies `tar-stream`, `fflate` and `hyparquet`. WikiSection and QASPER read named members of their checksummed archives through the system `tar` command. CUAD and HotpotQA now download pinned JSON mirrors. CUAD's test JSON matched the bytes in the authors' ZIP. For all 7,405 HotpotQA validation rows, the JSON matched the previous Parquet source on row order, question IDs, question and answer text, question type, passage titles and sentences, and supporting facts. [Dataset loaders](corpora.mjs)
