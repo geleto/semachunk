@@ -1,0 +1,99 @@
+<section id="sc-adaptive-groups" aria-label="Adaptive grouping with four sentences and illustrative cosine scores">
+  <style>
+    #sc-adaptive-groups { display: grid; gap: calc(var(--font-size-base) * .8); }
+    #sc-adaptive-groups .group-list { display: grid; gap: calc(var(--font-size-base) * .8); }
+    #sc-adaptive-groups .sentence-group { display: grid; grid-template-columns: auto 1fr; gap: var(--font-size-base); align-items: baseline; }
+    #sc-adaptive-groups ol { margin: 0; padding-inline-start: calc(var(--font-size-base) * 1.6); }
+    #sc-adaptive-groups li + li { margin-block-start: calc(var(--font-size-base) * .35); }
+    #sc-adaptive-groups .boundary { display: block; color: var(--muted-foreground); }
+  </style>
+  <h3>Initial sentence groups</h3>
+  <div class="viz-controls">
+    <label class="form-label">Base cutoff
+      <select class="form-select" data-base>
+        <option value="0.4">0.40</option>
+        <option value="0.5" selected>0.50</option>
+        <option value="0.6">0.60</option>
+        <option value="0.7">0.70</option>
+        <option value="0.8">0.80</option>
+      </select>
+    </label>
+  </div>
+  <div class="viz-row tabular-nums" data-status role="status" aria-live="polite"></div>
+  <div class="group-list" data-groups></div>
+  <span class="text-small text-muted">Illustrative cosine scores · 500-character limit</span>
+</section>
+<script>
+(() => {
+  const root = document.getElementById('sc-adaptive-groups');
+  const base = root.querySelector('[data-base]');
+  const groups = root.querySelector('[data-groups]');
+  const status = root.querySelector('[data-status]');
+  const sentences = [
+    'Rain is forecast tonight.',
+    'The café closes at six.',
+    'Heavy showers will arrive after dusk.',
+    'An umbrella will keep you dry.'
+  ];
+  const scores = [0.08, 0.05, 0.72];
+  const mean = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+  const variance = scores.reduce((sum, score) => sum + (score - mean) ** 2, 0) / scores.length;
+
+  function draw() {
+    let cutoff = Number(base.value);
+    if (variance < 0.01) cutoff -= 0.1;
+    else if (variance > 0.05) cutoff += 0.1;
+    if (mean < 0.3) cutoff += 0.05;
+    else if (mean > 0.7) cutoff -= 0.05;
+    cutoff = Math.max(0.4, Math.min(0.8, cutoff));
+
+    groups.replaceChildren();
+    let list, groupCount = 0, length = 0;
+    sentences.forEach((sentence, i) => {
+      if (!list) {
+        const group = document.createElement('div');
+        group.className = 'sentence-group';
+        const heading = document.createElement('h3');
+        heading.textContent = 'Group ' + (++groupCount);
+        list = document.createElement('ol');
+        list.start = i + 1;
+        list.setAttribute('aria-label', heading.textContent);
+        group.append(heading, list);
+        groups.append(group);
+        length = 0;
+      }
+      length += (length ? 1 : 0) + sentence.length;
+      const line = document.createElement('li');
+      line.textContent = sentence;
+      list.append(line);
+      if (i < scores.length) {
+        const score = scores[i];
+        const joins = score >= cutoff && length + 1 + sentences[i + 1].length <= 500;
+        const detail = document.createElement('span');
+        detail.className = 'boundary text-small tabular-nums';
+        detail.textContent = (joins ? 'Join next' : 'Split here') + ' · ' + score.toFixed(2) + ' with sentence ' + (i + 2);
+        line.append(detail);
+        if (!joins) list = null;
+      }
+    });
+    status.textContent = 'Adjusted cutoff ' + cutoff.toFixed(2) + ' · ' + groupCount + ' groups';
+  }
+
+  function restore(state) {
+    const saved = state?.modelContent;
+    base.value = [0.4, 0.5, 0.6, 0.7, 0.8].includes(saved?.base) ? String(saved.base) : '0.5';
+    draw();
+  }
+  root.addEventListener('change', () => {
+    draw();
+    window.openai?.setWidgetState?.({
+      modelContent: { base: Number(base.value) },
+      privateContent: null
+    }).catch(() => {});
+  });
+  window.addEventListener('openai:set_globals', event => {
+    if (event.detail?.globals && 'widgetState' in event.detail.globals) restore(event.detail.globals.widgetState);
+  });
+  restore(window.openai?.widgetState);
+})();
+</script>
