@@ -92,6 +92,15 @@ Each command takes a new output path. The study uses the same model, tokenizer, 
 
 The confirmation command evaluates the already-selected original-boundary strategy at both the public character setting and the matched token setting on a third, group-disjoint sample. The final context command reuses its calibration bodies for the predeclared heading comparison.
 
+To reproduce the automatic policy comparison, run calibration first and pass its report to the independent fourth split.
+
+```sh
+node benchmarks/markdown-study.mjs rules rules.json
+node benchmarks/markdown-study.mjs validate-rules rule-validation.json rules.json
+```
+
+The six primary settings are 500, 1,024 and 2,048 characters and 128, 256 and 512 tokens. The runner scores the actual document layouts selected by each rule, including mixed-policy HotpotQA pools. Budget-only rules reuse the corresponding full-policy measurement at each setting. The JSON grid identifies those measurements. Bootstrap draws keep a question's outcomes across all six settings in the same independent group. The two mixed-cap diagnostics appear separately in the validation report.
+
 All arms search the same sources. QASPER uses the paper's heading hierarchy. FinQA includes pre-table prose, the table and post-table prose with offsets keyed by the annotation IDs. A financial hit requires every annotated row and prose span. The primary score averages the four dataset complete-evidence rates at 512 delivered tokens with pooled HotpotQA. The diagnostic shortlist searches each question's supplied articles. The report also records both rankers at 256 and 1,024 tokens, per-question paired outcomes and group bootstrap intervals. [Frozen sample IDs](results/2026-11-23-markdown-samples.json)
 
 ## Run the large-document benchmark

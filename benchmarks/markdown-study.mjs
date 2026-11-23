@@ -6,16 +6,18 @@ import { denseRanker, split as splitPlain, vocabulary } from './chunking.mjs';
 import { sha256 } from './corpora.mjs';
 import { deliver, evidenceScore, goldReference } from './delivered-context.mjs';
 import { dimension, encodingName, model, modelInputTokens, openReplay } from './encoder.mjs';
-import { indexDocument } from './markdown-index.mjs';
+import { documentRule, indexDocument } from './markdown-index.mjs';
+import { studyRules } from './markdown-rules.mjs';
 import { macro, paired, selectCombination } from './markdown-decisions.mjs';
 import { manifest, markdownCorpora } from './markdown-corpora.mjs';
 import { bm25Ranker, budgets, wordCounts } from './rag.mjs';
 
 const read = async path => JSON.parse(await readFile(path, 'utf8'));
 const [experiment, output, previous, candidate] = process.argv.slice(2);
-const split = experiment === 'confirm' ? 'confirmation' : experiment === 'final' ? 'final' : 'calibration';
-if (!['size', 'compare', 'context', 'final', 'confirm'].includes(experiment) || !output) {
-    throw new Error('Use markdown-study.mjs size|compare|context|final|confirm NEW-OUTPUT.json [PREVIOUS-REPORT.json] [CANDIDATE]');
+const ruleStudy = experiment === 'rules' || experiment === 'validate-rules';
+const split = experiment === 'validate-rules' ? 'rules-test' : experiment === 'confirm' ? 'confirmation' : experiment === 'final' ? 'final' : 'calibration';
+if (!['size', 'compare', 'context', 'final', 'confirm', 'rules', 'validate-rules'].includes(experiment) || !output) {
+    throw new Error('Supply a Markdown study experiment and a new JSON output path.');
 }
 if (existsSync(output)) throw new Error('Result already exists: ' + output);
 const prior = previous ? await read(previous) : {};
@@ -53,9 +55,25 @@ async function evaluate(task, policy) {
     const start = performance.now(), paid = { ...encoder.stats };
     const costs = { calls: 0, texts: 0, singletons: 0, embeddedTokens: 0, indexTexts: 0, indexTokens: 0 };
     const initial = [], context = { retained: 0, shortened: 0, omitted: 0, alreadyPresentOrUnavailable: 0 };
-    const byDoc = await Promise.all(docs.map((doc, d) => indexDocument(doc, policy, costs, initial, context, encoder)
-        .then(rows => rows.map(row => ({ ...row, doc: d })))));
+    let semanticDocuments = 0;
+    const byDoc = await Promise.all(docs.map(async (doc, d) => {
+        const selected = documentRule(doc, policy, countTokens);
+        if (selected.method === 'fixed') semanticDocuments++;
+        const key = JSON.stringify(selected, Object.keys(selected).sort());
+        if (ruleStudy) doc.layouts ??= new Map();
+        let layout = doc.layouts?.get(key);
+        if (!layout) {
+            const work = Object.fromEntries(Object.keys(costs).map(k => [k, 0])), scores = [];
+            const rows = await indexDocument(doc, selected, work, scores, context, encoder);
+            layout = { work, scores, rows: rows.map(row => ({ ...row, doc: d })) };
+            doc.layouts?.set(key, layout);
+        }
+        for (const k of Object.keys(costs)) costs[k] += layout.work[k];
+        for (const score of layout.scores) initial.push(score);
+        return layout.rows;
+    }));
     const bodyHash = sha256(JSON.stringify(byDoc.map(rows => rows.map(c => [c.text, c.sourceRanges]))));
+    const layouts = ruleStudy && byDoc.map(rows => sha256(JSON.stringify(rows.map(c => [c.text, c.sourceRanges, c.embeddingText]))));
     const vocab = vocabulary();
     for (const c of byDoc.flat()) c.index = vocab.intern(c.embeddingText ?? c.text);
     for (const q of questions) vocab.intern(q.text);
@@ -68,30 +86,42 @@ async function evaluate(task, policy) {
             const key = name + pool.join(',');
             if (!pools.has(key)) {
                 const passages = pool.flatMap(d => byDoc[d]);
-                pools.set(key, { passages, indices: passages.map(p => p.index), bm25: bm25Ranker(passages.map(p => wordCounts(p.text))) });
+                pools.set(key, { passages, indices: passages.map(p => p.index), bm25: bm25Ranker(passages.map(p => wordCounts(p.text))),
+                    layout: ruleStudy && sha256(pool.map(d => d + '/' + layouts[d]).join(',')) });
             }
-            const { passages, indices, bm25 } = pools.get(key);
-            for (const [ranker, order] of [['dense', dense(vocab.id(q.text), indices)], ['bm25', bm25(wordCounts(q.text))]]) {
-                const arm = name + '/' + ranker, ranked = order.map(j => passages[j]);
-                const scores = retrieval[arm] ??= {};
-                for (const budget of budgets) {
-                    const { projected, text } = deliver(ranked, budget, encoder);
-                    const metrics = evidenceScore(projected, q.gold);
-                    const total = scores[budget] ??= { complete: 0, recall: 0, precision: 0, deliveredTokens: 0 };
-                    total.complete += metrics.complete;
-                    for (const k of ['recall', 'precision']) total[k] += metrics[k] / questions.length;
-                    total.deliveredTokens += projected.length / questions.length;
-                    if (budget === 512 && ranker === 'dense') {
-                        complete512[arm] = (complete512[arm] ?? '') + metrics.complete;
-                        if (i === 0) examples[name] = { id: q.id, first: ranked[0].sourceRanges, doc: ranked[0].doc,
-                            deliveredSHA256: sha256(text), ...metrics };
+            const { passages, indices, bm25, layout } = pools.get(key);
+            if (ruleStudy) q.scores ??= new Map();
+            let measured = q.scores?.get(layout);
+            if (!measured) {
+                measured = [];
+                for (const [ranker, order] of [['dense', dense(vocab.id(q.text), indices)], ['bm25', bm25(wordCounts(q.text))]]) {
+                    const ranked = order.map(j => passages[j]);
+                    for (const budget of budgets) {
+                        const { projected, text } = deliver(ranked, budget, encoder);
+                        const metrics = evidenceScore(projected, q.gold);
+                        const trace = i === 0 && budget === 512 && ranker === 'dense' && { id: q.id, first: ranked[0].sourceRanges,
+                            doc: ranked[0].doc, deliveredSHA256: sha256(text), ...metrics };
+                        measured.push({ ranker, budget, metrics, spent: projected.length, trace });
                     }
+                }
+                q.scores?.set(layout, measured);
+            }
+            for (const { ranker, budget, metrics, spent, trace } of measured) {
+                const arm = name + '/' + ranker;
+                const scores = retrieval[arm] ??= {};
+                const total = scores[budget] ??= { complete: 0, recall: 0, precision: 0, deliveredTokens: 0 };
+                total.complete += metrics.complete;
+                for (const k of ['recall', 'precision']) total[k] += metrics[k] / questions.length;
+                total.deliveredTokens += spent / questions.length;
+                if (budget === 512 && ranker === 'dense') {
+                    complete512[arm] = (complete512[arm] ?? '') + metrics.complete;
+                    if (trace) examples[name] = trace;
                 }
             }
         }
     }
     return { questions: questions.length, bodyHash, chunkTokens: distribution(byDoc.flat().map(c => countTokens(c.text))),
-        ...costs, ...(policy.context && { context }), ...(initial.length && { eligibleCosines: distribution(initial) }),
+        ...costs, ...(ruleStudy && { semanticDocuments }), ...(policy.context && { context }), ...(initial.length && { eligibleCosines: distribution(initial) }),
         retrieval, complete512, examples, milliseconds: performance.now() - start, peakRSSKiB: process.resourceUsage().maxRSS,
         encoder: Object.fromEntries(Object.entries(encoder.stats).map(([k, n]) => [k, n - paid[k]])) };
 }
@@ -107,6 +137,7 @@ async function run(name, policy, subset = tasks) {
 
 async function main() {
     await prepare();
+    if (ruleStudy) return studyRules({ report, prior, data, run, validation: experiment === 'validate-rules' });
     const tokens = prior.tokens;
     if (experiment === 'size') {
         for (const size of [128, 256, 512]) await run('plain-' + size, { method: 'plain-pack', tokens: size });

@@ -2,11 +2,42 @@ import assert from 'node:assert/strict';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import { chunkText } from '../src/index.js';
 import { createBatchEmbedder } from '../src/embeddings.js';
-import { markdownResult, parseMarkdown } from '../src/markdown.js';
+import { fitsMarkdownJoin, markdownResult, parseMarkdown } from '../src/markdown.js';
 import { tokenBudget } from '../src/token-limit.js';
 import { packSentences } from './chunking.mjs';
 import { alignPlain, tokenWindows } from './delivered-context.mjs';
 import { combineMarkdown } from './markdown-merging.mjs';
+
+function parsed(doc, size, tokens, fits, sentences) {
+    const key = [size, tokens, Boolean(sentences)].join('/');
+    if (!doc.parsed.has(key)) doc.parsed.set(key, parseMarkdown(doc.source, { maxChunkSize: size, fits, sentenceUnits: sentences }));
+    return doc.parsed.get(key);
+}
+
+export function boundaryFractions(source, units, maxChunkSize, fits) {
+    let eligible = 0, competing = 0, previous = false;
+    for (let i = 1; i < units.length; i++) {
+        const left = units[i - 1], right = units[i];
+        const joins = left.kind === 'prose' && right.kind === 'prose' && fitsMarkdownJoin(source, left, right, maxChunkSize, fits);
+        if (joins) { eligible++; if (previous) competing++; }
+        previous = joins;
+    }
+    return { eligible: eligible / Math.max(1, units.length - 1), competing: competing / Math.max(1, units.length - 2) };
+}
+
+export function documentRule(doc, policy, countTokens) {
+    if (!policy.feature) return policy;
+    const { feature, at, ...scoring } = policy;
+    const size = policy.chars ?? Infinity, tokens = policy.tokens ?? Infinity;
+    const key = [size, tokens].join('/');
+    doc.fractions ??= new Map();
+    if (!doc.fractions.has(key)) {
+        const fits = tokenBudget(tokens, countTokens, doc.chunkPrefix?.trim() ? doc.chunkPrefix + ': ' : '');
+        const units = parsed(doc, size, tokens, fits);
+        doc.fractions.set(key, boundaryFractions(doc.source, units, size, fits));
+    }
+    return doc.fractions.get(key)[feature] >= at ? scoring : { method: 'pack', chars: policy.chars, tokens: policy.tokens };
+}
 
 // Only the indexing input changes across context arms. Drop the outermost
 // heading first, then the title. An existing caller prefix is always required.
@@ -70,10 +101,8 @@ export async function indexDocument(doc, policy, costs, initial, context, encode
     } else if (policy.method === 'window') {
         chunks = tokenWindows(doc, doc.offsets, policy.tokens, policy.tokens / 4);
     } else {
-        const key = [maxChunkSize, maxChunkTokens, Boolean(policy.sentences)].join('/');
-        if (!doc.parsed.has(key)) doc.parsed.set(key, parseMarkdown(doc.source,
-            { maxChunkSize, fits, sentenceUnits: policy.sentences }));
-        const units = await combineMarkdown(doc.source, doc.parsed.get(key), embed, { ...policy, maxChunkSize, fits }, initial);
+        const input = parsed(doc, maxChunkSize, maxChunkTokens, fits, policy.sentences);
+        const units = await combineMarkdown(doc.source, input, embed, { ...policy, maxChunkSize, fits }, initial);
         chunks = units.map(u => markdownResult(doc.source, u));
     }
     if (required) for (const chunk of chunks) chunk.embeddingText = required + chunk.text;

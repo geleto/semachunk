@@ -1,5 +1,19 @@
 # Chunking improvements and benchmark results
 
+## 2026-11-23 · Automatic policy experiment design
+
+Use the original calibration documents for the heuristic search. Cross three character caps (500, 1,024 and 2,048) with three independently measured token budgets (128, 256 and 512) as six separate settings. The pairs have similar nominal sizes in English. Token counts are measured for each actual input. Weight each setting and each dataset equally. Resample independent question groups once per bootstrap draw, keeping all six results for each question together.
+
+Compare always packing and always scoring against rules using the presence of a hard token cap, a medium or large configured budget, the fraction of original boundaries that fit (one half or three quarters), and the fraction of interior units that fit with both neighbors (one quarter or one half). For original-boundary scoring, compare the frozen document cutoff with one merge pass, a cutoff tightened to the initial mean after the first pass, and recalibration from the remaining eligible scores each pass. Select candidates on calibration and retain the simplest when an extra adjustment has no clear gain.
+
+The fourth independent sample contains 86 contract, 27 paper, 27 row-plus-prose financial and 32 multi-hop questions. It shares no sampled documents or groups with the three previous samples. Freeze the best budget rule, document rule and pass challenger before measuring this sample. Also check the two mixed-cap settings of 500 characters with 256 tokens and 1,024 characters with 128 tokens. Report indexing work alongside paired complete-evidence differences. [Frozen samples](results/2026-11-23-markdown-samples.json)
+
+Two additional calibration arms directly vary the initial cosine cutoff with available capacity. If `p` is the fraction of original boundaries that fit, test both `mean − p × SD` and `mean − (1 − p) × SD`. These coincide with the existing cutoff at `p = 0.5` and test opposite directions without introducing a fitted coefficient. Compare the stronger of these with the pass schedules before freezing the shortlist.
+
+Require a positive lower paired interval over packing to add automatic scoring. Favor the cheaper budget rule if the more involved document or pass rule has an interval spanning zero against it. Report the comparison with scoring every document as well. The mixed caps are diagnostics and do not enter the selection mean.
+
+Calibration froze the budget rule at **1,024 characters and 256 tokens**. An unbounded limit satisfies its side of the test. Its mean was 53.68%, compared with 50.83% for packing, 51.98% for scoring whenever a token cap was set, and 53.22% for scoring everywhere. Relative to packing the paired difference was +2.85 per 100 (+0.34 to +5.28). Scoring when at least half the interior units fit with both neighbors reached 53.51%. Tightening to the initial mean after pass one scored 52.82%, one pass 52.47%, live recalibration 52.18%, and the two density-adjusted cutoffs 52.54% and 52.37%. The independent shortlist uses the budget rule, the half-competing rule, the stronger pass challenger and both constant controls. [Raw calibration grid and paired comparisons](results/2026-11-23-markdown-rules.json)
+
 ## 2026-11-23 · Fresh confirmation at both size settings
 
 At **500 UTF-16 code units**, greedy packing scored **57.78%**, original-boundary scoring at the document cutoff **57.57%** (−0.22 per 100, paired 95% interval −2.57 to +1.47), and a fixed 0.5 cutoff **56.40%**. Greedy used 365 logical calls and 210,282 tokens. The document cutoff used 530 calls and 295,668 tokens.

@@ -1,4 +1,5 @@
 import { fitsMarkdownJoin, markdownText, packMarkdown } from '../src/markdown.js';
+import { mergePass } from '../src/markdown-merge.js';
 import { directionCosine, documentMergeThreshold, SimilarityStatistics, vectorDirection } from '../src/similarity.js';
 import { DEFAULT_CONFIG as defaults } from '../config.js';
 
@@ -11,7 +12,7 @@ export async function combineMarkdown(source, units, embed, options, initialScor
     if (method === 'pack' && !leadIn) return packMarkdown(source, units, maxChunkSize, fits);
     let live = units.map((u, i) => ({ ...u, first: i, last: i }));
     function eligible(a, b) {
-        const lead = leadIn && a.first === a.last && (b.kind === 'code' || b.kind === 'table');
+        const lead = leadIn && a.first === a.last && b.first === b.last && (b.kind === 'code' || b.kind === 'table');
         return a.kind === 'prose' && (b.kind === 'prose' || lead) && fitsMarkdownJoin(source, a, b, maxChunkSize, fits);
     }
     function join(a, b) { return { ...a, last: b.last, end: b.end, kind: b.kind === 'prose' ? 'prose' : 'closed' }; }
@@ -25,7 +26,7 @@ export async function combineMarkdown(source, units, embed, options, initialScor
         return packed;
     }
     const directions = new WeakMap(), scores = new Map();
-    let threshold = options.cutoff ?? 0.5, uncapped = 0;
+    let threshold = options.cutoff ?? 0.5, initialCutoff = threshold, initialMean = threshold, uncapped = 0;
     for (let pass = 0; pass < maxPasses && uncapped < maxUncappedPasses && maxMergesPerPass > 0; pass++) {
         const edges = [], missing = new Set();
         for (let i = 0; i + 1 < live.length; i++) {
@@ -48,31 +49,24 @@ export async function combineMarkdown(source, units, embed, options, initialScor
             if (!scores.has(edge.key)) scores.set(edge.key, directionCosine(directions.get(edge.left), directions.get(edge.right)));
             edge.score = scores.get(edge.key);
         }
-        if (!pass) {
+        if (!pass || options.schedule === 'live') {
             const stats = new SimilarityStatistics();
-            for (const { score } of edges) { initialScores.push(score); stats.add(score); }
-            if (options.adaptive) threshold = documentMergeThreshold(stats, threshold);
-        }
-        const candidates = edges.filter(e => e.score >= threshold).sort((a, b) => b.score - a.score);
-        const percent = Math.floor(candidates.length * candidateMergesPercentageCap / 100 + 1e-9);
-        const cap = Math.min(maxMergesPerPass, Math.max(uncappedCandidateMerges, percent));
-        if (!candidates.length || !cap) break;
-        const starts = new Set();
-        let capped = false;
-        for (const { i } of candidates) {
-            if (starts.has(i - 1) || starts.has(i + 1)) continue;
-            if (starts.size === cap) { capped = true; break; }
-            starts.add(i);
-        }
-        const next = [];
-        for (let i = 0; i < live.length; i++) {
-            if (starts.has(i)) {
-                next.push(join(live[i], live[i + 1]));
-                i++;
-            } else next.push(live[i]);
-        }
-        live = next;
-        if (!capped) uncapped++;
+            for (const { score } of edges) {
+                stats.add(score);
+                if (!pass) initialScores.push(score);
+            }
+            if (options.adaptive) threshold = documentMergeThreshold(stats, initialCutoff);
+            if (!pass && options.density && stats.boundaryCount >= 2) {
+                const fraction = edges.length / (units.length - 1);
+                const weight = options.density === 'relax' ? fraction : 1 - fraction;
+                threshold = stats.average - weight * Math.sqrt(stats.variance);
+            }
+            if (!pass) { initialCutoff = threshold; initialMean = stats.boundaryCount >= 2 ? stats.average : threshold; }
+        } else if (options.schedule === 'tighten') threshold = initialMean;
+        const merged = mergePass(live, edges, threshold, { maxMergesPerPass, candidateMergesPercentageCap, uncappedCandidateMerges });
+        if (!merged) break;
+        live = merged.next;
+        if (!merged.capped) uncapped++;
     }
     return live;
 }

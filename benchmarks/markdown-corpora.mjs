@@ -13,7 +13,7 @@ function shuffled(items, key) {
 function partition(items, key, size, historical = []) {
     const exclude = new Set(historical.map(key));
     const order = shuffled(items.filter(item => !exclude.has(key(item))), key);
-    return [order.slice(0, size), order.slice(size, 2 * size), order.slice(2 * size, 3 * size)];
+    return Array.from({ length: 4 }, (_, i) => order.slice(i * size, (i + 1) * size));
 }
 
 function corpus() {
@@ -144,8 +144,8 @@ function multiHop(rows) {
 }
 
 export async function markdownCorpora(split) {
-    const i = ['calibration', 'final', 'confirmation'].indexOf(split);
-    if (i < 0) throw new Error('Select calibration, final or confirmation');
+    const i = ['calibration', 'final', 'confirmation', 'rules-test'].indexOf(split);
+    if (i < 0) throw new Error('Unknown Markdown study split');
     const { data: cuad } = await readJSON('cuad');
     const qasper = Object.entries(await tarJSON(await asset(assets.qasper), 'qasper-test-v0.3.json'));
     const finance = (await readJSON('finqa')).filter(row => {
@@ -153,7 +153,7 @@ export async function markdownCorpora(split) {
         return ids.some(k => k.startsWith('table_')) && ids.some(k => k.startsWith('text_'));
     });
     const reports = new Set(partition([...new Set(finance.map(reportId))], r => r, 24)[i]);
-    const hotpot = await readJSON('hotpotqa'), selected = [[], [], []], seen = new Set();
+    const hotpot = await readJSON('hotpotqa'), selected = [[], [], [], []], seen = new Set();
     for (const kind of ['bridge', 'comparison']) {
         const rows = hotpot.filter(r => r.type === kind);
         for (const row of evenly(rows, 32)) for (const [title] of row.context) seen.add(title);
@@ -169,7 +169,9 @@ export async function markdownCorpora(split) {
         }
     }
     for (const kind of ['bridge', 'comparison']) pick(kind, 32, n => n % 2);
-    if (split === 'confirmation') for (const kind of ['bridge', 'comparison']) pick(kind, 16, () => 2);
+    for (let extra = 2; extra <= i; extra++) {
+        for (const kind of ['bridge', 'comparison']) pick(kind, 16, () => extra);
+    }
     return {
         cuad: contracts(partition(cuad, r => r.title, 6, evenly(cuad, 8))[i]),
         qasper: papers(partition(qasper, ([id]) => id, 12, evenly(qasper, 16))[i]),

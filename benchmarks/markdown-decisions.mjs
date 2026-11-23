@@ -18,7 +18,7 @@ export function paired(a, b, data) {
             if (!byGroup.has(group)) byGroup.set(group, [0, 0]);
             const delta = Number(x[i]) - Number(y[i]), pair = byGroup.get(group);
             pair[0] += delta;
-            pair[1]++;
+            pair[1] += a.measurements ?? 1;
             if (delta) (delta > 0 ? wins : losses).push(id);
         });
         perTask[t] = { winsPer100: 100 * wins.length / x.length, lossesPer100: 100 * losses.length / x.length, wins, losses };
