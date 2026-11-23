@@ -79,6 +79,13 @@ test('nested lists preserve repeated markers, indentation and internal headings;
     assert.ok(kept.some(c => c.text === '    123'));
 });
 
+test('literal autolinks with parser-generated children keep their original source offsets', async () => {
+    const source = 'A citation. «a href="http%3A//www.example.com/person.asp%3Fx">Name here</ref> More prose.';
+    const rows = await chunks(source, { maxChunkSize: 10 });
+    assert.equal(original(source, rows), source);
+    assert.ok(rows.some(c => c.text.includes('www.example.com/person.asp%3Fx')));
+});
+
 test('split tables repeat the literal header and delimiter, oversized rows retain values without a misleading header', async () => {
     const h = '> | a | b |\r\n> |---|---|\r\n', first = '> | 1 | x\\|y |\r\n', last = '> | 2 | 🌍 |';
     const s = h + first + last;

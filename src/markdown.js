@@ -46,9 +46,8 @@ export function markdownResult(source, unit) {
     return { text: markdownText(source, unit), sectionId: unit.sectionId, headingPath: [...unit.headingPath], sourceRanges };
 }
 
-export function canPack(source, left, right, maxChunkSize, fits) {
-    return left.kind === 'prose' && right.kind === 'prose' && !left.parts && !right.parts &&
-        left.sectionId === right.sectionId && right.end - left.start <= maxChunkSize &&
+export function fitsMarkdownJoin(source, left, right, maxChunkSize, fits) {
+    return !left.parts && !right.parts && left.sectionId === right.sectionId && right.end - left.start <= maxChunkSize &&
         !/\S/u.test(source.slice(left.end, right.start)) && (!fits || fits(source.slice(left.start, right.end)));
 }
 
@@ -56,7 +55,7 @@ export function packMarkdown(source, units, maxChunkSize, fits) {
     const packed = [];
     for (const unit of units) {
         const last = packed.at(-1);
-        if (last && canPack(source, last, unit, maxChunkSize, fits)) last.end = unit.end;
+        if (last?.kind === 'prose' && unit.kind === 'prose' && fitsMarkdownJoin(source, last, unit, maxChunkSize, fits)) last.end = unit.end;
         else packed.push({ ...unit });
     }
     return packed;
@@ -98,7 +97,20 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
         const a = offset(node.position.start), b = offset(node.position.end), atoms = [];
         function collect(child) {
             if (inlineAtoms.has(child.type)) atoms.push([offset(child.position.start), offset(child.position.end)]);
-            else child.children?.forEach(collect);
+            else if (child.children) {
+                const all = child.children;
+                for (let i = 0; i < all.length; i++) {
+                    if (all[i].position) { collect(all[i]); continue; }
+                    // A GFM literal autolink transform can replace a run of text
+                    // with positionless siblings. Protect its enclosing source gap.
+                    const first = i;
+                    while (i + 1 < all.length && !all[i + 1].position) i++;
+                    if (all.slice(first, i + 1).some(n => inlineAtoms.has(n.type))) {
+                        atoms.push([offset(all[first - 1]?.position.end ?? child.position.start),
+                            offset(all[i + 1]?.position.start ?? child.position.end)]);
+                    }
+                }
+            }
         }
         collect(node);
         const spans = [];
@@ -140,8 +152,8 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
         let headerUsed = false;
         rows.push(end);
         function group(a, b) {
-            return a === headerEnd ? raw(start, b, 'table') :
-                { ...raw(a, b, 'table'), parts: [[start, headerEnd], [a, b]] };
+            return a === headerEnd ? raw(start, b, 'rows') :
+                { ...raw(a, b, 'rows'), parts: [[start, headerEnd], [a, b]] };
         }
         for (let i = 0; i + 1 < rows.length;) {
             let j = i + 1;
