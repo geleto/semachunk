@@ -1,5 +1,32 @@
 # Chunking improvements and benchmark results
 
+## 2026-11-23 · Markdown combination by chunk budget
+
+Ship greedy section packing when `maxChunkSize < 1024` or `maxChunkTokens < 256`. When both limits allow that capacity, score the original eligible prose boundaries once, calibrate the cutoff from their cosines and keep it for every pass. The public 500-character default uses packing. Each hard token check still counts the actual raw and prefixed text. [Frozen rules](results/2026-11-23-markdown-rules.json) · [Replication on 676 independent questions](results/2026-11-23-markdown-rule-replication.json)
+
+The primary outcome is complete annotated evidence in 512 delivered tokens, averaged equally across four datasets and six size settings. Costs cover all six indexes, including scoring and final embeddings. Intervals are paired 95% group bootstraps.
+
+| Combination | Complete evidence | Gain per 100 over packing | Logical calls | Embedded tokens |
+|---|---:|---:|---:|---:|
+| Greedy packing | 52.82% | — | 8,491 | 4,588,066 |
+| **Budget rule** | **56.04%** | **+3.22 (+1.74 to +4.67)** | **9,249** | **5,958,407** |
+| Always score, frozen cutoff | 55.81% | +2.99 (+1.45 to +4.60) | 10,564 | 6,634,566 |
+| Tighten the cutoff after pass one | 55.83% | +3.01 (+1.20 to +4.86) | 10,564 | 6,379,911 |
+| Score when half the interior units fit both neighbors | 55.99% | +3.17 (+1.70 to +4.77) | 10,374 | 6,320,249 |
+
+The budget rule used **29.9% more tokens than packing** and **10.2% fewer than always scoring**. Its gain over always scoring was +0.23 per 100 (−0.37 to +0.80). Tightening the cutoff after the first pass scored −0.21 against the budget rule (−1.30 to +0.96). Selecting by competing neighbors scored −0.06 (−0.79 to +0.67). Both alternatives used more tokens. Keep the size rule and the frozen cutoff.
+
+| Dataset | Questions | Packing | Budget rule |
+|---|---:|---:|---:|
+| CUAD contracts | 298 | 33.05% | 36.13% |
+| QASPER papers | 135 | 44.57% | 43.70% |
+| FinQA annotated rows and prose | 115 | 53.19% | 63.48% |
+| Pooled HotpotQA | 128 | 80.47% | 80.86% |
+
+At 500 characters, scoring changed complete-evidence retrieval by −0.82 per 100 (−2.73 to +1.05). At 256 body tokens it gained +2.98 (+0.38 to +5.72), at 2,048 characters +6.09 (+3.22 to +8.99) and at 512 body tokens +7.46 (+4.58 to +10.46). The 1,024-character estimate was +2.80 (−0.02 to +5.52). With both a 500-character and a 256-token cap, the observed gain was −0.74 (−2.57 to +1.17). These measurements used English-language data and one embedding model. Heading context, special table lead-ins and pass-dependent cutoffs remain benchmark experiments. [Per-size intervals, question outcomes, budget curves and cost breakdown](results/2026-11-23-markdown-rule-replication.json)
+
+The replication needed 270 provider requests, 40,869 inputs and 4,052,838 reported tokens. The full Markdown study, including heuristic calibration and both independent rule evaluations, used 1,007 provider requests, 95,550 inputs and 9,775,482 reported tokens. Logical cold index costs in the table count the work of each policy independently of provider-cache reuse.
+
 ## 2026-11-23 · Independent test of automatic Markdown rules
 
 On 172 fresh questions the budget switch recovered **60.93%** of complete evidence at 512 delivered tokens across the six settings. Greedy packing recovered **58.50%**. The paired gain was **+2.43 per 100** (95% interval −0.78 to +5.68). The budget switch used 1,463,289 embedding tokens versus 1,104,710 for packing and 1,618,484 for scoring everywhere. The document-structure rule reached 61.23%, +0.30 over the budget rule (−1.15 to +1.56). [Validation scores, cost and paired intervals](results/2026-11-23-markdown-rule-validation.json)

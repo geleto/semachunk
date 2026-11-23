@@ -16,7 +16,7 @@ const read = async path => JSON.parse(await readFile(path, 'utf8'));
 const [experiment, output, previous, candidate] = process.argv.slice(2);
 const ruleStudy = ['rules', 'validate-rules', 'replicate-rules'].includes(experiment);
 const split = ({ 'validate-rules': 'rules-test', 'replicate-rules': 'replication', confirm: 'confirmation', final: 'final' })[experiment] ?? 'calibration';
-if (!['size', 'compare', 'context', 'final', 'confirm'].includes(experiment) && !ruleStudy || !output) {
+if (!output || (!ruleStudy && !['size', 'compare', 'context', 'final', 'confirm'].includes(experiment))) {
     throw new Error('Supply a Markdown study experiment and a new JSON output path.');
 }
 if (existsSync(output)) throw new Error('Result already exists: ' + output);
