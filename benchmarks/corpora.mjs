@@ -1,22 +1,40 @@
+import { execFile } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { createReadStream, createWriteStream } from 'node:fs';
 import { mkdir, readFile, rename, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { pipeline } from 'node:stream/promises';
-import { createGunzip } from 'node:zlib';
-import { unzipSync } from 'fflate';
-import { asyncBufferFromFile, parquetReadObjects } from 'hyparquet';
-import tar from 'tar-stream';
 import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 
 export const here = fileURLToPath(new URL('./', import.meta.url));
 export const cache = join(here, '.cache');
 export const assets = {
-    'squad.json': ['https://raw.githubusercontent.com/rajpurkar/SQuAD-explorer/eee5fdbf62f8613a7812b03419e6b29617b74fd1/dataset/dev-v1.1.json', '95aa6a52d5d6a735563366753ca50492a658031da74f301ac5238b03966972c9'],
-    'wikisection.tar.gz': ['https://raw.githubusercontent.com/sebastianarnold/WikiSection/9d1bd55da4bc2dc985b5f4493e8214caa86100b8/wikisection_dataset_json.tar.gz', 'f37810a95702737b153a3034dbb877d08ecc699900f1a01c70110d47a5a016b8'],
-    'cuad.zip': ['https://raw.githubusercontent.com/The-Atticus-Project/cuad/67faa0e6023b04fcaae6cc09497ab00e5d63a2a2/data.zip', 'f8161d18bea4e9c05e78fa6dda61c19c846fb8087ea969c172753bc2f45b999a'],
-    'qasper-test.tgz': ['https://qasper-dataset.s3.us-west-2.amazonaws.com/qasper-test-and-evaluator-v0.3.tgz', '72a52a41193e2838b8074f80ac074b94f956b84886c36a61c58a7df4171bdd72'],
-    'hotpot.parquet': ['https://huggingface.co/datasets/hotpotqa/hotpot_qa/resolve/1908d6afbbead072334abe2965f91bd2709910ab/distractor/validation-00000-of-00001.parquet', 'c20b638ca82b21d04fe12e14ff417ad05153d4d215a65de54497fca4e972f7c6'],
+    squad: {
+        name: 'squad.json',
+        url: 'https://raw.githubusercontent.com/rajpurkar/SQuAD-explorer/eee5fdbf62f8613a7812b03419e6b29617b74fd1/dataset/dev-v1.1.json',
+        checksum: '95aa6a52d5d6a735563366753ca50492a658031da74f301ac5238b03966972c9',
+    },
+    wikisection: {
+        name: 'wikisection.tar.gz',
+        url: 'https://raw.githubusercontent.com/sebastianarnold/WikiSection/9d1bd55da4bc2dc985b5f4493e8214caa86100b8/wikisection_dataset_json.tar.gz',
+        checksum: 'f37810a95702737b153a3034dbb877d08ecc699900f1a01c70110d47a5a016b8',
+    },
+    cuad: {
+        name: 'cuad-test.json',
+        url: 'https://raw.githubusercontent.com/Break-Through-Tech/Accenture-1T-contract-review-challenge/06410c6b3cdb2c0cf80a0a3dc9b6bb64c85338e4/data/test.json',
+        checksum: '007b6a40b0c65247f881627375c3d2e9b6aeeb5dfa89957494feed0765a1a073',
+    },
+    qasper: {
+        name: 'qasper-test.tgz',
+        url: 'https://qasper-dataset.s3.us-west-2.amazonaws.com/qasper-test-and-evaluator-v0.3.tgz',
+        checksum: '72a52a41193e2838b8074f80ac074b94f956b84886c36a61c58a7df4171bdd72',
+    },
+    hotpotqa: {
+        name: 'hotpot-dev-distractor.json',
+        url: 'https://huggingface.co/datasets/namlh2004/hotpotqa/resolve/7e54db4656209750ff487f6fdf8e39a66dba136b/hotpot_dev_distractor_v1.json',
+        checksum: 'e3da074df24e8369009918aa5cdbdd254dadcde4c63f7569d36afd6f2268caa8',
+    },
 };
 
 export function sha256(bytes) {
@@ -29,12 +47,11 @@ export async function fileDigest(path) {
     return hash.digest('hex');
 }
 
-export async function asset(name) {
-    const [url, expected] = assets[name];
+async function asset({ name, url, checksum }) {
     const path = join(cache, name);
     await mkdir(cache, { recursive: true });
     try {
-        if (await fileDigest(path) === expected) return path;
+        if (await fileDigest(path) === checksum) return path;
     } catch (error) {
         if (error.code !== 'ENOENT') throw error;
     }
@@ -44,7 +61,7 @@ export async function asset(name) {
         const response = await fetch(url, { signal: AbortSignal.timeout(120_000) });
         if (!response.ok) throw new Error('Download failed for ' + name + ' (HTTP ' + response.status + ')');
         await pipeline(response.body, createWriteStream(temp, { flags: 'wx' }));
-        if (await fileDigest(temp) !== expected) throw new Error('Checksum mismatch for ' + name);
+        if (await fileDigest(temp) !== checksum) throw new Error('Checksum mismatch for ' + name);
         await rename(temp, path);
     } finally {
         await rm(temp, { force: true });
@@ -52,25 +69,14 @@ export async function asset(name) {
     return path;
 }
 
-async function tarJSON(name, members) {
-    const result = {};
-    const archive = tar.extract();
-    archive.on('entry', async ({ name }, entry, next) => {
-        try {
-            if (members.includes(name)) {
-                const buffers = [];
-                for await (const buffer of entry) buffers.push(buffer);
-                result[name] = JSON.parse(Buffer.concat(buffers).toString('utf8'));
-            } else {
-                entry.resume();
-                await new Promise((resolve, reject) => entry.once('end', resolve).once('error', reject));
-            }
-            next();
-        } catch (error) { archive.destroy(error); }
+const runFile = promisify(execFile);
+
+async function tarJSON(archive, member) {
+    // The largest pinned JSON member is 33 MB. Read it directly from stdout.
+    const { stdout } = await runFile('tar', ['-xOzf', archive, member], {
+        encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, windowsHide: true,
     });
-    await pipeline(createReadStream(await asset(name)), createGunzip(), archive);
-    for (const member of members) if (!result[member]) throw new Error('Missing archive entry ' + member);
-    return result;
+    return JSON.parse(stdout);
 }
 
 // Dataset annotations from SQuAD and CUAD count Unicode
@@ -142,7 +148,7 @@ function evenly(items, count) {
 }
 
 export async function squad() {
-    const { data } = JSON.parse(await readFile(await asset('squad.json'), 'utf8'));
+    const { data } = JSON.parse(await readFile(await asset(assets.squad), 'utf8'));
     return data.filter((_, i) => i % 3 === 0).map((article, i) => {
         const paragraphs = [], questions = [];
         let offset = 0;
@@ -161,8 +167,9 @@ export async function squad() {
 
 export async function wikisection() {
     const names = ['wikisection_en_city_validation.json', 'wikisection_en_city_test.json'];
-    const files = await tarJSON('wikisection.tar.gz', names);
-    return names.flatMap((name, i) => evenly(files[name], 8).map(article => {
+    const archive = await asset(assets.wikisection);
+    const partitions = await Promise.all(names.map(name => tarJSON(archive, name)));
+    return partitions.flatMap((articles, i) => evenly(articles, 8).map(article => {
         const cuts = [], sections = [];
         let offset = 0;
         for (const annotation of article.annotations) {
@@ -196,8 +203,7 @@ export function joinParts(parts) {
 function increment(counts, name) { counts[name] = (counts[name] ?? 0) + 1; }
 
 export async function cuad() {
-    const files = unzipSync(await readFile(await asset('cuad.zip')), { filter: entry => entry.name === 'test.json' });
-    const { data } = JSON.parse(new TextDecoder().decode(files['test.json']));
+    const { data } = JSON.parse(await readFile(await asset(assets.cuad), 'utf8'));
     const docs = [], questions = [], exclusions = {};
     for (const row of evenly(data, 8)) {
         const [{ context: raw, qas }] = row.paragraphs;
@@ -213,8 +219,7 @@ export async function cuad() {
 }
 
 export async function qasper() {
-    const name = 'qasper-test-v0.3.json';
-    const rows = (await tarJSON('qasper-test.tgz', [name]))[name];
+    const rows = await tarJSON(await asset(assets.qasper), 'qasper-test-v0.3.json');
     const docs = [], questions = [], exclusions = {};
     for (const [paper, row] of evenly(Object.entries(rows), 16)) {
         const parts = [row.title, row.abstract, ...row.full_text.flatMap(s => [s.section_name, ...s.paragraphs]),
@@ -243,15 +248,13 @@ export async function qasper() {
 }
 
 export async function hotpotqa() {
-    const file = await asyncBufferFromFile(await asset('hotpot.parquet'));
-    const rows = await parquetReadObjects({ file });
+    const rows = JSON.parse(await readFile(await asset(assets.hotpotqa), 'utf8'));
     const indices = ['bridge', 'comparison'].flatMap(kind =>
         evenly(rows.flatMap((row, i) => row.type === kind ? [i] : []), 32)).sort((a, b) => a - b);
     const docs = [], questions = [], docIds = new Map();
     for (const index of indices) {
         const row = rows[index], pool = [], facts = new Map();
-        row.context.title.forEach((title, i) => {
-            const sentences = row.context.sentences[i];
+        for (const [title, sentences] of row.context) {
             const { text, spans } = joinParts([title + '.', ...sentences]);
             if (!docIds.has(title)) {
                 docIds.set(title, docs.length);
@@ -261,10 +264,10 @@ export async function hotpotqa() {
             if (docs[d].text !== text || pool.includes(d)) throw new Error('Ambiguous HotpotQA source ' + title);
             pool.push(d);
             facts.set(title, spans.slice(1).map(span => span && [d, ...span]));
-        });
-        const reference = row.supporting_facts.title.map((t, i) => facts.get(t)?.[row.supporting_facts.sent_id[i]]);
-        if (!reference.length || reference.some(s => !s)) throw new Error('Invalid supporting facts for ' + row.id);
-        questions.push({ id: row.id, text: row.question, kind: row.type, pool, references: [reference] });
+        }
+        const reference = row.supporting_facts.map(([title, sentence]) => facts.get(title)?.[sentence]);
+        if (!reference.length || reference.some(s => !s)) throw new Error('Invalid supporting facts for ' + row._id);
+        questions.push({ id: row._id, text: row.question, kind: row.type, pool, references: [reference] });
     }
     return { docs, questions, exclusions: {} };
 }

@@ -1,5 +1,11 @@
 # Chunking improvements and benchmark results
 
+## 2026-11-23 · Simplified benchmark dataset loading
+
+Removed the benchmark development dependencies `tar-stream`, `fflate` and `hyparquet`. WikiSection and QASPER read named members of their checksummed archives through the system `tar` command. CUAD and HotpotQA now download pinned JSON mirrors. CUAD's test JSON matched the bytes in the authors' ZIP. For all 7,405 HotpotQA validation rows, the JSON matched the previous Parquet source on row order, question IDs, question and answer text, question type, passage titles and sentences, and supporting facts. [Dataset loaders](corpora.mjs)
+
+Compared the complete serialized loader output against revision `3745d3a`. All five SHA-256 hashes matched, including answer and evidence offsets, exclusions and query pools. The changed readers cover 16 WikiSection documents, 8 CUAD contracts with 100 questions, 16 QASPER papers with 54 questions, and 640 HotpotQA passages with 64 questions. This was a data-parity check. The existing retrieval scores are recorded below. [Benchmark setup](README.md)
+
 ## 2026-11-23 · OpenAI embeddings and outstanding review decisions
 
 The live quality and RAG benchmarks now use `text-embedding-3-small` at its native 1,536 dimensions. The tests and synthetic performance workloads already have deterministic vectors, so their execution provided no reason to retain local inference. Removed the ONNX runner, model download and weights, both Hugging Face tokenizer dependencies, and the MiniLM replay option. One `cl100k_base` tokenizer supplies both counts and source positions. The model-specific historical results and hashes remain available below. [Current commands](README.md)

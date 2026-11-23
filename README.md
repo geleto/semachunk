@@ -52,7 +52,7 @@ Input is plain text by default. Strings such as `Array<T>` and `&amp;` stay lite
 
 ### Fitting an embedding model’s input
 
-Set `maxChunkTokens` and supply a synchronous `countTokens(text)` using the same tokenizer and special tokens as your provider. The chunker checks each join and both the raw and prefixed forms. A sentence over budget is split at word boundaries when possible, then at Unicode code point boundaries if a single word is too long. Those pieces go directly into the final embedding batch. An input that cannot fit even one code point with its prefix raises a `RangeError` before embedding.
+For a rough size target, set `maxChunkSize`. It compares JavaScript string lengths and needs no tokenizer. For a hard model-token limit, set `maxChunkTokens` and supply a synchronous `countTokens(text)` using the same tokenizer and special tokens as your provider. The chunker checks each join and both the raw and prefixed forms. A sentence over budget is split at word boundaries when possible, then at Unicode code point boundaries if a single word is too long. Those pieces go directly into the final embedding batch. An input that cannot fit even one code point with its prefix raises a `RangeError` before embedding.
 
 ```javascript
 const chunks = await chunkText(text, myEmbedder, {

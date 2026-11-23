@@ -4,7 +4,7 @@ The quality suite scores short-answer retrieval and editorial boundaries. The RA
 
 ## Run the quality suite
 
-Use Node 20.12 or newer. Set `OPENAI_API_KEY` in your environment or in the repository's Git-ignored `.env`. To read the key directly from another project, pass `--env-file path/to/.env` after npm's argument separator. The runner reads only `OPENAI_API_KEY` from that file. From the repository root run
+Use Node 20.12 or newer. WikiSection and QASPER also use the system `tar` command on PATH to read their published archives. Set `OPENAI_API_KEY` in your environment or in the repository's Git-ignored `.env`. To read the key directly from another project, pass `--env-file path/to/.env` after npm's argument separator. The runner reads only `OPENAI_API_KEY` from that file. From the repository root run
 
 ```sh
 npm ci
@@ -49,7 +49,7 @@ After `npm ci`, run
 npm run benchmark:rag
 ```
 
-To run one dataset, use `npm run benchmark:rag -- --task cuad` with a task name of `cuad`, `qasper` or `hotpotqa`. The three pinned data files total about 50 MB. Each sample uses published test or validation data. The JSON records sample IDs, lengths in `cl100k_base` tokens, exclusions, indexing costs, counts above the 256-token policy budget and the model's input limit, and source ranges for example queries.
+To run one dataset, use `npm run benchmark:rag -- --task cuad` with a task name of `cuad`, `qasper` or `hotpotqa`. The three pinned data files total about 72 MB. CUAD and HotpotQA use checksummed JSON mirrors of the original splits. A cache from the ZIP/Parquet loader needs one download per changed dataset. The sample IDs, texts and gold evidence are identical. Each report records sample IDs, lengths in `cl100k_base` tokens, exclusions, indexing costs and source ranges for example queries.
 
 Use `--methods merge-500-0.5 merge-500-document` to run selected policies alongside the token window. For an older implementation, select settings it supports. Include `flat-merge-500-0.5` to compare its normal input with a flattened control on a shared vector matrix.
 

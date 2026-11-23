@@ -54,14 +54,13 @@ async function main() {
         if (!Object.hasOwn(plans, name)) throw new Error('Unknown RAG method ' + name);
         return [name, plans[name]];
     }));
-    const files = { squad: 'squad.json', wikisection: 'wikisection.tar.gz', cuad: 'cuad.zip', qasper: 'qasper-test.tgz', hotpotqa: 'hotpot.parquet' };
     const { devDependencies: libraries } = JSON.parse(await readFile(join(here, '..', 'package.json'), 'utf8'));
     const report = { startedUTC, implementationSHA256: await digest(root, ['config.js', ...(await readdir(join(root, 'src')))
         .filter(f => f.endsWith('.js')).map(f => 'src/' + f)]),
         harnessSHA256: await digest(here, ['run.mjs', 'chunking.mjs', 'corpora.mjs', 'encoder.mjs', suite + '.mjs']),
         node: process.version, platform: process.platform + '-' + process.arch, libraries,
         embedding: { provider: 'OpenAI', model, dimensions: dimension, encoding: encodingName, maxInputTokens: modelInputTokens },
-        artifactsSHA256: Object.fromEntries(tasks.map(t => [files[t], assets[files[t]][1]])),
+        artifactsSHA256: Object.fromEntries(tasks.map(task => [assets[task].name, assets[task].checksum])),
         ...(rag ? { contextBudgets: budgets, rankers: { dense: 'cosine with ' + model, bm25: { k1: 1.2, b: 0.75 } },
             plans: { ...plans, [windowName]: windowPlan }, tasks: {} } : { contextTokens: 256, plans }) };
     const encoder = openEncoder(options['env-file']);
