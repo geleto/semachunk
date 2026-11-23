@@ -75,6 +75,21 @@ For a disjoint chunking policy, the scorer checks that every source token belong
 
 Retrieval benchmarks such as BEIR also use rank-based metrics including nDCG and Recall@k. A token budget makes comparisons across chunk sizes meaningful here. LegalBench-RAG measures overlap with cited source spans. End-to-end benchmarks such as RAGBench additionally evaluate how faithfully a generated response uses the supplied context. This suite measures the evidence a generator would receive. [BEIR evaluation](https://github.com/beir-cellar/beir) · [LegalBench-RAG](https://github.com/zeroentropy-ai/legalbenchrag) · [RAGBench metrics](https://arxiv.org/html/2407.11005v2)
 
+## Compare Markdown retrieval
+
+The Markdown study uses fresh group-disjoint samples, checked against the source and annotation hashes in the frozen manifest. It selects the common body budget on plain sentence packing, then compares section-aware packing with fixed-boundary and rescored merges. The next run measures context on the selected bodies. The final run evaluates the frozen shortlist alongside the plain-text defaults, matched token controls and overlapping windows.
+
+```sh
+node benchmarks/markdown-study.mjs size size.json
+node benchmarks/markdown-study.mjs compare comparison.json size.json
+node benchmarks/markdown-study.mjs context context.json comparison.json
+node benchmarks/markdown-study.mjs final final.json context.json
+```
+
+Each command takes a new output path. The study uses the same model, tokenizer, credentials and provider limits as the historical RAG suite. It records exact input keys alongside checksummed vector batches so different merge orders and batch compositions can replay individual texts. Logical cold indexing costs count each policy's own calls, including singleton batches and repeated scoring inputs. Provider usage records paid cache misses separately. Peak RSS is the process high-water mark through that measurement. Timing includes retrieval, replay and any API calls.
+
+All arms search the same sources. QASPER uses the paper's heading hierarchy. FinQA includes pre-table prose, the table and post-table prose with offsets keyed by the annotation IDs. A financial hit requires every annotated row and prose span. The primary score averages the four dataset complete-evidence rates at 512 delivered tokens with pooled HotpotQA. The diagnostic shortlist searches each question's supplied articles. The report also records both rankers at 256 and 1,024 tokens, per-question paired outcomes and group bootstrap intervals. [Frozen sample IDs](results/2026-11-23-markdown-samples.json)
+
 ## Run the large-document benchmark
 
 Run `node benchmarks/markdown-performance.mjs` for the Markdown packer. An optional output path saves a new JSON report. Each workload runs in its own process with one warmup and three timed iterations. The inputs include repeated and unique paragraphs, fenced code and tables in either one long section or 2,048 short sections.

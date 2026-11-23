@@ -35,6 +35,11 @@ export const assets = {
         url: 'https://huggingface.co/datasets/namlh2004/hotpotqa/resolve/7e54db4656209750ff487f6fdf8e39a66dba136b/hotpot_dev_distractor_v1.json',
         checksum: 'e3da074df24e8369009918aa5cdbdd254dadcde4c63f7569d36afd6f2268caa8',
     },
+    finqa: {
+        name: 'finqa-dev.json',
+        url: 'https://raw.githubusercontent.com/czyssrs/FinQA/0f16e2867befa6840783e58be38c9efb9229d742/dataset/dev.json',
+        checksum: 'a847fb7e0d61a3125a1e2909852df6b89f1ee64d2c5ff1bf689e332214deee51',
+    },
 };
 
 export function sha256(bytes) {
@@ -47,7 +52,7 @@ export async function fileDigest(path) {
     return hash.digest('hex');
 }
 
-async function asset({ name, url, checksum }) {
+export async function asset({ name, url, checksum }) {
     const path = join(cache, name);
     await mkdir(cache, { recursive: true });
     try {
@@ -71,7 +76,7 @@ async function asset({ name, url, checksum }) {
 
 const runFile = promisify(execFile);
 
-async function tarJSON(archive, member) {
+export async function tarJSON(archive, member) {
     // The largest pinned JSON member is 33 MB. Read it directly from stdout.
     const { stdout } = await runFile('tar', ['-xOzf', archive, member], {
         encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, windowsHide: true,
@@ -142,7 +147,7 @@ function answerSpans(raw, flat, answers, toUtf16, requireAll) {
     return [...spans.values()].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
 }
 
-function evenly(items, count) {
+export function evenly(items, count) {
     if (items.length < count) throw new Error('Sample exceeds source partition');
     return Array.from({ length: count }, (_, i) => items[Math.floor(i * items.length / count)]);
 }

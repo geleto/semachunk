@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { link, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { link, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { endianness } from 'node:os';
 import { join } from 'node:path';
 import { parseEnv } from 'node:util';
@@ -106,7 +106,7 @@ async function readBatch(path, expectedLength) {
 
 // A completed request is reusable even if a later request fails. The first
 // writer publishes the cache entry atomically and concurrent readers reuse it.
-export async function cachedVectors(texts, countTokens, request, directory) {
+export async function cachedVectors(texts, countTokens, request, directory, recordKeys = false) {
     const batches = embeddingBatches(texts, countTokens);
     const matrixBytes = Buffer.alloc(texts.length * rowBytes);
     const precomputation = { apiRequests: 0, apiInputs: 0, apiInputTokens: 0, cachedBatches: 0 };
@@ -133,6 +133,13 @@ export async function cachedVectors(texts, countTokens, request, directory) {
                 }
             } finally { await rm(tmp, { force: true }); }
         }
+        if (recordKeys) {
+            const temp = path + '.' + randomUUID();
+            try {
+                await writeFile(temp, JSON.stringify(input.map(sha256)), { flag: 'wx' });
+                try { await link(temp, path + '.keys'); } catch (error) { if (error.code !== 'EEXIST') throw error; }
+            } finally { await rm(temp, { force: true }); }
+        }
         bytes.copy(matrixBytes, start * rowBytes);
     }
     const vectorsSHA256 = sha256(matrixBytes);
@@ -154,5 +161,62 @@ export function openEncoder(envFile) {
             throw error;
         }
     }
-    return { ...tokenizer, vectors: texts => cachedVectors(texts, tokenizer.countTokens, request, join(cache, 'openai-embeddings')) };
+    return { ...tokenizer, vectors: (texts, recordKeys) =>
+        cachedVectors(texts, tokenizer.countTokens, request, join(cache, 'openai-embeddings'), recordKeys) };
+}
+
+// Index recorded provider batches by exact input. A new candidate order or
+// batch size can reuse their vectors. Coalesce misses from concurrent documents.
+export async function openReplay(envFile) {
+    const encoder = openEncoder(envFile), directory = join(cache, 'openai-embeddings');
+    await mkdir(directory, { recursive: true });
+    const disk = new Map(), memory = new Map();
+    for (const name of await readdir(directory)) {
+        if (!name.endsWith('.f32.keys')) continue;
+        const keys = JSON.parse(await readFile(join(directory, name), 'utf8'));
+        keys.forEach((key, row) => disk.set(key, { file: name.slice(0, -5), row, count: keys.length }));
+    }
+    const stats = { apiRequests: 0, apiInputs: 0, apiInputTokens: 0, diskTexts: 0, memoryTexts: 0, replayMs: 0 };
+    let pending = [], flushing = false;
+    async function flush() {
+        flushing = true;
+        while (pending.length) {
+            const requests = pending;
+            pending = [];
+            try {
+                const started = performance.now(), files = new Map(), missing = [];
+                const unique = new Set(requests.flatMap(r => r.texts));
+                for (const text of unique) {
+                    if (memory.has(text)) { stats.memoryTexts++; continue; }
+                    const hit = disk.get(sha256(text));
+                    if (!hit) { missing.push(text); continue; }
+                    if (!files.has(hit.file)) files.set(hit.file, []);
+                    files.get(hit.file).push({ text, ...hit });
+                }
+                for (const [file, hits] of files) {
+                    const bytes = await readBatch(join(directory, file), hits[0].count * rowBytes);
+                    if (endianness() === 'BE') bytes.swap32();
+                    for (const { text, row } of hits) {
+                        memory.set(text, new Float32Array(bytes.buffer, bytes.byteOffset + row * rowBytes, dimension));
+                        stats.diskTexts++;
+                    }
+                }
+                stats.replayMs += performance.now() - started;
+                if (missing.length) {
+                    const { matrix, precomputation: paid } = await encoder.vectors(missing, true);
+                    for (const key of ['apiRequests', 'apiInputs', 'apiInputTokens']) stats[key] += paid[key];
+                    missing.forEach((text, i) => memory.set(text, matrix.subarray(i * dimension, (i + 1) * dimension)));
+                }
+                for (const r of requests) r.resolve(r.texts.map(t => memory.get(t)));
+            } catch (error) { for (const r of requests) r.reject(error); }
+        }
+        flushing = false;
+    }
+    function embed(texts) {
+        return new Promise((resolve, reject) => {
+            pending.push({ texts, resolve, reject });
+            if (pending.length === 1 && !flushing) setImmediate(flush);
+        });
+    }
+    return { ...encoder, embed, stats };
 }

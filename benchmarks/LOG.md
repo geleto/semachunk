@@ -1,5 +1,15 @@
 # Chunking improvements and benchmark results
 
+## 2026-11-23 · Retrieval protocol frozen before calibration
+
+The fresh samples use six contracts, twelve papers, twenty-four financial reports and thirty-two multi-hop questions per split. Selection orders group IDs by seeded SHA-256. The multi-hop samples exclude historical article titles and share no titles with each other. FinQA contributes only questions requiring both complete table rows and surrounding prose. The frozen manifests identify documents and questions and hash the rendered sources, evidence and candidate pools. [Sample manifest](results/2026-11-23-markdown-samples.json)
+
+Choose 128, 256 or 512 tokens on plain sentence packing by the equal-weight mean dense complete-evidence rate at 512 displayed tokens. Ties favor the larger body budget. Both token windows use 25% overlap. Compare greedy packing, original-boundary cosine and live-body cosine on those same Markdown units. Try 0.3, 0.5, 0.7 and the document cutoff on calibration. A more complex policy must have a positive lower endpoint in a seeded 2,000-draw paired group bootstrap and justify its indexing cost. Test a prose lead-in before an intact table or code block on each policy. Freeze bodies for the title and heading controls. The final evaluation uses the calibration shortlist and the declared controls.
+
+The revised metric tokenizes the exact displayed strings and separators, clips at a complete character, and projects the visible text onto each source occurrence. It credits complete annotated portions of source tokens and counts a displayed token once when it contributes new evidence. For normalized text, a visible collapsed space maps to its original whitespace run. The historical source-token metric and reports retain their original definitions. The calibration query preload made one paid request for 138 distinct texts and 3,502 tokens.
+
+The plain packing control now splits oversized seeds and recounts joins with the actual tokenizer. At 128, 256 and 512 body tokens its four-task calibration means were 45.09%, 51.81% and 51.53%. The selected **256-token** control recovered complete evidence for 22/86 CUAD, 10/29 QASPER, 27/43 FinQA and 27/32 pooled HotpotQA questions. Preparing the three sizes used 24 paid requests, 4,173 texts and 704,687 tokens. [All three budgets, per-task scores and costs](results/2026-11-23-markdown-size.json)
+
 ## 2026-11-23 · Markdown source parsing and greedy packing
 
 The public API now packs contiguous source slices within a heading occurrence. Tables and code close a packing run. Only a split that needs repeated markup carries multiple pieces. A shared offset splitter handles hard token limits. The plain-text path still consumes normalized word separators. The Markdown path keeps them. Parser dependencies load on demand. No external splitter source was copied.

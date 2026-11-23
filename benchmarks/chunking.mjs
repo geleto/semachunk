@@ -1,4 +1,17 @@
 import { dimension } from './encoder.mjs';
+import { createJoinCheck, sentenceTokenLimit, tokenBudget } from '../src/token-limit.js';
+
+export function packSentences(parts, maxChunkSize, maxChunkTokens = Infinity, countTokens) {
+    const limit = sentenceTokenLimit(parts, tokenBudget(maxChunkTokens, countTokens, ''));
+    const canJoin = createJoinCheck(maxChunkSize, limit);
+    const output = [];
+    for (const part of parts) {
+        const i = output.length - 1;
+        if (i >= 0 && canJoin(output[i], part)) output[i] += ' ' + part;
+        else output.push(part);
+    }
+    return limit?.oversized.size ? output.flatMap(text => limit.oversized.get(text) ?? [text]) : output;
+}
 
 export function qualityPlans() {
     const plans = { sentences: { combineChunks: false } };
@@ -64,13 +77,8 @@ export async function measure(chunkText, doc, plan, vocab, matrix, countTokens) 
     }
     let output;
     if (plan.pack) {
-        output = [];
-        for (const sentence of doc.parts) {
-            const last = output.length - 1;
-            if (last >= 0 && output[last].length + 1 + sentence.length <= plan.maxChunkSize) output[last] += ' ' + sentence;
-            else output.push(sentence);
-        }
-        embed([...new Set(output)]);
+        output = packSentences(doc.parts, plan.maxChunkSize, plan.maxChunkTokens, countTokens);
+        if (output.length) embed([...new Set(output)]);
     } else {
         const { flatInput, ...options } = plan;
         if (options.maxChunkTokens) options.countTokens = countTokens;
