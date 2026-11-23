@@ -1,0 +1,1712 @@
+{
+  "startedUTC": "2026-11-23T14:35:08.761303+00:00",
+  "implementationSHA256": "5fb804d68fac7711d2186eb23ceae0a90d07f558929797cfc29fb69b6b4cc0f7",
+  "harnessSHA256": "09aeb9f7108a9ae45b733b6d2b272e6eee1aeeaf11d106210b8ad81b3f2eaa58",
+  "node": "v24.14.1",
+  "python": "3.14.8",
+  "libraries": {
+    "numpy": "2.5.5",
+    "onnxruntime": "1.32.0",
+    "tokenizers": "0.23.3"
+  },
+  "artifactsSHA256": {
+    "squad.json": "95aa6a52d5d6a735563366753ca50492a658031da74f301ac5238b03966972c9",
+    "wikisection.tar.gz": "f37810a95702737b153a3034dbb877d08ecc699900f1a01c70110d47a5a016b8",
+    "tokenizer.json": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+    "model.onnx": "b941bf19f1f1283680f449fa6a7336bb5600bdcd5f84d10ddc5cd72218a0fd21"
+  },
+  "contextTokens": 256,
+  "plans": {
+    "sentences": {
+      "combineChunks": false
+    },
+    "pack-250": {
+      "pack": true,
+      "maxChunkSize": 250
+    },
+    "merge-250-0.3": {
+      "maxChunkSize": 250,
+      "similarityThreshold": 0.3
+    },
+    "merge-250-0.4": {
+      "maxChunkSize": 250,
+      "similarityThreshold": 0.4
+    },
+    "merge-250-0.5": {
+      "maxChunkSize": 250,
+      "similarityThreshold": 0.5
+    },
+    "merge-250-0.6": {
+      "maxChunkSize": 250,
+      "similarityThreshold": 0.6
+    },
+    "merge-250-0.7": {
+      "maxChunkSize": 250,
+      "similarityThreshold": 0.7
+    },
+    "merge-250-document": {
+      "maxChunkSize": 250,
+      "mergeThresholdMode": "document"
+    },
+    "group-250": {
+      "maxChunkSize": 250,
+      "groupSentences": true,
+      "combineChunks": false
+    },
+    "group+merge-250": {
+      "maxChunkSize": 250,
+      "groupSentences": true,
+      "combineChunks": true
+    },
+    "pack-500": {
+      "pack": true,
+      "maxChunkSize": 500
+    },
+    "merge-500-0.3": {
+      "maxChunkSize": 500,
+      "similarityThreshold": 0.3
+    },
+    "merge-500-0.4": {
+      "maxChunkSize": 500,
+      "similarityThreshold": 0.4
+    },
+    "merge-500-0.5": {
+      "maxChunkSize": 500,
+      "similarityThreshold": 0.5
+    },
+    "merge-500-0.6": {
+      "maxChunkSize": 500,
+      "similarityThreshold": 0.6
+    },
+    "merge-500-0.7": {
+      "maxChunkSize": 500,
+      "similarityThreshold": 0.7
+    },
+    "merge-500-document": {
+      "maxChunkSize": 500,
+      "mergeThresholdMode": "document"
+    },
+    "group-500": {
+      "maxChunkSize": 500,
+      "groupSentences": true,
+      "combineChunks": false
+    },
+    "group+merge-500": {
+      "maxChunkSize": 500,
+      "groupSentences": true,
+      "combineChunks": true
+    },
+    "pack-1000": {
+      "pack": true,
+      "maxChunkSize": 1000
+    },
+    "merge-1000-0.3": {
+      "maxChunkSize": 1000,
+      "similarityThreshold": 0.3
+    },
+    "merge-1000-0.4": {
+      "maxChunkSize": 1000,
+      "similarityThreshold": 0.4
+    },
+    "merge-1000-0.5": {
+      "maxChunkSize": 1000,
+      "similarityThreshold": 0.5
+    },
+    "merge-1000-0.6": {
+      "maxChunkSize": 1000,
+      "similarityThreshold": 0.6
+    },
+    "merge-1000-0.7": {
+      "maxChunkSize": 1000,
+      "similarityThreshold": 0.7
+    },
+    "merge-1000-document": {
+      "maxChunkSize": 1000,
+      "mergeThresholdMode": "document"
+    },
+    "group-1000": {
+      "maxChunkSize": 1000,
+      "groupSentences": true,
+      "combineChunks": false
+    },
+    "group+merge-1000": {
+      "maxChunkSize": 1000,
+      "groupSentences": true,
+      "combineChunks": true
+    },
+    "group-500-fixed": {
+      "maxChunkSize": 500,
+      "groupSentences": true,
+      "combineChunks": false,
+      "dynamicThresholdLowerBound": 0.5,
+      "dynamicThresholdUpperBound": 0.5
+    },
+    "group+merge-500-fixed": {
+      "maxChunkSize": 500,
+      "groupSentences": true,
+      "combineChunks": true,
+      "dynamicThresholdLowerBound": 0.5,
+      "dynamicThresholdUpperBound": 0.5
+    }
+  },
+  "squad": {
+    "documents": {
+      "calibration": [
+        "Super_Bowl_50",
+        "Martin_Luther",
+        "Oxygen",
+        "Fresno,_California",
+        "American_Broadcasting_Company",
+        "Private_school",
+        "Yuan_dynasty",
+        "Scottish_Parliament"
+      ],
+      "heldout": [
+        "Nikola_Tesla",
+        "Victoria_(Australia)",
+        "European_Union_law",
+        "Geology",
+        "Immune_system",
+        "Economic_inequality",
+        "Chloroplast",
+        "United_Methodist_Church"
+      ]
+    },
+    "sentences": 675,
+    "distinctTexts": 5122,
+    "vectorsSHA256": "45f2487bc594c31723ef1fc82da1ef62220ed8a9a6f3198ea837a1d306bc570c",
+    "calibrationSelection": "merge-500-0.5",
+    "scores": {
+      "sentences": {
+        "calibration": {
+          "questions": 481,
+          "hits": 445,
+          "hitRate": 0.9251559251559252,
+          "top1Hits": 307,
+          "chunks": 310,
+          "providerCalls": 8,
+          "providerTexts": 310,
+          "singletonCalls": 0
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 420,
+          "hitRate": 0.9610983981693364,
+          "top1Hits": 298,
+          "chunks": 365,
+          "providerCalls": 8,
+          "providerTexts": 365,
+          "singletonCalls": 0
+        }
+      },
+      "pack-250": {
+        "calibration": {
+          "questions": 481,
+          "hits": 437,
+          "hitRate": 0.9085239085239085,
+          "top1Hits": 309,
+          "chunks": 232,
+          "providerCalls": 8,
+          "providerTexts": 232,
+          "singletonCalls": 0
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 419,
+          "hitRate": 0.9588100686498856,
+          "top1Hits": 302,
+          "chunks": 272,
+          "providerCalls": 8,
+          "providerTexts": 272,
+          "singletonCalls": 0
+        }
+      },
+      "merge-250-0.3": {
+        "calibration": {
+          "questions": 481,
+          "hits": 445,
+          "hitRate": 0.9251559251559252,
+          "top1Hits": 316,
+          "chunks": 263,
+          "providerCalls": 17,
+          "providerTexts": 357,
+          "singletonCalls": 1
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 419,
+          "hitRate": 0.9588100686498856,
+          "top1Hits": 304,
+          "chunks": 286,
+          "providerCalls": 19,
+          "providerTexts": 444,
+          "singletonCalls": 2
+        }
+      },
+      "merge-250-0.4": {
+        "calibration": {
+          "questions": 481,
+          "hits": 442,
+          "hitRate": 0.918918918918919,
+          "top1Hits": 317,
+          "chunks": 278,
+          "providerCalls": 17,
+          "providerTexts": 342,
+          "singletonCalls": 3
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 416,
+          "hitRate": 0.9519450800915332,
+          "top1Hits": 305,
+          "chunks": 303,
+          "providerCalls": 16,
+          "providerTexts": 427,
+          "singletonCalls": 0
+        }
+      },
+      "merge-250-0.5": {
+        "calibration": {
+          "questions": 481,
+          "hits": 445,
+          "hitRate": 0.9251559251559252,
+          "top1Hits": 313,
+          "chunks": 289,
+          "providerCalls": 16,
+          "providerTexts": 331,
+          "singletonCalls": 5
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 421,
+          "hitRate": 0.9633867276887872,
+          "top1Hits": 295,
+          "chunks": 327,
+          "providerCalls": 17,
+          "providerTexts": 403,
+          "singletonCalls": 2
+        }
+      },
+      "merge-250-0.6": {
+        "calibration": {
+          "questions": 481,
+          "hits": 445,
+          "hitRate": 0.9251559251559252,
+          "top1Hits": 306,
+          "chunks": 302,
+          "providerCalls": 11,
+          "providerTexts": 318,
+          "singletonCalls": 2
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 420,
+          "hitRate": 0.9610983981693364,
+          "top1Hits": 296,
+          "chunks": 343,
+          "providerCalls": 14,
+          "providerTexts": 387,
+          "singletonCalls": 0
+        }
+      },
+      "merge-250-0.7": {
+        "calibration": {
+          "questions": 481,
+          "hits": 445,
+          "hitRate": 0.9251559251559252,
+          "top1Hits": 307,
+          "chunks": 306,
+          "providerCalls": 10,
+          "providerTexts": 314,
+          "singletonCalls": 1
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 420,
+          "hitRate": 0.9610983981693364,
+          "top1Hits": 297,
+          "chunks": 357,
+          "providerCalls": 12,
+          "providerTexts": 373,
+          "singletonCalls": 2
+        }
+      },
+      "merge-250-document": {
+        "calibration": {
+          "questions": 481,
+          "hits": 446,
+          "hitRate": 0.9272349272349273,
+          "top1Hits": 313,
+          "chunks": 253,
+          "providerCalls": 19,
+          "providerTexts": 367,
+          "singletonCalls": 1
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 420,
+          "hitRate": 0.9610983981693364,
+          "top1Hits": 301,
+          "chunks": 288,
+          "providerCalls": 18,
+          "providerTexts": 442,
+          "singletonCalls": 0
+        }
+      },
+      "group-250": {
+        "calibration": {
+          "questions": 481,
+          "hits": 446,
+          "hitRate": 0.9272349272349273,
+          "top1Hits": 312,
+          "chunks": 291,
+          "providerCalls": 16,
+          "providerTexts": 329,
+          "singletonCalls": 0
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 420,
+          "hitRate": 0.9610983981693364,
+          "top1Hits": 296,
+          "chunks": 326,
+          "providerCalls": 16,
+          "providerTexts": 403,
+          "singletonCalls": 0
+        }
+      },
+      "group+merge-250": {
+        "calibration": {
+          "questions": 481,
+          "hits": 445,
+          "hitRate": 0.9251559251559252,
+          "top1Hits": 313,
+          "chunks": 289,
+          "providerCalls": 16,
+          "providerTexts": 331,
+          "singletonCalls": 0
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 420,
+          "hitRate": 0.9610983981693364,
+          "top1Hits": 296,
+          "chunks": 326,
+          "providerCalls": 16,
+          "providerTexts": 403,
+          "singletonCalls": 0
+        }
+      },
+      "pack-500": {
+        "calibration": {
+          "questions": 481,
+          "hits": 427,
+          "hitRate": 0.8877338877338877,
+          "top1Hits": 333,
+          "chunks": 113,
+          "providerCalls": 8,
+          "providerTexts": 113,
+          "singletonCalls": 0
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 397,
+          "hitRate": 0.9084668192219679,
+          "top1Hits": 304,
+          "chunks": 128,
+          "providerCalls": 8,
+          "providerTexts": 128,
+          "singletonCalls": 0
+        }
+      },
+      "merge-500-0.3": {
+        "calibration": {
+          "questions": 481,
+          "hits": 440,
+          "hitRate": 0.9147609147609148,
+          "top1Hits": 350,
+          "chunks": 158,
+          "providerCalls": 28,
+          "providerTexts": 462,
+          "singletonCalls": 2
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 402,
+          "hitRate": 0.919908466819222,
+          "top1Hits": 305,
+          "chunks": 157,
+          "providerCalls": 31,
+          "providerTexts": 573,
+          "singletonCalls": 3
+        }
+      },
+      "merge-500-0.4": {
+        "calibration": {
+          "questions": 481,
+          "hits": 436,
+          "hitRate": 0.9064449064449065,
+          "top1Hits": 335,
+          "chunks": 198,
+          "providerCalls": 25,
+          "providerTexts": 422,
+          "singletonCalls": 0
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 406,
+          "hitRate": 0.9290617848970252,
+          "top1Hits": 307,
+          "chunks": 186,
+          "providerCalls": 31,
+          "providerTexts": 544,
+          "singletonCalls": 4
+        }
+      },
+      "merge-500-0.5": {
+        "calibration": {
+          "questions": 481,
+          "hits": 447,
+          "hitRate": 0.9293139293139293,
+          "top1Hits": 336,
+          "chunks": 236,
+          "providerCalls": 24,
+          "providerTexts": 384,
+          "singletonCalls": 2
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 409,
+          "hitRate": 0.9359267734553776,
+          "top1Hits": 290,
+          "chunks": 239,
+          "providerCalls": 26,
+          "providerTexts": 491,
+          "singletonCalls": 3
+        }
+      },
+      "merge-500-0.6": {
+        "calibration": {
+          "questions": 481,
+          "hits": 443,
+          "hitRate": 0.920997920997921,
+          "top1Hits": 316,
+          "chunks": 279,
+          "providerCalls": 20,
+          "providerTexts": 341,
+          "singletonCalls": 7
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 415,
+          "hitRate": 0.9496567505720824,
+          "top1Hits": 298,
+          "chunks": 299,
+          "providerCalls": 22,
+          "providerTexts": 431,
+          "singletonCalls": 4
+        }
+      },
+      "merge-500-0.7": {
+        "calibration": {
+          "questions": 481,
+          "hits": 443,
+          "hitRate": 0.920997920997921,
+          "top1Hits": 311,
+          "chunks": 296,
+          "providerCalls": 16,
+          "providerTexts": 324,
+          "singletonCalls": 6
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 419,
+          "hitRate": 0.9588100686498856,
+          "top1Hits": 298,
+          "chunks": 338,
+          "providerCalls": 16,
+          "providerTexts": 392,
+          "singletonCalls": 1
+        }
+      },
+      "merge-500-document": {
+        "calibration": {
+          "questions": 481,
+          "hits": 444,
+          "hitRate": 0.9230769230769231,
+          "top1Hits": 351,
+          "chunks": 157,
+          "providerCalls": 28,
+          "providerTexts": 463,
+          "singletonCalls": 1
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 409,
+          "hitRate": 0.9359267734553776,
+          "top1Hits": 303,
+          "chunks": 171,
+          "providerCalls": 33,
+          "providerTexts": 559,
+          "singletonCalls": 4
+        }
+      },
+      "group-500": {
+        "calibration": {
+          "questions": 481,
+          "hits": 444,
+          "hitRate": 0.9230769230769231,
+          "top1Hits": 336,
+          "chunks": 243,
+          "providerCalls": 16,
+          "providerTexts": 362,
+          "singletonCalls": 0
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 409,
+          "hitRate": 0.9359267734553776,
+          "top1Hits": 286,
+          "chunks": 241,
+          "providerCalls": 16,
+          "providerTexts": 451,
+          "singletonCalls": 0
+        }
+      },
+      "group+merge-500": {
+        "calibration": {
+          "questions": 481,
+          "hits": 447,
+          "hitRate": 0.9293139293139293,
+          "top1Hits": 340,
+          "chunks": 235,
+          "providerCalls": 21,
+          "providerTexts": 370,
+          "singletonCalls": 3
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 410,
+          "hitRate": 0.9382151029748284,
+          "top1Hits": 290,
+          "chunks": 236,
+          "providerCalls": 21,
+          "providerTexts": 456,
+          "singletonCalls": 5
+        }
+      },
+      "pack-1000": {
+        "calibration": {
+          "questions": 481,
+          "hits": 377,
+          "hitRate": 0.7837837837837838,
+          "top1Hits": 340,
+          "chunks": 55,
+          "providerCalls": 8,
+          "providerTexts": 55,
+          "singletonCalls": 0
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 330,
+          "hitRate": 0.7551487414187643,
+          "top1Hits": 281,
+          "chunks": 59,
+          "providerCalls": 8,
+          "providerTexts": 59,
+          "singletonCalls": 0
+        }
+      },
+      "merge-1000-0.3": {
+        "calibration": {
+          "questions": 481,
+          "hits": 429,
+          "hitRate": 0.8918918918918919,
+          "top1Hits": 339,
+          "chunks": 105,
+          "providerCalls": 37,
+          "providerTexts": 515,
+          "singletonCalls": 5
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 376,
+          "hitRate": 0.8604118993135011,
+          "top1Hits": 328,
+          "chunks": 89,
+          "providerCalls": 40,
+          "providerTexts": 641,
+          "singletonCalls": 5
+        }
+      },
+      "merge-1000-0.4": {
+        "calibration": {
+          "questions": 481,
+          "hits": 426,
+          "hitRate": 0.8856548856548857,
+          "top1Hits": 333,
+          "chunks": 152,
+          "providerCalls": 37,
+          "providerTexts": 468,
+          "singletonCalls": 6
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 380,
+          "hitRate": 0.8695652173913043,
+          "top1Hits": 314,
+          "chunks": 118,
+          "providerCalls": 42,
+          "providerTexts": 612,
+          "singletonCalls": 4
+        }
+      },
+      "merge-1000-0.5": {
+        "calibration": {
+          "questions": 481,
+          "hits": 442,
+          "hitRate": 0.918918918918919,
+          "top1Hits": 334,
+          "chunks": 209,
+          "providerCalls": 33,
+          "providerTexts": 411,
+          "singletonCalls": 6
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 391,
+          "hitRate": 0.8947368421052632,
+          "top1Hits": 296,
+          "chunks": 203,
+          "providerCalls": 34,
+          "providerTexts": 527,
+          "singletonCalls": 4
+        }
+      },
+      "merge-1000-0.6": {
+        "calibration": {
+          "questions": 481,
+          "hits": 441,
+          "hitRate": 0.9168399168399168,
+          "top1Hits": 314,
+          "chunks": 275,
+          "providerCalls": 22,
+          "providerTexts": 345,
+          "singletonCalls": 8
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 407,
+          "hitRate": 0.931350114416476,
+          "top1Hits": 291,
+          "chunks": 281,
+          "providerCalls": 30,
+          "providerTexts": 449,
+          "singletonCalls": 9
+        }
+      },
+      "merge-1000-0.7": {
+        "calibration": {
+          "questions": 481,
+          "hits": 442,
+          "hitRate": 0.918918918918919,
+          "top1Hits": 313,
+          "chunks": 294,
+          "providerCalls": 17,
+          "providerTexts": 326,
+          "singletonCalls": 7
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 418,
+          "hitRate": 0.9565217391304348,
+          "top1Hits": 298,
+          "chunks": 335,
+          "providerCalls": 18,
+          "providerTexts": 395,
+          "singletonCalls": 3
+        }
+      },
+      "merge-1000-document": {
+        "calibration": {
+          "questions": 481,
+          "hits": 436,
+          "hitRate": 0.9064449064449065,
+          "top1Hits": 345,
+          "chunks": 96,
+          "providerCalls": 38,
+          "providerTexts": 524,
+          "singletonCalls": 4
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 382,
+          "hitRate": 0.8741418764302059,
+          "top1Hits": 326,
+          "chunks": 105,
+          "providerCalls": 43,
+          "providerTexts": 625,
+          "singletonCalls": 6
+        }
+      },
+      "group-1000": {
+        "calibration": {
+          "questions": 481,
+          "hits": 440,
+          "hitRate": 0.9147609147609148,
+          "top1Hits": 323,
+          "chunks": 228,
+          "providerCalls": 16,
+          "providerTexts": 362,
+          "singletonCalls": 0
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 391,
+          "hitRate": 0.8947368421052632,
+          "top1Hits": 283,
+          "chunks": 218,
+          "providerCalls": 16,
+          "providerTexts": 439,
+          "singletonCalls": 0
+        }
+      },
+      "group+merge-1000": {
+        "calibration": {
+          "questions": 481,
+          "hits": 442,
+          "hitRate": 0.918918918918919,
+          "top1Hits": 335,
+          "chunks": 207,
+          "providerCalls": 29,
+          "providerTexts": 383,
+          "singletonCalls": 9
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 387,
+          "hitRate": 0.88558352402746,
+          "top1Hits": 288,
+          "chunks": 201,
+          "providerCalls": 24,
+          "providerTexts": 456,
+          "singletonCalls": 2
+        }
+      },
+      "group-500-fixed": {
+        "calibration": {
+          "questions": 481,
+          "hits": 444,
+          "hitRate": 0.9230769230769231,
+          "top1Hits": 336,
+          "chunks": 243,
+          "providerCalls": 16,
+          "providerTexts": 362,
+          "singletonCalls": 0
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 409,
+          "hitRate": 0.9359267734553776,
+          "top1Hits": 286,
+          "chunks": 241,
+          "providerCalls": 16,
+          "providerTexts": 451,
+          "singletonCalls": 0
+        }
+      },
+      "group+merge-500-fixed": {
+        "calibration": {
+          "questions": 481,
+          "hits": 447,
+          "hitRate": 0.9293139293139293,
+          "top1Hits": 340,
+          "chunks": 235,
+          "providerCalls": 21,
+          "providerTexts": 370,
+          "singletonCalls": 3
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 410,
+          "hitRate": 0.9382151029748284,
+          "top1Hits": 290,
+          "chunks": 236,
+          "providerCalls": 21,
+          "providerTexts": 456,
+          "singletonCalls": 5
+        }
+      }
+    }
+  },
+  "wikisection": {
+    "documents": {
+      "calibration": [
+        "https://en.wikipedia.org/wiki/Richfield,_Utah",
+        "https://en.wikipedia.org/wiki/Monticello,_Illinois",
+        "https://en.wikipedia.org/wiki/Slutsk",
+        "https://en.wikipedia.org/wiki/L\u00fcbeck",
+        "https://en.wikipedia.org/wiki/Glasgow",
+        "https://en.wikipedia.org/wiki/Pevek",
+        "https://en.wikipedia.org/wiki/Willowbrook,_Kansas",
+        "https://en.wikipedia.org/wiki/Crystal_Lake,_Iowa"
+      ],
+      "heldout": [
+        "https://en.wikipedia.org/wiki/Thornhill,_Kentucky",
+        "https://en.wikipedia.org/wiki/Khojaly_(city)",
+        "https://en.wikipedia.org/wiki/Uberaba",
+        "https://en.wikipedia.org/wiki/Cruces,_Cuba",
+        "https://en.wikipedia.org/wiki/Jerash",
+        "https://en.wikipedia.org/wiki/Jeju_City",
+        "https://en.wikipedia.org/wiki/Parker,_Florida",
+        "https://en.wikipedia.org/wiki/Aasiaat"
+      ]
+    },
+    "sentences": 1159,
+    "distinctTexts": 8179,
+    "vectorsSHA256": "324499950ee9f8d46cdf4e90f78f063936edaaca3a25181fa0cd8601c58559fe",
+    "calibrationSelection": "merge-500-0.3",
+    "scores": {
+      "sentences": {
+        "calibration": {
+          "matched": 80,
+          "predicted": 895,
+          "gold": 81,
+          "precision": 0.0893854748603352,
+          "recall": 0.9876543209876543,
+          "f1": 0.16393442622950818,
+          "windowDiff": 0.993235821683047,
+          "chunks": 903,
+          "providerCalls": 8,
+          "providerTexts": 901,
+          "singletonCalls": 0
+        },
+        "heldout": {
+          "matched": 46,
+          "predicted": 248,
+          "gold": 47,
+          "precision": 0.18548387096774194,
+          "recall": 0.9787234042553191,
+          "f1": 0.31186440677966104,
+          "windowDiff": 0.9498857912729146,
+          "chunks": 256,
+          "providerCalls": 8,
+          "providerTexts": 256,
+          "singletonCalls": 0
+        }
+      },
+      "pack-250": {
+        "calibration": {
+          "matched": 60,
+          "predicted": 612,
+          "gold": 81,
+          "precision": 0.09803921568627451,
+          "recall": 0.7407407407407407,
+          "f1": 0.17316017316017315,
+          "windowDiff": 0.9514340600478586,
+          "chunks": 620,
+          "providerCalls": 8,
+          "providerTexts": 620,
+          "singletonCalls": 0
+        },
+        "heldout": {
+          "matched": 25,
+          "predicted": 148,
+          "gold": 47,
+          "precision": 0.16891891891891891,
+          "recall": 0.5319148936170213,
+          "f1": 0.2564102564102564,
+          "windowDiff": 0.8291134149406353,
+          "chunks": 156,
+          "providerCalls": 8,
+          "providerTexts": 156,
+          "singletonCalls": 0
+        }
+      },
+      "merge-250-0.3": {
+        "calibration": {
+          "matched": 73,
+          "predicted": 705,
+          "gold": 81,
+          "precision": 0.10354609929078014,
+          "recall": 0.9012345679012346,
+          "f1": 0.18575063613231552,
+          "windowDiff": 0.987569919154309,
+          "chunks": 713,
+          "providerCalls": 26,
+          "providerTexts": 1091,
+          "singletonCalls": 2
+        },
+        "heldout": {
+          "matched": 35,
+          "predicted": 179,
+          "gold": 47,
+          "precision": 0.19553072625698323,
+          "recall": 0.7446808510638298,
+          "f1": 0.30973451327433627,
+          "windowDiff": 0.8689027196583867,
+          "chunks": 187,
+          "providerCalls": 21,
+          "providerTexts": 325,
+          "singletonCalls": 3
+        }
+      },
+      "merge-250-0.4": {
+        "calibration": {
+          "matched": 74,
+          "predicted": 756,
+          "gold": 81,
+          "precision": 0.09788359788359788,
+          "recall": 0.9135802469135802,
+          "f1": 0.1768219832735962,
+          "windowDiff": 0.9931332786149584,
+          "chunks": 764,
+          "providerCalls": 24,
+          "providerTexts": 1040,
+          "singletonCalls": 2
+        },
+        "heldout": {
+          "matched": 38,
+          "predicted": 193,
+          "gold": 47,
+          "precision": 0.19689119170984457,
+          "recall": 0.8085106382978723,
+          "f1": 0.31666666666666665,
+          "windowDiff": 0.8902139780699238,
+          "chunks": 201,
+          "providerCalls": 21,
+          "providerTexts": 311,
+          "singletonCalls": 4
+        }
+      },
+      "merge-250-0.5": {
+        "calibration": {
+          "matched": 77,
+          "predicted": 801,
+          "gold": 81,
+          "precision": 0.09612983770287141,
+          "recall": 0.9506172839506173,
+          "f1": 0.1746031746031746,
+          "windowDiff": 0.9931332786149584,
+          "chunks": 809,
+          "providerCalls": 23,
+          "providerTexts": 995,
+          "singletonCalls": 5
+        },
+        "heldout": {
+          "matched": 41,
+          "predicted": 209,
+          "gold": 47,
+          "precision": 0.19617224880382775,
+          "recall": 0.8723404255319149,
+          "f1": 0.3203125,
+          "windowDiff": 0.9193539265398583,
+          "chunks": 217,
+          "providerCalls": 20,
+          "providerTexts": 295,
+          "singletonCalls": 5
+        }
+      },
+      "merge-250-0.6": {
+        "calibration": {
+          "matched": 79,
+          "predicted": 845,
+          "gold": 81,
+          "precision": 0.09349112426035502,
+          "recall": 0.9753086419753086,
+          "f1": 0.17062634989200864,
+          "windowDiff": 0.993235821683047,
+          "chunks": 853,
+          "providerCalls": 19,
+          "providerTexts": 951,
+          "singletonCalls": 3
+        },
+        "heldout": {
+          "matched": 44,
+          "predicted": 223,
+          "gold": 47,
+          "precision": 0.19730941704035873,
+          "recall": 0.9361702127659575,
+          "f1": 0.32592592592592595,
+          "windowDiff": 0.9226558841833008,
+          "chunks": 231,
+          "providerCalls": 17,
+          "providerTexts": 281,
+          "singletonCalls": 3
+        }
+      },
+      "merge-250-0.7": {
+        "calibration": {
+          "matched": 80,
+          "predicted": 881,
+          "gold": 81,
+          "precision": 0.09080590238365494,
+          "recall": 0.9876543209876543,
+          "f1": 0.16632016632016633,
+          "windowDiff": 0.993235821683047,
+          "chunks": 889,
+          "providerCalls": 15,
+          "providerTexts": 915,
+          "singletonCalls": 3
+        },
+        "heldout": {
+          "matched": 45,
+          "predicted": 241,
+          "gold": 47,
+          "precision": 0.18672199170124482,
+          "recall": 0.9574468085106383,
+          "f1": 0.3125,
+          "windowDiff": 0.9347313373288719,
+          "chunks": 249,
+          "providerCalls": 12,
+          "providerTexts": 263,
+          "singletonCalls": 2
+        }
+      },
+      "merge-250-document": {
+        "calibration": {
+          "matched": 72,
+          "predicted": 676,
+          "gold": 81,
+          "precision": 0.10650887573964497,
+          "recall": 0.8888888888888888,
+          "f1": 0.190224570673712,
+          "windowDiff": 0.9886817451741263,
+          "chunks": 684,
+          "providerCalls": 28,
+          "providerTexts": 1120,
+          "singletonCalls": 1
+        },
+        "heldout": {
+          "matched": 35,
+          "predicted": 173,
+          "gold": 47,
+          "precision": 0.2023121387283237,
+          "recall": 0.7446808510638298,
+          "f1": 0.3181818181818182,
+          "windowDiff": 0.8653069103103765,
+          "chunks": 181,
+          "providerCalls": 21,
+          "providerTexts": 331,
+          "singletonCalls": 2
+        }
+      },
+      "group-250": {
+        "calibration": {
+          "matched": 77,
+          "predicted": 811,
+          "gold": 81,
+          "precision": 0.09494451294697903,
+          "recall": 0.9506172839506173,
+          "f1": 0.1726457399103139,
+          "windowDiff": 0.9931332786149584,
+          "chunks": 819,
+          "providerCalls": 16,
+          "providerTexts": 976,
+          "singletonCalls": 1
+        },
+        "heldout": {
+          "matched": 41,
+          "predicted": 217,
+          "gold": 47,
+          "precision": 0.1889400921658986,
+          "recall": 0.8723404255319149,
+          "f1": 0.3106060606060606,
+          "windowDiff": 0.9217303523953715,
+          "chunks": 225,
+          "providerCalls": 16,
+          "providerTexts": 286,
+          "singletonCalls": 0
+        }
+      },
+      "group+merge-250": {
+        "calibration": {
+          "matched": 77,
+          "predicted": 800,
+          "gold": 81,
+          "precision": 0.09625,
+          "recall": 0.9506172839506173,
+          "f1": 0.17480136208853575,
+          "windowDiff": 0.9931332786149584,
+          "chunks": 808,
+          "providerCalls": 21,
+          "providerTexts": 987,
+          "singletonCalls": 3
+        },
+        "heldout": {
+          "matched": 41,
+          "predicted": 209,
+          "gold": 47,
+          "precision": 0.19617224880382775,
+          "recall": 0.8723404255319149,
+          "f1": 0.3203125,
+          "windowDiff": 0.9193539265398583,
+          "chunks": 217,
+          "providerCalls": 19,
+          "providerTexts": 294,
+          "singletonCalls": 1
+        }
+      },
+      "pack-500": {
+        "calibration": {
+          "matched": 26,
+          "predicted": 284,
+          "gold": 81,
+          "precision": 0.09154929577464789,
+          "recall": 0.32098765432098764,
+          "f1": 0.14246575342465753,
+          "windowDiff": 0.7385292471844203,
+          "chunks": 292,
+          "providerCalls": 8,
+          "providerTexts": 292,
+          "singletonCalls": 0
+        },
+        "heldout": {
+          "matched": 15,
+          "predicted": 68,
+          "gold": 47,
+          "precision": 0.22058823529411764,
+          "recall": 0.3191489361702128,
+          "f1": 0.2608695652173913,
+          "windowDiff": 0.5665872533381904,
+          "chunks": 76,
+          "providerCalls": 8,
+          "providerTexts": 76,
+          "singletonCalls": 0
+        }
+      },
+      "merge-500-0.3": {
+        "calibration": {
+          "matched": 59,
+          "predicted": 449,
+          "gold": 81,
+          "precision": 0.13140311804008908,
+          "recall": 0.7283950617283951,
+          "f1": 0.22264150943396227,
+          "windowDiff": 0.872092659139093,
+          "chunks": 457,
+          "providerCalls": 36,
+          "providerTexts": 1347,
+          "singletonCalls": 1
+        },
+        "heldout": {
+          "matched": 28,
+          "predicted": 116,
+          "gold": 47,
+          "precision": 0.2413793103448276,
+          "recall": 0.5957446808510638,
+          "f1": 0.34355828220858897,
+          "windowDiff": 0.6755117625148976,
+          "chunks": 124,
+          "providerCalls": 31,
+          "providerTexts": 388,
+          "singletonCalls": 4
+        }
+      },
+      "merge-500-0.4": {
+        "calibration": {
+          "matched": 61,
+          "predicted": 556,
+          "gold": 81,
+          "precision": 0.10971223021582734,
+          "recall": 0.7530864197530864,
+          "f1": 0.19152276295133439,
+          "windowDiff": 0.8996378119932844,
+          "chunks": 564,
+          "providerCalls": 35,
+          "providerTexts": 1240,
+          "singletonCalls": 3
+        },
+        "heldout": {
+          "matched": 31,
+          "predicted": 151,
+          "gold": 47,
+          "precision": 0.2052980132450331,
+          "recall": 0.6595744680851063,
+          "f1": 0.31313131313131315,
+          "windowDiff": 0.7623458984935675,
+          "chunks": 159,
+          "providerCalls": 27,
+          "providerTexts": 353,
+          "singletonCalls": 2
+        }
+      },
+      "merge-500-0.5": {
+        "calibration": {
+          "matched": 71,
+          "predicted": 697,
+          "gold": 81,
+          "precision": 0.10186513629842181,
+          "recall": 0.8765432098765432,
+          "f1": 0.18251928020565553,
+          "windowDiff": 0.9742364548238888,
+          "chunks": 705,
+          "providerCalls": 29,
+          "providerTexts": 1099,
+          "singletonCalls": 5
+        },
+        "heldout": {
+          "matched": 38,
+          "predicted": 188,
+          "gold": 47,
+          "precision": 0.20212765957446807,
+          "recall": 0.8085106382978723,
+          "f1": 0.32340425531914896,
+          "windowDiff": 0.8566970276942412,
+          "chunks": 196,
+          "providerCalls": 25,
+          "providerTexts": 316,
+          "singletonCalls": 5
+        }
+      },
+      "merge-500-0.6": {
+        "calibration": {
+          "matched": 77,
+          "predicted": 793,
+          "gold": 81,
+          "precision": 0.09709962168978563,
+          "recall": 0.9506172839506173,
+          "f1": 0.17620137299771166,
+          "windowDiff": 0.9840683614639683,
+          "chunks": 801,
+          "providerCalls": 23,
+          "providerTexts": 1003,
+          "singletonCalls": 2
+        },
+        "heldout": {
+          "matched": 42,
+          "predicted": 210,
+          "gold": 47,
+          "precision": 0.2,
+          "recall": 0.8936170212765957,
+          "f1": 0.32684824902723736,
+          "windowDiff": 0.8622355149796546,
+          "chunks": 218,
+          "providerCalls": 21,
+          "providerTexts": 294,
+          "singletonCalls": 3
+        }
+      },
+      "merge-500-0.7": {
+        "calibration": {
+          "matched": 80,
+          "predicted": 867,
+          "gold": 81,
+          "precision": 0.0922722029988466,
+          "recall": 0.9876543209876543,
+          "f1": 0.16877637130801687,
+          "windowDiff": 0.993235821683047,
+          "chunks": 875,
+          "providerCalls": 16,
+          "providerTexts": 929,
+          "singletonCalls": 2
+        },
+        "heldout": {
+          "matched": 45,
+          "predicted": 238,
+          "gold": 47,
+          "precision": 0.18907563025210083,
+          "recall": 0.9574468085106383,
+          "f1": 0.3157894736842105,
+          "windowDiff": 0.9330190085617486,
+          "chunks": 246,
+          "providerCalls": 13,
+          "providerTexts": 266,
+          "singletonCalls": 2
+        }
+      },
+      "merge-500-document": {
+        "calibration": {
+          "matched": 55,
+          "predicted": 423,
+          "gold": 81,
+          "precision": 0.13002364066193853,
+          "recall": 0.6790123456790124,
+          "f1": 0.21825396825396826,
+          "windowDiff": 0.8549066964327054,
+          "chunks": 431,
+          "providerCalls": 40,
+          "providerTexts": 1373,
+          "singletonCalls": 4
+        },
+        "heldout": {
+          "matched": 27,
+          "predicted": 107,
+          "gold": 47,
+          "precision": 0.2523364485981308,
+          "recall": 0.574468085106383,
+          "f1": 0.35064935064935066,
+          "windowDiff": 0.6845142477149196,
+          "chunks": 115,
+          "providerCalls": 31,
+          "providerTexts": 397,
+          "singletonCalls": 2
+        }
+      },
+      "group-500": {
+        "calibration": {
+          "matched": 68,
+          "predicted": 709,
+          "gold": 81,
+          "precision": 0.09590973201692525,
+          "recall": 0.8395061728395061,
+          "f1": 0.17215189873417722,
+          "windowDiff": 0.9686462961094866,
+          "chunks": 717,
+          "providerCalls": 15,
+          "providerTexts": 1052,
+          "singletonCalls": 0
+        },
+        "heldout": {
+          "matched": 40,
+          "predicted": 197,
+          "gold": 47,
+          "precision": 0.20304568527918782,
+          "recall": 0.851063829787234,
+          "f1": 0.32786885245901637,
+          "windowDiff": 0.8620797879717742,
+          "chunks": 205,
+          "providerCalls": 16,
+          "providerTexts": 298,
+          "singletonCalls": 0
+        }
+      },
+      "group+merge-500": {
+        "calibration": {
+          "matched": 68,
+          "predicted": 688,
+          "gold": 81,
+          "precision": 0.09883720930232558,
+          "recall": 0.8395061728395061,
+          "f1": 0.17685305591677503,
+          "windowDiff": 0.9657296523184575,
+          "chunks": 696,
+          "providerCalls": 24,
+          "providerTexts": 1073,
+          "singletonCalls": 6
+        },
+        "heldout": {
+          "matched": 38,
+          "predicted": 185,
+          "gold": 47,
+          "precision": 0.20540540540540542,
+          "recall": 0.8085106382978723,
+          "f1": 0.3275862068965517,
+          "windowDiff": 0.8509330910115158,
+          "chunks": 193,
+          "providerCalls": 20,
+          "providerTexts": 310,
+          "singletonCalls": 0
+        }
+      },
+      "pack-1000": {
+        "calibration": {
+          "matched": 8,
+          "predicted": 130,
+          "gold": 81,
+          "precision": 0.06153846153846154,
+          "recall": 0.09876543209876543,
+          "f1": 0.07582938388625593,
+          "windowDiff": 0.5356385399047925,
+          "chunks": 138,
+          "providerCalls": 8,
+          "providerTexts": 138,
+          "singletonCalls": 0
+        },
+        "heldout": {
+          "matched": 4,
+          "predicted": 29,
+          "gold": 47,
+          "precision": 0.13793103448275862,
+          "recall": 0.0851063829787234,
+          "f1": 0.10526315789473684,
+          "windowDiff": 0.44052265219547043,
+          "chunks": 37,
+          "providerCalls": 8,
+          "providerTexts": 37,
+          "singletonCalls": 0
+        }
+      },
+      "merge-1000-0.3": {
+        "calibration": {
+          "matched": 43,
+          "predicted": 309,
+          "gold": 81,
+          "precision": 0.13915857605177995,
+          "recall": 0.5308641975308642,
+          "f1": 0.2205128205128205,
+          "windowDiff": 0.6484356010089326,
+          "chunks": 317,
+          "providerCalls": 47,
+          "providerTexts": 1487,
+          "singletonCalls": 3
+        },
+        "heldout": {
+          "matched": 16,
+          "predicted": 88,
+          "gold": 47,
+          "precision": 0.18181818181818182,
+          "recall": 0.3404255319148936,
+          "f1": 0.23703703703703705,
+          "windowDiff": 0.5727693868111488,
+          "chunks": 96,
+          "providerCalls": 38,
+          "providerTexts": 416,
+          "singletonCalls": 4
+        }
+      },
+      "merge-1000-0.4": {
+        "calibration": {
+          "matched": 47,
+          "predicted": 456,
+          "gold": 81,
+          "precision": 0.10307017543859649,
+          "recall": 0.5802469135802469,
+          "f1": 0.1750465549348231,
+          "windowDiff": 0.8087455930571389,
+          "chunks": 464,
+          "providerCalls": 43,
+          "providerTexts": 1340,
+          "singletonCalls": 7
+        },
+        "heldout": {
+          "matched": 23,
+          "predicted": 127,
+          "gold": 47,
+          "precision": 0.18110236220472442,
+          "recall": 0.48936170212765956,
+          "f1": 0.26436781609195403,
+          "windowDiff": 0.6691333818849458,
+          "chunks": 135,
+          "providerCalls": 36,
+          "providerTexts": 377,
+          "singletonCalls": 8
+        }
+      },
+      "merge-1000-0.5": {
+        "calibration": {
+          "matched": 67,
+          "predicted": 651,
+          "gold": 81,
+          "precision": 0.10291858678955453,
+          "recall": 0.8271604938271605,
+          "f1": 0.1830601092896175,
+          "windowDiff": 0.9220933506482345,
+          "chunks": 659,
+          "providerCalls": 36,
+          "providerTexts": 1145,
+          "singletonCalls": 7
+        },
+        "heldout": {
+          "matched": 35,
+          "predicted": 176,
+          "gold": 47,
+          "precision": 0.19886363636363635,
+          "recall": 0.7446808510638298,
+          "f1": 0.31390134529147984,
+          "windowDiff": 0.7806590003375653,
+          "chunks": 184,
+          "providerCalls": 30,
+          "providerTexts": 328,
+          "singletonCalls": 6
+        }
+      },
+      "merge-1000-0.6": {
+        "calibration": {
+          "matched": 77,
+          "predicted": 783,
+          "gold": 81,
+          "precision": 0.0983397190293742,
+          "recall": 0.9506172839506173,
+          "f1": 0.17824074074074073,
+          "windowDiff": 0.9834746528289142,
+          "chunks": 791,
+          "providerCalls": 23,
+          "providerTexts": 1013,
+          "singletonCalls": 1
+        },
+        "heldout": {
+          "matched": 41,
+          "predicted": 206,
+          "gold": 47,
+          "precision": 0.19902912621359223,
+          "recall": 0.8723404255319149,
+          "f1": 0.3241106719367589,
+          "windowDiff": 0.8460417721673953,
+          "chunks": 214,
+          "providerCalls": 22,
+          "providerTexts": 298,
+          "singletonCalls": 2
+        }
+      },
+      "merge-1000-0.7": {
+        "calibration": {
+          "matched": 80,
+          "predicted": 865,
+          "gold": 81,
+          "precision": 0.09248554913294797,
+          "recall": 0.9876543209876543,
+          "f1": 0.16913319238900634,
+          "windowDiff": 0.992778374046202,
+          "chunks": 873,
+          "providerCalls": 16,
+          "providerTexts": 931,
+          "singletonCalls": 1
+        },
+        "heldout": {
+          "matched": 45,
+          "predicted": 238,
+          "gold": 47,
+          "precision": 0.18907563025210083,
+          "recall": 0.9574468085106383,
+          "f1": 0.3157894736842105,
+          "windowDiff": 0.9330190085617486,
+          "chunks": 246,
+          "providerCalls": 13,
+          "providerTexts": 266,
+          "singletonCalls": 2
+        }
+      },
+      "merge-1000-document": {
+        "calibration": {
+          "matched": 40,
+          "predicted": 280,
+          "gold": 81,
+          "precision": 0.14285714285714285,
+          "recall": 0.49382716049382713,
+          "f1": 0.22160664819944598,
+          "windowDiff": 0.6094227448165208,
+          "chunks": 288,
+          "providerCalls": 51,
+          "providerTexts": 1516,
+          "singletonCalls": 6
+        },
+        "heldout": {
+          "matched": 15,
+          "predicted": 76,
+          "gold": 47,
+          "precision": 0.19736842105263158,
+          "recall": 0.3191489361702128,
+          "f1": 0.24390243902439024,
+          "windowDiff": 0.5661963697334206,
+          "chunks": 84,
+          "providerCalls": 39,
+          "providerTexts": 428,
+          "singletonCalls": 6
+        }
+      },
+      "group-1000": {
+        "calibration": {
+          "matched": 67,
+          "predicted": 691,
+          "gold": 81,
+          "precision": 0.09696092619392185,
+          "recall": 0.8271604938271605,
+          "f1": 0.17357512953367876,
+          "windowDiff": 0.9628878916339556,
+          "chunks": 699,
+          "providerCalls": 15,
+          "providerTexts": 1051,
+          "singletonCalls": 0
+        },
+        "heldout": {
+          "matched": 39,
+          "predicted": 192,
+          "gold": 47,
+          "precision": 0.203125,
+          "recall": 0.8297872340425532,
+          "f1": 0.3263598326359833,
+          "windowDiff": 0.8402393136310617,
+          "chunks": 200,
+          "providerCalls": 16,
+          "providerTexts": 299,
+          "singletonCalls": 0
+        }
+      },
+      "group+merge-1000": {
+        "calibration": {
+          "matched": 66,
+          "predicted": 642,
+          "gold": 81,
+          "precision": 0.102803738317757,
+          "recall": 0.8148148148148148,
+          "f1": 0.1825726141078838,
+          "windowDiff": 0.9014242440317612,
+          "chunks": 650,
+          "providerCalls": 27,
+          "providerTexts": 1100,
+          "singletonCalls": 4
+        },
+        "heldout": {
+          "matched": 34,
+          "predicted": 174,
+          "gold": 47,
+          "precision": 0.19540229885057472,
+          "recall": 0.723404255319149,
+          "f1": 0.3076923076923077,
+          "windowDiff": 0.7804009136204283,
+          "chunks": 182,
+          "providerCalls": 25,
+          "providerTexts": 317,
+          "singletonCalls": 4
+        }
+      },
+      "group-500-fixed": {
+        "calibration": {
+          "matched": 68,
+          "predicted": 702,
+          "gold": 81,
+          "precision": 0.09686609686609686,
+          "recall": 0.8395061728395061,
+          "f1": 0.17369093231162197,
+          "windowDiff": 0.9686462961094866,
+          "chunks": 710,
+          "providerCalls": 16,
+          "providerTexts": 1055,
+          "singletonCalls": 1
+        },
+        "heldout": {
+          "matched": 39,
+          "predicted": 187,
+          "gold": 47,
+          "precision": 0.20855614973262032,
+          "recall": 0.8297872340425532,
+          "f1": 0.3333333333333333,
+          "windowDiff": 0.8492372094082248,
+          "chunks": 195,
+          "providerCalls": 16,
+          "providerTexts": 301,
+          "singletonCalls": 0
+        }
+      },
+      "group+merge-500-fixed": {
+        "calibration": {
+          "matched": 68,
+          "predicted": 688,
+          "gold": 81,
+          "precision": 0.09883720930232558,
+          "recall": 0.8395061728395061,
+          "f1": 0.17685305591677503,
+          "windowDiff": 0.9657296523184575,
+          "chunks": 696,
+          "providerCalls": 22,
+          "providerTexts": 1069,
+          "singletonCalls": 5
+        },
+        "heldout": {
+          "matched": 38,
+          "predicted": 184,
+          "gold": 47,
+          "precision": 0.20652173913043478,
+          "recall": 0.8085106382978723,
+          "f1": 0.329004329004329,
+          "windowDiff": 0.8516460187681698,
+          "chunks": 192,
+          "providerCalls": 17,
+          "providerTexts": 304,
+          "singletonCalls": 0
+        }
+      }
+    }
+  }
+}

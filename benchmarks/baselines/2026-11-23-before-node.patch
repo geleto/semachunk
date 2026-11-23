@@ -1,0 +1,1494 @@
+diff --git b/benchmarks/chunk.mjs b/benchmarks/chunk.mjs
+new file mode 100644
+index 0000000..51950af
+--- /dev/null
++++ b/benchmarks/chunk.mjs
+@@ -0,0 +1,93 @@
++import { readFileSync, readSync, writeFileSync } from 'node:fs';
++import { join } from 'node:path';
++import { pathToFileURL } from 'node:url';
++
++const [stage, implementation, dir, vectorFile] = process.argv.slice(2);
++const { chunkText } = await import(pathToFileURL(join(implementation, 'src/index.js')));
++const read = name => JSON.parse(readFileSync(join(dir, name + '.json'), 'utf8'));
++const write = (name, data) => writeFileSync(join(dir, name + '.json'), JSON.stringify(data));
++const docs = read('documents');
++// The Python runner owns the exact pinned model tokenizer. Only token-limited
++// methods use this local pipe. All embedding callbacks still receive batches.
++const tokenCounts = new Map();
++const reply = Buffer.alloc(32);
++function countTokens(text) {
++    if (!tokenCounts.has(text)) {
++        writeFileSync(1, JSON.stringify(text) + '\n');
++        let end = 0;
++        while (end < reply.length && (end === 0 || reply[end - 1] !== 10)) {
++            const n = readSync(0, reply, end, reply.length - end);
++            if (!n) throw new Error('Tokenizer pipe closed');
++            end += n;
++        }
++        if (reply[end - 1] !== 10) throw new Error('Invalid tokenizer reply');
++        tokenCounts.set(text, Number(reply.toString('ascii', 0, end).trim()));
++    }
++    return tokenCounts.get(text);
++}
++
++if (stage === 'split') {
++    const sentences = [];
++    const unexpected = () => { throw new Error('Splitting requested embeddings'); };
++    for (const doc of docs) {
++        const options = { combineChunks: false, groupSentences: false, returnEmbedding: false };
++        if (process.argv.includes('--token-split')) Object.assign(options, { maxChunkTokens: 256, countTokens });
++        const chunks = await chunkText(doc, unexpected, options);
++        sentences.push(chunks.map(c => c.text));
++    }
++    write('sentences', sentences);
++} else if (stage === 'chunk') {
++    const sentences = read('sentences');
++    const texts = read('texts');
++    const ids = new Map(texts.map((s, i) => [s, i]));
++    const bytes = readFileSync(vectorFile);
++    const matrix = new Float32Array(bytes.buffer, bytes.byteOffset, bytes.byteLength / 4);
++    if (matrix.length !== texts.length * 384) throw new Error('Embedding matrix size mismatch');
++    const id = text => {
++        if (!ids.has(text)) throw new Error('Chunk text missing from the frozen vectors: ' + text.slice(0, 80));
++        return ids.get(text);
++    };
++    const results = {};
++    let flatDocs;
++    for (const [name, options] of Object.entries(read('plans'))) {
++        results[name] = [];
++        for (let i = 0; i < docs.length; i++) {
++            let calls = 0, inputs = 0, singletons = 0;
++            const embed = async batch => {
++                if (options.maxChunkTokens && batch.some(s => countTokens(s) > options.maxChunkTokens)) {
++                    throw new Error('Token limit exceeded in an embedding request');
++                }
++                calls++;
++                inputs += batch.length;
++                if (batch.length === 1) singletons++;
++                return batch.map(s => {
++                    const start = id(s) * 384;
++                    return matrix.subarray(start, start + 384);
++                });
++            };
++            let output;
++            if (options.pack) {
++                output = [];
++                for (const sentence of sentences[i]) {
++                    const last = output.length - 1;
++                    if (last >= 0 && output[last].length + 1 + sentence.length <= options.maxChunkSize) {
++                        output[last] += ' ' + sentence;
++                    } else {
++                        output.push(sentence);
++                    }
++                }
++                await embed([...new Set(output)]); // Include indexing cost on the same terms as chunkText.
++            } else {
++                if (options.flatInput) flatDocs ??= read('flat-documents');
++                const input = options.flatInput ? flatDocs[i] : docs[i];
++                const chunkOptions = { ...options, returnEmbedding: true };
++                if (options.maxChunkTokens) chunkOptions.countTokens = countTokens;
++                output = (await chunkText(input, embed, chunkOptions)).map(c => c.text);
++            }
++            results[name].push({ ids: output.map(id), calls, inputs, singletons });
++        }
++    }
++    write('runs', results);
++} else {
++    throw new Error('Unknown benchmark stage: ' + stage);
++}
+diff --git b/benchmarks/corpora.py b/benchmarks/corpora.py
+new file mode 100644
+index 0000000..550139b
+--- /dev/null
++++ b/benchmarks/corpora.py
+@@ -0,0 +1,159 @@
++"""Pinned public data and source offsets for the two evaluation tasks."""
++
++from bisect import bisect_right
++from dataclasses import dataclass, field
++import hashlib
++import json
++from pathlib import Path
++import shutil
++import tarfile
++from tempfile import NamedTemporaryFile
++from urllib.request import urlopen
++
++
++CACHE = Path(__file__).resolve().parent / ".cache"
++MODEL = "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
++ASSETS = {
++    "squad.json": (
++        "https://raw.githubusercontent.com/rajpurkar/SQuAD-explorer/eee5fdbf62f8613a7812b03419e6b29617b74fd1/dataset/dev-v1.1.json",
++        "95aa6a52d5d6a735563366753ca50492a658031da74f301ac5238b03966972c9"),
++    "wikisection.tar.gz": (
++        "https://raw.githubusercontent.com/sebastianarnold/WikiSection/9d1bd55da4bc2dc985b5f4493e8214caa86100b8/wikisection_dataset_json.tar.gz",
++        "f37810a95702737b153a3034dbb877d08ecc699900f1a01c70110d47a5a016b8"),
++    "tokenizer.json": (MODEL + "/tokenizer.json", "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037"),
++    "model.onnx": (MODEL + "/onnx/model_quint8_avx2.onnx", "b941bf19f1f1283680f449fa6a7336bb5600bdcd5f84d10ddc5cd72218a0fd21"),
++}
++
++
++def sha256(path):
++    with path.open("rb") as file:
++        return hashlib.file_digest(file, "sha256").hexdigest()
++
++
++def fetch(name, assets=ASSETS):
++    CACHE.mkdir(exist_ok=True)
++    path = CACHE / name
++    url, digest = assets[name]
++    if path.is_file() and sha256(path) == digest:
++        return path
++    with NamedTemporaryFile(dir=CACHE, delete=False) as file:
++        tmp = Path(file.name)
++    try:
++        print(f"Downloading {name}", flush=True)
++        with urlopen(url, timeout=120) as source, tmp.open("wb") as dest:
++            shutil.copyfileobj(source, dest)
++        if sha256(tmp) != digest:
++            raise ValueError(f"Checksum mismatch for {name}")
++        tmp.replace(path)
++    finally:
++        tmp.unlink(missing_ok=True)
++    return path
++
++
++def compact(text):
++    return " ".join(text.split())
++
++
++def utf16_length(text):
++    return len(text.encode("utf-16-le")) // 2
++
++
++@dataclass
++class Document:
++    title: str
++    split: str
++    text: str
++    questions: list = field(default_factory=list)  # (query, list of half-open answer spans)
++    cuts: list = field(default_factory=list)  # starts of sections after the first
++    source_text: str | None = None  # Original layout for chunking; annotations use compact text.
++
++    def align(self, sentences):
++        """Translate gold coordinates to the exact strings returned by chunkText."""
++        original, joined = [], []
++        cursor = offset = 0
++        for sentence in sentences:
++            start = self.text.index(sentence, cursor)
++            if self.text[cursor:start].strip():
++                raise ValueError(f"Sentence splitter skipped content in {self.title}")
++            original.append(start)
++            joined.append(offset)
++            cursor = start + len(sentence)
++            offset += len(sentence) + 1
++        if not sentences or self.text[cursor:].strip():
++            raise ValueError(f"Incomplete sentence coverage in {self.title}")
++
++        def translate(position):
++            i = bisect_right(original, position) - 1
++            if i < 0 or position >= original[i] + len(sentences[i]):
++                raise ValueError(f"Annotation outside sentence text in {self.title}")
++            return joined[i] + position - original[i]
++
++        self.questions = [(q, [(translate(a), translate(b - 1) + 1) for a, b in spans])
++                          for q, spans in self.questions]
++        self.cuts = [translate(start) for start in self.cuts]
++        self.text = " ".join(sentences)
++        return translate
++
++
++def answer_span(raw, normalized, answer):
++    start, literal = answer["answer_start"], answer["text"]
++    if raw[start:start + len(literal)] != literal:
++        return None
++    prefix = raw[:start + len(literal) - len(literal.lstrip())]
++    trimmed = compact(prefix)
++    begin = len(trimmed) + int(bool(trimmed and prefix[-1].isspace()))
++    content = compact(literal)
++    if content and normalized[begin:begin + len(content)] == content:
++        return begin, begin + len(content)
++    return None
++
++
++def squad():
++    articles = json.loads(fetch("squad.json").read_bytes())["data"]
++    docs = []
++    for i, article in enumerate(articles[::3]):
++        paragraphs, questions = [], []
++        offset = 0
++        for paragraph in article["paragraphs"][:8]:
++            raw = paragraph["context"]
++            text = compact(raw)
++            for qa in paragraph["qas"]:
++                spans = set()
++                for answer in qa["answers"]:
++                    span = answer_span(raw, text, answer)
++                    if span:
++                        spans.add((offset + span[0], offset + span[1]))
++                if not spans:
++                    raise ValueError(f"No aligned reference for SQuAD question {qa['id']}")
++                questions.append((qa["question"], sorted(spans)))
++            paragraphs.append(text)
++            offset += len(text) + 1
++        split = "calibration" if i % 2 == 0 else "heldout"
++        docs.append(Document(article["title"], split, " ".join(paragraphs), questions))
++    return docs
++
++
++def wikisection():
++    docs = []
++    with tarfile.open(fetch("wikisection.tar.gz")) as archive:
++        for source, split in [("validation", "calibration"), ("test", "heldout")]:
++            articles = json.load(archive.extractfile(f"wikisection_en_city_{source}.json"))
++            for i in range(8):
++                article = articles[i * len(articles) // 8]
++                raw = article["text"].encode("utf-16-le")
++                sections, cuts = [], []
++                offset = 0
++                for annotation in article["annotations"]:
++                    start = annotation["begin"] * 2
++                    end = start + annotation["length"] * 2
++                    section = compact(raw[start:end].decode("utf-16-le"))
++                    if not section:
++                        raise ValueError(f"Empty section in {article['title']}")
++                    cuts.append(offset)
++                    sections.append(section)
++                    offset += len(section) + 1
++                text = " ".join(sections)
++                if text != compact(article["text"]):
++                    raise ValueError(f"Section annotations omit text in {article['title']}")
++                docs.append(Document(article["id"], split, text, cuts=cuts[1:]))
++    return docs
+diff --git b/benchmarks/encoder.py b/benchmarks/encoder.py
+new file mode 100644
+index 0000000..e8a9fad
+--- /dev/null
++++ b/benchmarks/encoder.py
+@@ -0,0 +1,69 @@
++"""Freeze a shared MiniLM embedding for every candidate text and question."""
++
++import hashlib
++import json
++from pathlib import Path
++from tempfile import NamedTemporaryFile
++
++import numpy as np
++import onnxruntime as ort
++import tokenizers
++
++from corpora import ASSETS, CACHE, fetch
++
++
++DIMENSION = 384
++VERSIONS = {"numpy": np.__version__, "onnxruntime": ort.__version__, "tokenizers": tokenizers.__version__}
++
++
++def encode(texts, tokenizer, model):
++    encodings = tokenizer.encode_batch(texts)
++    order = sorted(range(len(texts)), key=lambda i: len(encodings[i].ids))
++    vectors = np.empty((len(order), DIMENSION), dtype="<f4")
++    options = ort.SessionOptions()
++    options.intra_op_num_threads = 3
++    options.inter_op_num_threads = 1
++    session = ort.InferenceSession(str(model), options, providers=["CPUExecutionProvider"])
++    sep = tokenizer.token_to_id("[SEP]")
++    for offset in range(0, len(order), 24):
++        batch = order[offset:offset + 24]
++        rows = [encodings[i].ids for i in batch]
++        rows = [row if len(row) <= 256 else row[:255] + [sep] for row in rows]
++        ids = np.zeros((len(rows), max(map(len, rows))), dtype=np.int64)
++        mask = np.zeros_like(ids)
++        for i, row in enumerate(rows):
++            ids[i, :len(row)] = row
++            mask[i, :len(row)] = 1
++        hidden = session.run(None, {"input_ids": ids, "attention_mask": mask, "token_type_ids": np.zeros_like(ids)})[0]
++        pooled = (hidden * mask[:, :, None]).sum(axis=1) / mask.sum(axis=1)[:, None]
++        vectors[batch] = pooled / np.linalg.norm(pooled, axis=1, keepdims=True)
++    return vectors
++
++
++def frozen_vectors(texts, tokenizer, model):
++    # Quantized inference depends on batch composition. Include the ordered texts,
++    # encoder implementation and artifact versions in the key; reuse the same bytes.
++    key = hashlib.sha256(Path(__file__).read_text(encoding="utf-8").encode())
++    for item in [VERSIONS, ASSETS["model.onnx"][1], ASSETS["tokenizer.json"][1], texts]:
++        key.update(json.dumps(item, separators=(",", ":")).encode())
++    path = CACHE / (key.hexdigest() + ".f32")
++    if not path.exists():
++        print(f"Embedding {len(texts):,} distinct texts in batches of 24", flush=True)
++        vectors = encode(texts, tokenizer, model)
++        with NamedTemporaryFile(dir=CACHE, delete=False) as file:
++            tmp = Path(file.name)
++        try:
++            vectors.tofile(tmp)
++            tmp.replace(path)
++        finally:
++            tmp.unlink(missing_ok=True)
++    if path.stat().st_size != len(texts) * DIMENSION * 4:
++        raise ValueError(f"Incomplete vector cache at {path}")
++    return path, np.memmap(path, dtype="<f4", mode="r", shape=(len(texts), DIMENSION))
++
++
++def load_model():
++    tokenizer = tokenizers.Tokenizer.from_file(str(fetch("tokenizer.json")))
++    tokenizer.no_padding()
++    tokenizer.no_truncation()
++    return tokenizer, fetch("model.onnx")
+diff --git b/benchmarks/rag.py b/benchmarks/rag.py
+new file mode 100644
+index 0000000..14d0c02
+--- /dev/null
++++ b/benchmarks/rag.py
+@@ -0,0 +1,376 @@
++"""Evaluate retrieval of complete supporting evidence from real documents."""
++
++import argparse
++from bisect import bisect_left, bisect_right
++from collections import Counter, defaultdict
++from dataclasses import dataclass
++from datetime import datetime, timezone
++from functools import lru_cache
++from importlib.metadata import version
++import json
++import math
++from pathlib import Path
++import platform
++import re
++import statistics
++import subprocess
++from tempfile import TemporaryDirectory
++
++from run import HERE, contiguous_texts, indexed_chunks, node, plans, source_digest, write
++import numpy as np
++
++import rag_data
++from corpora import ASSETS, compact, sha256
++from encoder import VERSIONS, frozen_vectors, load_model
++
++
++BUDGETS = (256, 512, 1024)
++METHODS = ("sentences", "pack-500", "merge-250-0.5", "merge-500-0.3", "merge-500-0.5", "merge-500-0.7", "group+merge-500",
++           "flat-merge-500-0.5", "merge-500-document", "merge-500-token-256", "merge-500-two-passes")
++WINDOW, OVERLAP = 128, 32
++WINDOW_NAME = "window-128-overlap-32"
++TASKS = {"cuad": rag_data.cuad, "qasper": rag_data.qasper, "hotpotqa": rag_data.hotpot}
++
++
++@dataclass
++class SourceTokens:
++    starts: list[int]
++    ends: list[int]
++    base: int  # Corpus-wide IDs distinguish identical text at different source positions.
++
++    def span(self, char_start, char_end):
++        return bisect_right(self.ends, char_start), bisect_left(self.starts, char_end)
++
++
++@dataclass(frozen=True)
++class Passage:
++    doc: int
++    start: int
++    end: int
++    text_id: int
++
++
++def node_with_tokenizer(stage, root, directory, tokenizer, *args):
++    cmd = ["node", HERE / "chunk.mjs", stage, root, directory, *args]
++    with subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True, encoding="utf-8") as proc:
++        try:
++            for line in proc.stdout:
++                proc.stdin.write(str(len(tokenizer.encode(json.loads(line)).ids)) + "\n")
++                proc.stdin.flush()
++        except BaseException:
++            proc.kill()
++            raise
++        finally:
++            proc.stdin.close()
++        if proc.wait():
++            raise subprocess.CalledProcessError(proc.returncode, cmd)
++
++
++def prepare(docs, questions, root, directory, tokenizer, settings):
++    flat = [doc.text for doc in docs]
++    inputs = [doc.source_text if doc.source_text is not None else doc.text for doc in docs]
++    if any(compact(raw) != normalized for raw, normalized in zip(inputs, flat, strict=True)):
++        raise ValueError("Raw layout and annotation text disagree")
++    flat_parts = None
++    if any(plan.get("flatInput") for plan in settings.values()):
++        write(directory / "flat-documents.json", flat)
++        write(directory / "documents.json", flat)
++        node("split", root, directory)
++        flat_parts = json.loads((directory / "sentences.json").read_bytes())
++    write(directory / "documents.json", inputs)
++    limited = any(plan.get("maxChunkTokens") for plan in settings.values())
++    if limited:
++        node_with_tokenizer("split", root, directory, tokenizer, "--token-split")
++        limited_parts = json.loads((directory / "sentences.json").read_bytes())
++    node("split", root, directory)
++    sentences = json.loads((directory / "sentences.json").read_bytes())
++    translators, sources, windows = [], [], []
++    ids = {}
++
++    def intern(text):
++        return ids.setdefault(text, len(ids))
++
++    base = 0
++    for d, (doc, parts) in enumerate(zip(docs, sentences, strict=True)):
++        translators.append(doc.align(parts))
++        for text in contiguous_texts(parts, 500):
++            intern(text)
++        # All methods rank with one matrix, including the flattened-input control.
++        if flat_parts is not None:
++            if " ".join(flat_parts[d]) != doc.text:
++                raise ValueError(f"Flat control needs different source coordinates in {doc.title}")
++            for text in contiguous_texts(flat_parts[d], 500):
++                intern(text)
++        if limited:
++            # Over-budget sentences are terminal; only their actual output pieces
++            # need additional vectors. The scorer below verifies their source spans.
++            for text in limited_parts[d]:
++                intern(text)
++        offsets = tokenizer.encode(doc.text, add_special_tokens=False).offsets
++        source = SourceTokens([a for a, _ in offsets], [b for _, b in offsets], base)
++        if not offsets:
++            raise ValueError(f"Empty tokenized source {doc.title}")
++        sources.append(source)
++        base += len(offsets)
++        for start in range(0, len(offsets), WINDOW - OVERLAP):
++            end = min(start + WINDOW, len(offsets))
++            text = doc.text[source.starts[start]:source.ends[end - 1]]
++            windows.append(Passage(d, start, end, intern(text)))
++            if end == len(offsets):
++                break
++
++    gold = []
++    for query in questions:
++        intern(query.text)
++        alternatives = []
++        for reference in query.references:
++            tokens = set()
++            for d, a, b in reference:
++                if d not in query.pool:
++                    raise ValueError(f"Evidence outside the search pool for {query.id}")
++                translate = translators[d]
++                start, end = sources[d].span(translate(a), translate(b - 1) + 1)
++                if end <= start:
++                    raise ValueError(f"Evidence covers no source tokens for {query.id}")
++                tokens.update(range(sources[d].base + start, sources[d].base + end))
++            if tokens not in alternatives:
++                alternatives.append(tokens)
++        if not alternatives or not all(alternatives):
++            raise ValueError(f"Missing reference for {query.id}")
++        gold.append(alternatives)
++    return ids, sources, windows, gold
++
++
++def bm25_rank(queries, passages):
++    """Rank a question's available chunks with BM25 (k1=1.2, b=0.75)."""
++    postings = defaultdict(list)
++    lengths = []
++    for i, terms in enumerate(passages):
++        lengths.append(sum(terms.values()))
++        for word, count in terms.items():
++            postings[word].append((i, count))
++    n = len(passages)
++    mean = sum(lengths) / n or 1
++    norms = [1.2 * (0.25 + 0.75 * length / mean) for length in lengths]
++    for terms in queries:
++        scores = np.zeros(n)
++        for word in terms:
++            matches = postings.get(word, ())
++            idf = math.log1p((n - len(matches) + 0.5) / (len(matches) + 0.5))
++            for i, count in matches:
++                scores[i] += idf * count * 2.2 / (count + norms[i])
++        yield np.argsort(-scores, kind="stable")
++
++
++def evidence_at_budget(ranked, sources, references, budget, trace=None):
++    visible = set()
++    spent = 0
++    for passage in ranked:
++        take = min(passage.end - passage.start, budget - spent)
++        start = sources[passage.doc].base + passage.start
++        visible.update(range(start, start + take))
++        spent += take
++        if trace is not None:
++            trace.append([passage.doc, passage.start, passage.start + take])
++        if spent == budget:
++            break
++    if not spent:
++        raise ValueError("Ranked passages contain no tokens")
++    # Accept a single annotator's complete explanation. Mixing parts from
++    # different annotators can otherwise manufacture a fully supported answer.
++    matches = [(len(gold & visible), len(gold)) for gold in references]
++    correct, gold_size = max(matches, key=lambda pair: (pair[0] / pair[1], pair[0]))
++    recall = correct / gold_size
++    return {"evidenceRecall": recall, "contextPrecision": correct / spent, "complete": int(recall == 1),
++            "budgetFeasible": int(any(len(gold) <= budget for gold in references)), "tokensDelivered": spent}
++
++
++def distribution(values):
++    return {"min": min(values), "median": statistics.median(values), "max": max(values)}
++
++
++def score_method(questions, pools, by_doc, sources, gold, ids, vectors, terms, examples):
++    totals = defaultdict(Counter)
++    for pool, members in pools.items():
++        passages = [p for d in pool for p in by_doc[d]]
++        indices = [p.text_id for p in passages]
++        query_ids = [ids[questions[i].text] for i in members]
++        dense = vectors[query_ids] @ vectors[indices].T
++        rankings = {
++            "minilm": np.argsort(-dense, axis=1, kind="stable"),
++            "bm25": bm25_rank((terms(i) for i in query_ids), [terms(i) for i in indices]),
++        }
++        for ranker, orders in rankings.items():
++            for i, order in zip(members, orders, strict=True):
++                ranked = [passages[j] for j in order]
++                for budget in BUDGETS:
++                    trace = [] if i in examples and ranker == "minilm" and budget == 256 else None
++                    score = evidence_at_budget(ranked, sources, gold[i], budget, trace)
++                    totals[ranker, budget].update(score)
++                    if trace is not None:
++                        examples[i].update(score=score, retrievedSourceTokenRanges=trace)
++    result = {}
++    for (ranker, budget), counts in totals.items():
++        n = len(questions)
++        result.setdefault(ranker, {})[budget] = {
++            "questions": n, "complete": counts["complete"], "budgetFeasible": counts["budgetFeasible"],
++            "evidenceRecall": counts["evidenceRecall"] / n, "contextPrecision": counts["contextPrecision"] / n,
++            "meanTokensDelivered": counts["tokensDelivered"] / n,
++        }
++    return result
++
++
++def examine_examples(task, questions, gold, sources):
++    # Select examples from the source labels before ranking any passages.
++    if task == "cuad":
++        governing_law = [i for i, q in enumerate(questions) if q.id.endswith("__Governing Law")]
++        indices = [max(governing_law, key=lambda i: len(sources[questions[i].pool[0]].starts))]
++    elif task == "qasper":
++        indices = [next(i for i, q in enumerate(questions) if all(len(set(ref)) > 1 for ref in q.references))]
++    else:
++        indices = [next(i for i, q in enumerate(questions) if q.kind == kind) for kind in ("bridge", "comparison")]
++    examples = {}
++    for i in indices:
++        q = questions[i]
++        references = []
++        for alternative in gold[i]:
++            spans = []
++            for d in q.pool:
++                source = sources[d]
++                positions = sorted(t - source.base for t in alternative if source.base <= t < source.base + len(source.starts))
++                for pos in positions:
++                    if spans and spans[-1][0] == d and spans[-1][2] == pos:
++                        spans[-1][2] += 1
++                    else:
++                        spans.append([d, pos, pos + 1])
++            references.append(spans)
++        examples[i] = {"questionId": q.id, "question": q.text, "candidateDocumentIndices": q.pool,
++                       "referenceSourceTokenRanges": references}
++    return examples
++
++
++def evaluate(task, root, directory, tokenizer, model, settings):
++    docs, questions, excluded = TASKS[task]()
++    ids, sources, windows, gold = prepare(docs, questions, root, directory, tokenizer, settings)
++    texts = list(ids)
++    path, vectors = frozen_vectors(texts, tokenizer, model)
++    write(directory / "texts.json", texts)
++    if any(plan.get("maxChunkTokens") for plan in settings.values()):
++        node_with_tokenizer("chunk", root, directory, tokenizer, path)
++    else:
++        node("chunk", root, directory, path)
++    runs = json.loads((directory / "runs.json").read_bytes())
++    pools = defaultdict(list)
++    for i, query in enumerate(questions):
++        pools[query.pool].append(i)
++    # Reuse the exact same article chunks and gold positions for open retrieval.
++    all_articles = {tuple(range(len(docs))): range(len(questions))} if task == "hotpotqa" else None
++    examples = examine_examples(task, questions, gold, sources) if "merge-500-0.5" in settings else {}
++    pooled_examples = {i: {} for i in examples} if all_articles else {}
++
++    @lru_cache(maxsize=None)
++    def terms(index):
++        return Counter(re.findall(r"\w+", texts[index].casefold()))
++
++    @lru_cache(maxsize=None)
++    def exceeds_model_input(index):
++        return len(tokenizer.encode(texts[index]).ids) > 256
++
++    scores = {}
++    for name in [*settings, WINDOW_NAME]:
++        by_doc = [[] for _ in docs]
++        if name == WINDOW_NAME:
++            for p in windows:
++                by_doc[p.doc].append(p)
++            batches = [len({p.text_id for p in group}) for group in by_doc]
++            calls, inputs, singles = len(batches), sum(batches), batches.count(1)
++        else:
++            rows = runs[name]
++            for d, start, index in indexed_chunks(docs, rows, texts):
++                a, b = sources[d].span(start, start + len(texts[index]))
++                if a < b:
++                    by_doc[d].append(Passage(d, a, b, index))
++            for d, group in enumerate(by_doc):
++                if not group or group[0].start != 0 or group[-1].end != len(sources[d].starts) or any(
++                        p.end != q.start for p, q in zip(group, group[1:])):
++                    raise ValueError(f"Chunks do not partition the source tokens in {docs[d].title}")
++            calls, inputs, singles = (sum(r[field] for r in rows) for field in ("calls", "inputs", "singletons"))
++        scores[name] = {
++            "chunks": sum(map(len, by_doc)), "providerCalls": calls, "providerTexts": inputs, "singletonCalls": singles,
++            "chunkTokens": distribution([p.end - p.start for group in by_doc for p in group]),
++            "chunksOverModelInput": sum(exceeds_model_input(p.text_id) for group in by_doc for p in group),
++            "retrieval": score_method(questions, pools, by_doc, sources, gold, ids, vectors, terms,
++                                      examples if name == "merge-500-0.5" else {}),
++        }
++        if all_articles:
++            scores[name]["pooledRetrieval"] = score_method(questions, all_articles, by_doc, sources, gold, ids, vectors, terms,
++                                                          pooled_examples if name == "merge-500-0.5" else {})
++    for i, trace in pooled_examples.items():
++        examples[i]["pooledAt256"] = trace
++    lengths = [len(source.starts) for source in sources]
++    summary = f"{task}: {len(questions)} questions; {len(docs)} documents"
++    if "merge-500-0.5" in scores:
++        summary += f"; default complete at 256 = {scores['merge-500-0.5']['retrieval']['minilm'][256]['complete']}"
++    print(summary, flush=True)
++    return {
++        "documents": [doc.title for doc in docs], "questionIds": [q.id for q in questions], "exclusions": dict(excluded),
++        "corpusTokens": sum(lengths),
++        "documentTokens": distribution(lengths),
++        "candidatePoolTokensPerQuestion": distribution([sum(lengths[d] for d in q.pool) for q in questions]),
++        "candidateDocumentsPerQuestion": distribution([len(q.pool) for q in questions]),
++        "shortestReferenceTokens": distribution([min(map(len, ref)) for ref in gold]),
++        "requiresMultipleSources": sum(all(len({d for d, _, _ in ref}) > 1 for ref in q.references) for q in questions),
++        "requiresMultipleSpans": sum(all(len(set(ref)) > 1 for ref in q.references) for q in questions),
++        "distinctTexts": len(texts), "vectorsSHA256": sha256(path), "scores": scores,
++        "defaultExamplesAt256": list(examples.values()),
++    }
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--task", choices=["all", *TASKS], default="all")
++    parser.add_argument("--implementation", type=Path, default=HERE.parent)
++    parser.add_argument("--methods", nargs="+", choices=METHODS, default=METHODS, help="chunker settings to compare with the token window")
++    parser.add_argument("--output", type=Path, help="new result file in JSON format")
++    args = parser.parse_args()
++    root = args.implementation.resolve()
++    started = datetime.now(timezone.utc)
++    out = args.output or HERE / "results" / ("rag-" + started.strftime("%Y%m%dT%H%M%S%fZ") + ".json")
++    if out.exists():
++        parser.error(f"result already exists: {out}")
++    tasks = list(TASKS) if args.task == "all" else [args.task]
++    assets = {k: ASSETS[k] for k in ("model.onnx", "tokenizer.json")}
++    files = {"cuad": "cuad.zip", "qasper": "qasper-test.tgz", "hotpotqa": "hotpot.parquet"}
++    assets.update({files[t]: rag_data.ASSETS[files[t]] for t in tasks})
++    grid = plans()
++    grid.update({
++        "flat-merge-500-0.5": {**grid["merge-500-0.5"], "flatInput": True},
++        "merge-500-token-256": {**grid["merge-500-0.5"], "maxChunkTokens": 256},
++        "merge-500-two-passes": {**grid["merge-500-0.5"], "maxPasses": 2},
++    })
++    settings = {name: grid[name] for name in args.methods}
++    report = {
++        "startedUTC": started.isoformat(), "implementationSHA256": source_digest([root / "config.js", *(root / "src").glob("*.js")], root),
++        "harnessSHA256": source_digest([HERE / f for f in ("chunk.mjs", "corpora.py", "encoder.py", "run.py", "rag.py", "rag_data.py")], HERE),
++        "node": subprocess.check_output(["node", "--version"], text=True).strip(), "python": platform.python_version(),
++        "libraries": dict(VERSIONS), "artifactsSHA256": {k: v[1] for k, v in assets.items()}, "contextBudgets": BUDGETS,
++        "rankers": {"minilm": "cosine with all-MiniLM-L6-v2", "bm25": {"k1": 1.2, "b": 0.75}},
++        "plans": {**settings, WINDOW_NAME: {"tokens": WINDOW, "overlap": OVERLAP}}, "tasks": {},
++    }
++    if "hotpotqa" in tasks:
++        report["libraries"]["pyarrow"] = version("pyarrow")
++    tokenizer, model = load_model()
++    with TemporaryDirectory() as temp:
++        directory = Path(temp)
++        write(directory / "plans.json", settings)
++        for task in tasks:
++            report["tasks"][task] = evaluate(task, root, directory, tokenizer, model, settings)
++    serialized = json.dumps(report, indent=2, allow_nan=False) + "\n"
++    out.parent.mkdir(parents=True, exist_ok=True)
++    with out.open("x", encoding="utf-8", newline="\n") as target:
++        target.write(serialized)
++    print(f"Saved {out}", flush=True)
++
++
++if __name__ == "__main__":
++    main()
+diff --git b/benchmarks/rag_data.py b/benchmarks/rag_data.py
+new file mode 100644
+index 0000000..62cfff5
+--- /dev/null
++++ b/benchmarks/rag_data.py
+@@ -0,0 +1,141 @@
++"""Source documents, candidate pools and complete sets of human-labelled evidence."""
++
++from collections import Counter, defaultdict
++from dataclasses import dataclass
++import json
++import tarfile
++import zipfile
++
++from corpora import Document, answer_span, compact, fetch
++
++
++ASSETS = {
++    "cuad.zip": (
++        "https://raw.githubusercontent.com/The-Atticus-Project/cuad/67faa0e6023b04fcaae6cc09497ab00e5d63a2a2/data.zip",
++        "f8161d18bea4e9c05e78fa6dda61c19c846fb8087ea969c172753bc2f45b999a"),
++    "qasper-test.tgz": (
++        "https://qasper-dataset.s3.us-west-2.amazonaws.com/qasper-test-and-evaluator-v0.3.tgz",
++        "72a52a41193e2838b8074f80ac074b94f956b84886c36a61c58a7df4171bdd72"),
++    "hotpot.parquet": (
++        "https://huggingface.co/datasets/hotpotqa/hotpot_qa/resolve/1908d6afbbead072334abe2965f91bd2709910ab/distractor/validation-00000-of-00001.parquet",
++        "c20b638ca82b21d04fe12e14ff417ad05153d4d215a65de54497fca4e972f7c6"),
++}
++
++
++@dataclass
++class Question:
++    id: str
++    text: str
++    pool: tuple[int, ...]  # Documents available to this question.
++    references: list[list[tuple[int, int, int]]]  # Alternative sets of (document, char start, char end).
++    kind: str = ""
++
++
++def evenly_spaced(items, count):
++    if len(items) < count:
++        raise ValueError("Sample larger than the source partition")
++    return [items[i * len(items) // count] for i in range(count)]
++
++
++def join_parts(parts):
++    """Keep each source part's position, including gaps in numbered sentence lists."""
++    text, spans = [], []
++    cursor = 0
++    for part in parts:
++        clean = compact(part or "")
++        if clean:
++            text.append(clean)
++            spans.append((cursor, cursor + len(clean)))
++            cursor += len(clean) + 1
++        else:
++            spans.append(None)
++    return " ".join(text), spans
++
++
++def cuad():
++    with zipfile.ZipFile(fetch("cuad.zip", ASSETS)) as archive:
++        rows = json.loads(archive.read("test.json"))["data"]
++    docs, questions, counts = [], [], Counter()
++    for i, row in enumerate(evenly_spaced(rows, 8)):
++        paragraph, = row["paragraphs"]
++        raw = paragraph["context"]
++        text = compact(raw)
++        docs.append(Document(row["title"], "test", text, source_text=raw))
++        for qa in paragraph["qas"]:
++            if qa["is_impossible"]:
++                counts["noAnnotatedClause"] += 1
++                continue
++            spans = [answer_span(raw, text, a) for a in qa["answers"]]
++            if not spans or None in spans:
++                raise ValueError(f"Invalid CUAD answer offset in {qa['id']}")
++            reference = [(i, a, b) for a, b in sorted(set(spans))]
++            questions.append(Question(qa["id"], qa["question"], (i,), [reference]))
++    return docs, questions, counts
++
++
++def qasper():
++    with tarfile.open(fetch("qasper-test.tgz", ASSETS)) as archive:
++        rows = json.load(archive.extractfile("qasper-test-v0.3.json"))
++    docs, questions, counts = [], [], Counter()
++    for i, (paper, row) in enumerate(evenly_spaced(list(rows.items()), 16)):
++        parts = [row["title"], row["abstract"]]
++        for section in row["full_text"]:
++            parts.extend([section["section_name"], *section["paragraphs"]])
++        parts.extend(figure["caption"] for figure in row["figures_and_tables"])
++        text, spans = join_parts(parts)
++        docs.append(Document(paper, "test", text, source_text="\n\n".join(p for p in parts if p)))
++        positions = defaultdict(list)
++        for part, span in zip(parts, spans, strict=True):
++            if span:
++                positions[compact(part)].append((i, *span))
++        for qa in row["qas"]:
++            alternatives = []
++            for annotation in qa["answers"]:
++                answer = annotation["answer"]
++                if answer["unanswerable"]:
++                    continue
++                matches = [positions.get(compact(p), []) for p in answer["evidence"]]
++                if matches and all(len(m) == 1 for m in matches):
++                    alternatives.append([m[0] for m in matches])
++                else:
++                    counts["unmappedOrNontextAnnotations"] += 1
++            if alternatives:
++                questions.append(Question(qa["question_id"], qa["question"], (i,), alternatives))
++            elif all(a["answer"]["unanswerable"] for a in qa["answers"]):
++                counts["unanswerableQuestions"] += 1
++            else:
++                counts["noCompleteTextReference"] += 1
++    return docs, questions, counts
++
++
++def hotpot():
++    import pyarrow.parquet as parquet
++
++    table = parquet.read_table(fetch("hotpot.parquet", ASSETS))
++    types = table["type"].to_pylist()
++    indices = [i for kind in ("bridge", "comparison")
++               for i in evenly_spaced([j for j, value in enumerate(types) if value == kind], 32)]
++    docs, questions = [], []
++    doc_ids = {}
++    for row in table.take(sorted(indices)).to_pylist():
++        context = row["context"]
++        pool = []
++        facts = {}
++        for title, sentences in zip(context["title"], context["sentences"], strict=True):
++            text, spans = join_parts([title + ".", *sentences])
++            if title not in doc_ids:
++                doc_ids[title] = len(docs)
++                docs.append(Document(title, "validation", text, source_text=title + ".\n\n" + " ".join(s for s in sentences if s)))
++            d = doc_ids[title]
++            if docs[d].text != text or d in pool:
++                raise ValueError(f"Ambiguous HotpotQA source {title} in {row['id']}")
++            pool.append(d)
++            for j, span in enumerate(spans[1:]):
++                if span:
++                    facts[title, j] = (d, *span)
++        support = row["supporting_facts"]
++        reference = [facts[key] for key in zip(support["title"], support["sent_id"], strict=True)]
++        if not reference:
++            raise ValueError(f"Missing HotpotQA evidence in {row['id']}")
++        questions.append(Question(row["id"], row["question"], tuple(pool), [reference], row["type"]))
++    return docs, questions, {}
+diff --git b/benchmarks/requirements-rag.txt b/benchmarks/requirements-rag.txt
+new file mode 100644
+index 0000000..486f06f
+--- /dev/null
++++ b/benchmarks/requirements-rag.txt
+@@ -0,0 +1,2 @@
++-r requirements.txt
++pyarrow==26.0.1
+diff --git b/benchmarks/requirements.txt b/benchmarks/requirements.txt
+new file mode 100644
+index 0000000..cc3ceed
+--- /dev/null
++++ b/benchmarks/requirements.txt
+@@ -0,0 +1,3 @@
++numpy==2.5.5
++onnxruntime==1.32.0
++tokenizers==0.23.3
+diff --git b/benchmarks/run.py b/benchmarks/run.py
+new file mode 100644
+index 0000000..f5e2079
+--- /dev/null
++++ b/benchmarks/run.py
+@@ -0,0 +1,229 @@
++"""Run the chunker against pinned retrieval and segmentation benchmarks."""
++
++import argparse
++from bisect import bisect_right
++from datetime import datetime, timezone
++from functools import lru_cache
++import hashlib
++import json
++import math
++import os
++from pathlib import Path
++import platform
++import re
++import subprocess
++from tempfile import TemporaryDirectory
++
++os.environ["TOKENIZERS_PARALLELISM"] = "false"
++
++import numpy as np
++
++from corpora import ASSETS, sha256, squad, utf16_length, wikisection
++from encoder import VERSIONS, frozen_vectors, load_model
++
++
++HERE = Path(__file__).resolve().parent
++SIZES = (250, 500, 1000)
++CUTOFFS = (0.3, 0.4, 0.5, 0.6, 0.7)
++CONTEXT_TOKENS = 256
++
++
++def plans():
++    settings = {"sentences": {"combineChunks": False}}
++    for size in SIZES:
++        settings[f"pack-{size}"] = {"pack": True, "maxChunkSize": size}
++        for cutoff in CUTOFFS:
++            settings[f"merge-{size}-{cutoff}"] = {"maxChunkSize": size, "similarityThreshold": cutoff}
++        settings[f"merge-{size}-document"] = {"maxChunkSize": size, "mergeThresholdMode": "document"}
++        for mode, combine in [("group", False), ("group+merge", True)]:
++            settings[f"{mode}-{size}"] = {"maxChunkSize": size, "groupSentences": True, "combineChunks": combine}
++    for mode in ["group", "group+merge"]:
++        settings[f"{mode}-500-fixed"] = {**settings[f"{mode}-500"], "dynamicThresholdLowerBound": 0.5,
++                                         "dynamicThresholdUpperBound": 0.5}
++    return settings
++
++
++def write(path, data):
++    path.write_text(json.dumps(data, separators=(",", ":")), encoding="utf-8")
++
++
++def node(stage, implementation, directory, *args):
++    subprocess.run(["node", HERE / "chunk.mjs", stage, implementation, directory, *args], check=True)
++
++
++def contiguous_texts(parts, max_size):
++    lengths = list(map(utf16_length, parts))
++    for i, sentence in enumerate(parts):
++        span, size = sentence, lengths[i]
++        yield span  # A single long sentence is always a possible output.
++        for j in range(i + 1, len(parts)):
++            size += 1 + lengths[j]
++            if size > max_size:
++                break
++            span += " " + parts[j]
++            yield span
++
++
++def candidate_texts(docs, sentences):
++    texts = {}
++    for doc, parts in zip(docs, sentences, strict=True):
++        doc.align(parts)
++        texts.update(dict.fromkeys(contiguous_texts(parts, max(SIZES))))
++    for doc in docs:
++        for question, _ in doc.questions:
++            texts[question] = None
++    return list(texts)
++
++
++def indexed_chunks(docs, rows, texts):
++    """Return actual source positions, checking every output for omissions and reordering."""
++    chunks = []
++    for d, (doc, row) in enumerate(zip(docs, rows, strict=True)):
++        start = 0
++        for index in row["ids"]:
++            text = texts[index]
++            if not doc.text.startswith(text, start):
++                raise ValueError(f"Chunk does not match the source at {doc.title}, offset {start}")
++            chunks.append((d, start, index))
++            start += len(text) + 1
++        if start != len(doc.text) + 1:
++            raise ValueError(f"Incomplete chunk coverage in {doc.title}")
++    return chunks
++
++
++def retrieval(docs, chunks, vectors, ids, texts, token_ends):
++    queries = [(d, ids[q], spans) for d, doc in enumerate(docs) for q, spans in doc.questions]
++    scores = vectors[[index for _, index, _ in queries]] @ vectors[[index for _, _, index in chunks]].T
++    rankings = np.argsort(-scores, axis=1, kind="stable")
++    hits = top1 = 0
++    for (source, _, spans), ranking in zip(queries, rankings, strict=True):
++        remaining = CONTEXT_TOKENS
++        for rank, pos in enumerate(ranking):
++            d, start, index = chunks[pos]
++            ends = token_ends(texts[index])
++            take = min(len(ends), remaining)
++            if take:
++                end = start + (len(texts[index]) if take == len(ends) else ends[take - 1])
++                if source == d and any(start <= a and b <= end for a, b in spans):
++                    hits += 1
++                    top1 += int(rank == 0)
++                    break
++            remaining -= take
++            if remaining == 0:
++                break
++    return {"questions": len(queries), "hits": hits, "hitRate": hits / len(queries), "top1Hits": top1}
++
++
++def window_diff(word_starts, reference, predicted):
++    # Compare the number of cuts between words i and i+k, including the right
++    # endpoint. Character offsets allow gold cuts within a chunker's sentence.
++    n = len(word_starts)
++    k = max(1, math.floor(n / (2 * (len(reference) + 1)) + 0.5))
++    errors = 0
++    for left, right in zip(word_starts, word_starts[k:]):
++        gold = bisect_right(reference, right) - bisect_right(reference, left)
++        actual = bisect_right(predicted, right) - bisect_right(predicted, left)
++        errors += int(gold != actual)
++    return errors / (n - k)
++
++
++def segmentation(docs, chunks):
++    predicted = [[] for _ in docs]
++    for d, start, _ in chunks:
++        if start:
++            predicted[d].append(start)
++    correct = count = gold = 0
++    distances = []
++    for doc, cuts in zip(docs, predicted, strict=True):
++        correct += len(set(doc.cuts).intersection(cuts))
++        count += len(cuts)
++        gold += len(doc.cuts)
++        words = [match.start() for match in re.finditer(r"\S+", doc.text)]
++        distances.append(window_diff(words, doc.cuts, cuts))
++    return {"matched": correct, "predicted": count, "gold": gold, "precision": correct / count if count else 0,
++            "recall": correct / gold, "f1": 2 * correct / (count + gold), "windowDiff": sum(distances) / len(docs)}
++
++
++def evaluate(task, docs, implementation, settings, tokenizer, model, directory):
++    write(directory / "documents.json", [doc.text for doc in docs])
++    node("split", implementation, directory)
++    sentences = json.loads((directory / "sentences.json").read_bytes())
++    texts = candidate_texts(docs, sentences)
++    ids = {text: i for i, text in enumerate(texts)}
++    write(directory / "texts.json", texts)
++    path, vectors = frozen_vectors(texts, tokenizer, model)
++    node("chunk", implementation, directory, path)
++    runs = json.loads((directory / "runs.json").read_bytes())
++
++    @lru_cache(maxsize=None)
++    def token_ends(text):
++        return [end for _, end in tokenizer.encode(text, add_special_tokens=False).offsets]
++
++    scores = {}
++    for name, rows in runs.items():
++        scores[name] = {}
++        for split in ("calibration", "heldout"):
++            selected = [i for i, doc in enumerate(docs) if doc.split == split]
++            group = [docs[i] for i in selected]
++            batch = [rows[i] for i in selected]
++            chunks = indexed_chunks(group, batch, texts)
++            if task == "squad":
++                metrics = retrieval(group, chunks, vectors, ids, texts, token_ends)
++            else:
++                metrics = segmentation(group, chunks)
++            metrics.update(chunks=len(chunks), providerCalls=sum(row["calls"] for row in batch),
++                           providerTexts=sum(row["inputs"] for row in batch), singletonCalls=sum(row["singletons"] for row in batch))
++            scores[name][split] = metrics
++    objective = "hits" if task == "squad" else "f1"
++    grid = [name for name in settings if name.startswith("merge-")]
++    best = max(grid, key=lambda name: (scores[name]["calibration"][objective], -scores[name]["calibration"]["chunks"]))
++    print(f"{task}: calibration selected {best}; held-out {objective} = {scores[best]['heldout'][objective]}", flush=True)
++    return {"documents": {s: [d.title for d in docs if d.split == s] for s in ("calibration", "heldout")},
++            "sentences": sum(map(len, sentences)), "distinctTexts": len(texts), "vectorsSHA256": sha256(path),
++            "calibrationSelection": best, "scores": scores}
++
++
++def source_digest(paths, root):
++    digest = hashlib.sha256()
++    for path in sorted(paths):
++        digest.update(path.relative_to(root).as_posix().encode() + b"\0")
++        digest.update(path.read_text(encoding="utf-8").encode() + b"\0")
++    return digest.hexdigest()
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--implementation", type=Path, default=HERE.parent, help="repository tree containing src/index.js")
++    parser.add_argument("--output", type=Path, help="new JSON result file (default: timestamped file in benchmarks/results)")
++    args = parser.parse_args()
++    root = args.implementation.resolve()
++    started = datetime.now(timezone.utc)
++    out = args.output or (HERE / "results" / (started.strftime("%Y%m%dT%H%M%S%fZ") + ".json"))
++    if out.exists():
++        parser.error(f"result already exists: {out}")
++    settings = plans()
++    report = {
++        "startedUTC": started.isoformat(),
++        "implementationSHA256": source_digest([root / "config.js", *(root / "src").glob("*.js")], root),
++        "harnessSHA256": source_digest([HERE / f for f in ("chunk.mjs", "corpora.py", "encoder.py", "run.py")], HERE),
++        "node": subprocess.check_output(["node", "--version"], text=True).strip(),
++        "python": platform.python_version(), "libraries": VERSIONS,
++        "artifactsSHA256": {name: digest for name, (_, digest) in ASSETS.items()},
++        "contextTokens": CONTEXT_TOKENS, "plans": settings,
++    }
++    tokenizer, model = load_model()
++    with TemporaryDirectory() as temp:
++        directory = Path(temp)
++        write(directory / "plans.json", settings)
++        for task, load in [("squad", squad), ("wikisection", wikisection)]:
++            print(f"Running {task}", flush=True)
++            report[task] = evaluate(task, load(), root, settings, tokenizer, model, directory)
++    serialized = json.dumps(report, indent=2, allow_nan=False) + "\n"
++    out.parent.mkdir(parents=True, exist_ok=True)
++    with out.open("x", encoding="utf-8", newline="\n") as target:
++        target.write(serialized)
++    print(f"Saved {out}", flush=True)
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/config.js b/config.js
+index fec2030..83a8bda 100644
+--- a/config.js
++++ b/config.js
+@@ -1,11 +1,9 @@
+ export const DEFAULT_CONFIG = {
+     LOGGING: false,
+     INPUT_FORMAT: 'text',
+-    LOCALE: 'en',
+     MAX_CHUNK_SIZE: 500,
+     MAX_CHUNK_TOKENS: Infinity,
+     MAX_EMBEDDING_BATCH_SIZE: Infinity,
+-    MAX_CACHED_EMBEDDINGS: Infinity,
+     SIMILARITY_THRESHOLD: 0.5,
+     GROUP_SENTENCES: false,
+     EXCLUDE_NON_LETTER_SENTENCES: false,
+diff --git b/src/decimal.js b/src/decimal.js
+new file mode 100644
+index 0000000..f840fa5
+--- /dev/null
++++ b/src/decimal.js
+@@ -0,0 +1,23 @@
++// Configuration steps and percentages are decimal quantities. Keep their
++// arithmetic exact until the cutoff or integral candidate count is needed.
++function decimalParts(value) {
++    const [mantissa, exponent = '0'] = value.toString().split('e');
++    const [whole, fraction = ''] = mantissa.split('.');
++    return { units: BigInt(whole + fraction), places: fraction.length - Number(exponent) };
++}
++
++export function addHundredths(base, change) {
++    if (change === 0) return base;
++    const { units, places } = decimalParts(base);
++    const scale = Math.max(places, 2);
++    const adjusted = units * 10n ** BigInt(scale - places) + BigInt(change) * 10n ** BigInt(scale - 2);
++    return Number(`${adjusted}e-${scale}`);
++}
++
++export function createPercentageLimit(percent) {
++    // A JS array's length times a whole percentage fits exactly in a Number.
++    if (Number.isInteger(percent)) return count => Math.floor(count * percent / 100);
++    const { units, places } = decimalParts(percent);
++    const divisor = 10n ** BigInt(places + 2);
++    return count => Number(BigInt(count) * units / divisor);
++}
+diff --git a/src/embeddings.js b/src/embeddings.js
+index 87c8445..a9f325a 100644
+--- a/src/embeddings.js
++++ b/src/embeddings.js
+@@ -1,5 +1,5 @@
+ // One cache per chunkText call, shared by sentence, merge and output batches.
+-export function createBatchEmbedder(embedBatchCallback, maxEmbeddingBatchSize = Infinity, maxCachedEmbeddings = Infinity) {
++export function createBatchEmbedder(embedBatchCallback, maxEmbeddingBatchSize = Infinity) {
+     if (typeof embedBatchCallback !== 'function') {
+         throw new TypeError('embedBatchCallback must be a function');
+     }
+@@ -8,9 +8,6 @@ export function createBatchEmbedder(embedBatchCallback, maxEmbeddingBatchSize =
+     }
+ 
+     const cache = new Map();
+-    if (maxCachedEmbeddings !== Infinity && !(Number.isSafeInteger(maxCachedEmbeddings) && maxCachedEmbeddings >= 0)) {
+-        throw new RangeError('maxCachedEmbeddings must be a nonnegative safe integer or Infinity.');
+-    }
+     let dimension;
+ 
+     return async function embedBatch(texts, finalTexts) {
+@@ -19,7 +16,7 @@ export function createBatchEmbedder(embedBatchCallback, maxEmbeddingBatchSize =
+         // Fill spare slots in the scoring requests with guaranteed output vectors.
+         // Only a scoring cache miss opens a request, and its batch count stays fixed.
+         const remainder = needed.size % maxEmbeddingBatchSize;
+-        if (remainder && finalTexts?.length && maxCachedEmbeddings === Infinity) {
++        if (remainder && finalTexts?.length) {
+             const capacity = needed.size + (maxEmbeddingBatchSize - remainder);
+             for (const text of finalTexts) {
+                 if (!cache.has(text)) needed.add(text);
+@@ -39,14 +36,7 @@ export function createBatchEmbedder(embedBatchCallback, maxEmbeddingBatchSize =
+             }
+             offset += count;
+         }
+-        const result = texts.map(text => cache.get(text));
+-        // Scoring still receives every vector in this stage. Release older cache
+-        // entries between stages, when the merge nodes own the vectors they need.
+-        if (cache.size > maxCachedEmbeddings) {
+-            const oldest = cache.keys();
+-            while (cache.size > maxCachedEmbeddings) cache.delete(oldest.next().value);
+-        }
+-        return result;
++        return texts.map(text => cache.get(text));
+     };
+ }
+ 
+diff --git a/src/index.d.ts b/src/index.d.ts
+index 039b876..304ebb7 100644
+--- a/src/index.d.ts
++++ b/src/index.d.ts
+@@ -2,8 +2,6 @@ export interface ChunkingOptions {
+ 	logging?: boolean;
+ 	/** Interpret input literally by default. Use 'html' to extract document text. */
+ 	inputFormat?: 'text' | 'html';
+-	/** BCP 47 language tag for sentence segmentation. Defaults to 'en'. */
+-	locale?: string;
+ 	/** Maximum UTF-16 code units per join, including its space. Nonnegative safe integer or Infinity. */
+ 	maxChunkSize?: number;
+ 	/** Maximum tokens in raw and prefixed texts. A finite positive integer enables the tokenizer fallback. */
+@@ -12,8 +10,6 @@ export interface ChunkingOptions {
+ 	countTokens?: (text: string) => number;
+ 	/** Maximum distinct texts per provider call across all stages. Defaults to Infinity. */
+ 	maxEmbeddingBatchSize?: number;
+-	/** Maximum cached vectors retained between stages. Evicted texts may be embedded again. Default Infinity. */
+-	maxCachedEmbeddings?: number;
+ 	/** Minimum merge cosine and base cutoff for optional sentence grouping. */
+ 	similarityThreshold?: number;
+ 	/** Group by adjacent and centroid cosine. Adapt the bounded base with two or more size-eligible boundaries. Default false. */
+diff --git a/src/index.js b/src/index.js
+index 01d75c8..8e5ab46 100644
+--- a/src/index.js
++++ b/src/index.js
+@@ -16,12 +16,10 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
+ 	const {
+ 		logging = DEFAULT_CONFIG.LOGGING,
+ 		inputFormat = DEFAULT_CONFIG.INPUT_FORMAT,
+-		locale = DEFAULT_CONFIG.LOCALE,
+ 		maxChunkSize = DEFAULT_CONFIG.MAX_CHUNK_SIZE,
+ 		maxChunkTokens = DEFAULT_CONFIG.MAX_CHUNK_TOKENS,
+ 		countTokens,
+ 		maxEmbeddingBatchSize = DEFAULT_CONFIG.MAX_EMBEDDING_BATCH_SIZE,
+-		maxCachedEmbeddings = DEFAULT_CONFIG.MAX_CACHED_EMBEDDINGS,
+ 		similarityThreshold = DEFAULT_CONFIG.SIMILARITY_THRESHOLD,
+ 		groupSentences = DEFAULT_CONFIG.GROUP_SENTENCES,
+ 		excludeNonLetterSentences = DEFAULT_CONFIG.EXCLUDE_NON_LETTER_SENTENCES,
+@@ -69,9 +67,9 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
+ 	if (!Number.isFinite(candidateMergesPercentageCap) || candidateMergesPercentageCap < 0 || candidateMergesPercentageCap > 100) {
+ 		throw new RangeError('candidateMergesPercentageCap (legacy candiateMergesPercentageCap) must be between 0 and 100.');
+ 	}
+-	const embedBatch = createBatchEmbedder(embedBatchCallback, maxEmbeddingBatchSize, maxCachedEmbeddings);
++	const embedBatch = createBatchEmbedder(embedBatchCallback, maxEmbeddingBatchSize);
+ 	if (logging) await _printVersion();
+-	const sentences = await parseSentences(text, { inputFormat, locale, excludeNonLetterSentences });
++	const sentences = await parseSentences(text, { inputFormat, excludeNonLetterSentences });
+ 	if (sentences.length === 0) return [];
+ 
+ 	const prefix = chunkPrefix?.trim() ? chunkPrefix + ': ' : '';
+@@ -101,7 +99,7 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
+ 			maxMergesPerPass,
+ 			candidateMergesPercentageCap,
+ 			uncappedCandidateMerges,
+-			finalEmbeddingText: returnEmbedding && maxCachedEmbeddings === Infinity ? outputText : undefined
++			finalEmbeddingText: returnEmbedding ? outputText : undefined
+ 		});
+ 		if (logging) console.log('Combined chunks', chunks.map(chunk => chunk.slice(0, 100)));
+ 	}
+diff --git a/src/merge.js b/src/merge.js
+index c376bb4..a6e4db5 100644
+--- a/src/merge.js
++++ b/src/merge.js
+@@ -1,12 +1,13 @@
+-import { directionCosine, documentMergeThreshold, SimilarityStatistics, vectorDirection } from './similarity.js';
++import { cosineSimilarity, documentMergeThreshold, SimilarityStatistics } from './similarity.js';
++import { createPercentageLimit } from './decimal.js';
+ import { createJoinCheck } from './token-limit.js';
+ 
+ export async function mergeChunks(texts, embedBatch, options) {
+     const { maxPasses = Infinity, maxUncappedPasses, maxMergesPerPass, candidateMergesPercentageCap, uncappedCandidateMerges } = options;
+     let cutoff = options.combineChunksSimilarityThreshold;
++    const percentageLimit = createPercentageLimit(candidateMergesPercentageCap);
+     function mergeLimit(candidateCount) {
+-        const percent = Math.floor(candidateCount * candidateMergesPercentageCap / 100 + 1e-9);
+-        return Math.min(maxMergesPerPass, Math.max(uncappedCandidateMerges, percent));
++        return Math.min(maxMergesPerPass, Math.max(uncappedCandidateMerges, percentageLimit(candidateCount)));
+     }
+     if (maxPasses < 1 || maxUncappedPasses < 1 || (!options.calibrate && cutoff > 1) || mergeLimit(texts.length - 1) <= 0) {
+         return texts;
+@@ -47,8 +48,6 @@ export async function mergeChunks(texts, embedBatch, options) {
+             left.embedding = null;
+             left.next = right.next;
+             if (left.next) left.next.prev = left;
+-            // A stale heap entry can still reference the retired node.
+-            right.embedding = right.prev = right.next = null;
+             changed.push(left);
+         }
+ 
+@@ -90,7 +89,7 @@ async function scoreChangedChunks(changed, pass, queue, embedBatch, options, cut
+         needed = [...endpoints];
+     }
+     const vectors = await embedBatch(needed.map(chunk => chunk.text), finalTexts);
+-    needed.forEach((chunk, i) => { chunk.embedding = vectorDirection(vectors[i]); });
++    needed.forEach((chunk, i) => { chunk.embedding = vectors[i]; });
+ 
+     // Calibrate once, on the original eligible sentence boundaries and the same
+     // embedding batch. Keep their scores so each cosine is computed only once.
+@@ -118,7 +117,7 @@ async function scoreChangedChunks(changed, pass, queue, embedBatch, options, cut
+         if (!left || left.scoredPass === pass) return;
+         left.scoredPass = pass; // Neighboring merges share a boundary.
+         if (!fitsNext(left)) return;
+-        const score = directionCosine(left.embedding, left.next.embedding);
++        const score = cosineSimilarity(left.embedding, left.next.embedding);
+         if (initial) {
+             initial.set(left, score);
+             stats.add(score);
+diff --git a/src/sentences.js b/src/sentences.js
+index 4a897b0..f5b6436 100644
+--- a/src/sentences.js
++++ b/src/sentences.js
+@@ -6,12 +6,7 @@ const blockElements = new Set(
+ const hiddenElements = new Set(['head', 'script', 'style', 'template', 'noscript', 'title']);
+ 
+ async function htmlToText(html) {
+-    const { parse } = await import('parse5').catch(error => {
+-        if (error.code === 'ERR_MODULE_NOT_FOUND' && error.message.includes("package 'parse5'")) {
+-            throw new Error("HTML input requires the optional parse5 package. Install it with npm install parse5.", { cause: error });
+-        }
+-        throw error;
+-    });
++    const { parse } = await import('parse5');
+     const pending = [parse(html)];
+     const parts = [];
+     const blockEnd = {}, preEnd = {};
+@@ -65,10 +60,7 @@ function* textBlocks(text) {
+     if (lines.length) yield lines.join(' ');
+ }
+ 
+-export async function parseSentences(text, { inputFormat, locale = 'en', excludeNonLetterSentences }) {
+-    if (typeof locale !== 'string') throw new TypeError('locale must be a language tag string.');
+-    // Preserve the default fast path. Reject invalid tags even for empty input.
+-    if (locale !== 'en') [locale] = Intl.getCanonicalLocales(locale);
++export async function parseSentences(text, { inputFormat, excludeNonLetterSentences }) {
+     if (inputFormat === 'html') {
+         text = await htmlToText(text);
+     } else if (inputFormat !== 'text') {
+@@ -83,7 +75,7 @@ export async function parseSentences(text, { inputFormat, locale = 'en', exclude
+         // the segmenter uppercases a character that expands (e.g. ß to SS).
+         const marked = multiline ? normalized.replace(/^(\d{1,3})\.(?= )/, '$1)') : normalized;
+         const boundaryText = marked.replace(/(?<=\. )[^\x00-\x7f]/gu, char => char.toUpperCase().slice(0, char.length));
+-        for (const { index, segment } of splitBySentence(boundaryText, locale)) {
++        for (const { index, segment } of splitBySentence(boundaryText)) {
+             const sentence = normalized.slice(index, index + segment.length).trim();
+             if (!excludeNonLetterSentences || /\p{L}/u.test(sentence)) sentences.push(sentence);
+         }
+diff --git a/src/similarity.js b/src/similarity.js
+index 3612f71..36da63b 100644
+--- a/src/similarity.js
++++ b/src/similarity.js
+@@ -1,38 +1,48 @@
++import { addHundredths } from './decimal.js';
+ import { createJoinCheck } from './token-limit.js';
+ 
+-// Cache the length on each live scoring node and preserve the provider's vector.
+-export function vectorDirection(vector) {
+-    let squared = 0;
+-    for (let i = 0; i < vector.length; i++) squared += vector[i] * vector[i];
+-    if (squared > 0 && Number.isFinite(squared) && Number.isFinite(1 / squared)) {
+-        return { vector, scale: Math.sqrt(squared), length: 1 };
+-    }
+-    // Extreme inputs can overflow or underflow when squared. Keep their
+-    // largest component separate so even their normalized length is representable.
++function maxMagnitude(vector) {
+     let scale = 0;
+     for (let i = 0; i < vector.length; i++) scale = Math.max(scale, Math.abs(vector[i]));
+-    if (!scale) return { vector, scale: 1, length: 1 };
+-    squared = 0;
+-    for (let i = 0; i < vector.length; i++) squared += (vector[i] / scale) ** 2;
+-    return { vector, scale, length: Math.sqrt(squared) };
++    return scale;
+ }
+ 
+-export function directionCosine(a, b) {
+-    let dot = 0;
+-    for (let i = 0; i < a.vector.length; i++) {
+-        dot += (a.vector[i] / a.scale) * (b.vector[i] / b.scale);
++function dotAndSquaredLengths(vecA, vecB, scaleA, scaleB) {
++    let dot = 0, normA = 0, normB = 0;
++    for (let i = 0; i < vecA.length; i++) {
++        const a = vecA[i] / scaleA;
++        const b = vecB[i] / scaleB;
++        dot += a * b;
++        normA += a * a;
++        normB += b * b;
+     }
+-    const cosine = dot / (a.length * b.length);
++    return { dot, normA, normB };
++}
++
++// Below this value a double has progressively fewer significant bits.
++const MIN_NORMAL = 2 ** -1022;
++
++export function cosineSimilarity(vecA, vecB) {
++    // Ordinary embeddings need only one pass. Rescale extreme vectors when
++    // their squared lengths or dot product risk overflow or loss of precision.
++    let terms = dotAndSquaredLengths(vecA, vecB, 1, 1);
++    let product = terms.normA * terms.normB;
++    const minimumSum = vecA.length * MIN_NORMAL;
++    if (!Number.isFinite(product) || product < MIN_NORMAL ||
++        Math.min(terms.normA, terms.normB, Math.abs(terms.dot)) < minimumSum) {
++        const scaleA = maxMagnitude(vecA);
++        const scaleB = maxMagnitude(vecB);
++        if (scaleA === 0 || scaleB === 0) return 0;
++        terms = dotAndSquaredLengths(vecA, vecB, scaleA, scaleB);
++        product = terms.normA * terms.normB;
++    }
++    const cosine = terms.dot / Math.sqrt(product);
+     // Preserve inclusive cutoffs for parallel directions despite rounding at the endpoints.
+     if (cosine >= 1 - 2 * Number.EPSILON) return 1;
+     if (cosine <= -1 + 2 * Number.EPSILON) return -1;
+     return cosine;
+ }
+ 
+-export function cosineSimilarity(vecA, vecB) {
+-    return directionCosine(vectorDirection(vecA), vectorDirection(vecB));
+-}
+-
+ // Online mean and population variance over size-eligible boundaries.
+ export class SimilarityStatistics {
+     boundaryCount = 0;
+@@ -76,15 +86,14 @@ export async function computeAdvancedSimilarities(sentences, embedBatch, { maxCh
+         endpoints.forEach((index, j) => { embeddings[index] = vectors[j]; });
+     }
+     const stats = new SimilarityStatistics();
+-    const directions = embeddings.map(vectorDirection);
+     for (let j = 0; j < boundaries.length; j++) {
+         const i = boundaries[j];
+-        const score = directionCosine(directions[i], directions[i + 1]);
++        const score = cosineSimilarity(embeddings[i], embeddings[i + 1]);
+         similarities[i] = score;
+         if (logging) console.log(`Similarity between sentences ${i + 1} and ${i + 2}`, score);
+         stats.add(score);
+     }
+-    return { similarities, embeddings, directions, average: stats.average, variance: stats.variance, boundaryCount: stats.boundaryCount };
++    return { similarities, embeddings, average: stats.average, variance: stats.variance, boundaryCount: stats.boundaryCount };
+ }
+ 
+ export function adjustThreshold(average, variance, baseThreshold = 0.5, lowerBound = 0.2, upperBound = 0.8, boundaryCount = 2) {
+@@ -96,18 +105,22 @@ export function adjustThreshold(average, variance, baseThreshold = 0.5, lowerBou
+         if (average < 0.3) change += 5;
+         else if (average > 0.7) change -= 5;
+     }
+-    const adjusted = change ? (baseThreshold * 100 + change) / 100 : baseThreshold;
+-    return Math.min(Math.max(adjusted, lowerBound), upperBound);
++    return Math.min(Math.max(addHundredths(baseThreshold, change), lowerBound), upperBound);
+ }
+ 
+-function addUnitVector(sum, { vector, scale, length }) {
++function addUnitVector(sum, vector) {
++    const scale = maxMagnitude(vector);
++    if (scale === 0) return;
++    let squaredLength = 0;
++    for (let i = 0; i < vector.length; i++) squaredLength += (vector[i] / scale) ** 2;
++    const length = Math.sqrt(squaredLength);
+     for (let i = 0; i < vector.length; i++) sum[i] += (vector[i] / scale) / length;
+ }
+ 
+ export async function groupAdjacentSentences(sentences, embedBatch, options, analysis) {
+     const { maxChunkSize, canJoin = createJoinCheck(maxChunkSize), similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound, logging } = options;
+     if (sentences.length < 2) return sentences;
+-    const { similarities, embeddings, directions = embeddings.map(vectorDirection), average, variance, boundaryCount } =
++    const { similarities, embeddings, average, variance, boundaryCount } =
+         analysis ?? await computeAdvancedSimilarities(sentences, embedBatch, options);
+     if (!boundaryCount) return sentences;
+     const threshold = adjustThreshold(average, variance, similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound, boundaryCount);
+@@ -124,11 +137,11 @@ export async function groupAdjacentSentences(sentences, embedBatch, options, ana
+         // unit directions only when a third sentence could join this group.
+         if (joins && i > groupStart + 1) {
+             if (!directionSum) {
+-                directionSum = new Float64Array(directions[i].vector.length);
+-                addUnitVector(directionSum, directions[groupStart]);
++                directionSum = new Float64Array(embeddings[i].length);
++                addUnitVector(directionSum, embeddings[groupStart]);
+             }
+-            addUnitVector(directionSum, directions[i - 1]);
+-            joins = directionCosine(vectorDirection(directionSum), directions[i]) >= threshold;
++            addUnitVector(directionSum, embeddings[i - 1]);
++            joins = cosineSimilarity(directionSum, embeddings[i]) >= threshold;
+         }
+         if (joins) {
+             current += ' ' + sentence;

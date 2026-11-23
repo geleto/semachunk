@@ -1,0 +1,4521 @@
+{
+  "startedUTC": "2026-11-23T14:40:11.436237+00:00",
+  "implementationSHA256": "5fb804d68fac7711d2186eb23ceae0a90d07f558929797cfc29fb69b6b4cc0f7",
+  "harnessSHA256": "1f9705a0aa3ce0d72c3a22b1a3d10b5fb328078029a92f3f45feed6acc7cd642",
+  "node": "v24.14.1",
+  "python": "3.14.8",
+  "libraries": {
+    "numpy": "2.5.5",
+    "onnxruntime": "1.32.0",
+    "tokenizers": "0.23.3",
+    "pyarrow": "26.0.1"
+  },
+  "artifactsSHA256": {
+    "model.onnx": "b941bf19f1f1283680f449fa6a7336bb5600bdcd5f84d10ddc5cd72218a0fd21",
+    "tokenizer.json": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+    "cuad.zip": "f8161d18bea4e9c05e78fa6dda61c19c846fb8087ea969c172753bc2f45b999a",
+    "qasper-test.tgz": "72a52a41193e2838b8074f80ac074b94f956b84886c36a61c58a7df4171bdd72",
+    "hotpot.parquet": "c20b638ca82b21d04fe12e14ff417ad05153d4d215a65de54497fca4e972f7c6"
+  },
+  "contextBudgets": [
+    256,
+    512,
+    1024
+  ],
+  "rankers": {
+    "minilm": "cosine with all-MiniLM-L6-v2",
+    "bm25": {
+      "k1": 1.2,
+      "b": 0.75
+    }
+  },
+  "plans": {
+    "sentences": {
+      "combineChunks": false
+    },
+    "pack-500": {
+      "pack": true,
+      "maxChunkSize": 500
+    },
+    "merge-250-0.5": {
+      "maxChunkSize": 250,
+      "similarityThreshold": 0.5
+    },
+    "merge-500-0.3": {
+      "maxChunkSize": 500,
+      "similarityThreshold": 0.3
+    },
+    "merge-500-0.5": {
+      "maxChunkSize": 500,
+      "similarityThreshold": 0.5
+    },
+    "merge-500-0.7": {
+      "maxChunkSize": 500,
+      "similarityThreshold": 0.7
+    },
+    "group+merge-500": {
+      "maxChunkSize": 500,
+      "groupSentences": true,
+      "combineChunks": true
+    },
+    "flat-merge-500-0.5": {
+      "maxChunkSize": 500,
+      "similarityThreshold": 0.5,
+      "flatInput": true
+    },
+    "merge-500-document": {
+      "maxChunkSize": 500,
+      "mergeThresholdMode": "document"
+    },
+    "merge-500-token-256": {
+      "maxChunkSize": 500,
+      "similarityThreshold": 0.5,
+      "maxChunkTokens": 256
+    },
+    "merge-500-two-passes": {
+      "maxChunkSize": 500,
+      "similarityThreshold": 0.5,
+      "maxPasses": 2
+    },
+    "window-128-overlap-32": {
+      "tokens": 128,
+      "overlap": 32
+    }
+  },
+  "tasks": {
+    "cuad": {
+      "documents": [
+        "LohaCompanyltd_20191209_F-1_EX-10.16_11917878_EX-10.16_Supply Agreement",
+        "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement",
+        "AMBASSADOREYEWEARGROUPINC_11_17_1997-EX-10.28-ENDORSEMENT AGREEMENT",
+        "ONEMAINHOLDINGS,INC_02_20_2020-EX-99.D-JOINT FILING AGREEMENT",
+        "WOMENSGOLFUNLIMITEDINC_03_29_2000-EX-10.13-ENDORSEMENT AGREEMENT",
+        "WatchitMediaInc_20061201_8-K_EX-10.1_4148672_EX-10.1_Content License Agreement",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT",
+        "EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement"
+      ],
+      "questionIds": [
+        "LohaCompanyltd_20191209_F-1_EX-10.16_11917878_EX-10.16_Supply Agreement__Document Name",
+        "LohaCompanyltd_20191209_F-1_EX-10.16_11917878_EX-10.16_Supply Agreement__Parties",
+        "LohaCompanyltd_20191209_F-1_EX-10.16_11917878_EX-10.16_Supply Agreement__Expiration Date",
+        "LohaCompanyltd_20191209_F-1_EX-10.16_11917878_EX-10.16_Supply Agreement__Governing Law",
+        "LohaCompanyltd_20191209_F-1_EX-10.16_11917878_EX-10.16_Supply Agreement__Warranty Duration",
+        "LohaCompanyltd_20191209_F-1_EX-10.16_11917878_EX-10.16_Supply Agreement__Insurance",
+        "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement__Document Name",
+        "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement__Parties",
+        "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement__Agreement Date",
+        "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement__Effective Date",
+        "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement__Expiration Date",
+        "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement__Governing Law",
+        "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement__Change Of Control",
+        "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement__Anti-Assignment",
+        "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement__Volume Restriction",
+        "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement__License Grant",
+        "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement__Non-Transferable License",
+        "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement__Insurance",
+        "FreezeTagInc_20180411_8-K_EX-10.1_11139603_EX-10.1_Sponsorship Agreement__Covenant Not To Sue",
+        "AMBASSADOREYEWEARGROUPINC_11_17_1997-EX-10.28-ENDORSEMENT AGREEMENT__Document Name",
+        "AMBASSADOREYEWEARGROUPINC_11_17_1997-EX-10.28-ENDORSEMENT AGREEMENT__Parties",
+        "AMBASSADOREYEWEARGROUPINC_11_17_1997-EX-10.28-ENDORSEMENT AGREEMENT__Agreement Date",
+        "AMBASSADOREYEWEARGROUPINC_11_17_1997-EX-10.28-ENDORSEMENT AGREEMENT__Effective Date",
+        "AMBASSADOREYEWEARGROUPINC_11_17_1997-EX-10.28-ENDORSEMENT AGREEMENT__Expiration Date",
+        "AMBASSADOREYEWEARGROUPINC_11_17_1997-EX-10.28-ENDORSEMENT AGREEMENT__Governing Law",
+        "AMBASSADOREYEWEARGROUPINC_11_17_1997-EX-10.28-ENDORSEMENT AGREEMENT__Exclusivity",
+        "AMBASSADOREYEWEARGROUPINC_11_17_1997-EX-10.28-ENDORSEMENT AGREEMENT__Competitive Restriction Exception",
+        "AMBASSADOREYEWEARGROUPINC_11_17_1997-EX-10.28-ENDORSEMENT AGREEMENT__Anti-Assignment",
+        "AMBASSADOREYEWEARGROUPINC_11_17_1997-EX-10.28-ENDORSEMENT AGREEMENT__Revenue/Profit Sharing",
+        "AMBASSADOREYEWEARGROUPINC_11_17_1997-EX-10.28-ENDORSEMENT AGREEMENT__Minimum Commitment",
+        "AMBASSADOREYEWEARGROUPINC_11_17_1997-EX-10.28-ENDORSEMENT AGREEMENT__Volume Restriction",
+        "AMBASSADOREYEWEARGROUPINC_11_17_1997-EX-10.28-ENDORSEMENT AGREEMENT__License Grant",
+        "AMBASSADOREYEWEARGROUPINC_11_17_1997-EX-10.28-ENDORSEMENT AGREEMENT__Post-Termination Services",
+        "AMBASSADOREYEWEARGROUPINC_11_17_1997-EX-10.28-ENDORSEMENT AGREEMENT__Audit Rights",
+        "AMBASSADOREYEWEARGROUPINC_11_17_1997-EX-10.28-ENDORSEMENT AGREEMENT__Insurance",
+        "AMBASSADOREYEWEARGROUPINC_11_17_1997-EX-10.28-ENDORSEMENT AGREEMENT__Covenant Not To Sue",
+        "ONEMAINHOLDINGS,INC_02_20_2020-EX-99.D-JOINT FILING AGREEMENT__Document Name",
+        "ONEMAINHOLDINGS,INC_02_20_2020-EX-99.D-JOINT FILING AGREEMENT__Parties",
+        "ONEMAINHOLDINGS,INC_02_20_2020-EX-99.D-JOINT FILING AGREEMENT__Agreement Date",
+        "WOMENSGOLFUNLIMITEDINC_03_29_2000-EX-10.13-ENDORSEMENT AGREEMENT__Document Name",
+        "WOMENSGOLFUNLIMITEDINC_03_29_2000-EX-10.13-ENDORSEMENT AGREEMENT__Parties",
+        "WOMENSGOLFUNLIMITEDINC_03_29_2000-EX-10.13-ENDORSEMENT AGREEMENT__Agreement Date",
+        "WOMENSGOLFUNLIMITEDINC_03_29_2000-EX-10.13-ENDORSEMENT AGREEMENT__Effective Date",
+        "WOMENSGOLFUNLIMITEDINC_03_29_2000-EX-10.13-ENDORSEMENT AGREEMENT__Expiration Date",
+        "WOMENSGOLFUNLIMITEDINC_03_29_2000-EX-10.13-ENDORSEMENT AGREEMENT__Renewal Term",
+        "WOMENSGOLFUNLIMITEDINC_03_29_2000-EX-10.13-ENDORSEMENT AGREEMENT__Governing Law",
+        "WOMENSGOLFUNLIMITEDINC_03_29_2000-EX-10.13-ENDORSEMENT AGREEMENT__Non-Compete",
+        "WOMENSGOLFUNLIMITEDINC_03_29_2000-EX-10.13-ENDORSEMENT AGREEMENT__Exclusivity",
+        "WOMENSGOLFUNLIMITEDINC_03_29_2000-EX-10.13-ENDORSEMENT AGREEMENT__Non-Disparagement",
+        "WOMENSGOLFUNLIMITEDINC_03_29_2000-EX-10.13-ENDORSEMENT AGREEMENT__Anti-Assignment",
+        "WOMENSGOLFUNLIMITEDINC_03_29_2000-EX-10.13-ENDORSEMENT AGREEMENT__Revenue/Profit Sharing",
+        "WOMENSGOLFUNLIMITEDINC_03_29_2000-EX-10.13-ENDORSEMENT AGREEMENT__Minimum Commitment",
+        "WOMENSGOLFUNLIMITEDINC_03_29_2000-EX-10.13-ENDORSEMENT AGREEMENT__Volume Restriction",
+        "WOMENSGOLFUNLIMITEDINC_03_29_2000-EX-10.13-ENDORSEMENT AGREEMENT__Ip Ownership Assignment",
+        "WOMENSGOLFUNLIMITEDINC_03_29_2000-EX-10.13-ENDORSEMENT AGREEMENT__License Grant",
+        "WOMENSGOLFUNLIMITEDINC_03_29_2000-EX-10.13-ENDORSEMENT AGREEMENT__Post-Termination Services",
+        "WOMENSGOLFUNLIMITEDINC_03_29_2000-EX-10.13-ENDORSEMENT AGREEMENT__Insurance",
+        "WatchitMediaInc_20061201_8-K_EX-10.1_4148672_EX-10.1_Content License Agreement__Document Name",
+        "WatchitMediaInc_20061201_8-K_EX-10.1_4148672_EX-10.1_Content License Agreement__Parties",
+        "WatchitMediaInc_20061201_8-K_EX-10.1_4148672_EX-10.1_Content License Agreement__Effective Date",
+        "WatchitMediaInc_20061201_8-K_EX-10.1_4148672_EX-10.1_Content License Agreement__Expiration Date",
+        "WatchitMediaInc_20061201_8-K_EX-10.1_4148672_EX-10.1_Content License Agreement__Exclusivity",
+        "WatchitMediaInc_20061201_8-K_EX-10.1_4148672_EX-10.1_Content License Agreement__Liquidated Damages",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__Document Name",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__Parties",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__Agreement Date",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__Effective Date",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__Expiration Date",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__Renewal Term",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__Governing Law",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__Termination For Convenience",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__Change Of Control",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__Anti-Assignment",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__Minimum Commitment",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__License Grant",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__Non-Transferable License",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__Source Code Escrow",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__Post-Termination Services",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__Audit Rights",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__Cap On Liability",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__Liquidated Damages",
+        "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__Insurance",
+        "EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement__Document Name",
+        "EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement__Parties",
+        "EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement__Agreement Date",
+        "EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement__Effective Date",
+        "EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement__Expiration Date",
+        "EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement__Governing Law",
+        "EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement__Exclusivity",
+        "EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement__Termination For Convenience",
+        "EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement__Change Of Control",
+        "EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement__Anti-Assignment",
+        "EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement__Volume Restriction",
+        "EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement__Ip Ownership Assignment",
+        "EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement__Joint Ip Ownership",
+        "EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement__License Grant",
+        "EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement__Non-Transferable License",
+        "EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement__Audit Rights",
+        "EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement__Cap On Liability",
+        "EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement__Covenant Not To Sue"
+      ],
+      "exclusions": {
+        "noAnnotatedClause": 228
+      },
+      "corpusTokens": 52231,
+      "documentTokens": {
+        "min": 417,
+        "median": 5531.5,
+        "max": 20407
+      },
+      "candidatePoolTokensPerQuestion": {
+        "min": 417,
+        "median": 7694.0,
+        "max": 20407
+      },
+      "candidateDocumentsPerQuestion": {
+        "min": 1,
+        "median": 1.0,
+        "max": 1
+      },
+      "shortestReferenceTokens": {
+        "min": 2,
+        "median": 59.0,
+        "max": 500
+      },
+      "requiresMultipleSources": 0,
+      "requiresMultipleSpans": 42,
+      "distinctTexts": 7761,
+      "vectorsSHA256": "6f17f7838cc00b02fa191d60559876ec589c7f15fa76d150fc9513db99afeec1",
+      "scores": {
+        "sentences": {
+          "chunks": 1762,
+          "providerCalls": 8,
+          "providerTexts": 1574,
+          "singletonCalls": 0,
+          "chunkTokens": {
+            "min": 1,
+            "median": 22.0,
+            "max": 493
+          },
+          "chunksOverModelInput": 2,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 100,
+                "complete": 31,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.4279411051607959,
+                "contextPrecision": 0.1271484375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 46,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5603949937313427,
+                "contextPrecision": 0.08326705822841726,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 52,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.6043937997751282,
+                "contextPrecision": 0.04841354260341726,
+                "meanTokensDelivered": 987.58
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 100,
+                "complete": 20,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.2680724491365434,
+                "contextPrecision": 0.0897265625,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 28,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.37413955461940335,
+                "contextPrecision": 0.06533737072841726,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 38,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5225673630434947,
+                "contextPrecision": 0.051177214478417256,
+                "meanTokensDelivered": 987.58
+              }
+            }
+          }
+        },
+        "pack-500": {
+          "chunks": 601,
+          "providerCalls": 8,
+          "providerTexts": 601,
+          "singletonCalls": 0,
+          "chunkTokens": {
+            "min": 2,
+            "median": 86,
+            "max": 493
+          },
+          "chunksOverModelInput": 2,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 100,
+                "complete": 27,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.34598417466601455,
+                "contextPrecision": 0.1184765625,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 41,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.48004912297846075,
+                "contextPrecision": 0.08377487072841726,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 51,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5764196005652016,
+                "contextPrecision": 0.05145065197841726,
+                "meanTokensDelivered": 987.58
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 100,
+                "complete": 19,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.26704071083896697,
+                "contextPrecision": 0.100390625,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 35,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.4429370811853031,
+                "contextPrecision": 0.07711471447841727,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 44,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5480827590485721,
+                "contextPrecision": 0.05236862072841726,
+                "meanTokensDelivered": 987.58
+              }
+            }
+          }
+        },
+        "merge-250-0.5": {
+          "chunks": 1620,
+          "providerCalls": 24,
+          "providerTexts": 1686,
+          "singletonCalls": 2,
+          "chunkTokens": {
+            "min": 1,
+            "median": 27.0,
+            "max": 493
+          },
+          "chunksOverModelInput": 2,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 100,
+                "complete": 34,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.4407445371661328,
+                "contextPrecision": 0.1291015625,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 47,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5644714177438188,
+                "contextPrecision": 0.08461471447841726,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 53,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.6114624238122682,
+                "contextPrecision": 0.04972213635341726,
+                "meanTokensDelivered": 987.58
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 100,
+                "complete": 21,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.2847897602861666,
+                "contextPrecision": 0.0939453125,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 28,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.37995994300471464,
+                "contextPrecision": 0.06797408947841727,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 38,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5195660378282756,
+                "contextPrecision": 0.050825651978417256,
+                "meanTokensDelivered": 987.58
+              }
+            }
+          }
+        },
+        "merge-500-0.3": {
+          "chunks": 1128,
+          "providerCalls": 43,
+          "providerTexts": 2158,
+          "singletonCalls": 4,
+          "chunkTokens": {
+            "min": 1,
+            "median": 39.0,
+            "max": 493
+          },
+          "chunksOverModelInput": 2,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 100,
+                "complete": 32,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.3832487553472358,
+                "contextPrecision": 0.1180078125,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 42,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5162500900174049,
+                "contextPrecision": 0.08451705822841726,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 53,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.596938152186079,
+                "contextPrecision": 0.051177214478417256,
+                "meanTokensDelivered": 987.58
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 100,
+                "complete": 22,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.2823925228615499,
+                "contextPrecision": 0.0977734375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 30,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.39997844213904976,
+                "contextPrecision": 0.07025924572841726,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 41,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5076849160056744,
+                "contextPrecision": 0.04925338635341726,
+                "meanTokensDelivered": 987.58
+              }
+            }
+          }
+        },
+        "merge-500-0.5": {
+          "chunks": 1408,
+          "providerCalls": 37,
+          "providerTexts": 1898,
+          "singletonCalls": 6,
+          "chunkTokens": {
+            "min": 1,
+            "median": 26.0,
+            "max": 493
+          },
+          "chunksOverModelInput": 2,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 100,
+                "complete": 31,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.40884018981478926,
+                "contextPrecision": 0.1198046875,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 50,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5681526041268911,
+                "contextPrecision": 0.08717330822841726,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 55,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.6153821410964834,
+                "contextPrecision": 0.050444792603417256,
+                "meanTokensDelivered": 987.58
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 100,
+                "complete": 22,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.2956548875481845,
+                "contextPrecision": 0.09796875,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 31,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.4036838948924551,
+                "contextPrecision": 0.06834518322841726,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 38,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5046038768572985,
+                "contextPrecision": 0.04893112072841726,
+                "meanTokensDelivered": 987.58
+              }
+            }
+          }
+        },
+        "merge-500-0.7": {
+          "chunks": 1687,
+          "providerCalls": 20,
+          "providerTexts": 1649,
+          "singletonCalls": 3,
+          "chunkTokens": {
+            "min": 1,
+            "median": 22,
+            "max": 493
+          },
+          "chunksOverModelInput": 2,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 100,
+                "complete": 31,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.42866399672706096,
+                "contextPrecision": 0.126328125,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 45,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5533735856162012,
+                "contextPrecision": 0.08354049572841726,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 51,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5983748922121029,
+                "contextPrecision": 0.048560026978417256,
+                "meanTokensDelivered": 987.58
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 100,
+                "complete": 24,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.3084223760638361,
+                "contextPrecision": 0.100234375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 30,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.3891184828170169,
+                "contextPrecision": 0.06732955822841726,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 38,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5163084512236074,
+                "contextPrecision": 0.050513151978417256,
+                "meanTokensDelivered": 987.58
+              }
+            }
+          }
+        },
+        "group+merge-500": {
+          "chunks": 1405,
+          "providerCalls": 28,
+          "providerTexts": 1854,
+          "singletonCalls": 3,
+          "chunkTokens": {
+            "min": 1,
+            "median": 26,
+            "max": 493
+          },
+          "chunksOverModelInput": 2,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 100,
+                "complete": 32,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.39902888646995227,
+                "contextPrecision": 0.1169921875,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 51,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5727907056430412,
+                "contextPrecision": 0.08893112072841726,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 57,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.6296197020720932,
+                "contextPrecision": 0.05168502697841726,
+                "meanTokensDelivered": 987.58
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 100,
+                "complete": 22,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.29629318542052496,
+                "contextPrecision": 0.0984375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 31,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.40040893993750004,
+                "contextPrecision": 0.07068893322841725,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 38,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5099090563160389,
+                "contextPrecision": 0.05005416760341726,
+                "meanTokensDelivered": 987.58
+              }
+            }
+          }
+        },
+        "flat-merge-500-0.5": {
+          "chunks": 1172,
+          "providerCalls": 30,
+          "providerTexts": 1598,
+          "singletonCalls": 3,
+          "chunkTokens": {
+            "min": 2,
+            "median": 34.0,
+            "max": 861
+          },
+          "chunksOverModelInput": 7,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 100,
+                "complete": 32,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.41834012362722217,
+                "contextPrecision": 0.125,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 46,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5211319775932204,
+                "contextPrecision": 0.08656783947841726,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 47,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5448511995925835,
+                "contextPrecision": 0.04996627697841726,
+                "meanTokensDelivered": 987.58
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 100,
+                "complete": 23,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.2860592964403575,
+                "contextPrecision": 0.098828125,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 30,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.3690369171735288,
+                "contextPrecision": 0.06361862072841726,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 38,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.48931673491948857,
+                "contextPrecision": 0.04883346447841726,
+                "meanTokensDelivered": 987.58
+              }
+            }
+          }
+        },
+        "merge-500-document": {
+          "chunks": 994,
+          "providerCalls": 53,
+          "providerTexts": 2292,
+          "singletonCalls": 7,
+          "chunkTokens": {
+            "min": 1,
+            "median": 53.5,
+            "max": 493
+          },
+          "chunksOverModelInput": 2,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 100,
+                "complete": 32,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.3960127697851042,
+                "contextPrecision": 0.125625,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 43,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.519717412753784,
+                "contextPrecision": 0.08701705822841727,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 53,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.6074898760396451,
+                "contextPrecision": 0.051909636353417256,
+                "meanTokensDelivered": 987.58
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 100,
+                "complete": 23,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.29310440411754884,
+                "contextPrecision": 0.101015625,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 31,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.4059109005769704,
+                "contextPrecision": 0.07207565197841725,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 43,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5242677162284577,
+                "contextPrecision": 0.05010299572841726,
+                "meanTokensDelivered": 987.58
+              }
+            }
+          }
+        },
+        "merge-500-token-256": {
+          "chunks": 1410,
+          "providerCalls": 37,
+          "providerTexts": 1900,
+          "singletonCalls": 6,
+          "chunkTokens": {
+            "min": 1,
+            "median": 26.0,
+            "max": 249
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 100,
+                "complete": 31,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.40884018981478926,
+                "contextPrecision": 0.1198046875,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 50,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5681526041268911,
+                "contextPrecision": 0.08717330822841726,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 56,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.6249490702303416,
+                "contextPrecision": 0.050688933228417256,
+                "meanTokensDelivered": 987.58
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 100,
+                "complete": 22,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.29703284030409,
+                "contextPrecision": 0.0993359375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 31,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.40321145394757324,
+                "contextPrecision": 0.06811080822841725,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 38,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5040133256761962,
+                "contextPrecision": 0.04878463635341726,
+                "meanTokensDelivered": 987.58
+              }
+            }
+          }
+        },
+        "merge-500-two-passes": {
+          "chunks": 1498,
+          "providerCalls": 24,
+          "providerTexts": 1820,
+          "singletonCalls": 1,
+          "chunkTokens": {
+            "min": 1,
+            "median": 24.0,
+            "max": 493
+          },
+          "chunksOverModelInput": 2,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 100,
+                "complete": 30,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.4096463793262402,
+                "contextPrecision": 0.1223046875,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 47,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.551150940731547,
+                "contextPrecision": 0.08363815197841726,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 54,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.6093895460241207,
+                "contextPrecision": 0.04945846447841726,
+                "meanTokensDelivered": 987.58
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 100,
+                "complete": 23,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.29667866193140746,
+                "contextPrecision": 0.101953125,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 30,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.39404812241441944,
+                "contextPrecision": 0.06760299572841726,
+                "meanTokensDelivered": 506.3
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 38,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5126942350406802,
+                "contextPrecision": 0.05001510510341726,
+                "meanTokensDelivered": 987.58
+              }
+            }
+          }
+        },
+        "window-128-overlap-32": {
+          "chunks": 545,
+          "providerCalls": 8,
+          "providerTexts": 545,
+          "singletonCalls": 0,
+          "chunkTokens": {
+            "min": 33,
+            "median": 128,
+            "max": 128
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 100,
+                "complete": 23,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.34255009661478647,
+                "contextPrecision": 0.098671875,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 33,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.4579365028962568,
+                "contextPrecision": 0.07423828125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 43,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.5550873144820606,
+                "contextPrecision": 0.05462553755733945,
+                "meanTokensDelivered": 995.26
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 100,
+                "complete": 15,
+                "budgetFeasible": 94,
+                "evidenceRecall": 0.28025431712962534,
+                "contextPrecision": 0.09765625,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 100,
+                "complete": 30,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.44592667599958163,
+                "contextPrecision": 0.079140625,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 100,
+                "complete": 38,
+                "budgetFeasible": 100,
+                "evidenceRecall": 0.537436386173843,
+                "contextPrecision": 0.04774077193233944,
+                "meanTokensDelivered": 995.26
+              }
+            }
+          }
+        }
+      },
+      "defaultExamplesAt256": [
+        {
+          "questionId": "TRICITYBANKSHARESCORP_05_15_1998-EX-10-OUTSOURCING AGREEMENT__Governing Law",
+          "question": "Highlight the parts (if any) of this contract related to \"Governing Law\" that should be reviewed by a lawyer. Details: Which state/country's law governs the interpretation of the contract?",
+          "candidateDocumentIndices": [
+            6
+          ],
+          "referenceSourceTokenRanges": [
+            [
+              [
+                6,
+                18361,
+                18401
+              ]
+            ]
+          ],
+          "score": {
+            "evidenceRecall": 1.0,
+            "contextPrecision": 0.15625,
+            "complete": 1,
+            "budgetFeasible": 1,
+            "tokensDelivered": 256
+          },
+          "retrievedSourceTokenRanges": [
+            [
+              6,
+              647,
+              740
+            ],
+            [
+              6,
+              15319,
+              15323
+            ],
+            [
+              6,
+              924,
+              939
+            ],
+            [
+              6,
+              18361,
+              18401
+            ],
+            [
+              6,
+              18450,
+              18505
+            ],
+            [
+              6,
+              18351,
+              18361
+            ],
+            [
+              6,
+              17349,
+              17388
+            ]
+          ]
+        }
+      ]
+    },
+    "qasper": {
+      "documents": [
+        "1911.10742",
+        "1909.00437",
+        "1809.03391",
+        "1602.04341",
+        "1707.06519",
+        "1906.01749",
+        "1708.05482",
+        "1704.08390",
+        "1906.01502",
+        "1811.01183",
+        "1908.05758",
+        "1707.02892",
+        "1909.00369",
+        "2001.11316",
+        "2002.04326",
+        "1803.04579"
+      ],
+      "questionIds": [
+        "397a1e851aab41c455c2b284f5e4947500d797f0",
+        "cc8b4ed3985f9bfbe1b5d7761b31d9bd6a965444",
+        "f7662b11e87c1e051e13799413f3db459ac3e19c",
+        "b584739622d0c53830e60430b13fd3ae6ff43669",
+        "b70e4c49300dc3eab18e907ab903afd2a0c6075a",
+        "088d42ecb1e15515f6a97a0da2fed81b61d61a23",
+        "8599d6d14ac157169920c73b98a79737c7a68cf5",
+        "f1d61b44105e651925d02a51e6d7ea10ea28ebd8",
+        "5dfd58f91e7740899c23ebfe04b7176edce9ead2",
+        "c09bceea67273c10a0621da1a83b409f53342fd9",
+        "732bd97ae34541f215c436e2a1b98db1649cba27",
+        "183b385fb59ff1e3f658d4555a08b67c005a8734",
+        "041529e15b70b21986adb781fd9b94b595e451ed",
+        "da2350395867b5fd4dbf968b5a1cd6921ab6dd37",
+        "c7ffef8bf0100eb6148bd932d0409b21759060b1",
+        "1ff0ffeb2d0b2e150abdb2f559d8b31f4dd8aa2c",
+        "3cc0d773085dc175b85955e95911a2cfaab2cdc4",
+        "44435fbd4087fa711835d267036b6a1f82336a22",
+        "86656aae3c27c6ea108f5600dd09ab7e421d876a",
+        "22488c8628b6db5fd708b6471c31a8eac31f66df",
+        "9863f5765ba70f7ff336a580346ef70205abbbd8",
+        "ced63053eb631c78a4ddd8c85ec0f3323a631a54",
+        "f13a5b6a67a9b10fde68e8b33792879b8146102c",
+        "67c16ba64fe27838b1034d15194c07a9c98cdebe",
+        "7b76b8b69246525a48c0a8ca0c42db3319cd10a5",
+        "8b1af67e3905244653b4cf66ba0acec8d6bff81f",
+        "9a7aeecbecf5e30ffa595c233fca31719c9b429f",
+        "21f6cb3819c85312364dd17dd4091df946591ef0",
+        "475ef4ad32a8589dae9d97048166d732ae5d7beb",
+        "3fd8eab282569b1c18b82f20d579b335ae70e79f",
+        "8e9561541f2e928eb239860c2455a254b5aceaeb",
+        "50c1bf8b928069f3ffc7f0cb00aa056a163ef336",
+        "2ddfb40a9e73f382a2eb641c8e22bbb80cef017b",
+        "5499440674f0e4a9d6912b9ac29fa1f7b7cd5253",
+        "de313b5061fc22e8ffef1706445728de298eae31",
+        "47b7bc232af7bf93338bd3926345e23e9e80c0c1",
+        "0b5c599195973c563c4b1a0fe5d8fc77204d71a0",
+        "1397b1c51f722a4ee2b6c64dc9fc6afc8bd3e880",
+        "a9eb8039431e2cb885cfcf96eb58c0675b36b3bd",
+        "998fa38634000f2d7b52d16518b9e18e898ce933",
+        "a82686c054b96f214521e468b17f0435e6cdf7cf",
+        "5752c8d333afc1e6c666b18d1477c8f669b7a602",
+        "fcdafaea5b1c9edee305b81f6865efc8b8dc50d3",
+        "91d4fd5796c13005fe306bcd895caaed7fa77030",
+        "27d7a30e42921e77cfffafac5cb0d16ce5a7df99",
+        "361f330d3232681f1a13c6d59abb6c18246e7b35",
+        "f7d61648ae4bd46c603a271185c3adfac5fc5114",
+        "c9a323c152c5d9bc2d244e0ed10afbdb0f93062a",
+        "9b536f4428206ef7afabc4ff0a2ebcbabd68b985",
+        "9d04fc997689f44e5c9a551b8571a60b621d35c2",
+        "8a0e1a298716698a305153c524bf03d18969b1c6",
+        "6371c6863fe9a14bf67560e754ce531d70de10ab",
+        "28a8a1542b45f67674a2f1d54fff7a1e45bfad66",
+        "65e30c842e4c140a6cb8b2f9498fcc6223ed49c0"
+      ],
+      "exclusions": {
+        "unmappedOrNontextAnnotations": 13,
+        "noCompleteTextReference": 4,
+        "unanswerableQuestions": 1
+      },
+      "corpusTokens": 84575,
+      "documentTokens": {
+        "min": 1755,
+        "median": 5518.5,
+        "max": 8312
+      },
+      "candidatePoolTokensPerQuestion": {
+        "min": 1755,
+        "median": 5518.5,
+        "max": 8312
+      },
+      "candidateDocumentsPerQuestion": {
+        "min": 1,
+        "median": 1.0,
+        "max": 1
+      },
+      "shortestReferenceTokens": {
+        "min": 48,
+        "median": 137.5,
+        "max": 588
+      },
+      "requiresMultipleSources": 0,
+      "requiresMultipleSpans": 11,
+      "distinctTexts": 13535,
+      "vectorsSHA256": "656d9545ec954c15ec875b84125e2bc51a903a16bb786196da019e09b08a8a18",
+      "scores": {
+        "sentences": {
+          "chunks": 3224,
+          "providerCalls": 16,
+          "providerTexts": 3194,
+          "singletonCalls": 0,
+          "chunkTokens": {
+            "min": 1,
+            "median": 24.0,
+            "max": 200
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 54,
+                "complete": 1,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.27829117289821936,
+                "contextPrecision": 0.18019386574074073,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 1,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.40188392663932293,
+                "contextPrecision": 0.12727864583333334,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 5,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.5473121824880173,
+                "contextPrecision": 0.09412977430555555,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 54,
+                "complete": 0,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.18694880596780394,
+                "contextPrecision": 0.1169704861111111,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 0,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.27936476677469196,
+                "contextPrecision": 0.08969907407407407,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 2,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.42545322424086407,
+                "contextPrecision": 0.0757740162037037,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "pack-500": {
+          "chunks": 922,
+          "providerCalls": 16,
+          "providerTexts": 922,
+          "singletonCalls": 0,
+          "chunkTokens": {
+            "min": 10,
+            "median": 92.0,
+            "max": 207
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 54,
+                "complete": 1,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.22959981143995922,
+                "contextPrecision": 0.17983217592592593,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 4,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.41060132503153146,
+                "contextPrecision": 0.1443142361111111,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 18,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.6277321693757707,
+                "contextPrecision": 0.12387876157407407,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 54,
+                "complete": 4,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.22971013576034777,
+                "contextPrecision": 0.1291232638888889,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 4,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.30323270452338885,
+                "contextPrecision": 0.09205005787037036,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 16,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.5644501200397839,
+                "contextPrecision": 0.08510561342592593,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "merge-250-0.5": {
+          "chunks": 2909,
+          "providerCalls": 51,
+          "providerTexts": 3509,
+          "singletonCalls": 1,
+          "chunkTokens": {
+            "min": 1,
+            "median": 27,
+            "max": 200
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 54,
+                "complete": 1,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.3078133455093924,
+                "contextPrecision": 0.1916232638888889,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 2,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.42617947928932953,
+                "contextPrecision": 0.1357421875,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 7,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.5614300337730898,
+                "contextPrecision": 0.10051359953703703,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 54,
+                "complete": 0,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.18846447125129864,
+                "contextPrecision": 0.11668113425925926,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 0,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.274475526878541,
+                "contextPrecision": 0.0929904513888889,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 2,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.4580655106452011,
+                "contextPrecision": 0.0785228587962963,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "merge-500-0.3": {
+          "chunks": 1660,
+          "providerCalls": 105,
+          "providerTexts": 4758,
+          "singletonCalls": 11,
+          "chunkTokens": {
+            "min": 1,
+            "median": 47.0,
+            "max": 222
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 54,
+                "complete": 5,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.285789834765903,
+                "contextPrecision": 0.1898871527777778,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 9,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.45604585558043603,
+                "contextPrecision": 0.15241608796296297,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 15,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.607694111438704,
+                "contextPrecision": 0.1048900462962963,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 54,
+                "complete": 3,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.21552310323887605,
+                "contextPrecision": 0.1355613425925926,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 6,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.38235360847771177,
+                "contextPrecision": 0.11783854166666667,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 14,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.5503836607735773,
+                "contextPrecision": 0.08286313657407407,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "merge-500-0.5": {
+          "chunks": 2470,
+          "providerCalls": 83,
+          "providerTexts": 3948,
+          "singletonCalls": 7,
+          "chunkTokens": {
+            "min": 1,
+            "median": 27.0,
+            "max": 222
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 54,
+                "complete": 2,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.2963787938106179,
+                "contextPrecision": 0.20305266203703703,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 3,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.41814295601742185,
+                "contextPrecision": 0.14561631944444445,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 10,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.5891757442918655,
+                "contextPrecision": 0.1051974826388889,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 54,
+                "complete": 0,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.19310004551095236,
+                "contextPrecision": 0.1281105324074074,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 1,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.2827480637217784,
+                "contextPrecision": 0.10319010416666667,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 5,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.49765236408207153,
+                "contextPrecision": 0.08251953125,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "merge-500-0.7": {
+          "chunks": 3089,
+          "providerCalls": 40,
+          "providerTexts": 3329,
+          "singletonCalls": 5,
+          "chunkTokens": {
+            "min": 1,
+            "median": 24,
+            "max": 200
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 54,
+                "complete": 1,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.2967376857248081,
+                "contextPrecision": 0.1841724537037037,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 2,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.40883496463809654,
+                "contextPrecision": 0.12962962962962962,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 6,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.5470297332313538,
+                "contextPrecision": 0.09675202546296297,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 54,
+                "complete": 0,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.19651211027565368,
+                "contextPrecision": 0.12000868055555555,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 0,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.27700231838217665,
+                "contextPrecision": 0.08770978009259259,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 2,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.43930479615152024,
+                "contextPrecision": 0.0773654513888889,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "group+merge-500": {
+          "chunks": 2439,
+          "providerCalls": 50,
+          "providerTexts": 3810,
+          "singletonCalls": 5,
+          "chunkTokens": {
+            "min": 1,
+            "median": 27,
+            "max": 222
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 54,
+                "complete": 2,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.299907172685469,
+                "contextPrecision": 0.20377604166666666,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 3,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.4161931560841315,
+                "contextPrecision": 0.14565248842592593,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 11,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.6100212257238371,
+                "contextPrecision": 0.10883246527777778,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 54,
+                "complete": 0,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.19772814478659834,
+                "contextPrecision": 0.12984664351851852,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 1,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.2853102996806188,
+                "contextPrecision": 0.0980541087962963,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 5,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.49384699922718933,
+                "contextPrecision": 0.07486979166666667,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "flat-merge-500-0.5": {
+          "chunks": 2122,
+          "providerCalls": 78,
+          "providerTexts": 3451,
+          "singletonCalls": 6,
+          "chunkTokens": {
+            "min": 2,
+            "median": 32.0,
+            "max": 271
+          },
+          "chunksOverModelInput": 2,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 54,
+                "complete": 1,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.31316525090095204,
+                "contextPrecision": 0.21158854166666666,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 2,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.4480692142726693,
+                "contextPrecision": 0.15198206018518517,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 9,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.6021529444958269,
+                "contextPrecision": 0.10743995949074074,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 54,
+                "complete": 0,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.21628668082197333,
+                "contextPrecision": 0.13838252314814814,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 0,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.32399994331881177,
+                "contextPrecision": 0.10930266203703703,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 3,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.4787066546263069,
+                "contextPrecision": 0.083984375,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "merge-500-document": {
+          "chunks": 1543,
+          "providerCalls": 108,
+          "providerTexts": 4875,
+          "singletonCalls": 15,
+          "chunkTokens": {
+            "min": 1,
+            "median": 55,
+            "max": 222
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 54,
+                "complete": 5,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.28949836925214756,
+                "contextPrecision": 0.18909143518518517,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 9,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.46878560342372216,
+                "contextPrecision": 0.1596137152777778,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 17,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.6207610020842921,
+                "contextPrecision": 0.1056857638888889,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 54,
+                "complete": 3,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.21543342925411824,
+                "contextPrecision": 0.13744212962962962,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 7,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.39541781492307027,
+                "contextPrecision": 0.12221498842592593,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 14,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.5545320119180072,
+                "contextPrecision": 0.08405671296296297,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "merge-500-token-256": {
+          "chunks": 2470,
+          "providerCalls": 83,
+          "providerTexts": 3948,
+          "singletonCalls": 7,
+          "chunkTokens": {
+            "min": 1,
+            "median": 27.0,
+            "max": 222
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 54,
+                "complete": 2,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.2963787938106179,
+                "contextPrecision": 0.20305266203703703,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 3,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.41814295601742185,
+                "contextPrecision": 0.14561631944444445,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 10,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.5891757442918655,
+                "contextPrecision": 0.1051974826388889,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 54,
+                "complete": 0,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.19310004551095236,
+                "contextPrecision": 0.1281105324074074,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 1,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.2827480637217784,
+                "contextPrecision": 0.10319010416666667,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 5,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.49765236408207153,
+                "contextPrecision": 0.08251953125,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "merge-500-two-passes": {
+          "chunks": 2701,
+          "providerCalls": 48,
+          "providerTexts": 3717,
+          "singletonCalls": 0,
+          "chunkTokens": {
+            "min": 1,
+            "median": 26,
+            "max": 200
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 54,
+                "complete": 1,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.2855663025865881,
+                "contextPrecision": 0.19212962962962962,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 3,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.4039111411277739,
+                "contextPrecision": 0.1376953125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 8,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.5806256928505085,
+                "contextPrecision": 0.10472728587962964,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 54,
+                "complete": 0,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.18599072868847819,
+                "contextPrecision": 0.11921296296296297,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 1,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.28160295060522866,
+                "contextPrecision": 0.09078414351851852,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 4,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.4641041709620453,
+                "contextPrecision": 0.0816333912037037,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "window-128-overlap-32": {
+          "chunks": 883,
+          "providerCalls": 16,
+          "providerTexts": 883,
+          "singletonCalls": 0,
+          "chunkTokens": {
+            "min": 37,
+            "median": 128,
+            "max": 128
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 54,
+                "complete": 1,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.2228822872556572,
+                "contextPrecision": 0.17180266203703703,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 5,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.39754694927874074,
+                "contextPrecision": 0.17194733796296297,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 16,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.6009785584848333,
+                "contextPrecision": 0.1154513888888889,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 54,
+                "complete": 3,
+                "budgetFeasible": 49,
+                "evidenceRecall": 0.17982644425378766,
+                "contextPrecision": 0.09780092592592593,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 54,
+                "complete": 5,
+                "budgetFeasible": 53,
+                "evidenceRecall": 0.3113158608011872,
+                "contextPrecision": 0.09125434027777778,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 54,
+                "complete": 12,
+                "budgetFeasible": 54,
+                "evidenceRecall": 0.48313820905769067,
+                "contextPrecision": 0.0759548611111111,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        }
+      },
+      "defaultExamplesAt256": [
+        {
+          "questionId": "f7662b11e87c1e051e13799413f3db459ac3e19c",
+          "question": "What are the baselines outperformed by this work?",
+          "candidateDocumentIndices": [
+            0
+          ],
+          "referenceSourceTokenRanges": [
+            [
+              [
+                0,
+                4825,
+                4981
+              ],
+              [
+                0,
+                5930,
+                6030
+              ]
+            ],
+            [
+              [
+                0,
+                842,
+                1063
+              ],
+              [
+                0,
+                5930,
+                6030
+              ]
+            ],
+            [
+              [
+                0,
+                4825,
+                4981
+              ]
+            ]
+          ],
+          "score": {
+            "evidenceRecall": 0.1640625,
+            "contextPrecision": 0.1640625,
+            "complete": 0,
+            "budgetFeasible": 1,
+            "tokensDelivered": 256
+          },
+          "retrievedSourceTokenRanges": [
+            [
+              0,
+              4819,
+              4825
+            ],
+            [
+              0,
+              1157,
+              1175
+            ],
+            [
+              0,
+              243,
+              267
+            ],
+            [
+              0,
+              5585,
+              5599
+            ],
+            [
+              0,
+              455,
+              478
+            ],
+            [
+              0,
+              6315,
+              6332
+            ],
+            [
+              0,
+              4825,
+              4835
+            ],
+            [
+              0,
+              5927,
+              5930
+            ],
+            [
+              0,
+              5975,
+              6007
+            ],
+            [
+              0,
+              3430,
+              3452
+            ],
+            [
+              0,
+              5522,
+              5530
+            ],
+            [
+              0,
+              6030,
+              6109
+            ]
+          ]
+        }
+      ]
+    },
+    "hotpotqa": {
+      "documents": [
+        "Ed Wood (film)",
+        "Scott Derrickson",
+        "Woodson, Arkansas",
+        "Tyler Bates",
+        "Ed Wood",
+        "Deliver Us from Evil (2014 film)",
+        "Adam Collis",
+        "Sinister (film)",
+        "Conrad Brooks",
+        "Doctor Strange (2016 film)",
+        "Meet Corliss Archer",
+        "Shirley Temple",
+        "Janet Waldo",
+        "Meet Corliss Archer (TV series)",
+        "Lord High Treasurer",
+        "A Kiss for Corliss",
+        "Kiss and Tell (1945 film)",
+        "Secretary of State for Constitutional Affairs",
+        "Village accountant",
+        "Charles Craft",
+        "Kasi (Pashtun tribe)",
+        "Tippecanoe order of battle",
+        "Tenskwatawa",
+        "Tecumseh",
+        "Tecumseh's Confederacy",
+        "Ziri ibn Atiyya",
+        "Battle of Tippecanoe",
+        "Prophetstown State Park",
+        "Battle of Fallen Timbers",
+        "Zafar, Yemen",
+        "Groups of Traditional Buildings",
+        "Ballenberg",
+        "Omodos",
+        "Gulangyu",
+        "Asante Traditional Buildings",
+        "Jeonju Hanok Village",
+        "Cultural Property (Japan)",
+        "Open-air museums in Slovakia",
+        "Imanishi family's House",
+        "Museumsdorf Niedersulz",
+        "Frigg gas field",
+        "Eir",
+        "Hl\u00edn",
+        "S\u00e1ga and S\u00f6kkvabekkr",
+        "Nanna (Norse deity)",
+        "Gn\u00e1 and H\u00f3fvarpnir",
+        "Norse mythology",
+        "Fensalir",
+        "Marzanna",
+        "Fulla",
+        "Echosmith",
+        "All That You Are (Goo Goo Dolls song)",
+        "Live in Buffalo: July 4th, 2004",
+        "Goo Goo Dolls (album)",
+        "Notbroken",
+        "Goo Goo Dolls",
+        "Something for the Rest of Us",
+        "Waiting for the Rest of It",
+        "ITunes Originals \u2013 Goo Goo Dolls",
+        "Hold Me Up",
+        "Lies That Chelsea Handler Told Me",
+        "Are You There, Chelsea?",
+        "List of Chelsea episodes",
+        "Are You There, Vodka? It's Me, Chelsea",
+        "The Chelsea Handler Show",
+        "Chelsea (TV series)",
+        "Chelsea Handler",
+        "Chelsea Lately",
+        "Hello Ross",
+        "Chelsea Does",
+        "Emerald ash borer",
+        "Pterostyrax hispidus",
+        "Native Tour",
+        "Dregea volubilis",
+        "Pterostyrax",
+        "Bothriochloa ischaemum",
+        "Oenanthe javanica",
+        "Sino-Tibetan languages",
+        "Dregea sinensis",
+        "Dregea",
+        "Insomnia (2002 film)",
+        "Interstellar (soundtrack)",
+        "The Dark Knight Rises",
+        "Christopher Nolan (author)",
+        "Inception: Music from the Motion Picture",
+        "Memento (film)",
+        "Hugh Jackman",
+        "Jeremy Theobald",
+        "The Prestige (film)",
+        "Happy and Glorious (TV series)",
+        "Agent 077: Mission Bloody Mary",
+        "Bacon martini",
+        "Bloody Mary (Nerve Endings)",
+        "Bloody Mary Morning",
+        "Caesar (cocktail)",
+        "Bloody Mary (folklore)",
+        "The Bloody Mary Show",
+        "Typhoon Mary (1960)",
+        "Sidecar (cocktail)",
+        "Bloody Mary (cocktail)",
+        "Field marshal (United Kingdom)",
+        "Charles Egerton (Indian Army officer)",
+        "Sowar",
+        "General (United Kingdom)",
+        "Jiang (rank)",
+        "Military ranks of Syria",
+        "Xiao (rank)",
+        "Charles Forbes-Leith",
+        "Wei (rank)",
+        "Master aircrew",
+        "1991 Athens Open \u2013 Doubles",
+        "1980 Bavarian Tennis Championships \u2013 Singles",
+        "1976 Aryamehr Cup",
+        "1976 Bavarian Tennis Championships",
+        "1972 Grand Prix German Open",
+        "1972 Swedish Open",
+        "1972 Italian Open (tennis)",
+        "1976 Commercial Union Assurance Masters",
+        "Sergio Casal",
+        "Manuel Orantes",
+        "Robert Melville (car designer)",
+        "Bob Lee (quarterback)",
+        "Robert Melville (art critic)",
+        "Robert Melville, 1st Lord Melville",
+        "George Melville Baker",
+        "Robert Ayres Barnet",
+        "Study for Crouching Nude",
+        "Robert Melville Smith",
+        "Jaguar Land Rover",
+        "Earl of Melville",
+        "Li Zhusheng",
+        "Adam Tsuei",
+        "Wu Weishan",
+        "Sun Chunlan",
+        "Liu Zhenhua",
+        "Japanese Buddhist architecture",
+        "Li Chengpeng",
+        "Pocahontas (1995 film)",
+        "Born in China",
+        "Christian Bale filmography",
+        "2002\u201303 Inter Milan season",
+        "GAS Kilkis",
+        "Acute HME syndrome",
+        "Alcoholic hallucinosis",
+        "Hern\u00e1n Crespo Toral",
+        "Engin \u0130peko\u011flu",
+        "Balasore",
+        "Shamwari Game Reserve",
+        "2002\u201303 Serie A",
+        "2008\u201309 Serie D",
+        "Sandy and Beaver Canal",
+        "Owensmouth",
+        "Frederick Eaton",
+        "Rush Creek (Mono County, California)",
+        "Beaver Creek State Park",
+        "Owensmouth (Pacific Electric)",
+        "Los Angeles Aqueduct",
+        "St. Francis Dam",
+        "William Mulholland",
+        "Dry Canyon Reservoir",
+        "Jacqueline Mukansonera",
+        "Mass Slaughter: The Best of Slaughter",
+        "Rwandan genocide",
+        "Genocidal rape",
+        "Democratic Forces for the Liberation of Rwanda",
+        "Cyprian and Daphrose Rugamba",
+        "Origins of Hutu, Tutsi and Twa",
+        "Gacaca court",
+        "Ubuhake",
+        "Rwandan Revolution",
+        "Tetrapanax",
+        "Fuscospora gunnii",
+        "Philadelphus mexicanus",
+        "Lonicera morrowii",
+        "Philadelphus incanus",
+        "Hippophae rhamnoides",
+        "Hippophae",
+        "Camellia sinensis",
+        "Euryops chrysanthemoides",
+        "Agastachys",
+        "Adoption 2002",
+        "Indecency with Children Act 1960",
+        "Adoption Act 1958",
+        "Treason Act 1795",
+        "Baw Beese",
+        "Adoption and Safe Families Act",
+        "Trade dollar (United States coin)",
+        "Termite barrier",
+        "Strolling Actresses Dressing in a Barn",
+        "Coastal Barrier Resources Act",
+        "2006 Qatar Ladies Open \u2013 Doubles",
+        "2009 Hansol Korea Open \u2013 Doubles",
+        "2010 Australian Open \u2013 Mixed Doubles",
+        "2010 US Open \u2013 Mixed Doubles",
+        "2007 Kremlin Cup \u2013 Women's Doubles",
+        "Francesca Schiavone",
+        "2006 Generali Ladies Linz \u2013 Doubles",
+        "2005 Challenge Bell \u2013 Doubles",
+        "Carly Gullickson",
+        "2010 Toray Pan Pacific Open \u2013 Doubles",
+        "Genzyme",
+        "Peptech",
+        "William Ticknor",
+        "William Davis Ticknor, Sr.",
+        "John F. Milligan",
+        "Manteia Predictive Medicine",
+        "Daiichi Sankyo",
+        "Icos",
+        "Pascal Brandys",
+        "Commercial Solvents Corporation",
+        "Euryanthe",
+        "Te Siento",
+        "Tha\u00efs (opera)",
+        "Dio, come ti amo",
+        "Ren\u00e9e Fleming",
+        "Olive Gilbert",
+        "Sweetwater (band)",
+        "Ganglionectomy",
+        "Zauvijek volim te",
+        "Agnes von Hohenstaufen",
+        "Open information extraction",
+        "The Merry Heirs",
+        "Alain Jessua",
+        "Shirley Clarke",
+        "The Earrings of Madame de\u2026",
+        "The Exile (1947 film)",
+        "Jacques Natanson",
+        "Sarajevo (1940 French film)",
+        "Max Oph\u00fcls",
+        "Everybody's Woman",
+        "Polar Bears International",
+        "Polar bear",
+        "Ian Stirling (biologist)",
+        "Phoenix Polar Bears",
+        "Kermode bear",
+        "Canada Goose (clothing)",
+        "Mitchell Taylor",
+        "Agreement on the Conservation of Polar Bears",
+        "The Real Bears",
+        "Polar Bears (band)",
+        "Muppets Most Wanted (soundtrack)",
+        "Eva Gabor",
+        "The Muppets (soundtrack)",
+        "Walt Disney Pictures",
+        "The Rescuers Down Under",
+        "The Muppets at Walt Disney World",
+        "The Muppets (film)",
+        "Disney Renaissance",
+        "Walt Disney World Dolphin",
+        "The Rescuers",
+        "Sing (2016 American film)",
+        "Kingsman (franchise)",
+        "Taron Egerton",
+        "Eddie &quot;The Eagle&quot; Edwards",
+        "Robin Hood (2018 film)",
+        "The Smoke (TV series)",
+        "Kingsman: The Golden Circle",
+        "Eddie the Eagle (film)",
+        "Billionaire Boys Club (2017 film)",
+        "Kingsman: The Secret Service",
+        "Selkie (disambiguation)",
+        "Almaz (mythical beast)",
+        "Magical creatures in Harry Potter",
+        "Scandinavian folklore",
+        "Hulder",
+        "Tradition history",
+        "V\u00f6r\u00f0r",
+        "Jenny Nystr\u00f6m",
+        "Pukwudgie",
+        "Skogsr\u00e5",
+        "Flesh and Blood (1985 film)",
+        "Paul Verhoeven",
+        "Black Book (film)",
+        "The Fourth Man (1983 film)",
+        "Fairest of Them All",
+        "James Kerwin",
+        "Yesterday Was a Lie",
+        "Rob Bottin",
+        "Patrick Kerwin (politician)",
+        "All Things Pass",
+        "Alison Norlen",
+        "Althea Thauberger",
+        "Beaverbrook Art Gallery",
+        "MacKenzie Art Gallery",
+        "Grand Central Art Galleries",
+        "Diane Borsato",
+        "Linda Duvall",
+        "Christchurch Art Gallery",
+        "Armen Chakmakian",
+        "Hovsep Pushman",
+        "Sean Walker (racing driver)",
+        "Clyde Valley Racing",
+        "Rod Mansfield",
+        "Teamcraft Motorsport",
+        "Whitianga Festival of Speed",
+        "Dunlop Tyres",
+        "James Vowles",
+        "John Quenby",
+        "Great and British Motorsport Festival",
+        "Prodrive",
+        "Lew Tyler's Wives",
+        "A Romantic Adventuress",
+        "Winning America",
+        "Half an Hour",
+        "Guilty of Love (film)",
+        "Land of Hope and Glory (film)",
+        "Brent Hodge",
+        "Harley Knoles",
+        "Pinna Nesbit",
+        "The Master Hand",
+        "I Know Him So Well",
+        "One Night in Bangkok",
+        "Chess (musical)",
+        "Mamma Mia!",
+        "Murray Head",
+        "Gemini (Gemini album)",
+        "Just Like That (Gemini song)",
+        "Tim Rice",
+        "Anthem (Chess song)",
+        "Story of a Heart (song)",
+        "Polish Armed Forces in the East (1914\u201320)",
+        "Russian Protective Corps",
+        "White Russian (cocktail)",
+        "Arthur Cherep-Spiridovich",
+        "Battle of Dawan Cheng",
+        "Green Russian",
+        "Ewen Cameron Bruce",
+        "Jin Shuren",
+        "Nikolaschka",
+        "Pavel Pappengut",
+        "Charles Murray (bishop)",
+        "Union Airways of N.Z. Ltd",
+        "1931 Avro Ten Southern Cloud disappearance",
+        "History of Air New Zealand",
+        "1945 Australian National Airways Stinson crash",
+        "1948 Australian National Airways DC-3 crash",
+        "Charles Kingsford Smith",
+        "Holyman House",
+        "Australian National Airways (1930)",
+        "West Australian Airways",
+        "Notre Dame\u2013Stanford football rivalry",
+        "University of Notre Dame",
+        "Tall Grass Game",
+        "Eric Hansen (sportswriter)",
+        "2009 Notre Dame Fighting Irish football team",
+        "William Beauchamp",
+        "Notre Dame of Midsayap College",
+        "Notre Dame Shakespeare Festival",
+        "Notre Dame Fighting Irish football",
+        "University of Wisconsin\u2013Madison",
+        "William Alexander (American football)",
+        "Mac McWhorter",
+        "1915 Georgia Tech Yellow Jackets football team",
+        "1927 Georgia Tech Golden Tornado football team",
+        "1959 Georgia Tech Yellow Jackets football team",
+        "1994 Georgia Tech Yellow Jackets football team",
+        "1981 Georgia Tech Yellow Jackets football team",
+        "1961 Georgia Tech Yellow Jackets football team",
+        "1916 Georgia Tech Yellow Jackets football team",
+        "1966 Georgia Tech Yellow Jackets football team",
+        "Illyrian Shepherd",
+        "Taigan",
+        "Brazilian Dogo",
+        "Rastreador Brasileiro",
+        "Continental bulldog",
+        "Barbado da Terceira",
+        "Small M\u00fcnsterl\u00e4nder",
+        "Korean Jindo",
+        "Guatemalan Dogo",
+        "List of dog breeds recognized by the FCI",
+        "2005 Seattle Seahawks season",
+        "Giovanni Carmazzi",
+        "Ed Rutkowski",
+        "2003 St. Louis Rams season",
+        "1971 Los Angeles Rams season",
+        "1982 Atlanta Falcons season",
+        "Tampa Bay Buccaneers",
+        "San Francisco 49ers",
+        "2015 Buffalo Bills season",
+        "Danny Etling",
+        "Suor Angelica",
+        "Giovacchino Forzano",
+        "Jane Henschel",
+        "Marie-Jos\u00e9e Lord",
+        "Il trittico",
+        "Rita Fornia",
+        "Anna Nechaeva",
+        "Norine Burgess",
+        "Pagliacci",
+        "Barbara Frittoli",
+        "Southern Rhodesia",
+        "Violet King Henry",
+        "George Tawengwa",
+        "Wilbur K. Howard",
+        "C. Bette Wimbish",
+        "Andrew Watson (footballer, born 1856)",
+        "Tawengwa family",
+        "Ronald Blackwood",
+        "Charles Burleigh Purvis",
+        "Ike Jones",
+        "Brian Steidle",
+        "Devil Came to Me (Dover song)",
+        "3 Generations (nonprofit)",
+        "The Devil Came on Horseback",
+        "My Best Fiend",
+        "Dover (band)",
+        "2 (Dover album)",
+        "The Devil Came from Akasava",
+        "The Farmer's Curst Wife",
+        "Jane I. Wells",
+        "Battle of Qala-i-Jangi",
+        "Sayeed Salahudeen",
+        "Valerio Fioravanti",
+        "Combat Terrorist Organization",
+        "Mark E. Curry",
+        "Filiberto Ojeda R\u00edos",
+        "Iraultza",
+        "Soldiers of Egypt",
+        "Patty Hearst",
+        "Mark E. Mitchell",
+        "Dracula (plant)",
+        "Leptofoenus",
+        "Megalurus",
+        "Pachyornis",
+        "Calyptocephalellidae",
+        "Crowea",
+        "Lophodermium",
+        "Banksiamyces",
+        "Ceratozamia",
+        "List of Amanita species",
+        "Johnny Prescott",
+        "Dave Allen (boxer)",
+        "Danny Williams (boxer)",
+        "Jack London (boxer)",
+        "Garry Delaney",
+        "Lenroy Thomas",
+        "Adam Pearce",
+        "Brian London",
+        "Michael Sprott",
+        "Shannon Ritch",
+        "Labyrinthodontia",
+        "Blue on Blue (Bobby Vinton album)",
+        "Rock-A-Hula Baby",
+        "Perger",
+        "Blue Hawaii (drink)",
+        "Baby Guinness",
+        "Sanantha",
+        "Fort Fizzle (Montana)",
+        "Saliou",
+        "Blue Hawaii (Elvis Presley album)",
+        "2006 Stanley Cup Finals",
+        "2001 Stanley Cup Finals",
+        "Bryan Lewis",
+        "Toronto Maple Leafs",
+        "Prince of Wales Trophy",
+        "1998 Stanley Cup Finals",
+        "2002 Stanley Cup Finals",
+        "1999 Stanley Cup Finals",
+        "1966\u201367 NHL season",
+        "2007 Stanley Cup Finals",
+        "KHNK",
+        "KPFA",
+        "WFAN-FM",
+        "WSYY-FM",
+        "Columbia Falls, Montana",
+        "WAKB",
+        "Ship station",
+        "Babylon FM",
+        "French Radio London",
+        "CJOB",
+        "John Berry (album)",
+        "John Berry (film director)",
+        "Hollow City (novel)",
+        "Miss Peregrine's Home for Peculiar Children",
+        "Ransom Riggs",
+        "Your Love Amazes Me",
+        "You and Only You",
+        "Library of Souls",
+        "Kiss Me in the Car",
+        "What's in It for Me",
+        "Eugene Wigner",
+        "Joseph Henry House",
+        "Curtis Callan",
+        "Daniel C. Tsui",
+        "The Princeton Three",
+        "Miklos Porkolab",
+        "Princeton Community High School",
+        "Predhiman Krishan Kaw",
+        "Duncan Haldane",
+        "Andrei Linde",
+        "John Zacherle",
+        "Midnite Movies",
+        "Eugenio Mart\u00edn",
+        "Bangkok Girl",
+        "Deadly Earnest",
+        "Creature Features",
+        "Creature Double Feature",
+        "The Apparition",
+        "Transylvania Twist",
+        "Home (2009 film)",
+        "Eureka, Nunavut",
+        "Kings of Convenience",
+        "Arizona State Route 389",
+        "Belle and Sebastian",
+        "Texas State Highway 77",
+        "Fort Harker (Kansas)",
+        "Monashee Mountains",
+        "Pennsylvania Route 382",
+        "Register Cliff",
+        "Fort Gibson",
+        "Fayette County School System (Georgia)",
+        "Flower Alley",
+        "Manara, Ohio",
+        "Falmouth, Indiana",
+        "Oran, Iowa",
+        "Blue Grass Airport",
+        "Buena Vista, Fayette County, Ohio",
+        "Hurricane Hall",
+        "Joseph A. Hardy Connellsville Airport",
+        "Fayette County, Georgia",
+        "Museum of Motherhood",
+        "Sylvia Pankhurst",
+        "Frances Nacke Noel",
+        "Elsie Plant",
+        "Sanna Kannasto",
+        "Clemence Housman",
+        "Gertrude Harding",
+        "William \u2013 an Englishman",
+        "Angela Down",
+        "Mary Lowndes",
+        "Exclusive (film)",
+        "The Lone Wolf Keeps a Date",
+        "Alexander Kluge",
+        "The Great Sioux Massacre",
+        "The Lone Wolf Takes a Chance",
+        "Artists Under the Big Top: Perplexed",
+        "Robbers' Roost (film)",
+        "Sidney Salkow",
+        "Anita G.",
+        "Yesterday Girl",
+        "Reggae rock",
+        "Keith Morris",
+        "Midnight Snack Break at the Poodle Factory",
+        "Rome Ramirez",
+        "Yours Truly (Sublime with Rome album)",
+        "Circle Jerks",
+        "List of Circle Jerks band members",
+        "Street punk",
+        "Brisbane punk rock",
+        "List of Black Flag band members",
+        "Richard D. Cummings",
+        "George Weinstock",
+        "Press TV",
+        "Murray Esler",
+        "Julie Huber",
+        "Francis J. Beckwith",
+        "Jeanetta Laurence",
+        "Carole Hayman",
+        "Press TV controversies",
+        "Douglas Murray (author)",
+        "Tiexi District, Siping",
+        "Siping, Jilin",
+        "Siping Campaign",
+        "Linhai",
+        "Wang Jinshan",
+        "Liaoyuan",
+        "Jilin Normal University",
+        "Battle of Siping",
+        "Changtu County",
+        "Siping East Railway Station",
+        "Good Kid, M.A.A.D City",
+        "Money Trees",
+        "Ricci Riera",
+        "Freedom (Beyonc\u00e9 song)",
+        "Swimming Pools (Drank)",
+        "Money Trees Deuce",
+        "Control (Big Sean song)",
+        "DJ Dahi",
+        "Money tree (myth)",
+        "These Walls (Kendrick Lamar song)",
+        "Jack Chick",
+        "1992\u201393 Philadelphia 76ers season",
+        "The Light of the World (film)",
+        "Fred Carter (artist)",
+        "Fred Carter (disambiguation)",
+        "Harold Gray",
+        "The Chain (Deana Carter album)",
+        "Brad Parker (artist)",
+        "John Stanley (cartoonist)",
+        "Fred Carter House",
+        "Di'Anno",
+        "Mike Muir",
+        "Killers Live at the Whiskey",
+        "Di'Anno (album)",
+        "Suicidal Tendencies",
+        "Paul Di'Anno",
+        "Mike Clark (guitarist)",
+        "Gogmagog (band)",
+        "Icarus Witch",
+        "List of songs recorded by Iron Maiden",
+        "HNA Infrastructure Investment Group",
+        "Man's World (magazine)",
+        "Mariupol Investment Group",
+        "Fortress Investment Group",
+        "Gold Coast (magazine)",
+        "Strategic Investment Group",
+        "Richelieu Foods",
+        "Dow Investment Group",
+        "Fossil Group",
+        "Shinola",
+        "The Everlasting (song)",
+        "Some Kind of Bliss",
+        "An English Gentleman",
+        "Tsunami (Manic Street Preachers song)",
+        "Ocean Spray (song)",
+        "Rob Thomas (musician)",
+        "So Why So Sad",
+        "James Dean Bradfield",
+        "Found That Soul",
+        "You Stole the Sun from My Heart",
+        "University of California, Santa Barbara Library",
+        "USNS Mission Santa Barbara (T-AO-131)",
+        "Santa Barbara High School",
+        "Hamdard University",
+        "Erno S. Daniel",
+        "University of California, Santa Barbara",
+        "Santa Barbara International Marathon",
+        "KUSC",
+        "Mission Santa Barbara",
+        "Santa Barbara City College",
+        "Bancroft Shed",
+        "Tosside",
+        "Paythorne",
+        "Kirk Deighton",
+        "Barnoldswick",
+        "Hopperton",
+        "Great Stone of Fourstones",
+        "Anglican Diocese of Leeds",
+        "John Ramsbottom (engineer)",
+        "Whernside"
+      ],
+      "questionIds": [
+        "5a8b57f25542995d1e6f1371",
+        "5a8c7595554299585d9e36b6",
+        "5a87ab9b5542996e4f3088c2",
+        "5ab1e984554299340b525428",
+        "5adc8977554299438c868de2",
+        "5ae1316555429901ffe4adda",
+        "5adf734b5542995ec70e9016",
+        "5a866c04554299211dda2b25",
+        "5a77a41a5542997042120ab9",
+        "5ab344fc55429969a97a811e",
+        "5ac1b1345542994ab5c67dd0",
+        "5a84fea85542994c784ddabf",
+        "5ac25fa955429951e9e6858c",
+        "5a7e1cad55429965cec5ea75",
+        "5a75eda35542994ccc918661",
+        "5abe91895542993f32c2a168",
+        "5ade8bd955429975fa854f04",
+        "5ac3126f5542995ef918c0e8",
+        "5a71446b5542994082a3e72a",
+        "5a8b91d25542995d1e6f13fc",
+        "5ae1faf15542997f29b3c1e3",
+        "5a865cac55429960ec39b675",
+        "5abd38285542993062266c19",
+        "5a8ae00e5542992d82986fc7",
+        "5ae0d7bf5542990adbacf67b",
+        "5ab827a555429934fafe6cf5",
+        "5a80b9e85542992bc0c4a7ed",
+        "5a7785af55429949eeb29ec2",
+        "5a7f5d165542992097ad2f3c",
+        "5ae32eca5542994393b9e640",
+        "5ab3010455429976abd1bc15",
+        "5a8e2147554299068b959e67",
+        "5a8393665542990548d0b1ea",
+        "5a7f1ad155429934daa2fce2",
+        "5a8d08ee55429941ae14df70",
+        "5a80c01855429938b61421b8",
+        "5a8197905542995ce29dcc10",
+        "5ae2aa345542996483e64a25",
+        "5abdcad155429965af743e4d",
+        "5a883c175542997e5c09a5ae",
+        "5a7b76225542997c3ec9719c",
+        "5abb9ad4554299642a094abe",
+        "5a8f1672554299458435d558",
+        "5ae1e1e55542997f29b3c15e",
+        "5a83108d55429966c78a6b1e",
+        "5abfb4235542990832d3a1ca",
+        "5a7fcd9c5542992e7d278da9",
+        "5a88364c5542994846c1ce2e",
+        "5ae46c9d5542996836b02c9d",
+        "5a7f10e2554299306751360b",
+        "5a7a4f335542990198eaf11e",
+        "5a89dd4d554299669944a5e3",
+        "5ae32c935542990afbd1e0bd",
+        "5abb14d85542996cc5e49f92",
+        "5abec12b5542997ec76fd358",
+        "5a8c7703554299585d9e36b9",
+        "5ac4deff554299076e296e26",
+        "5a7a103b5542990783324e27",
+        "5ac1620855429964131be1bc",
+        "5ab819065542995dae37ea3c",
+        "5ae7cb575542997ec27276ea",
+        "5ae234005542994d89d5b392",
+        "5ab8494d55429916710eb016",
+        "5a8ac4dd5542992d82986f76"
+      ],
+      "exclusions": {},
+      "corpusTokens": 80514,
+      "documentTokens": {
+        "min": 22,
+        "median": 110.0,
+        "max": 1128
+      },
+      "candidatePoolTokensPerQuestion": {
+        "min": 672,
+        "median": 1259.5,
+        "max": 2123
+      },
+      "candidateDocumentsPerQuestion": {
+        "min": 10,
+        "median": 10.0,
+        "max": 10
+      },
+      "shortestReferenceTokens": {
+        "min": 29,
+        "median": 76.0,
+        "max": 198
+      },
+      "requiresMultipleSources": 64,
+      "requiresMultipleSpans": 64,
+      "distinctTexts": 10079,
+      "vectorsSHA256": "fee6d3cade57bc8e79d1dea35a84ecbfdc537e18c17a45bc92b8f27d4021cde2",
+      "scores": {
+        "sentences": {
+          "chunks": 3349,
+          "providerCalls": 640,
+          "providerTexts": 3338,
+          "singletonCalls": 0,
+          "chunkTokens": {
+            "min": 1,
+            "median": 22,
+            "max": 177
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 32,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7569352503436101,
+                "contextPrecision": 0.22332763671875,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 49,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8950807817542696,
+                "contextPrecision": 0.13409423828125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 57,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9645290146437616,
+                "contextPrecision": 0.07729611769137762,
+                "meanTokensDelivered": 981.34375
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 28,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.726907424521502,
+                "contextPrecision": 0.2235107421875,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 43,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.867259282313257,
+                "contextPrecision": 0.13134765625,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 56,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9683255498477674,
+                "contextPrecision": 0.07784543409762762,
+                "meanTokensDelivered": 981.34375
+              }
+            }
+          },
+          "pooledRetrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 32,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7484847006392493,
+                "contextPrecision": 0.2200927734375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 41,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8297042814508273,
+                "contextPrecision": 0.124298095703125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 47,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8807237697137767,
+                "contextPrecision": 0.0660552978515625,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 24,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.6781090254289401,
+                "contextPrecision": 0.203125,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 34,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7553227757255093,
+                "contextPrecision": 0.112884521484375,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 42,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8383321911289843,
+                "contextPrecision": 0.0634002685546875,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "pack-500": {
+          "chunks": 1080,
+          "providerCalls": 640,
+          "providerTexts": 1080,
+          "singletonCalls": 311,
+          "chunkTokens": {
+            "min": 3,
+            "median": 78.0,
+            "max": 177
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 34,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7494208608030962,
+                "contextPrecision": 0.22271728515625,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 50,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.861296160955681,
+                "contextPrecision": 0.12957763671875,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 59,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9631001309449999,
+                "contextPrecision": 0.07847104444919012,
+                "meanTokensDelivered": 981.34375
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 35,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7659406081811251,
+                "contextPrecision": 0.23223876953125,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 49,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8781582558471009,
+                "contextPrecision": 0.134185791015625,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 59,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9697456270361774,
+                "contextPrecision": 0.07889829054294012,
+                "meanTokensDelivered": 981.34375
+              }
+            }
+          },
+          "pooledRetrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 32,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7259283679051273,
+                "contextPrecision": 0.215087890625,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 47,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.836891992517169,
+                "contextPrecision": 0.126312255859375,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 54,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9124826961985656,
+                "contextPrecision": 0.069061279296875,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 34,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7606233747420246,
+                "contextPrecision": 0.229736328125,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 43,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8360374835503405,
+                "contextPrecision": 0.127227783203125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 50,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8928264312672511,
+                "contextPrecision": 0.0687408447265625,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "merge-250-0.5": {
+          "chunks": 2660,
+          "providerCalls": 1216,
+          "providerTexts": 4027,
+          "singletonCalls": 483,
+          "chunkTokens": {
+            "min": 1,
+            "median": 28.0,
+            "max": 177
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 32,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.763578547171416,
+                "contextPrecision": 0.22467041015625,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 45,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8758001918240016,
+                "contextPrecision": 0.130523681640625,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 57,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9645290146437616,
+                "contextPrecision": 0.07729611769137762,
+                "meanTokensDelivered": 981.34375
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 34,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7786291683197374,
+                "contextPrecision": 0.23297119140625,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 45,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8676888434614455,
+                "contextPrecision": 0.130096435546875,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 56,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9683255498477674,
+                "contextPrecision": 0.07784543409762762,
+                "meanTokensDelivered": 981.34375
+              }
+            }
+          },
+          "pooledRetrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 31,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7293678645245507,
+                "contextPrecision": 0.2130126953125,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 38,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8143125370170153,
+                "contextPrecision": 0.120086669921875,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 45,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.880732710997362,
+                "contextPrecision": 0.065704345703125,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 26,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.6917412999481551,
+                "contextPrecision": 0.2047119140625,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 37,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7835505519459645,
+                "contextPrecision": 0.116119384765625,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 42,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.838526389608553,
+                "contextPrecision": 0.063018798828125,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "merge-500-0.3": {
+          "chunks": 1567,
+          "providerCalls": 1789,
+          "providerTexts": 5120,
+          "singletonCalls": 693,
+          "chunkTokens": {
+            "min": 1,
+            "median": 48,
+            "max": 177
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 33,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7563119884151448,
+                "contextPrecision": 0.2242431640625,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 44,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8562155707922193,
+                "contextPrecision": 0.1275634765625,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 57,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9481125625227288,
+                "contextPrecision": 0.07683835401950262,
+                "meanTokensDelivered": 981.34375
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 34,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7505182470222073,
+                "contextPrecision": 0.22760009765625,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 43,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8522008390200873,
+                "contextPrecision": 0.1298828125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 54,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9584063853769725,
+                "contextPrecision": 0.07706723585544012,
+                "meanTokensDelivered": 981.34375
+              }
+            }
+          },
+          "pooledRetrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 30,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7408129236576628,
+                "contextPrecision": 0.21966552734375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 41,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.814751966867775,
+                "contextPrecision": 0.12066650390625,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 48,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8880927882792179,
+                "contextPrecision": 0.0671539306640625,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 29,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7065549778369348,
+                "contextPrecision": 0.21136474609375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 40,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8282447993241613,
+                "contextPrecision": 0.1260986328125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 49,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8964975793951071,
+                "contextPrecision": 0.068267822265625,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "merge-500-0.5": {
+          "chunks": 2299,
+          "providerCalls": 1451,
+          "providerTexts": 4388,
+          "singletonCalls": 606,
+          "chunkTokens": {
+            "min": 1,
+            "median": 28,
+            "max": 177
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 30,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7302472750600846,
+                "contextPrecision": 0.21502685546875,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 43,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8498376644961726,
+                "contextPrecision": 0.12652587890625,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 56,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.958018597977095,
+                "contextPrecision": 0.07699094191012762,
+                "meanTokensDelivered": 981.34375
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 35,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7871151341799653,
+                "contextPrecision": 0.23614501953125,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 45,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8631777105249693,
+                "contextPrecision": 0.130126953125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 56,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9683255498477674,
+                "contextPrecision": 0.07784543409762762,
+                "meanTokensDelivered": 981.34375
+              }
+            }
+          },
+          "pooledRetrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 29,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7115244550333227,
+                "contextPrecision": 0.2099609375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 37,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7853012292013812,
+                "contextPrecision": 0.1153564453125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 45,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8833508002479105,
+                "contextPrecision": 0.0662078857421875,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 30,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7112281307618963,
+                "contextPrecision": 0.21331787109375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 36,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7914312848470568,
+                "contextPrecision": 0.11895751953125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 45,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8589760614347881,
+                "contextPrecision": 0.0647430419921875,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "merge-500-0.7": {
+          "chunks": 2985,
+          "providerCalls": 990,
+          "providerTexts": 3702,
+          "singletonCalls": 336,
+          "chunkTokens": {
+            "min": 1,
+            "median": 24,
+            "max": 177
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 32,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7548090980096589,
+                "contextPrecision": 0.221923828125,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 47,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8809716054750624,
+                "contextPrecision": 0.132354736328125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 57,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9652083624698486,
+                "contextPrecision": 0.07734189405856512,
+                "meanTokensDelivered": 981.34375
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 30,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7446070240236131,
+                "contextPrecision": 0.22711181640625,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 44,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8689688202951164,
+                "contextPrecision": 0.131103515625,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 55,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.964817896786543,
+                "contextPrecision": 0.07750974073825262,
+                "meanTokensDelivered": 981.34375
+              }
+            }
+          },
+          "pooledRetrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 31,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7339283228490577,
+                "contextPrecision": 0.21441650390625,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 38,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8092308779470108,
+                "contextPrecision": 0.120880126953125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 46,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8760642808775692,
+                "contextPrecision": 0.065887451171875,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 26,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.6998239982461315,
+                "contextPrecision": 0.20843505859375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 38,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7968260180248447,
+                "contextPrecision": 0.11944580078125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 41,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8374562798670435,
+                "contextPrecision": 0.063323974609375,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "group+merge-500": {
+          "chunks": 2246,
+          "providerCalls": 1348,
+          "providerTexts": 4219,
+          "singletonCalls": 529,
+          "chunkTokens": {
+            "min": 1,
+            "median": 29.0,
+            "max": 177
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 30,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7398450548616143,
+                "contextPrecision": 0.2183837890625,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 43,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8466618514880425,
+                "contextPrecision": 0.125762939453125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 56,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.958018597977095,
+                "contextPrecision": 0.07699094191012762,
+                "meanTokensDelivered": 981.34375
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 33,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7736539828112052,
+                "contextPrecision": 0.23358154296875,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 44,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8574032540032301,
+                "contextPrecision": 0.129608154296875,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 56,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9683255498477674,
+                "contextPrecision": 0.07784543409762762,
+                "meanTokensDelivered": 981.34375
+              }
+            }
+          },
+          "pooledRetrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 28,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.717562684989764,
+                "contextPrecision": 0.21234130859375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 37,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7853012292013812,
+                "contextPrecision": 0.1153564453125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 45,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8841399416620519,
+                "contextPrecision": 0.0662841796875,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 29,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7055717092854036,
+                "contextPrecision": 0.21270751953125,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 38,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8016479008284306,
+                "contextPrecision": 0.12030029296875,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 44,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8557272990585505,
+                "contextPrecision": 0.064422607421875,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "flat-merge-500-0.5": {
+          "chunks": 2297,
+          "providerCalls": 1451,
+          "providerTexts": 4386,
+          "singletonCalls": 606,
+          "chunkTokens": {
+            "min": 1,
+            "median": 28,
+            "max": 177
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 30,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7302472750600846,
+                "contextPrecision": 0.21502685546875,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 43,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8498376644961726,
+                "contextPrecision": 0.12652587890625,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 56,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.958018597977095,
+                "contextPrecision": 0.07699094191012762,
+                "meanTokensDelivered": 981.34375
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 35,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7871151341799653,
+                "contextPrecision": 0.23614501953125,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 45,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8631777105249693,
+                "contextPrecision": 0.130126953125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 56,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9683255498477674,
+                "contextPrecision": 0.07784543409762762,
+                "meanTokensDelivered": 981.34375
+              }
+            }
+          },
+          "pooledRetrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 29,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7115244550333227,
+                "contextPrecision": 0.2099609375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 37,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7853012292013812,
+                "contextPrecision": 0.1153564453125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 45,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8833508002479105,
+                "contextPrecision": 0.0662078857421875,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 30,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7112281307618963,
+                "contextPrecision": 0.21331787109375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 36,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7914312848470568,
+                "contextPrecision": 0.11895751953125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 45,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8589760614347881,
+                "contextPrecision": 0.0647430419921875,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "merge-500-document": {
+          "chunks": 1680,
+          "providerCalls": 1739,
+          "providerTexts": 5007,
+          "singletonCalls": 694,
+          "chunkTokens": {
+            "min": 1,
+            "median": 42.0,
+            "max": 177
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 36,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7655763876347809,
+                "contextPrecision": 0.22430419921875,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 44,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8504183978885059,
+                "contextPrecision": 0.126129150390625,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 57,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.959819128795483,
+                "contextPrecision": 0.07734189405856512,
+                "meanTokensDelivered": 981.34375
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 37,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7912393396772806,
+                "contextPrecision": 0.2353515625,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 49,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.885762300782308,
+                "contextPrecision": 0.1339111328125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 53,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9556779481934693,
+                "contextPrecision": 0.07660947218356512,
+                "meanTokensDelivered": 981.34375
+              }
+            }
+          },
+          "pooledRetrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 32,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7352521720819536,
+                "contextPrecision": 0.21575927734375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 43,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8139406202220483,
+                "contextPrecision": 0.119598388671875,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 49,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9060238235062205,
+                "contextPrecision": 0.0680084228515625,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 32,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7150054846124626,
+                "contextPrecision": 0.2120361328125,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 41,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8159760379599069,
+                "contextPrecision": 0.1234130859375,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 48,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8922222978719512,
+                "contextPrecision": 0.0673675537109375,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "merge-500-token-256": {
+          "chunks": 2299,
+          "providerCalls": 1451,
+          "providerTexts": 4388,
+          "singletonCalls": 606,
+          "chunkTokens": {
+            "min": 1,
+            "median": 28,
+            "max": 177
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 30,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7302472750600846,
+                "contextPrecision": 0.21502685546875,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 43,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8498376644961726,
+                "contextPrecision": 0.12652587890625,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 56,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.958018597977095,
+                "contextPrecision": 0.07699094191012762,
+                "meanTokensDelivered": 981.34375
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 35,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7871151341799653,
+                "contextPrecision": 0.23614501953125,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 45,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8631777105249693,
+                "contextPrecision": 0.130126953125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 56,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9683255498477674,
+                "contextPrecision": 0.07784543409762762,
+                "meanTokensDelivered": 981.34375
+              }
+            }
+          },
+          "pooledRetrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 29,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7115244550333227,
+                "contextPrecision": 0.2099609375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 37,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7853012292013812,
+                "contextPrecision": 0.1153564453125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 45,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8833508002479105,
+                "contextPrecision": 0.0662078857421875,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 30,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7112281307618963,
+                "contextPrecision": 0.21331787109375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 36,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7914312848470568,
+                "contextPrecision": 0.11895751953125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 45,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8589760614347881,
+                "contextPrecision": 0.0647430419921875,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "merge-500-two-passes": {
+          "chunks": 2322,
+          "providerCalls": 1428,
+          "providerTexts": 4365,
+          "singletonCalls": 583,
+          "chunkTokens": {
+            "min": 1,
+            "median": 28.0,
+            "max": 177
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 30,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7302472750600846,
+                "contextPrecision": 0.21502685546875,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 43,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8498376644961726,
+                "contextPrecision": 0.12652587890625,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 56,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.958018597977095,
+                "contextPrecision": 0.07699094191012762,
+                "meanTokensDelivered": 981.34375
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 35,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7834200328286139,
+                "contextPrecision": 0.23614501953125,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 44,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.857680025339784,
+                "contextPrecision": 0.129547119140625,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 56,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9683255498477674,
+                "contextPrecision": 0.07784543409762762,
+                "meanTokensDelivered": 981.34375
+              }
+            }
+          },
+          "pooledRetrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 29,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7115244550333227,
+                "contextPrecision": 0.2099609375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 37,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7853012292013812,
+                "contextPrecision": 0.1153564453125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 45,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8833508002479105,
+                "contextPrecision": 0.0662078857421875,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 30,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7112281307618963,
+                "contextPrecision": 0.21331787109375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 36,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7960765551173271,
+                "contextPrecision": 0.119964599609375,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 44,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8569860293108272,
+                "contextPrecision": 0.064788818359375,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        },
+        "window-128-overlap-32": {
+          "chunks": 973,
+          "providerCalls": 640,
+          "providerTexts": 973,
+          "singletonCalls": 380,
+          "chunkTokens": {
+            "min": 22,
+            "median": 99,
+            "max": 128
+          },
+          "chunksOverModelInput": 0,
+          "retrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 31,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.745730539779843,
+                "contextPrecision": 0.221435546875,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 43,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8322731011026256,
+                "contextPrecision": 0.12506103515625,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 57,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9535836385275641,
+                "contextPrecision": 0.07688052441091237,
+                "meanTokensDelivered": 987.78125
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 35,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7380637824040266,
+                "contextPrecision": 0.2288818359375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 46,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.863329144056941,
+                "contextPrecision": 0.133392333984375,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 57,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9731658151819063,
+                "contextPrecision": 0.07862002636403735,
+                "meanTokensDelivered": 987.78125
+              }
+            }
+          },
+          "pooledRetrieval": {
+            "minilm": {
+              "256": {
+                "questions": 64,
+                "complete": 26,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7151159177843882,
+                "contextPrecision": 0.212646484375,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 38,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.79613520089147,
+                "contextPrecision": 0.12005615234375,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 54,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.91679598164641,
+                "contextPrecision": 0.069732666015625,
+                "meanTokensDelivered": 1024.0
+              }
+            },
+            "bm25": {
+              "256": {
+                "questions": 64,
+                "complete": 33,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.7453019283021589,
+                "contextPrecision": 0.221435546875,
+                "meanTokensDelivered": 256.0
+              },
+              "512": {
+                "questions": 64,
+                "complete": 42,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.8367025829760789,
+                "contextPrecision": 0.1280517578125,
+                "meanTokensDelivered": 512.0
+              },
+              "1024": {
+                "questions": 64,
+                "complete": 53,
+                "budgetFeasible": 64,
+                "evidenceRecall": 0.9376369145523704,
+                "contextPrecision": 0.072967529296875,
+                "meanTokensDelivered": 1024.0
+              }
+            }
+          }
+        }
+      },
+      "defaultExamplesAt256": [
+        {
+          "questionId": "5a8c7595554299585d9e36b6",
+          "question": "What government position was held by the woman who portrayed Corliss Archer in the film Kiss and Tell?",
+          "candidateDocumentIndices": [
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19
+          ],
+          "referenceSourceTokenRanges": [
+            [
+              [
+                11,
+                3,
+                78
+              ],
+              [
+                16,
+                8,
+                32
+              ]
+            ]
+          ],
+          "score": {
+            "evidenceRecall": 0.24242424242424243,
+            "contextPrecision": 0.09375,
+            "complete": 0,
+            "budgetFeasible": 1,
+            "tokensDelivered": 256
+          },
+          "retrievedSourceTokenRanges": [
+            [
+              16,
+              0,
+              32
+            ],
+            [
+              15,
+              0,
+              30
+            ],
+            [
+              13,
+              0,
+              49
+            ],
+            [
+              15,
+              47,
+              61
+            ],
+            [
+              10,
+              0,
+              33
+            ],
+            [
+              15,
+              61,
+              88
+            ],
+            [
+              12,
+              25,
+              77
+            ],
+            [
+              19,
+              129,
+              148
+            ]
+          ],
+          "pooledAt256": {
+            "score": {
+              "evidenceRecall": 0.24242424242424243,
+              "contextPrecision": 0.09375,
+              "complete": 0,
+              "budgetFeasible": 1,
+              "tokensDelivered": 256
+            },
+            "retrievedSourceTokenRanges": [
+              [
+                16,
+                0,
+                32
+              ],
+              [
+                15,
+                0,
+                30
+              ],
+              [
+                13,
+                0,
+                49
+              ],
+              [
+                15,
+                47,
+                61
+              ],
+              [
+                10,
+                0,
+                33
+              ],
+              [
+                15,
+                61,
+                88
+              ],
+              [
+                12,
+                25,
+                77
+              ],
+              [
+                88,
+                115,
+                134
+              ]
+            ]
+          }
+        },
+        {
+          "questionId": "5a8b57f25542995d1e6f1371",
+          "question": "Were Scott Derrickson and Ed Wood of the same nationality?",
+          "candidateDocumentIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "referenceSourceTokenRanges": [
+            [
+              [
+                1,
+                4,
+                23
+              ],
+              [
+                4,
+                3,
+                33
+              ]
+            ]
+          ],
+          "score": {
+            "evidenceRecall": 1.0,
+            "contextPrecision": 0.19140625,
+            "complete": 1,
+            "budgetFeasible": 1,
+            "tokensDelivered": 256
+          },
+          "retrievedSourceTokenRanges": [
+            [
+              1,
+              0,
+              23
+            ],
+            [
+              4,
+              0,
+              33
+            ],
+            [
+              2,
+              55,
+              112
+            ],
+            [
+              0,
+              0,
+              71
+            ],
+            [
+              8,
+              42,
+              114
+            ]
+          ],
+          "pooledAt256": {
+            "score": {
+              "evidenceRecall": 1.0,
+              "contextPrecision": 0.19140625,
+              "complete": 1,
+              "budgetFeasible": 1,
+              "tokensDelivered": 256
+            },
+            "retrievedSourceTokenRanges": [
+              [
+                1,
+                0,
+                23
+              ],
+              [
+                4,
+                0,
+                33
+              ],
+              [
+                2,
+                55,
+                112
+              ],
+              [
+                372,
+                0,
+                50
+              ],
+              [
+                0,
+                0,
+                71
+              ],
+              [
+                399,
+                0,
+                3
+              ],
+              [
+                541,
+                124,
+                142
+              ],
+              [
+                615,
+                0,
+                1
+              ]
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

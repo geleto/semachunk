@@ -1,0 +1,32 @@
+{
+  "e73d4a4a8b494862c406dbc64e1f42f4f4a75e7532c36d76bc8b68aabae2830d": {
+    "task": "squad",
+    "file": "9d8ee8b1cb5df2bcb75bfccc159b90aa36048b03bf0d2cb4e28c16d5b94a617f.f32",
+    "sha256": "45f2487bc594c31723ef1fc82da1ef62220ed8a9a6f3198ea837a1d306bc570c",
+    "texts": 5122
+  },
+  "562c1e812713092616f08ff93e35e775eef115c8ff9a7bf449d4bafd867ce5f7": {
+    "task": "wikisection",
+    "file": "edae7beb69e13cba8cb1fea6be191c7f2a4d978346b1f90148f14aae43668c67.f32",
+    "sha256": "324499950ee9f8d46cdf4e90f78f063936edaaca3a25181fa0cd8601c58559fe",
+    "texts": 8179
+  },
+  "779d3b7858b41e0427a0bf3eeb4e80634d835e94d4e9fedee8b0cb9a904f205d": {
+    "task": "cuad",
+    "file": "01f404000069f89ee7083d5f7e5d8aa1aa1dfd46b4269837b5d8e5f703343cd0.f32",
+    "sha256": "6f17f7838cc00b02fa191d60559876ec589c7f15fa76d150fc9513db99afeec1",
+    "texts": 7761
+  },
+  "6ea6a34dff03a7a974968efc8af83215bd18bcf9353bbf3afcc5df8ea206e8f9": {
+    "task": "qasper",
+    "file": "964ca21586eb5a6c4c007fbf6cb25c23abb255e6abba1138610062c633f0cdca.f32",
+    "sha256": "656d9545ec954c15ec875b84125e2bc51a903a16bb786196da019e09b08a8a18",
+    "texts": 13535
+  },
+  "c050442e25b108f6c776857fa806a610cb7e17c1a4ef3fb693d1222f6b50ff5b": {
+    "task": "hotpotqa",
+    "file": "b7516085bd22fd187a860f8507e48fdfe36c1a96a1cff4cdcebb95e6ffb82b3f.f32",
+    "sha256": "fee6d3cade57bc8e79d1dea35a84ecbfdc537e18c17a45bc92b8f27d4021cde2",
+    "texts": 10079
+  }
+}

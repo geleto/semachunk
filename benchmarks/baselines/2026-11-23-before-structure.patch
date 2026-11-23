@@ -1,0 +1,833 @@
+diff --git a/config.js b/config.js
+--- a/config.js
++++ b/config.js
+@@ -2,7 +2,6 @@
+     LOGGING: false,
+     INPUT_FORMAT: 'text',
+     MAX_CHUNK_SIZE: 500,
+-    MAX_CHUNK_TOKENS: Infinity,
+     MAX_EMBEDDING_BATCH_SIZE: Infinity,
+     SIMILARITY_THRESHOLD: 0.5,
+     GROUP_SENTENCES: false,
+@@ -12,8 +11,6 @@
+     // Iterative Optimization
+     COMBINE_CHUNKS: true,
+     COMBINE_CHUNKS_SIMILARITY_THRESHOLD: 0.5,
+-    MERGE_THRESHOLD_MODE: 'fixed',
+-    MAX_PASSES: Infinity,
+     MAX_UNCAPPED_PASSES: 100,
+     MAX_MERGES_PER_PASS: 500, // Absolute limit
+     MAX_MERGES_PER_PASS_PERCENTAGE: 40, // 40% of valid candidates
+diff --git a/src/index.d.ts b/src/index.d.ts
+--- a/src/index.d.ts
++++ b/src/index.d.ts
+@@ -4,10 +4,6 @@
+ 	inputFormat?: 'text' | 'html';
+ 	/** Maximum UTF-16 code units per join, including its space. Nonnegative safe integer or Infinity. */
+ 	maxChunkSize?: number;
+-	/** Maximum tokens in raw and prefixed texts. A finite positive integer enables the tokenizer fallback. */
+-	maxChunkTokens?: number;
+-	/** Synchronous token count using the embedding model's tokenizer, including its special tokens. */
+-	countTokens?: (text: string) => number;
+ 	/** Maximum distinct texts per provider call across all stages. Defaults to Infinity. */
+ 	maxEmbeddingBatchSize?: number;
+ 	/** Minimum merge cosine and base cutoff for optional sentence grouping. */
+@@ -20,10 +16,6 @@
+ 	combineChunks?: boolean;
+ 	/** Overrides similarityThreshold for the priority merge only. */
+ 	combineChunksSimilarityThreshold?: number;
+-	/** Calibrate the priority cutoff from the document's original eligible sentence pairs. Default 'fixed'. */
+-	mergeThresholdMode?: 'fixed' | 'document';
+-	/** Limit all priority merge rounds, including capped rounds. Default Infinity. */
+-	maxPasses?: number;
+ 	/** Maximum uncapped passes. Nonnegative safe integer or Infinity. */
+ 	maxUncappedPasses?: number;
+ 	/** Absolute per-pass merge limit. Nonnegative safe integer or Infinity. */
+diff --git a/src/index.js b/src/index.js
+--- a/src/index.js
++++ b/src/index.js
+@@ -1,9 +1,9 @@
+-import { computeAdvancedSimilarities, documentMergeThreshold, groupAdjacentSentences } from './similarity.js';
++import { groupAdjacentSentences } from './similarity.js';
+ import { parseSentences } from './sentences.js';
+ import { copyEmbedding, createBatchEmbedder } from './embeddings.js';
+ import { mergeChunks } from './merge.js';
+ import { DEFAULT_CONFIG } from '../config.js';
+-import { createJoinCheck, createTokenLimit } from './token-limit.js';
++import { readFileSync } from 'fs';
+ 
+ /**
+  * Chunk text semantically using batch embeddings
+@@ -17,8 +17,6 @@
+ 		logging = DEFAULT_CONFIG.LOGGING,
+ 		inputFormat = DEFAULT_CONFIG.INPUT_FORMAT,
+ 		maxChunkSize = DEFAULT_CONFIG.MAX_CHUNK_SIZE,
+-		maxChunkTokens = DEFAULT_CONFIG.MAX_CHUNK_TOKENS,
+-		countTokens,
+ 		maxEmbeddingBatchSize = DEFAULT_CONFIG.MAX_EMBEDDING_BATCH_SIZE,
+ 		similarityThreshold = DEFAULT_CONFIG.SIMILARITY_THRESHOLD,
+ 		groupSentences = DEFAULT_CONFIG.GROUP_SENTENCES,
+@@ -27,8 +25,6 @@
+ 		dynamicThresholdUpperBound = DEFAULT_CONFIG.DYNAMIC_THRESHOLD_UPPER_BOUND,
+ 		combineChunks = DEFAULT_CONFIG.COMBINE_CHUNKS,
+ 		combineChunksSimilarityThreshold = options?.similarityThreshold ?? DEFAULT_CONFIG.COMBINE_CHUNKS_SIMILARITY_THRESHOLD,
+-		mergeThresholdMode = DEFAULT_CONFIG.MERGE_THRESHOLD_MODE,
+-		maxPasses = DEFAULT_CONFIG.MAX_PASSES,
+ 		maxUncappedPasses = DEFAULT_CONFIG.MAX_UNCAPPED_PASSES,
+ 		returnEmbedding = DEFAULT_CONFIG.RETURN_EMBEDDING,
+ 		chunkPrefix = DEFAULT_CONFIG.CHUNK_PREFIX,
+@@ -38,6 +34,8 @@
+ 		candidateMergesPercentageCap = candiateMergesPercentageCap,
+ 		uncappedCandidateMerges = DEFAULT_CONFIG.UNCAPPED_CANDIDATE_MERGES
+ 	} = options ?? {};
++
++	if (logging) { _printVersion(); }
+ 
+ 	if (typeof text !== 'string') {
+ 		throw new TypeError('Input must be a string');
+@@ -50,51 +48,32 @@
+ 	if (dynamicThresholdLowerBound > dynamicThresholdUpperBound) {
+ 		throw new RangeError('dynamicThresholdLowerBound must be at most dynamicThresholdUpperBound.');
+ 	}
+-	for (const [name, value] of Object.entries({ maxChunkSize, maxPasses, maxUncappedPasses, maxMergesPerPass, uncappedCandidateMerges })) {
++	for (const [name, value] of Object.entries({ maxChunkSize, maxUncappedPasses, maxMergesPerPass, uncappedCandidateMerges })) {
+ 		if (value !== Infinity && !(Number.isSafeInteger(value) && value >= 0)) {
+ 			throw new RangeError(`${name} must be a nonnegative safe integer or Infinity.`);
+ 		}
+-	}
+-	if (mergeThresholdMode !== 'fixed' && mergeThresholdMode !== 'document') {
+-		throw new TypeError("mergeThresholdMode must be 'fixed' or 'document'.");
+-	}
+-	if (maxChunkTokens !== Infinity && !(Number.isSafeInteger(maxChunkTokens) && maxChunkTokens > 0)) {
+-		throw new RangeError('maxChunkTokens must be a positive safe integer or Infinity.');
+-	}
+-	if ((maxChunkTokens !== Infinity || countTokens !== undefined) && typeof countTokens !== 'function') {
+-		throw new TypeError('A finite maxChunkTokens requires a countTokens function.');
+ 	}
+ 	if (!Number.isFinite(candidateMergesPercentageCap) || candidateMergesPercentageCap < 0 || candidateMergesPercentageCap > 100) {
+ 		throw new RangeError('candidateMergesPercentageCap (legacy candiateMergesPercentageCap) must be between 0 and 100.');
+ 	}
+ 	const embedBatch = createBatchEmbedder(embedBatchCallback, maxEmbeddingBatchSize);
+-	if (logging) await _printVersion();
+ 	const sentences = await parseSentences(text, { inputFormat, excludeNonLetterSentences });
+ 	if (sentences.length === 0) return [];
+ 
+-	const prefix = chunkPrefix?.trim() ? chunkPrefix + ': ' : '';
+-	const tokenLimit = maxChunkTokens === Infinity ? undefined : createTokenLimit(sentences, maxChunkTokens, countTokens, prefix);
+-	const canJoin = createJoinCheck(maxChunkSize, tokenLimit);
+-	let cutoff = combineChunksSimilarityThreshold;
+-	let calibrate = mergeThresholdMode === 'document' && options?.combineChunksSimilarityThreshold === undefined;
+ 	let chunks = sentences;
+-	if (groupSentences && sentences.length > 1) {
+-		const grouping = { maxChunkSize, canJoin, similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound, logging };
+-		const analysis = await computeAdvancedSimilarities(sentences, embedBatch, grouping);
+-		chunks = await groupAdjacentSentences(sentences, embedBatch, grouping, analysis);
+-		if (calibrate) {
+-			cutoff = documentMergeThreshold(analysis, cutoff);
+-			calibrate = false;
+-		}
++	if (groupSentences) {
++		chunks = await groupAdjacentSentences(sentences, embedBatch, {
++			maxChunkSize, similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound, logging
++		});
+ 	}
+ 	if (logging) console.log('Initial chunks', chunks.map(chunk => chunk.slice(0, 50)));
+ 
++	const prefix = chunkPrefix?.trim() ? chunkPrefix + ': ' : '';
+ 	const outputText = text => prefix + text;
+ 	if (combineChunks && chunks.length > 1) {
+ 		chunks = await mergeChunks(chunks, embedBatch, {
+-			maxChunkSize, canJoin, tokenLimit, logging,
+-			combineChunksSimilarityThreshold: cutoff, calibrate,
+-			maxPasses,
++			maxChunkSize,
++			combineChunksSimilarityThreshold,
+ 			maxUncappedPasses,
+ 			maxMergesPerPass,
+ 			candidateMergesPercentageCap,
+@@ -104,7 +83,6 @@
+ 		if (logging) console.log('Combined chunks', chunks.map(chunk => chunk.slice(0, 100)));
+ 	}
+ 
+-	if (tokenLimit?.oversized.size) chunks = chunks.flatMap(text => tokenLimit.oversized.get(text) ?? [text]);
+ 	const prefixedChunks = prefix ? chunks.map(outputText) : chunks;
+ 	const output = excludeChunkPrefixInResults ? chunks : prefixedChunks;
+ 	if (!returnEmbedding) return output.map(text => ({ text }));
+@@ -118,10 +96,10 @@
+ 	});
+ }
+ 
++const packageJson = JSON.parse(readFileSync(new URL('../package.json', import.meta.url)));
++const VERSION = packageJson.version;
+ export async function _printVersion() {
+-	const { readFile } = await import('node:fs/promises');
+-	const { version } = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
+-	const versionText = `-- semachunk v${version} --`;
++	const versionText = `-- semachunk v${VERSION} --`;
+ 	const lineLength = versionText.length;
+ 	console.log(`\n${'-'.repeat(lineLength)}\n${versionText}\n${'-'.repeat(lineLength)}`);
+ }
+diff --git a/src/sentences.js b/src/sentences.js
+--- a/src/sentences.js
++++ b/src/sentences.js
+@@ -1,7 +1,7 @@
+ import { splitBySentence } from 'string-segmenter';
+ 
+ const blockElements = new Set(
+-    'address article aside blockquote caption dd details dialog div dl dt fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 header hgroup hr li main menu nav ol p pre section summary table tbody td th tr ul'.split(' ')
++    'address article aside blockquote br caption dd details dialog div dl dt fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 header hgroup hr li main menu nav ol p pre section summary table tbody td th tr ul'.split(' ')
+ );
+ const hiddenElements = new Set(['head', 'script', 'style', 'template', 'noscript', 'title']);
+ 
+@@ -9,55 +9,26 @@
+     const { parse } = await import('parse5');
+     const pending = [parse(html)];
+     const parts = [];
+-    const blockEnd = {}, preEnd = {};
+-    let preDepth = 0;
++    const space = { nodeName: '#text', value: ' ' };
+ 
+     while (pending.length) {
+         const node = pending.pop();
+-        if (node === blockEnd || node === preEnd) {
+-            parts.push('\u2029');
+-            if (node === preEnd) preDepth--;
+-            continue;
+-        }
+         if (node.nodeName === '#text') {
+-            parts.push(preDepth ? node.value : node.value.replace(/\s+/g, ' '));
++            parts.push(node.value);
+             continue;
+         }
+         if (!node.childNodes || hiddenElements.has(node.tagName) || node.attrs?.some(attr => attr.name === 'hidden')) {
+             continue;
+         }
+-        if (node.tagName === 'br') {
+-            parts.push('\n');
+-            continue;
+-        }
+         if (blockElements.has(node.tagName)) {
+-            parts.push('\u2029');
+-            if (node.tagName === 'pre') preDepth++;
+-            pending.push(node.tagName === 'pre' ? preEnd : blockEnd);
++            parts.push(' ');
++            pending.push(space); // Close the block after visiting its children.
+         }
+         for (let i = node.childNodes.length - 1; i >= 0; i--) {
+             pending.push(node.childNodes[i]);
+         }
+     }
+     return parts.join('');
+-}
+-
+-// A single newline often wraps prose. Blank lines, explicit headings and new
+-// list items start units of their own; continuation lines stay with their item.
+-function* textBlocks(text) {
+-    const lines = [];
+-    for (const raw of text.replace(/\r\n?|\u2028/g, '\n').replace(/\u2029/g, '\n\n').split('\n')) {
+-        const line = raw.trim();
+-        const heading = /^#{1,6}\s/.test(line);
+-        const item = /^(?:[-*+•‣◦▪]|\d{1,3}[.)]|\(\d{1,3}\))\s/.test(line);
+-        if ((!line || heading || item) && lines.length) {
+-            yield lines.join(' ');
+-            lines.length = 0;
+-        }
+-        if (heading) yield line;
+-        else if (line) lines.push(line);
+-    }
+-    if (lines.length) yield lines.join(' ');
+ }
+ 
+ export async function parseSentences(text, { inputFormat, excludeNonLetterSentences }) {
+@@ -67,17 +38,17 @@
+         throw new TypeError("inputFormat must be 'text' or 'html'.");
+     }
+ 
++    const normalized = text.replace(/\s+/g, ' ').trim();
++    // The segmenter capitalizes sentence starts internally. Keep offsets into
++    // the source valid for characters whose uppercase expands (e.g. ß to SS).
++    const boundaryText = normalized.replace(/(?<=\. )[^\x00-\x7f]/gu, char =>
++        char.toUpperCase().slice(0, char.length)
++    );
+     const sentences = [];
+-    const multiline = /[\r\n\u2028\u2029]/.test(text);
+-    for (const block of multiline ? textBlocks(text) : [text.trim()]) {
+-        const normalized = block.replace(/\s+/g, ' ');
+-        // Mask a numbered list marker's period and preserve source offsets when
+-        // the segmenter uppercases a character that expands (e.g. ß to SS).
+-        const marked = multiline ? normalized.replace(/^(\d{1,3})\.(?= )/, '$1)') : normalized;
+-        const boundaryText = marked.replace(/(?<=\. )[^\x00-\x7f]/gu, char => char.toUpperCase().slice(0, char.length));
+-        for (const { index, segment } of splitBySentence(boundaryText)) {
+-            const sentence = normalized.slice(index, index + segment.length).trim();
+-            if (!excludeNonLetterSentences || /\p{L}/u.test(sentence)) sentences.push(sentence);
++    for (const { index, segment } of splitBySentence(boundaryText)) {
++        const sentence = normalized.slice(index, index + segment.length).trim();
++        if (!excludeNonLetterSentences || /\p{L}/u.test(sentence)) {
++            sentences.push(sentence);
+         }
+     }
+     return sentences;
+diff --git a/src/merge.js b/src/merge.js
+--- a/src/merge.js
++++ b/src/merge.js
+@@ -1,34 +1,31 @@
+-import { cosineSimilarity, documentMergeThreshold, SimilarityStatistics } from './similarity.js';
++import { cosineSimilarity } from './similarity.js';
+ import { createPercentageLimit } from './decimal.js';
+-import { createJoinCheck } from './token-limit.js';
+ 
+ export async function mergeChunks(texts, embedBatch, options) {
+-    const { maxPasses = Infinity, maxUncappedPasses, maxMergesPerPass, candidateMergesPercentageCap, uncappedCandidateMerges } = options;
+-    let cutoff = options.combineChunksSimilarityThreshold;
++    const { maxUncappedPasses, maxMergesPerPass, candidateMergesPercentageCap, uncappedCandidateMerges } = options;
+     const percentageLimit = createPercentageLimit(candidateMergesPercentageCap);
+     function mergeLimit(candidateCount) {
+         return Math.min(maxMergesPerPass, Math.max(uncappedCandidateMerges, percentageLimit(candidateCount)));
+     }
+-    if (maxPasses < 1 || maxUncappedPasses < 1 || (!options.calibrate && cutoff > 1) || mergeLimit(texts.length - 1) <= 0) {
++    if (maxUncappedPasses < 1 || options.combineChunksSimilarityThreshold > 1 || mergeLimit(texts.length - 1) <= 0) {
+         return texts;
+     }
+ 
+     // 1. Link chunks in document order. Each node represents the boundary with its next neighbor.
+-    let changed = texts.map(text => ({ text, prev: null, next: null, embedding: null, candidate: null, scoredPass: 0 }));
+-    const head = changed[0];
+-    for (let i = 1; i < changed.length; i++) {
+-        changed[i - 1].next = changed[i];
+-        changed[i].prev = changed[i - 1];
++    const nodes = texts.map(text => ({ text, prev: null, next: null, embedding: null, candidate: null, scoredPass: 0 }));
++    for (let i = 1; i < nodes.length; i++) {
++        nodes[i - 1].next = nodes[i];
++        nodes[i].prev = nodes[i - 1];
+     }
+ 
+     const queue = new CandidateQueue();
++    let changed = nodes;
+     let pass = 0;
+     let remainingPasses = maxUncappedPasses;
+-    while (pass < maxPasses && remainingPasses >= 1) {
++    while (remainingPasses >= 1) {
+         // 2. Batch-embed missing texts and score adjacent pairs that fit. On later passes,
+         //    only boundaries touching a merged chunk need a new score.
+-        cutoff = await scoreChangedChunks(changed, ++pass, queue, embedBatch, options, cutoff);
+-        if (options.logging && pass === 1) console.log('Priority merge cosine cutoff', cutoff);
++        await scoreChangedChunks(changed, ++pass, queue, embedBatch, options);
+ 
+         // 3. Set this pass's cap from the number of live candidates. Take the highest
+         //    cosine first, with earlier candidates winning ties just as in a stable sort.
+@@ -53,64 +50,36 @@
+ 
+         // 5. Charge the pass budget once all available disjoint pairs have been processed.
+         //    A surviving candidate means the cap deferred a merge.
+-        if (!queue.size) remainingPasses--;
++        if (!queue.size) {
++            remainingPasses--;
++            if (remainingPasses < 1) break;
++        }
+     }
+ 
+     // 6. Read out the surviving chunks in source order. chunkText handles final embeddings.
+     const chunks = [];
+-    for (let node = head; node; node = node.next) chunks.push(node.text);
++    for (let node = nodes[0]; node; node = node.next) chunks.push(node.text);
+     return chunks;
+ }
+ 
+-async function scoreChangedChunks(changed, pass, queue, embedBatch, options, cutoff) {
+-    const { maxChunkSize, canJoin = createJoinCheck(maxChunkSize), tokenLimit, finalEmbeddingText } = options;
++async function scoreChangedChunks(changed, pass, queue, embedBatch, { maxChunkSize, combineChunksSimilarityThreshold, finalEmbeddingText }) {
+     const pending = [], finalTexts = [];
+     for (const chunk of changed) {
+         if (fitsNext(chunk) || fitsNext(chunk.prev)) pending.push(chunk);
+-        else if (finalEmbeddingText) {
+-            const pieces = tokenLimit?.oversized.get(chunk.text);
+-            if (pieces) {
+-                for (const part of pieces) finalTexts.push(finalEmbeddingText(part));
+-            } else if (!tokenLimit || !(fitsLength(chunk) || fitsLength(chunk.prev))) {
+-                // Character length only grows; a tokenizer can change its count at a join.
+-                finalTexts.push(finalEmbeddingText(chunk.text));
+-            }
+-        }
++        // Neighbors can only grow. This chunk already has its exact final text.
++        else if (finalEmbeddingText) finalTexts.push(finalEmbeddingText(chunk.text));
+     }
+-    if (!pending.length) return cutoff;
+-    let needed = pending;
+-    if (tokenLimit && pass > 1) {
+-        // A changed neighbor can make a previously token-ineligible edge fit.
+-        const endpoints = new Set(pending);
+-        for (const chunk of pending) {
+-            if (fitsNext(chunk) && !chunk.next.embedding) endpoints.add(chunk.next);
+-            if (fitsNext(chunk.prev) && !chunk.prev.embedding) endpoints.add(chunk.prev);
+-        }
+-        needed = [...endpoints];
+-    }
+-    const vectors = await embedBatch(needed.map(chunk => chunk.text), finalTexts);
+-    needed.forEach((chunk, i) => { chunk.embedding = vectors[i]; });
++    if (!pending.length) return;
++    const vectors = await embedBatch(pending.map(chunk => chunk.text), finalTexts);
++    pending.forEach((chunk, i) => { chunk.embedding = vectors[i]; });
+ 
+-    // Calibrate once, on the original eligible sentence boundaries and the same
+-    // embedding batch. Keep their scores so each cosine is computed only once.
+-    const initial = options.calibrate && pass === 1 ? new Map() : null;
+-    const stats = initial ? new SimilarityStatistics() : null;
+     for (const chunk of pending) {
+         scoreBoundary(chunk);
+         scoreBoundary(chunk.prev);
+     }
+-    if (initial) {
+-        cutoff = documentMergeThreshold(stats, cutoff);
+-        for (const [left, score] of initial) if (score >= cutoff) queue.add(left, score);
+-    }
+-    return cutoff;
+-
+-    function fitsLength(left) {
+-        return left?.next && left.text.length + 1 + left.next.text.length <= maxChunkSize;
+-    }
+ 
+     function fitsNext(left) {
+-        return left?.next && canJoin(left.text, left.next.text);
++        return left?.next && left.text.length + 1 + left.next.text.length <= maxChunkSize;
+     }
+ 
+     function scoreBoundary(left) {
+@@ -118,10 +87,7 @@
+         left.scoredPass = pass; // Neighboring merges share a boundary.
+         if (!fitsNext(left)) return;
+         const score = cosineSimilarity(left.embedding, left.next.embedding);
+-        if (initial) {
+-            initial.set(left, score);
+-            stats.add(score);
+-        } else if (score >= cutoff) queue.add(left, score);
++        if (score >= combineChunksSimilarityThreshold) queue.add(left, score);
+     }
+ }
+ 
+diff --git a/src/similarity.js b/src/similarity.js
+--- a/src/similarity.js
++++ b/src/similarity.js
+@@ -1,5 +1,4 @@
+ import { addHundredths } from './decimal.js';
+-import { createJoinCheck } from './token-limit.js';
+ 
+ function maxMagnitude(vector) {
+     let scale = 0;
+@@ -43,36 +42,13 @@
+     return cosine;
+ }
+ 
+-// Online mean and population variance over size-eligible boundaries.
+-export class SimilarityStatistics {
+-    boundaryCount = 0;
+-    average = 0;
+-    squaredDeviations = 0;
+-
+-    add(score) {
+-        const delta = score - this.average;
+-        this.boundaryCount++;
+-        this.average += delta / this.boundaryCount;
+-        this.squaredDeviations += delta * (score - this.average);
+-    }
+-
+-    get variance() {
+-        return this.boundaryCount ? this.squaredDeviations / this.boundaryCount : 0;
+-    }
+-}
+-
+-export function documentMergeThreshold({ boundaryCount, average, variance }, fallback) {
+-    return boundaryCount >= 2 ? average - 0.5 * Math.sqrt(variance) : fallback;
+-}
+-
+ // Keep scores at their original boundary indices. A pair that cannot fit
+ // provides no evidence for the cutoff, even when both endpoints have vectors.
+-export async function computeAdvancedSimilarities(sentences, embedBatch, { maxChunkSize = Infinity, canJoin = createJoinCheck(maxChunkSize), logging = false } = {}) {
++export async function computeAdvancedSimilarities(sentences, embedBatch, { maxChunkSize = Infinity, logging = false } = {}) {
+     const boundaries = [];
+     const endpoints = [];
+     for (let i = 0; i + 1 < sentences.length; i++) {
+-        const left = sentences[i], right = sentences[i + 1];
+-        if (!canJoin(left, right)) continue;
++        if (sentences[i].length + 1 + sentences[i + 1].length > maxChunkSize) continue;
+         boundaries.push(i);
+         if (endpoints.at(-1) !== i) endpoints.push(i);
+         endpoints.push(i + 1);
+@@ -85,15 +61,19 @@
+         const vectors = await embedBatch(endpoints.map(i => sentences[i]));
+         endpoints.forEach((index, j) => { embeddings[index] = vectors[j]; });
+     }
+-    const stats = new SimilarityStatistics();
++    let average = 0, squaredDeviations = 0;
+     for (let j = 0; j < boundaries.length; j++) {
+         const i = boundaries[j];
+         const score = cosineSimilarity(embeddings[i], embeddings[i + 1]);
+         similarities[i] = score;
+         if (logging) console.log(`Similarity between sentences ${i + 1} and ${i + 2}`, score);
+-        stats.add(score);
++        // Online mean and population variance over eligible boundaries.
++        const delta = score - average;
++        average += delta / (j + 1);
++        squaredDeviations += delta * (score - average);
+     }
+-    return { similarities, embeddings, average: stats.average, variance: stats.variance, boundaryCount: stats.boundaryCount };
++    const count = boundaries.length;
++    return { similarities, embeddings, average, variance: count ? squaredDeviations / count : 0, boundaryCount: count };
+ }
+ 
+ export function adjustThreshold(average, variance, baseThreshold = 0.5, lowerBound = 0.2, upperBound = 0.8, boundaryCount = 2) {
+@@ -117,11 +97,11 @@
+     for (let i = 0; i < vector.length; i++) sum[i] += (vector[i] / scale) / length;
+ }
+ 
+-export async function groupAdjacentSentences(sentences, embedBatch, options, analysis) {
+-    const { maxChunkSize, canJoin = createJoinCheck(maxChunkSize), similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound, logging } = options;
++export async function groupAdjacentSentences(sentences, embedBatch, options) {
++    const { maxChunkSize, similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound, logging } = options;
+     if (sentences.length < 2) return sentences;
+     const { similarities, embeddings, average, variance, boundaryCount } =
+-        analysis ?? await computeAdvancedSimilarities(sentences, embedBatch, options);
++        await computeAdvancedSimilarities(sentences, embedBatch, { maxChunkSize, logging });
+     if (!boundaryCount) return sentences;
+     const threshold = adjustThreshold(average, variance, similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound, boundaryCount);
+     if (logging) console.log('Initial grouping threshold', threshold);
+@@ -132,7 +112,7 @@
+     let directionSum = null;
+     for (let i = 1; i < sentences.length; i++) {
+         const sentence = sentences[i];
+-        let joins = similarities[i - 1] >= threshold && canJoin(current, sentence);
++        let joins = current.length + 1 + sentence.length <= maxChunkSize && similarities[i - 1] >= threshold;
+         // A singleton's centroid test is its boundary test. Start accumulating
+         // unit directions only when a third sentence could join this group.
+         if (joins && i > groupStart + 1) {
+diff --git a/src/token-limit.js b/src/token-limit.js
+deleted file mode 100644
+--- a/src/token-limit.js
++++ /dev/null
+@@ -1,65 +0,0 @@
+-// Split only an oversized sentence. Work with source offsets so a fallback
+-// inside a long word or a script without spaces never inserts or drops text.
+-function splitToFit(text, fits) {
+-    const spans = [];
+-    function visit(start, end) {
+-        const part = text.slice(start, end);
+-        if (fits(part)) {
+-            const last = spans.at(-1);
+-            if (last && fits(text.slice(last.start, end))) last.end = end;
+-            else spans.push({ start, end });
+-            return;
+-        }
+-
+-        const middle = Math.floor(part.length / 2);
+-        const before = part.lastIndexOf(' ', middle), after = part.indexOf(' ', middle);
+-        const space = before >= 0 && (after < 0 || middle - before <= after - middle) ? before : after;
+-        if (space >= 0) {
+-            visit(start, start + space);
+-            visit(start + space + 1, end);
+-            return;
+-        }
+-
+-        let cut = middle;
+-        if (cut && /[\uD800-\uDBFF]/.test(part[cut - 1]) && /[\uDC00-\uDFFF]/.test(part[cut])) cut++;
+-        if (cut === 0 || cut === part.length) {
+-            throw new RangeError('maxChunkTokens cannot fit one Unicode code point with the configured tokenizer and prefix.');
+-        }
+-        visit(start, start + cut);
+-        visit(start + cut, end);
+-    }
+-    visit(0, text.length);
+-    return spans.map(({ start, end }) => text.slice(start, end));
+-}
+-
+-export function createTokenLimit(sentences, maxChunkTokens, countTokens, prefix) {
+-    const cache = new Map();
+-    function withinBudget(text) {
+-        const count = countTokens(text);
+-        if (!Number.isSafeInteger(count) || count < 0) {
+-            throw new TypeError('countTokens must return a nonnegative safe integer.');
+-        }
+-        return count <= maxChunkTokens;
+-    }
+-    function fits(text) {
+-        if (!cache.has(text)) {
+-            cache.set(text, withinBudget(text) && (!prefix || withinBudget(prefix + text)));
+-        }
+-        return cache.get(text);
+-    }
+-
+-    // Oversized sentences are final boundaries. Their pieces go directly to the
+-    // output batch; neither a truncated sentence nor a partial word gets scored.
+-    const oversized = new Map();
+-    for (const sentence of sentences) {
+-        if (!fits(sentence) && !oversized.has(sentence)) oversized.set(sentence, splitToFit(sentence, fits));
+-    }
+-    return { oversized, fits };
+-}
+-
+-export function createJoinCheck(maxChunkSize, tokenLimit) {
+-    const fitsLength = (left, right) => left.length + 1 + right.length <= maxChunkSize;
+-    if (!tokenLimit) return fitsLength;
+-    return (left, right) => fitsLength(left, right) &&
+-        !tokenLimit.oversized.has(left) && !tokenLimit.oversized.has(right) && tokenLimit.fits(left + ' ' + right);
+-}
+diff --git a/benchmarks/chunk.mjs b/benchmarks/chunk.mjs
+--- a/benchmarks/chunk.mjs
++++ b/benchmarks/chunk.mjs
+@@ -1,4 +1,4 @@
+-import { readFileSync, readSync, writeFileSync } from 'node:fs';
++import { readFileSync, writeFileSync } from 'node:fs';
+ import { join } from 'node:path';
+ import { pathToFileURL } from 'node:url';
+ 
+@@ -7,32 +7,12 @@
+ const read = name => JSON.parse(readFileSync(join(dir, name + '.json'), 'utf8'));
+ const write = (name, data) => writeFileSync(join(dir, name + '.json'), JSON.stringify(data));
+ const docs = read('documents');
+-// The Python runner owns the exact pinned model tokenizer. Only token-limited
+-// methods use this local pipe. All embedding callbacks still receive batches.
+-const tokenCounts = new Map();
+-const reply = Buffer.alloc(32);
+-function countTokens(text) {
+-    if (!tokenCounts.has(text)) {
+-        writeFileSync(1, JSON.stringify(text) + '\n');
+-        let end = 0;
+-        while (end < reply.length && (end === 0 || reply[end - 1] !== 10)) {
+-            const n = readSync(0, reply, end, reply.length - end);
+-            if (!n) throw new Error('Tokenizer pipe closed');
+-            end += n;
+-        }
+-        if (reply[end - 1] !== 10) throw new Error('Invalid tokenizer reply');
+-        tokenCounts.set(text, Number(reply.toString('ascii', 0, end).trim()));
+-    }
+-    return tokenCounts.get(text);
+-}
+ 
+ if (stage === 'split') {
+     const sentences = [];
+     const unexpected = () => { throw new Error('Splitting requested embeddings'); };
+     for (const doc of docs) {
+-        const options = { combineChunks: false, groupSentences: false, returnEmbedding: false };
+-        if (process.argv.includes('--token-split')) Object.assign(options, { maxChunkTokens: 256, countTokens });
+-        const chunks = await chunkText(doc, unexpected, options);
++        const chunks = await chunkText(doc, unexpected, { combineChunks: false, groupSentences: false, returnEmbedding: false });
+         sentences.push(chunks.map(c => c.text));
+     }
+     write('sentences', sentences);
+@@ -48,15 +28,11 @@
+         return ids.get(text);
+     };
+     const results = {};
+-    let flatDocs;
+     for (const [name, options] of Object.entries(read('plans'))) {
+         results[name] = [];
+         for (let i = 0; i < docs.length; i++) {
+             let calls = 0, inputs = 0, singletons = 0;
+             const embed = async batch => {
+-                if (options.maxChunkTokens && batch.some(s => countTokens(s) > options.maxChunkTokens)) {
+-                    throw new Error('Token limit exceeded in an embedding request');
+-                }
+                 calls++;
+                 inputs += batch.length;
+                 if (batch.length === 1) singletons++;
+@@ -78,11 +54,7 @@
+                 }
+                 await embed([...new Set(output)]); // Include indexing cost on the same terms as chunkText.
+             } else {
+-                if (options.flatInput) flatDocs ??= read('flat-documents');
+-                const input = options.flatInput ? flatDocs[i] : docs[i];
+-                const chunkOptions = { ...options, returnEmbedding: true };
+-                if (options.maxChunkTokens) chunkOptions.countTokens = countTokens;
+-                output = (await chunkText(input, embed, chunkOptions)).map(c => c.text);
++                output = (await chunkText(docs[i], embed, { ...options, returnEmbedding: true })).map(c => c.text);
+             }
+             results[name].push({ ids: output.map(id), calls, inputs, singletons });
+         }
+diff --git a/benchmarks/corpora.py b/benchmarks/corpora.py
+--- a/benchmarks/corpora.py
++++ b/benchmarks/corpora.py
+@@ -65,7 +65,6 @@
+     text: str
+     questions: list = field(default_factory=list)  # (query, list of half-open answer spans)
+     cuts: list = field(default_factory=list)  # starts of sections after the first
+-    source_text: str | None = None  # Original layout for chunking; annotations use compact text.
+ 
+     def align(self, sentences):
+         """Translate gold coordinates to the exact strings returned by chunkText."""
+diff --git a/benchmarks/rag.py b/benchmarks/rag.py
+--- a/benchmarks/rag.py
++++ b/benchmarks/rag.py
+@@ -20,13 +20,12 @@
+ import numpy as np
+ 
+ import rag_data
+-from corpora import ASSETS, compact, sha256
++from corpora import ASSETS, sha256
+ from encoder import VERSIONS, frozen_vectors, load_model
+ 
+ 
+ BUDGETS = (256, 512, 1024)
+-METHODS = ("sentences", "pack-500", "merge-250-0.5", "merge-500-0.3", "merge-500-0.5", "merge-500-0.7", "group+merge-500",
+-           "flat-merge-500-0.5", "merge-500-document", "merge-500-token-256", "merge-500-two-passes")
++METHODS = ("sentences", "pack-500", "merge-250-0.5", "merge-500-0.3", "merge-500-0.5", "merge-500-0.7", "group+merge-500")
+ WINDOW, OVERLAP = 128, 32
+ WINDOW_NAME = "window-128-overlap-32"
+ TASKS = {"cuad": rag_data.cuad, "qasper": rag_data.qasper, "hotpotqa": rag_data.hotpot}
+@@ -50,38 +49,8 @@
+     text_id: int
+ 
+ 
+-def node_with_tokenizer(stage, root, directory, tokenizer, *args):
+-    cmd = ["node", HERE / "chunk.mjs", stage, root, directory, *args]
+-    with subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True, encoding="utf-8") as proc:
+-        try:
+-            for line in proc.stdout:
+-                proc.stdin.write(str(len(tokenizer.encode(json.loads(line)).ids)) + "\n")
+-                proc.stdin.flush()
+-        except BaseException:
+-            proc.kill()
+-            raise
+-        finally:
+-            proc.stdin.close()
+-        if proc.wait():
+-            raise subprocess.CalledProcessError(proc.returncode, cmd)
+-
+-
+-def prepare(docs, questions, root, directory, tokenizer, settings):
+-    flat = [doc.text for doc in docs]
+-    inputs = [doc.source_text if doc.source_text is not None else doc.text for doc in docs]
+-    if any(compact(raw) != normalized for raw, normalized in zip(inputs, flat, strict=True)):
+-        raise ValueError("Raw layout and annotation text disagree")
+-    flat_parts = None
+-    if any(plan.get("flatInput") for plan in settings.values()):
+-        write(directory / "flat-documents.json", flat)
+-        write(directory / "documents.json", flat)
+-        node("split", root, directory)
+-        flat_parts = json.loads((directory / "sentences.json").read_bytes())
+-    write(directory / "documents.json", inputs)
+-    limited = any(plan.get("maxChunkTokens") for plan in settings.values())
+-    if limited:
+-        node_with_tokenizer("split", root, directory, tokenizer, "--token-split")
+-        limited_parts = json.loads((directory / "sentences.json").read_bytes())
++def prepare(docs, questions, root, directory, tokenizer):
++    write(directory / "documents.json", [doc.text for doc in docs])
+     node("split", root, directory)
+     sentences = json.loads((directory / "sentences.json").read_bytes())
+     translators, sources, windows = [], [], []
+@@ -95,17 +64,6 @@
+         translators.append(doc.align(parts))
+         for text in contiguous_texts(parts, 500):
+             intern(text)
+-        # All methods rank with one matrix, including the flattened-input control.
+-        if flat_parts is not None:
+-            if " ".join(flat_parts[d]) != doc.text:
+-                raise ValueError(f"Flat control needs different source coordinates in {doc.title}")
+-            for text in contiguous_texts(flat_parts[d], 500):
+-                intern(text)
+-        if limited:
+-            # Over-budget sentences are terminal; only their actual output pieces
+-            # need additional vectors. The scorer below verifies their source spans.
+-            for text in limited_parts[d]:
+-                intern(text)
+         offsets = tokenizer.encode(doc.text, add_special_tokens=False).offsets
+         source = SourceTokens([a for a, _ in offsets], [b for _, b in offsets], base)
+         if not offsets:
+@@ -251,21 +209,18 @@
+ 
+ def evaluate(task, root, directory, tokenizer, model, settings):
+     docs, questions, excluded = TASKS[task]()
+-    ids, sources, windows, gold = prepare(docs, questions, root, directory, tokenizer, settings)
++    ids, sources, windows, gold = prepare(docs, questions, root, directory, tokenizer)
+     texts = list(ids)
+     path, vectors = frozen_vectors(texts, tokenizer, model)
+     write(directory / "texts.json", texts)
+-    if any(plan.get("maxChunkTokens") for plan in settings.values()):
+-        node_with_tokenizer("chunk", root, directory, tokenizer, path)
+-    else:
+-        node("chunk", root, directory, path)
++    node("chunk", root, directory, path)
+     runs = json.loads((directory / "runs.json").read_bytes())
+     pools = defaultdict(list)
+     for i, query in enumerate(questions):
+         pools[query.pool].append(i)
+     # Reuse the exact same article chunks and gold positions for open retrieval.
+     all_articles = {tuple(range(len(docs))): range(len(questions))} if task == "hotpotqa" else None
+-    examples = examine_examples(task, questions, gold, sources) if "merge-500-0.5" in settings else {}
++    examples = examine_examples(task, questions, gold, sources)
+     pooled_examples = {i: {} for i in examples} if all_articles else {}
+ 
+     @lru_cache(maxsize=None)
+@@ -308,10 +263,8 @@
+     for i, trace in pooled_examples.items():
+         examples[i]["pooledAt256"] = trace
+     lengths = [len(source.starts) for source in sources]
+-    summary = f"{task}: {len(questions)} questions; {len(docs)} documents"
+-    if "merge-500-0.5" in scores:
+-        summary += f"; default complete at 256 = {scores['merge-500-0.5']['retrieval']['minilm'][256]['complete']}"
+-    print(summary, flush=True)
++    print(f"{task}: {len(questions)} questions; {len(docs)} documents; "
++          f"default complete at 256 = {scores['merge-500-0.5']['retrieval']['minilm'][256]['complete']}", flush=True)
+     return {
+         "documents": [doc.title for doc in docs], "questionIds": [q.id for q in questions], "exclusions": dict(excluded),
+         "corpusTokens": sum(lengths),
+@@ -330,7 +283,6 @@
+     parser = argparse.ArgumentParser(description=__doc__)
+     parser.add_argument("--task", choices=["all", *TASKS], default="all")
+     parser.add_argument("--implementation", type=Path, default=HERE.parent)
+-    parser.add_argument("--methods", nargs="+", choices=METHODS, default=METHODS, help="chunker settings to compare with the token window")
+     parser.add_argument("--output", type=Path, help="new result file in JSON format")
+     args = parser.parse_args()
+     root = args.implementation.resolve()
+@@ -343,12 +295,7 @@
+     files = {"cuad": "cuad.zip", "qasper": "qasper-test.tgz", "hotpotqa": "hotpot.parquet"}
+     assets.update({files[t]: rag_data.ASSETS[files[t]] for t in tasks})
+     grid = plans()
+-    grid.update({
+-        "flat-merge-500-0.5": {**grid["merge-500-0.5"], "flatInput": True},
+-        "merge-500-token-256": {**grid["merge-500-0.5"], "maxChunkTokens": 256},
+-        "merge-500-two-passes": {**grid["merge-500-0.5"], "maxPasses": 2},
+-    })
+-    settings = {name: grid[name] for name in args.methods}
++    settings = {name: grid[name] for name in METHODS}
+     report = {
+         "startedUTC": started.isoformat(), "implementationSHA256": source_digest([root / "config.js", *(root / "src").glob("*.js")], root),
+         "harnessSHA256": source_digest([HERE / f for f in ("chunk.mjs", "corpora.py", "encoder.py", "run.py", "rag.py", "rag_data.py")], HERE),
+diff --git a/benchmarks/rag_data.py b/benchmarks/rag_data.py
+--- a/benchmarks/rag_data.py
++++ b/benchmarks/rag_data.py
+@@ -60,7 +60,7 @@
+         paragraph, = row["paragraphs"]
+         raw = paragraph["context"]
+         text = compact(raw)
+-        docs.append(Document(row["title"], "test", text, source_text=raw))
++        docs.append(Document(row["title"], "test", text))
+         for qa in paragraph["qas"]:
+             if qa["is_impossible"]:
+                 counts["noAnnotatedClause"] += 1
+@@ -83,7 +83,7 @@
+             parts.extend([section["section_name"], *section["paragraphs"]])
+         parts.extend(figure["caption"] for figure in row["figures_and_tables"])
+         text, spans = join_parts(parts)
+-        docs.append(Document(paper, "test", text, source_text="\n\n".join(p for p in parts if p)))
++        docs.append(Document(paper, "test", text))
+         positions = defaultdict(list)
+         for part, span in zip(parts, spans, strict=True):
+             if span:
+@@ -125,7 +125,7 @@
+             text, spans = join_parts([title + ".", *sentences])
+             if title not in doc_ids:
+                 doc_ids[title] = len(docs)
+-                docs.append(Document(title, "validation", text, source_text=title + ".\n\n" + " ".join(s for s in sentences if s)))
++                docs.append(Document(title, "validation", text))
+             d = doc_ids[title]
+             if docs[d].text != text or d in pool:
+                 raise ValueError(f"Ambiguous HotpotQA source {title} in {row['id']}")
+diff --git a/benchmarks/run.py b/benchmarks/run.py
+--- a/benchmarks/run.py
++++ b/benchmarks/run.py
+@@ -34,7 +34,6 @@
+         settings[f"pack-{size}"] = {"pack": True, "maxChunkSize": size}
+         for cutoff in CUTOFFS:
+             settings[f"merge-{size}-{cutoff}"] = {"maxChunkSize": size, "similarityThreshold": cutoff}
+-        settings[f"merge-{size}-document"] = {"maxChunkSize": size, "mergeThresholdMode": "document"}
+         for mode, combine in [("group", False), ("group+merge", True)]:
+             settings[f"{mode}-{size}"] = {"maxChunkSize": size, "groupSentences": True, "combineChunks": combine}
+     for mode in ["group", "group+merge"]:

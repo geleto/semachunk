@@ -1,0 +1,177 @@
+{
+  "startedUTC": "2026-11-23T12:46:08.754Z",
+  "node": "v24.14.1",
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "platform": "win32",
+  "trials": 7,
+  "implementationSHA256": {
+    "current": "915e8f26169656e0d3dbb91b5c5778010dad292e798787c57ce8faec294a16e1",
+    "reference": "2d520909d05ab781ca23d8619e20dfb409c12078661d45ad941e9071df3ff059"
+  },
+  "results": [
+    {
+      "sentences": 2048,
+      "topicLength": 8,
+      "cap": 500,
+      "scores": {
+        "current": {
+          "chunks": 256,
+          "providerCalls": 12,
+          "providerTexts": 3840,
+          "singletonCalls": 0,
+          "boundariesSHA256": "9c719e921e6d01aa27339765ddad2e7e34497b3dca17dd2184e2d49a21464c56",
+          "samplesMs": [
+            23.06,
+            24.17,
+            19.68,
+            20.22,
+            21.64,
+            14.96,
+            20.52
+          ],
+          "medianMs": 20.52
+        },
+        "reference": {
+          "chunks": 256,
+          "providerCalls": 12,
+          "providerTexts": 3840,
+          "singletonCalls": 0,
+          "boundariesSHA256": "9c719e921e6d01aa27339765ddad2e7e34497b3dca17dd2184e2d49a21464c56",
+          "samplesMs": [
+            43.83,
+            24.93,
+            32.47,
+            25.66,
+            24.01,
+            18.27,
+            19.38
+          ],
+          "medianMs": 24.93
+        }
+      }
+    },
+    {
+      "sentences": 16384,
+      "topicLength": 8,
+      "cap": 500,
+      "scores": {
+        "current": {
+          "chunks": 2048,
+          "providerCalls": 37,
+          "providerTexts": 30720,
+          "singletonCalls": 0,
+          "boundariesSHA256": "2288af1cbf6774fbd4a4257558ef19e75f49d3e1201440bba3130eef58595cb8",
+          "samplesMs": [
+            171.27,
+            367.07,
+            253.97,
+            281.11,
+            356.07,
+            586.13,
+            572.14
+          ],
+          "medianMs": 356.07
+        },
+        "reference": {
+          "chunks": 2048,
+          "providerCalls": 37,
+          "providerTexts": 30720,
+          "singletonCalls": 0,
+          "boundariesSHA256": "2288af1cbf6774fbd4a4257558ef19e75f49d3e1201440bba3130eef58595cb8",
+          "samplesMs": [
+            144.33,
+            301.62,
+            327.88,
+            393.28,
+            458.05,
+            660.93,
+            412.73
+          ],
+          "medianMs": 393.28
+        }
+      }
+    },
+    {
+      "sentences": 16384,
+      "topicLength": 8,
+      "cap": 12,
+      "scores": {
+        "current": {
+          "chunks": 2048,
+          "providerCalls": 1196,
+          "providerTexts": 30720,
+          "singletonCalls": 0,
+          "boundariesSHA256": "2288af1cbf6774fbd4a4257558ef19e75f49d3e1201440bba3130eef58595cb8",
+          "samplesMs": [
+            219.58,
+            295.4,
+            235.14,
+            231.77,
+            245.49,
+            230.11,
+            222.74
+          ],
+          "medianMs": 231.77
+        },
+        "reference": {
+          "chunks": 2048,
+          "providerCalls": 1196,
+          "providerTexts": 30720,
+          "singletonCalls": 0,
+          "boundariesSHA256": "2288af1cbf6774fbd4a4257558ef19e75f49d3e1201440bba3130eef58595cb8",
+          "samplesMs": [
+            1396.54,
+            1469.99,
+            1112.56,
+            1353.16,
+            1209.39,
+            1447.22,
+            1369.9
+          ],
+          "medianMs": 1369.9
+        }
+      }
+    },
+    {
+      "sentences": 16384,
+      "topicLength": 1,
+      "cap": 500,
+      "scores": {
+        "current": {
+          "chunks": 16384,
+          "providerCalls": 1,
+          "providerTexts": 16384,
+          "singletonCalls": 0,
+          "boundariesSHA256": "fc478c05dd49f46b879597e9129248e3cf46d35351d6618e009fe9df19572c48",
+          "samplesMs": [
+            168.56,
+            208.65,
+            395.82,
+            390.77,
+            361.54,
+            303.42,
+            183.28
+          ],
+          "medianMs": 303.42
+        },
+        "reference": {
+          "chunks": 16384,
+          "providerCalls": 1,
+          "providerTexts": 16384,
+          "singletonCalls": 0,
+          "boundariesSHA256": "fc478c05dd49f46b879597e9129248e3cf46d35351d6618e009fe9df19572c48",
+          "samplesMs": [
+            177.81,
+            283.68,
+            762.49,
+            270.01,
+            356.95,
+            387.46,
+            255.1
+          ],
+          "medianMs": 283.68
+        }
+      }
+    }
+  ]
+}

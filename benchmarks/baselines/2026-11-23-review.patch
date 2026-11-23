@@ -1,0 +1,357 @@
+diff --git a/src/index.js b/src/index.js
+--- a/src/index.js
++++ b/src/index.js
+@@ -63,7 +63,8 @@
+ 	let chunks = sentences;
+ 	if (groupSentences) {
+ 		chunks = await groupAdjacentSentences(sentences, embedBatch, {
+-			maxChunkSize, similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound, logging
++			maxChunkSize, similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound, logging,
++			adjacentOnly: options?.review?.adjacentOnly
+ 		});
+ 	}
+ 	if (logging) console.log('Initial chunks', chunks.map(chunk => chunk.slice(0, 50)));
+@@ -78,7 +79,8 @@
+ 			maxMergesPerPass,
+ 			candidateMergesPercentageCap,
+ 			uncappedCandidateMerges,
+-			finalEmbeddingText: returnEmbedding ? outputText : undefined
++			finalEmbeddingText: returnEmbedding ? outputText : undefined,
++			review: options?.review ?? {}
+ 		});
+ 		if (logging) console.log('Combined chunks', chunks.map(chunk => chunk.slice(0, 100)));
+ 	}
+diff --git a/src/merge.js b/src/merge.js
+--- a/src/merge.js
++++ b/src/merge.js
+@@ -62,7 +62,11 @@
+     return chunks;
+ }
+ 
+-async function scoreChangedChunks(changed, pass, queue, embedBatch, { maxChunkSize, combineChunksSimilarityThreshold, finalEmbeddingText }) {
++async function scoreChangedChunks(changed, pass, queue, embedBatch, options) {
++    const { maxChunkSize, finalEmbeddingText, review } = options;
++    // Document calibration uses the original size-eligible sentence pairs in the
++    // first scoring batch. None of the calibration variants use initial grouping.
++    const initial = pass === 1 && review.cutoff ? [] : null;
+     const pending = [], finalTexts = [];
+     for (const chunk of changed) {
+         if (fitsNext(chunk) || fitsNext(chunk.prev)) pending.push(chunk);
+@@ -78,6 +82,24 @@
+         scoreBoundary(chunk.prev);
+     }
+ 
++    if (initial) {
++        if (initial.length >= 2) {
++            const scores = initial.map(entry => entry.score);
++            if (review.cutoff === 'median') {
++                scores.sort((a, b) => a - b);
++                const middle = Math.floor(scores.length / 2);
++                options.combineChunksSimilarityThreshold = (scores[middle] + scores[Math.floor((scores.length - 1) / 2)]) / 2;
++            } else if (review.cutoff === 'mean-minus-half-sd') {
++                const mean = scores.reduce((sum, x) => sum + x, 0) / scores.length;
++                const variance = scores.reduce((sum, x) => sum + (x - mean) ** 2, 0) / scores.length;
++                options.combineChunksSimilarityThreshold = mean - 0.5 * Math.sqrt(variance);
++            } else {
++                throw new Error('Unknown review cutoff');
++            }
++        }
++        for (const { left, score } of initial) consider(left, score);
++    }
++
+     function fitsNext(left) {
+         return left?.next && left.text.length + 1 + left.next.text.length <= maxChunkSize;
+     }
+@@ -87,7 +109,16 @@
+         left.scoredPass = pass; // Neighboring merges share a boundary.
+         if (!fitsNext(left)) return;
+         const score = cosineSimilarity(left.embedding, left.next.embedding);
+-        if (score >= combineChunksSimilarityThreshold) queue.add(left, score);
++        if (initial) initial.push({ left, score });
++        else consider(left, score);
++    }
++
++    function consider(left, score) {
++        const size = left.text.length + 1 + left.next.text.length;
++        const priority = score - (review.penalty ?? 0) * size / maxChunkSize;
++        const eligibility = review.rankOnly ? score : priority;
++        const short = Math.min(left.text.length, left.next.text.length) < (review.minimum ?? 0);
++        if (eligibility >= options.combineChunksSimilarityThreshold || short) queue.add(left, priority);
+     }
+ }
+ 
+diff --git a/src/similarity.js b/src/similarity.js
+--- a/src/similarity.js
++++ b/src/similarity.js
+@@ -115,7 +115,7 @@
+         let joins = current.length + 1 + sentence.length <= maxChunkSize && similarities[i - 1] >= threshold;
+         // A singleton's centroid test is its boundary test. Start accumulating
+         // unit directions only when a third sentence could join this group.
+-        if (joins && i > groupStart + 1) {
++        if (joins && !options.adjacentOnly && i > groupStart + 1) {
+             if (!directionSum) {
+                 directionSum = new Float64Array(embeddings[i].length);
+                 addUnitVector(directionSum, embeddings[groupStart]);
+diff --git a/benchmarks/review_cases.py b/benchmarks/review_cases.py
+new file mode 100644
+--- /dev/null
++++ b/benchmarks/review_cases.py
+@@ -0,0 +1,258 @@
++"""Replay the independent review against the repository's frozen benchmark inputs."""
++
++import argparse
++from bisect import bisect_left, bisect_right
++from datetime import datetime, timezone
++import json
++from pathlib import Path
++import re
++import sys
++from tempfile import TemporaryDirectory
++from unittest.mock import patch
++from zipfile import ZipFile
++
++import numpy as np
++
++
++def review_plans(grid):
++    names = ["merge-500-0.5", "merge-500-0.3", "merge-500-0.4", "merge-500-0.6", "merge-500-0.7",
++             "group-500", "group+merge-500"]
++    settings = {name: grid[name] for name in names}
++    base = settings["merge-500-0.5"]
++    for cutoff in [0.2, 0.25, 0.35]:
++        settings[f"merge-500-{cutoff}"] = {**base, "similarityThreshold": cutoff}
++    for name, variant in {
++        "document-median": {"cutoff": "median"},
++        "document-mean-half-sd": {"cutoff": "mean-minus-half-sd"},
++        "size-penalty": {"penalty": 0.15},
++        "size-priority-only": {"penalty": 0.15, "rankOnly": True},
++        "median-size-penalty": {"cutoff": "median", "penalty": 0.15},
++        "short-under-100": {"minimum": 100},
++    }.items():
++        settings[name] = {**base, "review": variant}
++    # A finite JSON integer larger than any document's n-1 possible merges.
++    full = 2**53 - 1
++    for cutoff in [0.3, 0.5]:
++        for mode, cap in [("one-at-a-time", 1), ("all-disjoint", full)]:
++            settings[f"{mode}-{cutoff}"] = {
++                "maxChunkSize": 500, "similarityThreshold": cutoff, "maxMergesPerPass": cap,
++                "candidateMergesPercentageCap": 100, "uncappedCandidateMerges": 0, "maxUncappedPasses": full,
++            }
++    for name in ["group-500", "group+merge-500"]:
++        settings[name + "-adjacent"] = {**settings[name], "review": {"adjacentOnly": True}}
++    return settings
++
++
++def midpoints(items, count):
++    # The archival sample took the start of each equal-width stratum. These cases
++    # come from the middle of the same strata, selected without inspecting labels.
++    return [items[(2*i + 1) * len(items) // (2*count)] for i in range(count)]
++
++
++def fresh_hotpot(rag, root, directory, tokenizer, model, settings):
++    score_method = rag.score_method
++    complete_ids = []
++
++    def trace_queries(questions, pools, by_doc, sources, gold, ids, vectors, terms, examples):
++        if len(pools) != 1:
++            return score_method(questions, pools, by_doc, sources, gold, ids, vectors, terms, examples)
++        traces = {i: {} for i in range(len(questions))}
++        scores = score_method(questions, pools, by_doc, sources, gold, ids, vectors, terms, traces)
++        for i, example in examples.items():
++            example.update(traces[i])
++        complete_ids.append([q.id for i, q in enumerate(questions) if traces[i]["score"]["complete"]])
++        return scores
++
++    with patch.object(rag.rag_data, "evenly_spaced", midpoints), patch.object(rag, "score_method", trace_queries):
++        result = rag.evaluate("hotpotqa", root, directory, tokenizer, model, settings)
++    result["primaryOutcome"] = "Complete two-article evidence, MiniLM, pooled search, 256 delivered WordPiece tokens"
++    result["primaryCompleteQuestionIds"] = dict(zip([*settings, rag.WINDOW_NAME], complete_ids, strict=True))
++    for name, ids in result["primaryCompleteQuestionIds"].items():
++        if len(ids) != result["scores"][name]["pooledRetrieval"]["minilm"][256]["complete"]:
++            raise ValueError(f"Per-question trace disagrees with the pooled score for {name}")
++    return result
++
++
++def cuad_paragraph_audit(rag_data, corpora, directory, tokenizer):
++    with ZipFile(corpora.fetch("cuad.zip", rag_data.ASSETS)) as archive:
++        rows = rag_data.evenly_spaced(json.loads(archive.read("test.json"))["data"], 8)
++    sentences = json.loads((directory / "sentences.json").read_bytes())
++    oversized = []
++    for d, (row, parts) in enumerate(zip(rows, sentences, strict=True)):
++        raw = row["paragraphs"][0]["context"]
++        flat = corpora.compact(raw)
++        words = list(re.finditer(r"\S+", raw))
++        starts, pos = [], 0
++        for word in words:
++            starts.append(pos)
++            pos += len(word.group()) + 1
++
++        def raw_pos(position):
++            word = bisect_right(starts, position) - 1
++            return words[word].start() + position - starts[word]
++
++        cursor = 0
++        for sentence in parts:
++            start = flat.index(sentence, cursor)
++            cursor = start + len(sentence)
++            tokens = len(tokenizer.encode(sentence).ids)
++            if tokens <= 256:
++                continue
++            a, b = raw_pos(start), raw_pos(cursor - 1) + 1
++            if corpora.compact(raw[a:b]) != sentence:
++                raise ValueError("Oversized sentence does not match raw CUAD text")
++            paragraphs = [corpora.compact(x) for x in re.split(r"(?:\r?\n[ \t]*){2,}", raw[a:b]) if x.strip()]
++            oversized.append({"documentIndex": d, "rawCodePointRange": [a, b], "modelInputTokens": tokens,
++                              "blankLineDelimitedParts": len(paragraphs),
++                              "maxPartModelInputTokens": max(len(tokenizer.encode(x).ids) for x in paragraphs)})
++    return oversized
++
++
++def grouping_cutoffs(docs, parts, ids, vectors, utf16_length):
++    estimates = {}
++    for doc, sentences in zip(docs, parts, strict=True):
++        scores = []
++        for left, right in zip(sentences, sentences[1:]):
++            if utf16_length(left) + 1 + utf16_length(right) <= 500:
++                a, b = vectors[ids[left]].astype(np.float64), vectors[ids[right]].astype(np.float64)
++                scores.append(float((a @ b) / (np.linalg.norm(a) * np.linalg.norm(b))))
++        cutoff = 50
++        if len(scores) >= 2:
++            mean, variance = np.mean(scores), np.var(scores)
++            cutoff += -10 if variance < 0.01 else 10 if variance > 0.05 else 0
++            cutoff += 5 if mean < 0.3 else -5 if mean > 0.7 else 0
++        estimates[doc.title] = min(80, max(40, cutoff)) / 100 if scores else None
++    return estimates
++
++
++def clean_context_auc(docs, parts, texts, vectors, utf16_length):
++    """Compare k vs 1 on identical centers. Exclude spans with any additional gold cut."""
++    ids = {text: i for i, text in enumerate(texts)}
++
++    def cosine(left, right):
++        a, b = vectors[ids[left]].astype(np.float64), vectors[ids[right]].astype(np.float64)
++        return float((a @ b) / (np.linalg.norm(a) * np.linalg.norm(b)))
++
++    def auc(within, across):
++        if not within or not across:
++            return None
++        ordered = np.sort(across)
++        # P(within > across) + half credit for ties.
++        lower = np.searchsorted(ordered, within, side="left")
++        upper = np.searchsorted(ordered, within, side="right")
++        return float(np.mean((lower + upper) / (2 * len(ordered))))
++
++    results = {}
++    for split in ["calibration", "heldout"]:
++        samples = {}
++        for k in range(1, 5):
++            by_label = {True: [], False: []}
++            for doc, sentences in zip(docs, parts, strict=True):
++                if doc.split != split:
++                    continue
++                starts, offset = [], 0
++                for sentence in sentences:
++                    starts.append(offset)
++                    offset += len(sentence) + 1
++                for b in range(k, len(sentences) - k + 1):
++                    left, right = " ".join(sentences[b-k:b]), " ".join(sentences[b:b+k])
++                    if utf16_length(left) + 1 + utf16_length(right) > 500:
++                        continue
++                    first, end = starts[b-k], starts[b+k-1] + len(sentences[b+k-1])
++                    is_cut = starts[b] in doc.cuts
++                    if bisect_left(doc.cuts, end) - bisect_right(doc.cuts, first) != int(is_cut):
++                        continue
++                    by_label[is_cut].append((cosine(sentences[b-1], sentences[b]), cosine(left, right)))
++            across, within = by_label[True], by_label[False]
++            samples[k] = {
++                "sectionBoundaries": len(across), "otherBoundaries": len(within),
++                "matchedSingleAUC": auc([x[0] for x in within], [x[0] for x in across]),
++                "contextAUC": auc([x[1] for x in within], [x[1] for x in across]),
++            }
++        results[split] = samples
++    return results
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    root = Path(__file__).resolve().parents[1]
++    parser.add_argument("--harness", type=Path, default=root / "benchmarks",
++                        help="benchmark directory with the base runners and archived controls")
++    parser.add_argument("--output", type=Path, required=True)
++    args = parser.parse_args()
++    if args.output.exists():
++        parser.error(f"Result already exists at {args.output}")
++    harness = args.harness.resolve()
++    sys.path.insert(0, str(harness))
++    import corpora
++    import encoder
++    import rag
++    import run
++
++    core_archive = json.loads((harness / "results/2026-11-23-final.json").read_bytes())
++    rag_archive = json.loads((harness / "results/2026-11-23-rag.json").read_bytes())
++    settings = review_plans(run.plans())
++    report = {
++        "startedUTC": datetime.now(timezone.utc).isoformat(),
++        "implementationSHA256": run.source_digest([root / "config.js", *(root / "src").glob("*.js")], root),
++        "controls": {}, "driverSHA256": run.source_digest([Path(__file__).resolve()], root),
++        "harnessSHA256": run.source_digest([harness / f for f in
++            ["chunk.mjs", "rag.py", "rag_data.py", "run.py", "encoder.py", "corpora.py"]], harness),
++        "plans": settings, "tasks": {},
++    }
++    if report["harnessSHA256"] != rag_archive["harnessSHA256"]:
++        raise ValueError("Shared benchmark harness differs from the archived RAG run")
++
++    def record(task, result, reference, controls):
++        if result["vectorsSHA256"] != reference["vectorsSHA256"]:
++            raise ValueError(f"Frozen vectors differ for {task}")
++        stored = json.loads(json.dumps(result["scores"]))
++        for name in controls:
++            if stored[name] != reference["scores"][name]:
++                raise ValueError(f"Control mismatch for {task}, {name}")
++        report["controls"][task] = controls
++        report["tasks"][task] = {"vectorsSHA256": result["vectorsSHA256"], "scores": stored}
++
++    tokenizer, model = encoder.load_model()
++    with TemporaryDirectory() as temp:
++        directory = Path(temp)
++        run.write(directory / "plans.json", settings)
++        controls = ["merge-500-0.5", "merge-500-0.3", "group+merge-500"]
++        for task, loader in [("squad", corpora.squad), ("wikisection", corpora.wikisection)]:
++            docs = loader()
++            result = run.evaluate(task, docs, root, settings, tokenizer, model, directory)
++            record(task, result, core_archive[task], [*controls, "merge-500-0.4", "merge-500-0.6",
++                                                      "merge-500-0.7", "group-500"])
++            parts = json.loads((directory / "sentences.json").read_bytes())
++            texts = json.loads((directory / "texts.json").read_bytes())
++            _, vectors = encoder.frozen_vectors(texts, tokenizer, model)
++            ids = {text: i for i, text in enumerate(texts)}
++            report["tasks"][task]["initialGroupingCutoffs"] = grouping_cutoffs(docs, parts, ids, vectors, corpora.utf16_length)
++            if task == "wikisection":
++                report["withinSizeContextAUC"] = clean_context_auc(docs, parts, texts, vectors, corpora.utf16_length)
++        for task in rag.TASKS:
++            result = rag.evaluate(task, root, directory, tokenizer, model, settings)
++            record(task, result, rag_archive["tasks"][task], [*controls, "merge-500-0.7", rag.WINDOW_NAME])
++            if task == "cuad":
++                audit = cuad_paragraph_audit(rag.rag_data, corpora, directory, tokenizer)
++                if len(audit) != rag_archive["tasks"][task]["scores"]["sentences"]["chunksOverModelInput"]:
++                    raise ValueError("Raw CUAD audit disagrees with the archived sentence-only baseline")
++                report["rawCUADOversizedSentences"] = audit
++
++        fresh = {name: settings[name] for name in ["merge-500-0.5", "merge-500-0.3", "document-mean-half-sd"]}
++        run.write(directory / "plans.json", fresh)
++        result = fresh_hotpot(rag, root, directory, tokenizer, model, fresh)
++        original = rag_archive["tasks"]["hotpotqa"]
++        if set(result["questionIds"]) & set(original["questionIds"]):
++            raise ValueError("Fresh questions overlap the original sample")
++        result["sharedDocumentTitlesWithOriginal"] = sorted(set(result["documents"]) & set(original["documents"]))
++        result["methods"] = [*fresh, rag.WINDOW_NAME]
++        report["tasks"]["fresh-hotpotqa"] = result
++
++    with args.output.open("x", encoding="utf-8", newline="\n") as output:
++        output.write(json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False) + "\n")
++    print(f"Verified all archived controls and saved {args.output}", flush=True)
++
++
++if __name__ == "__main__":
++    main()

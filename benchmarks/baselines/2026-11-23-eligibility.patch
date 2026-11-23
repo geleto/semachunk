@@ -1,0 +1,77 @@
+diff --git a/src/embeddings.js b/src/embeddings.js
+--- a/src/embeddings.js
++++ b/src/embeddings.js
+@@ -10,20 +10,8 @@
+     const cache = new Map();
+     let dimension;
+ 
+-    return async function embedBatch(texts, finalTexts) {
+-        const needed = new Set(texts);
+-        for (const text of needed) if (cache.has(text)) needed.delete(text);
+-        // Fill spare slots in the scoring requests with guaranteed output vectors.
+-        // Only a scoring cache miss opens a request, and its batch count stays fixed.
+-        const remainder = needed.size % maxEmbeddingBatchSize;
+-        if (remainder && finalTexts?.length) {
+-            const capacity = needed.size + (maxEmbeddingBatchSize - remainder);
+-            for (const text of finalTexts) {
+-                if (!cache.has(text)) needed.add(text);
+-                if (needed.size >= capacity) break;
+-            }
+-        }
+-        const missing = [...needed];
++    return async function embedBatch(texts) {
++        const missing = [...new Set(texts)].filter(text => !cache.has(text));
+         for (let offset = 0; offset < missing.length;) {
+             const remaining = missing.length - offset;
+             // Balance requests so a final singleton is sent only when unavoidable.
+diff --git a/src/index.js b/src/index.js
+--- a/src/index.js
++++ b/src/index.js
+@@ -68,8 +68,6 @@
+ 	}
+ 	if (logging) console.log('Initial chunks', chunks.map(chunk => chunk.slice(0, 50)));
+ 
+-	const prefix = chunkPrefix?.trim() ? chunkPrefix + ': ' : '';
+-	const outputText = text => prefix + text;
+ 	if (combineChunks && chunks.length > 1) {
+ 		chunks = await mergeChunks(chunks, embedBatch, {
+ 			maxChunkSize,
+@@ -77,13 +75,12 @@
+ 			maxUncappedPasses,
+ 			maxMergesPerPass,
+ 			candidateMergesPercentageCap,
+-			uncappedCandidateMerges,
+-			finalEmbeddingText: returnEmbedding ? outputText : undefined
++			uncappedCandidateMerges
+ 		});
+ 		if (logging) console.log('Combined chunks', chunks.map(chunk => chunk.slice(0, 100)));
+ 	}
+ 
+-	const prefixedChunks = prefix ? chunks.map(outputText) : chunks;
++	const prefixedChunks = chunkPrefix?.trim() ? chunks.map(chunk => `${chunkPrefix}: ${chunk}`) : chunks;
+ 	const output = excludeChunkPrefixInResults ? chunks : prefixedChunks;
+ 	if (!returnEmbedding) return output.map(text => ({ text }));
+ 	const embeddings = await embedBatch(prefixedChunks);
+diff --git a/src/merge.js b/src/merge.js
+--- a/src/merge.js
++++ b/src/merge.js
+@@ -62,15 +62,11 @@
+     return chunks;
+ }
+ 
+-async function scoreChangedChunks(changed, pass, queue, embedBatch, { maxChunkSize, combineChunksSimilarityThreshold, finalEmbeddingText }) {
+-    const pending = [], finalTexts = [];
+-    for (const chunk of changed) {
+-        if (fitsNext(chunk) || fitsNext(chunk.prev)) pending.push(chunk);
+-        // Neighbors can only grow. This chunk already has its exact final text.
+-        else if (finalEmbeddingText) finalTexts.push(finalEmbeddingText(chunk.text));
+-    }
++async function scoreChangedChunks(changed, pass, queue, embedBatch, { maxChunkSize, combineChunksSimilarityThreshold }) {
++    // A neighbor can only grow. If neither side fits now, this chunk needs no more merge scores.
++    const pending = changed.filter(chunk => fitsNext(chunk) || fitsNext(chunk.prev));
+     if (!pending.length) return;
+-    const vectors = await embedBatch(pending.map(chunk => chunk.text), finalTexts);
++    const vectors = await embedBatch(pending.map(chunk => chunk.text));
+     pending.forEach((chunk, i) => { chunk.embedding = vectors[i]; });
+ 
+     for (const chunk of pending) {
