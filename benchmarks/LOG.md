@@ -1,5 +1,19 @@
 # Chunking improvements and benchmark results
 
+## 2026-11-23 · Heading context on fixed Markdown bodies
+
+All five calibration arms produced identical body and source-range hashes, and identical BM25 scores at every context budget. The baseline recovered complete dense evidence at 512 tokens for 52.77% of questions averaged across the four tasks. At the deployment cap of 256 tokens, titles alone added one complete paper answer (53.63% overall). Adding the heading path brought the count back to baseline. At the provider ceiling of 8,192 tokens all three means were 52.77%. The paired intervals include zero. Keep the existing caller prefix and leave automatic heading context out of the public API.
+
+Of 1,561 chunks, 337 had extra heading or title context available. The 256-token heading arm kept it in full for 281, shortened it for 11 and omitted it for 45. At 8,192 tokens it retained all 337. The complete final shortlist is protected packing, packing with a lead-in, adaptive original-boundary scoring with and without a lead-in, and protected rescoring at 0.7. The final controls use the plain and Markdown defaults, plain packing and priority at 256 tokens, and 128/32 and 256/64 token windows. [Frozen bodies, retention counts, paired results and shortlist](results/2026-11-23-markdown-context.json)
+
+## 2026-11-23 · Markdown combination on calibration
+
+At 256 body tokens, protected greedy packing recovered all evidence at 512 displayed tokens in 22/86 contracts, 12/29 paper questions, 23/43 financial questions and 29/32 pooled multi-hop questions. The equal-task mean was 52.77%. The best original-boundary run used the adaptive cutoff and reached 55.96% (paired difference +3.19 per 100, 95% interval −1.52 to +7.51). Rescoring peaked at cutoff 0.7 and reached 54.89% (+2.13, −3.38 to +7.34). The respective logical costs were 358 calls and 254,784 tokens for packing, 427 and 399,205 for fixed boundaries, and 468 and 292,441 for rescoring. Sentence units under the paper headings recovered 10/29 complete references at 512 tokens, compared with 12/29 for paragraph units. [All cutoffs, cosine distributions, budgets and costs](results/2026-11-23-markdown-comparison.json)
+
+Allowing one prose lead-in before an intact table or code block raised the original-boundary mean to 58.28%, including 31/43 FinQA hits. Its interval against greedy packing with the same lead-in rule was 0.00 to +10.51 per 100, and its interval against the corresponding protected semantic run was 0.00 to +5.30. Keep packing as the provisional release choice. The frozen shortlist also retains the strongest lead-in policy and its simpler comparators for independent evaluation. Whole-body rescoring did not earn the merge-order or window-ranking experiment.
+
+For the FinQA debt-maturities question, both adaptive policies delivered both annotated rows. Original-boundary scoring missed all 187 characters of the required prose span. Rescoring delivered the full reference. In four other financial questions the original-boundary policy recovered complete references that rescoring missed. On the paper model-performance question, rescoring at 0.3 delivered the 351 annotated characters missing with original-boundary scoring. The inspection replay used zero paid requests. [Ranked source ranges and per-span coverage](results/2026-11-23-markdown-examples.json)
+
 ## 2026-11-23 · Retrieval protocol frozen before calibration
 
 The fresh samples use six contracts, twelve papers, twenty-four financial reports and thirty-two multi-hop questions per split. Selection orders group IDs by seeded SHA-256. The multi-hop samples exclude historical article titles and share no titles with each other. FinQA contributes only questions requiring both complete table rows and surrounding prose. The frozen manifests identify documents and questions and hash the rendered sources, evidence and candidate pools. [Sample manifest](results/2026-11-23-markdown-samples.json)

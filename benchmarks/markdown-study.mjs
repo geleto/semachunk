@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { existsSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import { chunkText } from '../src/index.js';
@@ -9,6 +10,7 @@ import { denseRanker, packSentences, split as splitPlain, vocabulary } from './c
 import { sha256 } from './corpora.mjs';
 import { alignPlain, deliver, evidenceScore, goldReference, tokenWindows } from './delivered-context.mjs';
 import { dimension, encodingName, model, modelInputTokens, openReplay } from './encoder.mjs';
+import { macro, paired, selectCombination } from './markdown-decisions.mjs';
 import { manifest, markdownCorpora } from './markdown-corpora.mjs';
 import { combineMarkdown } from './markdown-merging.mjs';
 import { bm25Ranker, budgets, wordCounts } from './rag.mjs';
@@ -19,6 +21,7 @@ const split = experiment === 'final' ? 'final' : 'calibration';
 if (!['size', 'compare', 'context', 'final'].includes(experiment) || !output) {
     throw new Error('Use markdown-study.mjs size|compare|context|final NEW-OUTPUT.json [PREVIOUS-REPORT.json]');
 }
+if (existsSync(output)) throw new Error('Result already exists: ' + output);
 const prior = previous ? await read(previous) : {};
 const data = await markdownCorpora(split), samples = manifest(data);
 const frozen = await read(new URL('./results/2026-11-23-markdown-samples.json', import.meta.url));
@@ -172,47 +175,6 @@ async function evaluate(task, policy) {
         encoder: Object.fromEntries(Object.entries(encoder.stats).map(([k, n]) => [k, n - paid[k]])) };
 }
 
-function primary(task) { return task === 'hotpotqa' ? 'pooled/dense' : 'document/dense'; }
-function macro(row) {
-    return tasks.reduce((sum, t) => sum + row.tasks[t].retrieval[primary(t)][512].complete / row.tasks[t].questions, 0) / tasks.length;
-}
-
-// Resample whole contracts, papers, reports or independent question pools,
-// paired within task. Each of the four tasks gets the same weight.
-function paired(a, b) {
-    let seed = 20261123;
-    const random = () => (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 2 ** 32;
-    const groups = [], perTask = {};
-    for (const t of tasks) {
-        const x = a.tasks[t].complete512[primary(t)], y = b.tasks[t].complete512[primary(t)];
-        const byGroup = new Map(), wins = [], losses = [];
-        data[t].questions.forEach(({ group, id }, i) => {
-            if (!byGroup.has(group)) byGroup.set(group, [0, 0]);
-            const delta = Number(x[i]) - Number(y[i]), pair = byGroup.get(group);
-            pair[0] += delta;
-            pair[1]++;
-            if (delta) (delta > 0 ? wins : losses).push(id);
-        });
-        perTask[t] = { winsPer100: 100 * wins.length / x.length, lossesPer100: 100 * losses.length / x.length, wins, losses };
-        groups.push([...byGroup.values()]);
-    }
-    const draws = [];
-    for (let i = 0; i < 2000; i++) {
-        let sum = 0;
-        for (const group of groups) {
-            let diff = 0, n = 0;
-            for (let j = 0; j < group.length; j++) {
-                const [d, k] = group[Math.floor(random() * group.length)];
-                diff += d; n += k;
-            }
-            sum += diff / n;
-        }
-        draws.push(100 * sum / groups.length);
-    }
-    draws.sort((a, b) => a - b);
-    return { deltaPer100: 100 * (macro(a) - macro(b)), ci95: [draws[50], draws[1949]], perTask };
-}
-
 async function run(name, policy, subset = tasks) {
     const row = { policy, tasks: {} };
     for (const task of subset) row.tasks[task] = await evaluate(task, policy);
@@ -236,8 +198,6 @@ async function main() {
     const pack = { method: 'pack', tokens };
     if (experiment === 'compare') {
         await run('pack', pack);
-        let winner = 'pack';
-        report.comparisons = {};
         for (const method of ['fixed', 'rescore']) {
             const names = [];
             for (const cutoff of [0.3, 0.5, 0.7, 'document']) {
@@ -247,18 +207,11 @@ async function main() {
             }
             const best = names.sort((a, b) => macro(report.policies[b]) - macro(report.policies[a]))[0];
             report[method] = best;
-            const test = paired(report.policies[best], report.policies[winner]);
-            report.comparisons[best + ' vs ' + winner] = test;
-            if (test.ci95[0] > 0) winner = best;
         }
         for (const name of ['pack', report.fixed, report.rescore]) {
             await run(name + '-lead', { ...report.policies[name].policy, leadIn: true });
         }
-        const test = paired(report.policies[winner + '-lead'], report.policies[winner]);
-        report.comparisons['lead vs protected'] = test;
-        if (test.ci95[0] > 0) winner += '-lead';
-        report.winner = report.policies[winner].policy;
-        report.shortlist = Object.fromEntries([...new Set(['pack', report.fixed, report.rescore, winner])].map(k => [k, report.policies[k].policy]));
+        selectCombination(report, data);
         await run('sentence-units', { ...report.winner, sentences: true }, ['qasper']);
         return;
     }
@@ -267,6 +220,8 @@ async function main() {
     report.shortlist = prior.shortlist;
     if (experiment === 'context') {
         const base = await run('baseline', report.winner);
+        const frozenWinner = Object.values(prior.policies).find(r => JSON.stringify(r.policy) === JSON.stringify(report.winner));
+        for (const t of tasks) assert.equal(base.tasks[t].bodyHash, frozenWinner.tasks[t].bodyHash);
         report.comparisons = {};
         for (const cap of [tokens, modelInputTokens]) {
             let control = base;
@@ -279,15 +234,15 @@ async function main() {
                         assert.deepEqual(row.tasks[t].retrieval[key], base.tasks[t].retrieval[key]);
                     }
                 }
-                const test = paired(row, control);
+                const test = paired(row, control, data);
                 report.comparisons[name] = test;
-                if (cap === tokens && test.ci95[0] > 0 && paired(row, base).ci95[0] > 0) report.shortlist[name] = row.policy;
+                if (cap === tokens && test.ci95[0] > 0 && paired(row, base, data).ci95[0] > 0) report.shortlist[name] = row.policy;
                 control = row;
             }
         }
         if (report.winner.method === 'rescore') {
             const reverse = await run('reversed', { ...report.winner, reverse: true });
-            report.comparisons.reversed = paired(reverse, base);
+            report.comparisons.reversed = paired(reverse, base, data);
         }
         return;
     }
@@ -299,7 +254,7 @@ async function main() {
     for (const [name, policy] of Object.entries(controls)) await run(name, policy);
     report.comparisons = {};
     for (const name of Object.keys(report.policies).filter(n => n !== 'pack')) {
-        report.comparisons[name + ' vs pack'] = paired(report.policies[name], report.policies.pack);
+        report.comparisons[name + ' vs pack'] = paired(report.policies[name], report.policies.pack, data);
     }
 }
 

@@ -1,0 +1,247 @@
+{
+  "budget": 512,
+  "examples": [
+    {
+      "task": "finqa",
+      "id": "ETR/2015/page_131.pdf-1",
+      "document": "ETR/2015/page_131.pdf",
+      "question": "what is the percent change in annual long-term debt maturities from 2016 to 2017?",
+      "cutoff": "document",
+      "sourceReferences": [
+        [
+          [
+            0,
+            1649,
+            1668
+          ],
+          [
+            0,
+            1669,
+            1688
+          ],
+          [
+            0,
+            583,
+            770
+          ]
+        ]
+      ],
+      "methods": {
+        "fixed": {
+          "chunks": 11,
+          "score": {
+            "recall": 0.3508771929824561,
+            "precision": 0.0390625,
+            "complete": 0
+          },
+          "deliveredTokens": 512,
+          "top": [
+            {
+              "sourceRanges": [
+                {
+                  "start": 1389,
+                  "end": 1602,
+                  "outputStart": 0
+                }
+              ],
+              "bodyTokens": 46
+            },
+            {
+              "sourceRanges": [
+                {
+                  "start": 1604,
+                  "end": 1749,
+                  "outputStart": 0
+                }
+              ],
+              "bodyTokens": 65
+            },
+            {
+              "sourceRanges": [
+                {
+                  "start": 2150,
+                  "end": 2253,
+                  "outputStart": 0
+                }
+              ],
+              "bodyTokens": 30
+            }
+          ],
+          "missingCodeUnits": [
+            [
+              0,
+              0,
+              187
+            ]
+          ]
+        },
+        "rescore": {
+          "chunks": 10,
+          "score": {
+            "recall": 1,
+            "precision": 0.111328125,
+            "complete": 1
+          },
+          "deliveredTokens": 512,
+          "top": [
+            {
+              "sourceRanges": [
+                {
+                  "start": 1389,
+                  "end": 1602,
+                  "outputStart": 0
+                }
+              ],
+              "bodyTokens": 46
+            },
+            {
+              "sourceRanges": [
+                {
+                  "start": 1604,
+                  "end": 1749,
+                  "outputStart": 0
+                }
+              ],
+              "bodyTokens": 65
+            },
+            {
+              "sourceRanges": [
+                {
+                  "start": 2150,
+                  "end": 2253,
+                  "outputStart": 0
+                }
+              ],
+              "bodyTokens": 30
+            }
+          ],
+          "missingCodeUnits": [
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "task": "qasper",
+      "id": "2fec84a62b4028bbe6500754d9c058eefbc24d9a",
+      "document": "2004.04060",
+      "question": "What is the performance of large state-of-the-art models on these datasets?",
+      "cutoff": 0.3,
+      "sourceReferences": [
+        [
+          [
+            9,
+            13354,
+            14602
+          ]
+        ]
+      ],
+      "methods": {
+        "fixed": {
+          "chunks": 31,
+          "score": {
+            "recall": 0.7318611987381703,
+            "precision": 0.455078125,
+            "complete": 0
+          },
+          "deliveredTokens": 512,
+          "top": [
+            {
+              "sourceRanges": [
+                {
+                  "start": 13705,
+                  "end": 14602,
+                  "outputStart": 0
+                }
+              ],
+              "bodyTokens": 233
+            },
+            {
+              "sourceRanges": [
+                {
+                  "start": 16238,
+                  "end": 16648,
+                  "outputStart": 0
+                }
+              ],
+              "bodyTokens": 111
+            },
+            {
+              "sourceRanges": [
+                {
+                  "start": 2564,
+                  "end": 2834,
+                  "outputStart": 0
+                }
+              ],
+              "bodyTokens": 69
+            }
+          ],
+          "missingCodeUnits": [
+            [
+              351
+            ]
+          ]
+        },
+        "rescore": {
+          "chunks": 29,
+          "score": {
+            "recall": 1,
+            "precision": 0.62109375,
+            "complete": 1
+          },
+          "deliveredTokens": 512,
+          "top": [
+            {
+              "sourceRanges": [
+                {
+                  "start": 13341,
+                  "end": 13801,
+                  "outputStart": 0
+                }
+              ],
+              "bodyTokens": 107
+            },
+            {
+              "sourceRanges": [
+                {
+                  "start": 16238,
+                  "end": 16648,
+                  "outputStart": 0
+                }
+              ],
+              "bodyTokens": 111
+            },
+            {
+              "sourceRanges": [
+                {
+                  "start": 13801,
+                  "end": 14602,
+                  "outputStart": 0
+                }
+              ],
+              "bodyTokens": 214
+            }
+          ],
+          "missingCodeUnits": [
+            [
+              0
+            ]
+          ]
+        }
+      }
+    }
+  ],
+  "encoder": {
+    "apiRequests": 0,
+    "apiInputs": 0,
+    "apiInputTokens": 0,
+    "diskTexts": 121,
+    "memoryTexts": 99,
+    "replayMs": 106.97649999999976
+  }
+}
