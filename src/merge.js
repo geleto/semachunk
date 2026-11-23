@@ -1,14 +1,15 @@
 import { directionCosine, documentMergeThreshold, SimilarityStatistics, vectorDirection } from './similarity.js';
 import { createJoinCheck } from './token-limit.js';
 
+export function mergeLimit(candidateCount, { maxMergesPerPass, candidateMergesPercentageCap, uncappedCandidateMerges }) {
+    const percent = Math.floor(candidateCount * candidateMergesPercentageCap / 100 + 1e-9);
+    return Math.min(maxMergesPerPass, Math.max(uncappedCandidateMerges, percent));
+}
+
 export async function mergeChunks(texts, embedBatch, options) {
-    const { maxPasses = Infinity, maxUncappedPasses, maxMergesPerPass, candidateMergesPercentageCap, uncappedCandidateMerges } = options;
+    const { maxPasses = Infinity, maxUncappedPasses } = options;
     let cutoff = options.combineChunksSimilarityThreshold;
-    function mergeLimit(candidateCount) {
-        const percent = Math.floor(candidateCount * candidateMergesPercentageCap / 100 + 1e-9);
-        return Math.min(maxMergesPerPass, Math.max(uncappedCandidateMerges, percent));
-    }
-    if (maxPasses < 1 || maxUncappedPasses < 1 || (!options.calibrate && cutoff > 1) || mergeLimit(texts.length - 1) <= 0) {
+    if (maxPasses < 1 || maxUncappedPasses < 1 || (!options.calibrate && cutoff > 1) || mergeLimit(texts.length - 1, options) <= 0) {
         return texts;
     }
 
@@ -31,7 +32,7 @@ export async function mergeChunks(texts, embedBatch, options) {
 
         // 3. Set this pass's cap from the number of live candidates. Take the highest
         //    cosine first, with earlier candidates winning ties just as in a stable sort.
-        const limit = mergeLimit(queue.size);
+        const limit = mergeLimit(queue.size, options);
         if (!queue.size || !(limit > 0)) break;
 
         // 4. Merge disjoint pairs and collect the surviving left nodes for the next embedding batch.

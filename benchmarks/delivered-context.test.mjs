@@ -150,4 +150,7 @@ test('the direct original-boundary implementation matches the measured candidate
         assert.deepEqual(actual.map(u => [u.start, u.end]), expected.map(u => [u.start, u.end]));
         assert.deepEqual(batches, expectedCalls);
     }
+    const blocked = await mergeOriginalBoundaries(source, units, assert.fail, { maxPasses: 10, maxUncappedPasses: 10,
+        maxMergesPerPass: 2, candidateMergesPercentageCap: 10, uncappedCandidateMerges: 0, maxChunkSize: 5, cutoff: 0.5 });
+    assert.deepEqual(blocked.map(u => [u.start, u.end]), units.map(u => [u.start, u.end]));
 });

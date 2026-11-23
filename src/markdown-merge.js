@@ -1,12 +1,12 @@
 import { fitsMarkdownJoin, markdownText } from './markdown.js';
+import { mergeLimit } from './merge.js';
 import { directionCosine, documentMergeThreshold, SimilarityStatistics, vectorDirection } from './similarity.js';
 
 // Live edges are in source order, so a stable sort breaks cosine ties by
 // occurrence. A pass is capped only when it defers another disjoint pair.
-export function mergePass(live, edges, cutoff, { maxMergesPerPass, candidateMergesPercentageCap, uncappedCandidateMerges }) {
+export function mergePass(live, edges, cutoff, options) {
     const candidates = edges.filter(e => e.score >= cutoff).sort((a, b) => b.score - a.score);
-    const percent = Math.floor(candidates.length * candidateMergesPercentageCap / 100 + 1e-9);
-    const cap = Math.min(maxMergesPerPass, Math.max(uncappedCandidateMerges, percent));
+    const cap = mergeLimit(candidates.length, options);
     if (!candidates.length || !cap) return null;
     const selected = new Set();
     let capped = false;
@@ -28,11 +28,10 @@ export function mergePass(live, edges, cutoff, { maxMergesPerPass, candidateMerg
 }
 
 export async function mergeOriginalBoundaries(source, units, embed, options) {
-    const { maxChunkSize, fits, maxPasses, maxUncappedPasses, maxMergesPerPass, candidateMergesPercentageCap,
-        uncappedCandidateMerges, calibrate } = options;
+    const { maxChunkSize, fits, maxPasses, maxUncappedPasses, calibrate } = options;
     let cutoff = options.cutoff;
-    if (!maxPasses || !maxUncappedPasses || !maxMergesPerPass || (!candidateMergesPercentageCap && !uncappedCandidateMerges) ||
-        (!calibrate && cutoff > 1) || units.length < 2) return units;
+    if (!maxPasses || !maxUncappedPasses || (!calibrate && cutoff > 1) || units.length < 2 ||
+        !mergeLimit(units.length - 1, options)) return units;
 
     const scores = [], directions = [], checks = [];
     let live = units.map((unit, last) => ({ ...unit, last })), uncapped = 0;
@@ -53,6 +52,7 @@ export async function mergeOriginalBoundaries(source, units, embed, options) {
                 if (!directions[gap + 1]) missing.add(gap + 1);
             }
         }
+        if (!edges.length || !mergeLimit(edges.length, options)) break;
         if (missing.size) {
             const ids = [...missing], vectors = await embed(ids.map(i => markdownText(source, units[i])));
             ids.forEach((id, i) => { directions[id] = vectorDirection(vectors[i]); });

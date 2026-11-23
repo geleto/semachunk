@@ -10,6 +10,8 @@ The budget-switch interval crosses zero across sizes, and the pass challenger ch
 
 The replication has 298 contract, 135 paper, 115 row-plus-prose financial and 128 multi-hop questions. It uses the next 24 contracts and 48 papers in seeded order and all 68 eligible financial reports in the released test split that appeared in none of the sampled development groups. Four title-disjoint, balanced 32-question multi-hop pools preserve the distractor setting. All document IDs, question IDs and groups were checked against the preceding four splits before scoring. [Frozen sample and source hashes](results/2026-11-23-markdown-samples.json)
 
+Offline verification matched all 32 dataset/setting layouts for public greedy packing and all 32 for the original-boundary implementation. Both reproduced the independently measured source-range and text hashes, callback counts, inputs, singleton batches and embedded token totals. The priority mergers share the same per-pass cap calculation. An insufficient percentage cap can skip scoring entirely. All 75 tests passed.
+
 ## 2026-11-23 · Automatic policy experiment design
 
 Use the original calibration documents for the heuristic search. Cross three character caps (500, 1,024 and 2,048) with three independently measured token budgets (128, 256 and 512) as six separate settings. The pairs have similar nominal sizes in English. Token counts are measured for each actual input. Weight each setting and each dataset equally. Resample independent question groups once per bootstrap draw, keeping all six results for each question together.
