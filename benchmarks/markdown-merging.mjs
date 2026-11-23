@@ -1,5 +1,5 @@
-import { fitsMarkdownJoin, markdownText, packMarkdown } from '../src/markdown.js';
-import { mergePass } from '../src/markdown-merge.js';
+import { markdownText } from '../src/markdown.js';
+import { fitsMarkdownJoin, mergePass, packMarkdown } from '../src/markdown-merge.js';
 import { directionCosine, documentMergeThreshold, SimilarityStatistics, vectorDirection } from '../src/similarity.js';
 import { DEFAULT_CONFIG as defaults } from '../config.js';
 

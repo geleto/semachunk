@@ -1,6 +1,6 @@
 export interface ChunkingOptions {
 	logging?: boolean;
-	/** Extract HTML text, pack Markdown sections, or split literal text (the default). */
+	/** Extract HTML text, chunk Markdown sections, or split literal text (the default). */
 	inputFormat?: 'text' | 'html' | 'markdown';
 	/** BCP 47 language tag for sentence segmentation. Defaults to 'en'. */
 	locale?: string;
@@ -24,7 +24,7 @@ export interface ChunkingOptions {
 	combineChunks?: boolean;
 	/** Overrides similarityThreshold for the priority merge only. */
 	combineChunksSimilarityThreshold?: number;
-	/** Calibrate the priority cutoff from the document's original eligible sentence pairs. Default 'fixed'. */
+	/** Calibrate the priority cutoff from original eligible neighbors. Defaults to 'document' for Markdown and 'fixed' for text and HTML. */
 	mergeThresholdMode?: 'fixed' | 'document';
 	/** Limit all priority merge rounds, including capped rounds. Default Infinity. */
 	maxPasses?: number;

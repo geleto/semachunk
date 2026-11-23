@@ -102,11 +102,13 @@ node benchmarks/markdown-study.mjs replicate-rules rule-replication.json rules.j
 
 The six primary settings are 500, 1,024 and 2,048 characters and 128, 256 and 512 tokens. The runner scores the actual document layouts selected by each rule, including mixed-policy HotpotQA pools. Budget-only rules reuse the corresponding full-policy measurement at each setting. The JSON grid identifies those measurements. Bootstrap draws keep a question's outcomes across all six settings in the same independent group. Both validation reports also include two mixed-cap diagnostics. The larger replication uses the frozen shortlist, report-disjoint FinQA test data and four independent 32-question multi-hop pools.
 
+In a six-setting comparison, a question counts as a win if the rule recovered its complete evidence at more settings than the control. The paired difference and interval use the magnitude of each question's change.
+
 All arms search the same sources. QASPER uses the paper's heading hierarchy. FinQA includes pre-table prose, the table and post-table prose with offsets keyed by the annotation IDs. A financial hit requires every annotated row and prose span. The primary score averages the four dataset complete-evidence rates at 512 delivered tokens with pooled HotpotQA. The diagnostic shortlist searches each question's supplied articles. The report also records both rankers at 256 and 1,024 tokens, per-question paired outcomes and group bootstrap intervals. [Frozen sample IDs](results/2026-11-23-markdown-samples.json)
 
 ## Run the large-document benchmark
 
-Run `node benchmarks/markdown-performance.mjs` for the Markdown packer. An optional output path saves a new JSON report. Each workload runs in its own process with one warmup and three timed iterations. The inputs include repeated and unique paragraphs, fenced code and tables in either one long section or 2,048 short sections.
+Run `node benchmarks/markdown-performance.mjs` for the public Markdown entry point. An optional output path saves a new JSON report. A second argument sets the character target, for example `node benchmarks/markdown-performance.mjs performance.json 1024`. Each workload runs in its own process with one warmup and three timed iterations. The inputs include repeated and unique paragraphs, fenced code and tables in either one long section or 2,048 short sections.
 
 ```sh
 npm run benchmark:merge

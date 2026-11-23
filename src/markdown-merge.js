@@ -1,6 +1,34 @@
-import { fitsMarkdownJoin, markdownText } from './markdown.js';
+import { markdownResult, markdownText, parseMarkdown } from './markdown.js';
 import { mergeLimit } from './merge.js';
 import { directionCosine, documentMergeThreshold, SimilarityStatistics, vectorDirection } from './similarity.js';
+
+export async function chunkMarkdown(source, embed, options) {
+    const { maxChunkSize, maxChunkTokens, fits, combineChunks } = options;
+    let units = parseMarkdown(source, options);
+    if (combineChunks) {
+        // Both limits must leave room for scoring to pay off (benchmarks/LOG.md).
+        units = maxChunkSize >= 1024 && maxChunkTokens >= 256
+            ? await mergeOriginalBoundaries(source, units, embed, options)
+            : packMarkdown(source, units, maxChunkSize, fits);
+    }
+    return units.map(unit => markdownResult(source, unit));
+}
+
+export function fitsMarkdownJoin(source, left, right, maxChunkSize, fits) {
+    return !left.parts && !right.parts && left.sectionId === right.sectionId && left.run === right.run &&
+        right.end - left.start <= maxChunkSize &&
+        !/\S/u.test(source.slice(left.end, right.start)) && (!fits || fits(source.slice(left.start, right.end)));
+}
+
+export function packMarkdown(source, units, maxChunkSize, fits) {
+    const packed = [];
+    for (const unit of units) {
+        const last = packed.at(-1);
+        if (last?.kind === 'prose' && unit.kind === 'prose' && fitsMarkdownJoin(source, last, unit, maxChunkSize, fits)) last.end = unit.end;
+        else packed.push({ ...unit });
+    }
+    return packed;
+}
 
 // Live edges are in source order, so a stable sort breaks cosine ties by
 // occurrence. A pass is capped only when it defers another disjoint pair.
@@ -29,12 +57,13 @@ export function mergePass(live, edges, cutoff, options) {
 
 export async function mergeOriginalBoundaries(source, units, embed, options) {
     const { maxChunkSize, fits, maxPasses, maxUncappedPasses, calibrate } = options;
-    let cutoff = options.cutoff;
+    let cutoff = options.combineChunksSimilarityThreshold;
     if (!maxPasses || !maxUncappedPasses || (!calibrate && cutoff > 1) || units.length < 2 ||
         !mergeLimit(units.length - 1, options)) return units;
 
     const scores = [], directions = [], checks = [];
-    let live = units.map((unit, last) => ({ ...unit, last })), uncapped = 0;
+    let live = units.map((unit, last) => ({ ...unit, last }));
+    let uncapped = 0;
     for (let pass = 0; pass < maxPasses && uncapped < maxUncappedPasses; pass++) {
         const edges = [], missing = new Set();
         for (let i = 0; i + 1 < live.length; i++) {

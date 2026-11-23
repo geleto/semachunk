@@ -59,6 +59,49 @@ test('greedy joins count actual separators, recheck hard caps and protect tables
     await assert.rejects(chunks('', { locale: 'bad tag' }), RangeError);
 });
 
+test('Markdown uses both capacity limits to choose packing or original-boundary scoring', async () => {
+    const units = ['A', 'B', 'C', 'D', '# Next\nA', 'B', 'C', 'D'];
+    const source = units.join('\n\n');
+    const greedy = [units.slice(0, 4).join('\n\n'), units.slice(4).join('\n\n')];
+    const scored = ['A\n\nB', 'C\n\nD', '# Next\nA\n\nB', 'C\n\nD'];
+    for (const [maxChunkSize, maxChunkTokens] of [[500, 256], [1023, Infinity], [1024, 128], [Infinity, 255]]) {
+        const rows = await chunks(source, { maxChunkSize, maxChunkTokens, countTokens: length });
+        assert.deepEqual(rows.map(c => c.text), greedy);
+    }
+
+    const calls = [];
+    function vector(t) {
+        if (t.startsWith('P: ')) return [t.length, 3];
+        return /[AB]$/.test(t) ? [1, 0] : [0, 1];
+    }
+    const embed = texts => { calls.push(texts); return texts.map(vector); };
+    const large = { ...options, maxChunkSize: 1024, maxChunkTokens: 256, countTokens: length };
+    for (const limits of [large, { ...large, maxChunkSize: Infinity }, { ...large, maxChunkTokens: Infinity }]) {
+        const rows = await chunkText(source, embed, limits);
+        assert.deepEqual(rows.map(c => c.text), scored);
+        assert.deepEqual(calls.splice(0), [['A', 'B', 'C', 'D', '# Next\nA']]);
+    }
+    for (const skip of [{ maxPasses: 0 }, { combineChunks: false }, { combineChunksSimilarityThreshold: 2 }]) {
+        assert.deepEqual((await chunkText(source, assert.fail, { ...large, ...skip })).map(c => c.text), units);
+    }
+    for (const fixed of [{ combineChunksSimilarityThreshold: 0 }, { mergeThresholdMode: 'fixed', similarityThreshold: 0 }]) {
+        const rows = await chunkText(source, texts => texts.map(vector), { ...large, ...fixed });
+        assert.deepEqual(rows.map(c => c.text), greedy);
+    }
+    const indexed = await chunkText(source, embed, { ...large, returnEmbedding: true, maxCachedEmbeddings: 0,
+        chunkPrefix: 'P', excludeChunkPrefixInResults: true });
+    assert.deepEqual(calls, [['A', 'B', 'C', 'D', '# Next\nA'], [...new Set(scored.map(t => 'P: ' + t))]]);
+    assert.deepEqual(indexed.map(c => c.text), scored);
+    for (const c of indexed) {
+        assert.equal(c.embeddingText, 'P: ' + c.text);
+        assert.deepEqual(c.embedding, vector(c.embeddingText));
+        const [{ start, end }] = c.sourceRanges;
+        assert.equal(source.slice(start, end), c.text);
+    }
+    assert.notEqual(indexed[1].embedding, indexed[3].embedding);
+    assert.notEqual(indexed[1].sourceRanges[0].start, indexed[3].sourceRanges[0].start);
+});
+
 test('hard splits prefer whole inline links and code, keep whitespace, and advance by code point', async () => {
     const link = '[See. Here](url)', code = '\x60x. Y\x60';
     const s = 'Some words before ' + link + ' and ' + code + '. Next sentence. ' + '🌍'.repeat(30);

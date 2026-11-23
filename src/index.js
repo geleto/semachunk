@@ -29,7 +29,7 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
 		dynamicThresholdUpperBound = DEFAULT_CONFIG.DYNAMIC_THRESHOLD_UPPER_BOUND,
 		combineChunks = DEFAULT_CONFIG.COMBINE_CHUNKS,
 		combineChunksSimilarityThreshold = options?.similarityThreshold ?? DEFAULT_CONFIG.COMBINE_CHUNKS_SIMILARITY_THRESHOLD,
-		mergeThresholdMode = DEFAULT_CONFIG.MERGE_THRESHOLD_MODE,
+		mergeThresholdMode = inputFormat === 'markdown' ? 'document' : DEFAULT_CONFIG.MERGE_THRESHOLD_MODE,
 		maxPasses = DEFAULT_CONFIG.MAX_PASSES,
 		maxUncappedPasses = DEFAULT_CONFIG.MAX_UNCAPPED_PASSES,
 		returnEmbedding = DEFAULT_CONFIG.RETURN_EMBEDDING,
@@ -73,34 +73,35 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
 	if (logging) await _printVersion();
 	const prefix = chunkPrefix?.trim() ? chunkPrefix + ': ' : '';
 	const fits = tokenBudget(maxChunkTokens, countTokens, prefix);
+	const priority = {
+		maxChunkSize, maxPasses, maxUncappedPasses, maxMergesPerPass, candidateMergesPercentageCap,
+		uncappedCandidateMerges, combineChunksSimilarityThreshold,
+		calibrate: mergeThresholdMode === 'document' && options?.combineChunksSimilarityThreshold === undefined
+	};
 	let output;
 	if (inputFormat === 'markdown') {
 		if (groupSentences) throw new TypeError('Markdown does not support groupSentences.');
-		const { parseMarkdown, packMarkdown, markdownResult } = await import('./markdown.js').catch(error => {
+		const { chunkMarkdown } = await import('./markdown-merge.js').catch(error => {
 			if (error.code === 'ERR_MODULE_NOT_FOUND' && /package '(?:mdast-util|micromark-extension)-/.test(error.message)) {
 				throw new Error('Markdown input requires optional packages. Run npm install mdast-util-from-markdown mdast-util-gfm mdast-util-frontmatter micromark-extension-gfm micromark-extension-frontmatter.', { cause: error });
 			}
 			throw error;
 		});
-		let units = parseMarkdown(text, { maxChunkSize, fits, locale, excludeNonLetterSentences });
-		if (combineChunks) units = packMarkdown(text, units, maxChunkSize, fits);
-		output = units.map(unit => markdownResult(text, unit));
+		output = await chunkMarkdown(text, embedBatch, { ...priority, maxChunkTokens, fits, locale, excludeNonLetterSentences, combineChunks });
 	} else {
 		const sentences = await parseSentences(text, { inputFormat, locale, excludeNonLetterSentences });
 		if (sentences.length === 0) return [];
 
 		const tokenLimit = sentenceTokenLimit(sentences, fits);
 		const canJoin = createJoinCheck(maxChunkSize, tokenLimit);
-		let cutoff = combineChunksSimilarityThreshold;
-		let calibrate = mergeThresholdMode === 'document' && options?.combineChunksSimilarityThreshold === undefined;
 		let chunks = sentences;
 		if (groupSentences && sentences.length > 1) {
 			const grouping = { maxChunkSize, canJoin, similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound, logging };
 			const analysis = await computeAdvancedSimilarities(sentences, embedBatch, grouping);
 			chunks = await groupAdjacentSentences(sentences, embedBatch, grouping, analysis);
-			if (calibrate) {
-				cutoff = documentMergeThreshold(analysis, cutoff);
-				calibrate = false;
+			if (priority.calibrate) {
+				priority.combineChunksSimilarityThreshold = documentMergeThreshold(analysis, combineChunksSimilarityThreshold);
+				priority.calibrate = false;
 			}
 		}
 		if (logging) console.log('Initial chunks', chunks.map(chunk => chunk.slice(0, 50)));
@@ -108,13 +109,7 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
 		const outputText = text => prefix + text;
 		if (combineChunks && chunks.length > 1) {
 			chunks = await mergeChunks(chunks, embedBatch, {
-				maxChunkSize, canJoin, tokenLimit, logging,
-				combineChunksSimilarityThreshold: cutoff, calibrate,
-				maxPasses,
-				maxUncappedPasses,
-				maxMergesPerPass,
-				candidateMergesPercentageCap,
-				uncappedCandidateMerges,
+				...priority, canJoin, tokenLimit, logging,
 				finalEmbeddingText: returnEmbedding && maxCachedEmbeddings === Infinity ? outputText : undefined
 			});
 			if (logging) console.log('Combined chunks', chunks.map(chunk => chunk.slice(0, 100)));

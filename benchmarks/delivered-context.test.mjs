@@ -146,11 +146,11 @@ test('the direct original-boundary implementation matches the measured candidate
         const embed = texts => { batches.push(texts); return texts.map(s => [1, s.length % 3]); };
         const expected = await combineMarkdown(source, units, embed, { ...options, method: 'fixed', adaptive: calibrate });
         const expectedCalls = batches.splice(0);
-        const actual = await mergeOriginalBoundaries(source, units, embed, { ...options, calibrate });
+        const actual = await mergeOriginalBoundaries(source, units, embed, { ...options, combineChunksSimilarityThreshold: options.cutoff, calibrate });
         assert.deepEqual(actual.map(u => [u.start, u.end]), expected.map(u => [u.start, u.end]));
         assert.deepEqual(batches, expectedCalls);
     }
     const blocked = await mergeOriginalBoundaries(source, units, assert.fail, { maxPasses: 10, maxUncappedPasses: 10,
-        maxMergesPerPass: 2, candidateMergesPercentageCap: 10, uncappedCandidateMerges: 0, maxChunkSize: 5, cutoff: 0.5 });
+        maxMergesPerPass: 2, candidateMergesPercentageCap: 10, uncappedCandidateMerges: 0, maxChunkSize: 5, combineChunksSimilarityThreshold: 0.5 });
     assert.deepEqual(blocked.map(u => [u.start, u.end]), units.map(u => [u.start, u.end]));
 });

@@ -50,22 +50,6 @@ export function markdownResult(source, unit) {
     return { text: markdownText(source, unit), sectionId: unit.sectionId, headingPath: [...unit.headingPath], sourceRanges };
 }
 
-export function fitsMarkdownJoin(source, left, right, maxChunkSize, fits) {
-    return !left.parts && !right.parts && left.sectionId === right.sectionId && left.run === right.run &&
-        right.end - left.start <= maxChunkSize &&
-        !/\S/u.test(source.slice(left.end, right.start)) && (!fits || fits(source.slice(left.start, right.end)));
-}
-
-export function packMarkdown(source, units, maxChunkSize, fits) {
-    const packed = [];
-    for (const unit of units) {
-        const last = packed.at(-1);
-        if (last?.kind === 'prose' && unit.kind === 'prose' && fitsMarkdownJoin(source, last, unit, maxChunkSize, fits)) last.end = unit.end;
-        else packed.push({ ...unit });
-    }
-    return packed;
-}
-
 export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en', excludeNonLetterSentences, sentenceUnits }) {
     if (typeof locale !== 'string') throw new TypeError('locale must be a language tag string.');
     const root = fromMarkdown(source, grammar);

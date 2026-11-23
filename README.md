@@ -5,6 +5,7 @@ A lightweight TypeScript/JavaScript library for semantically chunking text.
 ## Features
 
 - Sentence splitting with `string-segmenter` and optional HTML text extraction with `parse5`
+- Markdown chunks with heading paths, source ranges and protected tables and code
 - Model Agnostic, plug in any embedding provider (OpenAI, HuggingFace, etc.) via a simple callback
 - Batch Embeddings for Efficiency and handling API Rate Limiting
 - Optimized Sentence/Chunk Merging Algorithm
@@ -58,7 +59,11 @@ Install the optional parser dependencies in applications that use Markdown.
 npm install mdast-util-from-markdown mdast-util-gfm mdast-util-frontmatter micromark-extension-gfm micromark-extension-frontmatter
 ```
 
-Pass `inputFormat: 'markdown'` to preserve source spelling, whitespace, tables, code, and the heading hierarchy. Greedy packing joins adjacent bodies in the same section while their exact source slice fits. A thematic break or skipped definition ends a run. Tables and code have their own chunks. Set `combineChunks: false` for the initial units. The Markdown path only requests embeddings for the final indexing strings, and `returnEmbedding: false` skips that call. Similarity thresholds and priority pass limits apply to text and HTML. Markdown rejects `groupSentences: true`.
+Pass `inputFormat: 'markdown'` to preserve spelling, whitespace, tables, code and the heading hierarchy. Joins use the exact intervening source within one section. A thematic break or skipped definition ends a run. Tables and code have their own chunks. Set `combineChunks: false` to return the initial units. Markdown rejects `groupSentences: true`.
+
+At the default 500-character target, Markdown greedily packs adjacent prose and embeds only the requested final texts. When **both** limits allow at least **1,024 UTF-16 code units and 256 tokens**, it scores each eligible original prose boundary once and merges the highest-scoring disjoint pairs that fit. An unlimited setting satisfies its side of the rule. For a token-only budget, set `maxChunkSize: Infinity` along with `maxChunkTokens` and `countTokens`. [Retrieval and indexing costs](benchmarks/LOG.md)
+
+The scoring cutoff defaults to the document's mean eligible cosine minus half its population standard deviation. With fewer than two eligible boundaries it uses `similarityThreshold`. An explicit `combineChunksSimilarityThreshold` or `mergeThresholdMode: 'fixed'` selects a fixed cutoff. The priority pass limits apply during scoring. `returnEmbedding: false` skips final indexing, though scoring can still call the embedder. With `combineChunks: false` and `returnEmbedding: false`, Markdown makes zero embedding calls.
 
 Each Markdown result has a `sectionId` (heading offset, or `null` in the preamble), a `headingPath` of visible titles, and `sourceRanges`. For each `{ start, end, outputStart }`, the input slice from `start` to `end` appears verbatim at `outputStart` in the returned text. Offsets count UTF-16 code units. Repeated table headers map to the same input. Generated continuation markers and visible caller prefixes occupy gaps in the mapping. A hidden caller prefix is included in `embeddingText`, the exact string for external indexing.
 
@@ -79,7 +84,7 @@ const chunks = await chunkText(text, myEmbedder, {
 
 ### Choosing a similarity threshold
 
-By default, each sentence starts as its own chunk. The priority merge scores adjacent chunks by cosine similarity and merges the highest-scoring disjoint pairs in each pass. A score equal to the cutoff qualifies. Start with `similarityThreshold: 0.5` and `maxChunkSize: 500`. Tune them together with your embedding model and retrieval budget. The size limit determines which pairs can compete, and the cutoff determines which of those pairs can join. Earlier versions ignored `similarityThreshold`. An explicit `combineChunksSimilarityThreshold` takes precedence during the priority merge. [Benchmark results and settings](benchmarks/LOG.md)
+For text and HTML, each sentence starts as its own chunk by default. The priority merge scores adjacent chunks by cosine similarity and merges the highest-scoring disjoint pairs in each pass. A score equal to the cutoff qualifies. Start with `similarityThreshold: 0.5` and `maxChunkSize: 500`. Tune them together with your embedding model and retrieval budget. The size limit determines which pairs can compete, and the cutoff determines which of those pairs can join. Earlier versions ignored `similarityThreshold`. An explicit `combineChunksSimilarityThreshold` takes precedence during the priority merge. [Benchmark results and settings](benchmarks/LOG.md)
 
 Set `mergeThresholdMode: 'document'` to derive one priority cutoff from the original size-eligible adjacent sentence pairs. It uses their mean cosine minus half their population standard deviation, reusing the first scoring batch. Later rounds use that same cutoff. With fewer than two eligible pairs it falls back to `similarityThreshold`. An explicit `combineChunksSimilarityThreshold` selects a fixed cutoff in either mode. With initial grouping enabled, both stages share the original sentence statistics. [Cutoff comparison and retrieval costs](benchmarks/LOG.md)
 
@@ -108,7 +113,7 @@ Character size and merge counts accept nonnegative safe integers or `Infinity`. 
 | `dynamicThresholdUpperBound` | 0.8 | Maximum cutoff for initial grouping |
 | `combineChunks` | `true` | Combine initial units using the input format's strategy. Set to `false` to keep those units. |
 | `combineChunksSimilarityThreshold` | `similarityThreshold` in fixed mode | Supply a fixed priority cutoff, overriding document calibration and the base cutoff. |
-| `mergeThresholdMode` | `'fixed'` | Use a fixed priority cutoff or calibrate once per document with `'document'`. |
+| `mergeThresholdMode` | `'fixed'` for text and HTML, `'document'` for Markdown | Use a fixed priority cutoff or calibrate once per document from its original eligible neighbors. |
 | `excludeNonLetterSentences` | `false` | Skip sentences containing no Unicode letters before embedding |
 | `maxUncappedPasses` | `100` | Maximum number of passes that exhaust the available disjoint merges. A pass that defers an eligible disjoint pair because of a cap is exempt. |
 | `maxPasses` | `Infinity` | Total priority rounds, including capped rounds. Final indexing and splitting requests to respect `maxEmbeddingBatchSize` can add provider calls. |
