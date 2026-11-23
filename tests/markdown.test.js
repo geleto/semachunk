@@ -37,9 +37,11 @@ test('section occurrences, active heading text and omitted blocks use original U
     assert.deepEqual(rows.map(c => c.headingPath), [[], ['Root', 'New'], ['Root', 'New'], ['Root', 'New'], ['More here']]);
     assert.equal((await chunks('# A\n## B\nBody'))[0].text, '# A\n## B\nBody');
     assert.equal((await chunks('---\nnot closed\nstill prose'))[0].text, 'not closed\nstill prose');
-    for (const input of ['', ' \r\n', '\uFEFF---\ninvalid: [:\n---', '# A\n## B', '[p]: /private']) {
+    for (const input of ['', ' \r\n', '\uFEFF---\ninvalid: [:\n---', '# A\n## B', '[p]: /private', '[^empty]:']) {
         assert.deepEqual(await chunkText(input, assert.fail, { inputFormat: 'markdown' }), []);
     }
+    const nonadditive = await chunks('# A\n## B\nBody', { maxChunkTokens: 1, countTokens: t => t === '## B\nBody' ? 2 : 1 });
+    assert.equal(nonadditive[0].text, '# A\n## B\nBody');
 });
 
 test('greedy joins count actual separators, recheck hard caps and protect tables and code on both sides', async () => {

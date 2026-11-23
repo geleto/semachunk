@@ -12,6 +12,10 @@ const grammar = {
 const containers = new Set(['list', 'listItem', 'blockquote', 'footnoteDefinition']);
 const inlineAtoms = new Set(['inlineCode', 'link', 'linkReference', 'image', 'imageReference', 'footnoteReference']);
 
+function omitted(node) {
+    return node.type === 'definition' || (node.type === 'footnoteDefinition' && !node.children.length);
+}
+
 function headingText(node) {
     if (node.type === 'html') return '';
     if (node.type === 'break') return ' ';
@@ -129,7 +133,7 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
     // must skip. Never reintroduce a nested definition through a parent slice.
     const descend = new Set(), protectedBlocks = new Set(), prose = new Map();
     function inspect(node) {
-        if (node.type === 'definition') return true;
+        if (omitted(node)) return true;
         if (node.type === 'table' || node.type === 'code') protectedBlocks.add(node);
         if (node.type === 'paragraph' && excludeNonLetterSentences) {
             const parsed = sentences(node);
@@ -149,7 +153,6 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
         const rows = node.children.slice(1).map(lineStart);
         if (!rows.length) return leaf(start, end, 'fragment');
         const headerEnd = rows[0], units = [];
-        let headerUsed = false;
         rows.push(end);
         function group(a, b) {
             return a === headerEnd ? raw(start, b, 'rows') :
@@ -159,14 +162,13 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
             let j = i + 1;
             const a = rows[i];
             if (!within(markdownText(source, group(a, rows[j])))) {
-                if (!headerUsed) units.push(...leaf(start, headerEnd, 'fragment'));
-                units.push(...leaf(a, rows[j], 'fragment'));
+                if (!i) for (const part of leaf(start, headerEnd, 'fragment')) units.push(part);
+                for (const part of leaf(a, rows[j], 'fragment')) units.push(part);
             } else {
                 while (j + 1 < rows.length && headerEnd - start + rows[j + 1] - a <= maxChunkSize &&
                     within(markdownText(source, group(a, rows[j + 1])))) j++;
                 units.push(group(a, rows[j]));
             }
-            headerUsed = true;
             i = j;
         }
         return units;
@@ -174,16 +176,17 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
 
     function code(node, start, end) {
         const mark = offset(node.position.start);
-        const open = /^([\x60]{3,}|~{3,})([^\r\n]*)(\r\n|\r|\n)/.exec(source.slice(mark, end));
+        const open = /^(`{3,}|~{3,})([^\r\n]*)(\r\n|\r|\n)/.exec(source.slice(mark, end));
         const bodyStart = open ? mark + open[0].length : start;
-        let bodyEnd = end;
+        let bodyEnd = end, closingMark, closingWidth;
         if (open) {
             const closeStart = offset(node.position.end) - node.position.end.column + 1;
-            const closing = source.slice(closeStart, offset(node.position.end)).match(/^[>\t ]*([\x60~]+)[\t ]*$/);
-            if (closeStart >= bodyStart && closing && closing[1][0] === open[1][0] &&
-                closing[1] === open[1][0].repeat(closing[1].length) && closing[1].length >= open[1].length &&
+            const closing = /^([>\t ]*)(~{3,}|`{3,})[\t ]*$/.exec(source.slice(closeStart, offset(node.position.end)));
+            if (closeStart >= bodyStart && closing?.[2].startsWith(open[1]) &&
                 node.position.end.line - node.position.start.line > (node.value ? node.value.split(/\r\n|[\r\n]/).length : 0)) {
                 bodyEnd = closeStart;
+                closingMark = closeStart + closing[1].length;
+                closingWidth = closing[2].length;
             }
         }
         if (bodyStart >= bodyEnd) return leaf(start, end, 'fragment');
@@ -195,7 +198,7 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
             if (open) {
                 const marker = open[1][0];
                 let width = open[1].length;
-                for (const run of source.slice(a, b).matchAll(marker === '~' ? /~{3,}/g : /[\x60]{3,}/g)) {
+                for (const run of source.slice(a, b).matchAll(marker === '~' ? /~{3,}/g : /`{3,}/g)) {
                     width = Math.max(width, run[0].length + 1);
                 }
                 fence = marker.repeat(width);
@@ -207,10 +210,7 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
             if (open) {
                 if (!/[\r\n]/.test(source[b - 1])) parts.push(eol);
                 if (b === bodyEnd && end > bodyEnd) {
-                    const closing = source.slice(bodyEnd, end);
-                    const markerAt = closing.indexOf(open[1]);
-                    const length = closing.slice(markerAt).match(/^[\x60~]+/)[0].length;
-                    parts.push([bodyEnd, bodyEnd + markerAt], fence.slice(length), [bodyEnd + markerAt, end]);
+                    parts.push([bodyEnd, closingMark], fence.slice(closingWidth), [closingMark, end]);
                 } else parts.push(prefix + fence);
             }
             return { ...raw(a === bodyStart ? start : a, b === bodyEnd ? end : b, 'fragment'), parts };
@@ -241,7 +241,7 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
     }
 
     function blocks(node, start, end) {
-        if (node.type === 'definition') return [];
+        if (omitted(node)) return [];
         const kind = protectedBlocks.has(node) ? (containers.has(node.type) ? 'container' : node.type) : 'prose';
         if (!descend.has(node) && !(sentenceUnits && node.type === 'paragraph') &&
             (node.type === 'code' ? within(source.slice(start, end)) : wholeFits(start, end))) return [raw(start, end, kind)];
@@ -278,14 +278,16 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
         if (['yaml', 'definition', 'thematicBreak'].includes(node.type)) { pending = []; continue; }
         inspect(node);
         for (const unit of blocks(node, start, end)) {
-            const bodyStart = unit.start;
+            let first = unit.start, adjacent = unit.start;
             for (let i = pending.length - 1; i >= 0; i--) {
                 const h = pending[i];
-                if (/\S/u.test(source.slice(h.end, unit.start))) break;
-                const parts = unit.parts && [[h.start, bodyStart], ...unit.parts.slice(unit.start === bodyStart ? 0 : 1)];
-                if (fits && !fits(parts ? partsText(source, parts) : source.slice(h.start, unit.end))) break;
-                unit.start = h.start;
-                if (parts) unit.parts = parts;
+                if (/\S/u.test(source.slice(h.end, adjacent))) break;
+                adjacent = h.start;
+                if (!fits || fits(source.slice(h.start, unit.start) + markdownText(source, unit))) first = h.start;
+            }
+            if (first < unit.start) {
+                unit.parts?.unshift([first, unit.start]);
+                unit.start = first;
             }
             pending = [];
             units.push(Object.assign(unit, { headingPath, sectionId }));
