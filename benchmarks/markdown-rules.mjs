@@ -50,14 +50,7 @@ export async function studyRules({ report, prior, data, run, validation }) {
         grid[name] = {};
         for (const [label, size] of configs) {
             const key = name + '/' + label;
-            const policy = { ...size, ...options };
-            const saved = !validation && prior.experiment === 'rules' && prior.samplesSHA256 === report.samplesSHA256 && prior.policies[key];
-            if (saved && JSON.stringify(saved.policy) === JSON.stringify(policy)) {
-                report.policies[key] = saved;
-                report.reusedConfigurations = (report.reusedConfigurations ?? 0) + 1;
-                report.carriedForwardEncoder = prior.encoder;
-            }
-            else await run(key, policy);
+            await run(key, { ...size, ...options });
             grid[name][label] = key;
         }
         summarize(name);
@@ -97,6 +90,8 @@ export async function studyRules({ report, prior, data, run, validation }) {
         compare(id, 'frozen');
     }
     const budget = best(budgets);
+    compare(pass, 'pack');
+    compare(pass, budget);
     const structural = validation ? [prior.shortlist.structure] : Object.keys(structureRules);
     for (const id of structural) {
         await measure(id, { ...fixed, ...schedules[schedule], ...structureRules[id] });
@@ -105,4 +100,12 @@ export async function studyRules({ report, prior, data, run, validation }) {
         compare(id, budget);
     }
     report.shortlist = { schedule, pass, budget, structure: best(structural) };
+    if (validation) {
+        report.scoringBySize = {};
+        for (const [label] of configs) {
+            const a = report.policies[grid.frozen[label]], b = report.policies[grid.pack[label]];
+            const { deltaPer100, ci95 } = paired(a, b, data);
+            report.scoringBySize[label] = { deltaPer100, ci95 };
+        }
+    }
 }

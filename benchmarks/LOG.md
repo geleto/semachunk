@@ -1,5 +1,15 @@
 # Chunking improvements and benchmark results
 
+## 2026-11-23 · Independent test of automatic Markdown rules
+
+On 172 fresh questions the budget switch recovered **60.93%** of complete evidence at 512 delivered tokens across the six settings. Greedy packing recovered **58.50%**. The paired gain was **+2.43 per 100** (95% interval −0.78 to +5.68). The budget switch used 1,463,289 embedding tokens versus 1,104,710 for packing and 1,618,484 for scoring everywhere. The document-structure rule reached 61.23%, +0.30 over the budget rule (−1.15 to +1.56). [Validation scores, cost and paired intervals](results/2026-11-23-markdown-rule-validation.json)
+
+Tightening the cutoff to the initial mean after the first pass reached 62.17%, +3.66 over packing (+0.82 to +6.67), +0.96 over a frozen cutoff (−0.43 to +2.81), and +1.24 over the budget rule (−0.26 to +3.18). It used 1,561,480 tokens. At 256 body tokens, original-boundary scoring gained +4.87 per 100 (+0.22 to +9.82), the third positive independent interval at the previously selected setting. At 500 characters the difference was −0.06 (−3.01 to +2.37). The mixed-cap runs matched the tighter limit, including chunk hashes and retrieval scores. The heuristic search and this validation added 364 provider requests, 18,963 inputs and 2,309,949 reported tokens.
+
+The budget-switch interval crosses zero across sizes, and the pass challenger changed rank between calibration and validation. Use one larger replication of the frozen shortlist to resolve the release decision. Keep all cutoffs, pass schedules, size settings, controls, metric and weighting fixed. The primary comparison is the budget switch against packing. Adopt it if the lower paired bound exceeds zero. A more expensive pass or document rule must clear both packing and the budget switch and show positive differences against both on the preceding independent sample. Otherwise choose the simpler qualifying rule, or packing when none qualifies. This is the final sample for this decision.
+
+The replication has 298 contract, 135 paper, 115 row-plus-prose financial and 128 multi-hop questions. It uses the next 24 contracts and 48 papers in seeded order and all 68 eligible financial reports in the released test split that appeared in none of the sampled development groups. Four title-disjoint, balanced 32-question multi-hop pools preserve the distractor setting. All document IDs, question IDs and groups were checked against the preceding four splits before scoring. [Frozen sample and source hashes](results/2026-11-23-markdown-samples.json)
+
 ## 2026-11-23 · Automatic policy experiment design
 
 Use the original calibration documents for the heuristic search. Cross three character caps (500, 1,024 and 2,048) with three independently measured token budgets (128, 256 and 512) as six separate settings. The pairs have similar nominal sizes in English. Token counts are measured for each actual input. Weight each setting and each dataset equally. Resample independent question groups once per bootstrap draw, keeping all six results for each question together.

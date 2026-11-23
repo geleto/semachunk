@@ -14,9 +14,9 @@ import { bm25Ranker, budgets, wordCounts } from './rag.mjs';
 
 const read = async path => JSON.parse(await readFile(path, 'utf8'));
 const [experiment, output, previous, candidate] = process.argv.slice(2);
-const ruleStudy = experiment === 'rules' || experiment === 'validate-rules';
-const split = experiment === 'validate-rules' ? 'rules-test' : experiment === 'confirm' ? 'confirmation' : experiment === 'final' ? 'final' : 'calibration';
-if (!['size', 'compare', 'context', 'final', 'confirm', 'rules', 'validate-rules'].includes(experiment) || !output) {
+const ruleStudy = ['rules', 'validate-rules', 'replicate-rules'].includes(experiment);
+const split = ({ 'validate-rules': 'rules-test', 'replicate-rules': 'replication', confirm: 'confirmation', final: 'final' })[experiment] ?? 'calibration';
+if (!['size', 'compare', 'context', 'final', 'confirm'].includes(experiment) && !ruleStudy || !output) {
     throw new Error('Supply a Markdown study experiment and a new JSON output path.');
 }
 if (existsSync(output)) throw new Error('Result already exists: ' + output);
@@ -42,7 +42,7 @@ async function prepare() {
         for (const doc of docs) {
             doc.offsets = encoder.offsets(doc.source);
             doc.ends = doc.offsets.map(o => o[1]);
-            doc.parts = await splitPlain(chunkText, doc.source);
+            if (experiment === 'size' || experiment === 'final') doc.parts = await splitPlain(chunkText, doc.source);
             doc.parsed = new Map();
         }
         for (const q of questions) q.gold = q.references.map(ref => goldReference(ref, docs));
@@ -82,7 +82,7 @@ async function evaluate(task, policy) {
     const dense = denseRanker(matrix), pools = new Map(), retrieval = {}, complete512 = {}, examples = {};
     const all = docs.map((_, d) => d);
     for (const [i, q] of questions.entries()) {
-        for (const [name, pool] of task === 'hotpotqa' ? [['shortlist', q.pool], ['pooled', all]] : [['document', q.pool]]) {
+        for (const [name, pool] of task === 'hotpotqa' ? [['shortlist', q.pool], ['pooled', q.pooled ?? all]] : [['document', q.pool]]) {
             const key = name + pool.join(',');
             if (!pools.has(key)) {
                 const passages = pool.flatMap(d => byDoc[d]);
@@ -137,7 +137,7 @@ async function run(name, policy, subset = tasks) {
 
 async function main() {
     await prepare();
-    if (ruleStudy) return studyRules({ report, prior, data, run, validation: experiment === 'validate-rules' });
+    if (ruleStudy) return studyRules({ report, prior, data, run, validation: experiment !== 'rules' });
     const tokens = prior.tokens;
     if (experiment === 'size') {
         for (const size of [128, 256, 512]) await run('plain-' + size, { method: 'plain-pack', tokens: size });

@@ -31355,6 +31355,155 @@
         }
       }
     },
+    "tighten vs pack": {
+      "deltaPer100": 1.988835705693659,
+      "ci95": [
+        -1.2346925949867127,
+        5.234973659003832
+      ],
+      "perTask": {
+        "cuad": {
+          "winsPer100": 6.976744186046512,
+          "lossesPer100": 4.651162790697675,
+          "wins": [
+            "GOOSEHEADINSURANCE,INC_04_02_2018-EX-10.6-Franchise Agreement__Expiration Date",
+            "CENTRACKINTERNATIONALINC_10_29_1999-EX-10.3-WEB SITE HOSTING AGREEMENT__Agreement Date",
+            "CENTRACKINTERNATIONALINC_10_29_1999-EX-10.3-WEB SITE HOSTING AGREEMENT__Effective Date",
+            "CENTRACKINTERNATIONALINC_10_29_1999-EX-10.3-WEB SITE HOSTING AGREEMENT__Cap On Liability",
+            "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement__Non-Compete",
+            "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement__Irrevocable Or Perpetual License"
+          ],
+          "losses": [
+            "GOOSEHEADINSURANCE,INC_04_02_2018-EX-10.6-Franchise Agreement__Competitive Restriction Exception",
+            "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement__Expiration Date",
+            "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement__Uncapped Liability",
+            "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement__Insurance"
+          ]
+        },
+        "qasper": {
+          "winsPer100": 17.24137931034483,
+          "lossesPer100": 13.793103448275861,
+          "wins": [
+            "ec2045e0da92989642a5b5f2b1130c8bd765bcc5",
+            "d14118b18ee94dafe170439291e20cb19ab7a43c",
+            "2c4db4398ecff7e4c1c335a2cb3864bfdc31df1a",
+            "7ece07a84635269bb19796497847e4517d1e3e61",
+            "2803709fba74e6098aae145abcbf0e9a3f4c35e5"
+          ],
+          "losses": [
+            "014830892d93e3c01cb659ad31c90de4518d48f3",
+            "036c400424357457e42b22df477b7c3cdc2eefe9",
+            "08561f6ba578ce8f8d284abf90f5b24eb1f804d3",
+            "3c414f7fbf577dfd3363be6bbc9eba8bdd01f45f"
+          ]
+        },
+        "finqa": {
+          "winsPer100": 32.55813953488372,
+          "lossesPer100": 9.30232558139535,
+          "wins": [
+            "BLK/2014/page_119.pdf-1",
+            "FBHS/2017/page_23.pdf-1",
+            "MS/2014/page_292.pdf-2",
+            "BLK/2012/page_160.pdf-1",
+            "UAA/2016/page_52.pdf-2",
+            "AON/2009/page_48.pdf-3",
+            "HOLX/2008/page_144.pdf-2",
+            "BLK/2012/page_37.pdf-1",
+            "DRE/2007/page_59.pdf-2",
+            "MSI/2006/page_61.pdf-1",
+            "ETR/2011/page_341.pdf-1",
+            "BKR/2017/page_103.pdf-2",
+            "AAP/2012/page_12.pdf-3",
+            "AAP/2011/page_28.pdf-3"
+          ],
+          "losses": [
+            "ETR/2015/page_131.pdf-1",
+            "K/2013/page_62.pdf-2",
+            "IP/2009/page_37.pdf-1",
+            "ETR/2015/page_131.pdf-3"
+          ]
+        },
+        "hotpotqa": {
+          "winsPer100": 3.125,
+          "lossesPer100": 15.625,
+          "wins": [
+            "5ab720685542993667793f44"
+          ],
+          "losses": [
+            "5abd02605542992ac4f381a2",
+            "5a77727555429972597f1540",
+            "5ac0f7df554299012d1db667",
+            "5ab55e015542992aa134a2d3",
+            "5ae4d0ff55429913cc204511"
+          ]
+        }
+      }
+    },
+    "tighten vs medium-budget": {
+      "deltaPer100": -0.8630087209302362,
+      "ci95": [
+        -2.6704495081936614,
+        0.8846117469976496
+      ],
+      "perTask": {
+        "cuad": {
+          "winsPer100": 3.488372093023256,
+          "lossesPer100": 2.3255813953488373,
+          "wins": [
+            "GOOSEHEADINSURANCE,INC_04_02_2018-EX-10.6-Franchise Agreement__Expiration Date",
+            "CENTRACKINTERNATIONALINC_10_29_1999-EX-10.3-WEB SITE HOSTING AGREEMENT__Agreement Date",
+            "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement__Non-Compete"
+          ],
+          "losses": [
+            "GOOSEHEADINSURANCE,INC_04_02_2018-EX-10.6-Franchise Agreement__Non-Transferable License",
+            "HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development Agreement__Insurance"
+          ]
+        },
+        "qasper": {
+          "winsPer100": 10.344827586206897,
+          "lossesPer100": 10.344827586206897,
+          "wins": [
+            "d14118b18ee94dafe170439291e20cb19ab7a43c",
+            "7ece07a84635269bb19796497847e4517d1e3e61",
+            "2803709fba74e6098aae145abcbf0e9a3f4c35e5"
+          ],
+          "losses": [
+            "014830892d93e3c01cb659ad31c90de4518d48f3",
+            "08561f6ba578ce8f8d284abf90f5b24eb1f804d3",
+            "3c414f7fbf577dfd3363be6bbc9eba8bdd01f45f"
+          ]
+        },
+        "finqa": {
+          "winsPer100": 9.30232558139535,
+          "lossesPer100": 6.976744186046512,
+          "wins": [
+            "AON/2009/page_48.pdf-3",
+            "HOLX/2008/page_144.pdf-2",
+            "ETR/2011/page_341.pdf-1",
+            "AAP/2011/page_28.pdf-3"
+          ],
+          "losses": [
+            "K/2013/page_62.pdf-2",
+            "ETR/2011/page_324.pdf-2",
+            "IP/2009/page_37.pdf-1"
+          ]
+        },
+        "hotpotqa": {
+          "winsPer100": 3.125,
+          "lossesPer100": 15.625,
+          "wins": [
+            "5ab720685542993667793f44"
+          ],
+          "losses": [
+            "5abd02605542992ac4f381a2",
+            "5a77727555429972597f1540",
+            "5ac0f7df554299012d1db667",
+            "5ab55e015542992aa134a2d3",
+            "5ae4d0ff55429913cc204511"
+          ]
+        }
+      }
+    },
     "half-eligible vs pack": {
       "deltaPer100": 2.3946012095696356,
       "ci95": [

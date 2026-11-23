@@ -13,7 +13,7 @@ function shuffled(items, key) {
 function partition(items, key, size, historical = []) {
     const exclude = new Set(historical.map(key));
     const order = shuffled(items.filter(item => !exclude.has(key(item))), key);
-    return Array.from({ length: 4 }, (_, i) => order.slice(i * size, (i + 1) * size));
+    return [...Array.from({ length: 4 }, (_, i) => order.slice(i * size, (i + 1) * size)), order.slice(4 * size, 8 * size)];
 }
 
 function corpus() {
@@ -140,42 +140,54 @@ function multiHop(rows) {
         if (ref.some(s => !s)) throw new Error('Unmapped supporting sentence ' + row._id);
         data.questions.push({ id: row._id, group: row._id, text: row.question, pool, references: [ref] });
     }
+    // Larger replications use independent pools of the original 32-question size.
+    if (data.questions.length > 32) for (let i = 0; i < data.questions.length; i += 32) {
+        const group = data.questions.slice(i, i + 32), pooled = group.flatMap(q => q.pool);
+        for (const q of group) q.pooled = pooled;
+    }
     return data;
 }
 
 export async function markdownCorpora(split) {
-    const i = ['calibration', 'final', 'confirmation', 'rules-test'].indexOf(split);
+    const i = ['calibration', 'final', 'confirmation', 'rules-test', 'replication'].indexOf(split);
     if (i < 0) throw new Error('Unknown Markdown study split');
     const { data: cuad } = await readJSON('cuad');
     const qasper = Object.entries(await tarJSON(await asset(assets.qasper), 'qasper-test-v0.3.json'));
-    const finance = (await readJSON('finqa')).filter(row => {
+    function mixedEvidence(row) {
         const ids = Object.keys(row.qa.gold_inds);
         return ids.some(k => k.startsWith('table_')) && ids.some(k => k.startsWith('text_'));
-    });
-    const reports = new Set(partition([...new Set(finance.map(reportId))], r => r, 24)[i]);
-    const hotpot = await readJSON('hotpotqa'), selected = [[], [], [], []], seen = new Set();
+    }
+    const development = (await readJSON('finqa')).filter(mixedEvidence);
+    const developmentReports = new Set(development.map(reportId));
+    const reports = new Set(partition([...developmentReports], r => r, 24)[i]);
+    const finance = i === 4 ? (await readJSON('finqaTest')).filter(r => mixedEvidence(r) && !developmentReports.has(reportId(r))) :
+        development.filter(r => reports.has(reportId(r)));
+    const hotpot = await readJSON('hotpotqa'), selected = [[], [], [], [], []], seen = new Set();
     for (const kind of ['bridge', 'comparison']) {
         const rows = hotpot.filter(r => r.type === kind);
         for (const row of evenly(rows, 32)) for (const [title] of row.context) seen.add(title);
     }
-    function pick(kind, count, target) {
+    function pick(kind, count) {
         const rows = shuffled(hotpot.filter(r => r.type === kind), r => r._id);
-        let n = 0;
+        const batch = [];
         for (const row of rows) {
             if (row.context.some(([title]) => seen.has(title))) continue;
-            selected[target(n)].push(row);
+            batch.push(row);
             for (const [title] of row.context) seen.add(title);
-            if (++n === count) break;
+            if (batch.length === count) return batch;
         }
+        throw new Error('Insufficient independent multi-hop questions');
     }
-    for (const kind of ['bridge', 'comparison']) pick(kind, 32, n => n % 2);
+    for (const kind of ['bridge', 'comparison']) pick(kind, 32).forEach((row, n) => selected[n % 2].push(row));
     for (let extra = 2; extra <= i; extra++) {
-        for (const kind of ['bridge', 'comparison']) pick(kind, 16, () => extra);
+        const count = extra === 4 ? 64 : 16;
+        const bridge = pick('bridge', count), comparison = pick('comparison', count);
+        for (let n = 0; n < count; n += 16) selected[extra].push(...bridge.slice(n, n + 16), ...comparison.slice(n, n + 16));
     }
     return {
         cuad: contracts(partition(cuad, r => r.title, 6, evenly(cuad, 8))[i]),
         qasper: papers(partition(qasper, ([id]) => id, 12, evenly(qasper, 16))[i]),
-        finqa: finances(finance.filter(row => reports.has(reportId(row)))),
+        finqa: finances(finance),
         hotpotqa: multiHop(selected[i]),
     };
 }
