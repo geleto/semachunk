@@ -12,6 +12,8 @@ export const dimension = 1536;
 export const encodingName = 'cl100k_base';
 export const modelInputTokens = 8192;
 const rowBytes = dimension * Float32Array.BYTES_PER_ELEMENT;
+const replaySuffix = '.' + model + '-' + dimension + '.keys';
+const vectorDirectory = join(cache, 'openai-embeddings');
 
 export function openTokenizer() {
     const bpe = get_encoding(encodingName);
@@ -137,7 +139,7 @@ export async function cachedVectors(texts, countTokens, request, directory, reco
             const temp = path + '.' + randomUUID();
             try {
                 await writeFile(temp, JSON.stringify(input.map(sha256)), { flag: 'wx' });
-                try { await link(temp, path + '.keys'); } catch (error) { if (error.code !== 'EEXIST') throw error; }
+                try { await link(temp, path + replaySuffix); } catch (error) { if (error.code !== 'EEXIST') throw error; }
             } finally { await rm(temp, { force: true }); }
         }
         bytes.copy(matrixBytes, start * rowBytes);
@@ -148,7 +150,7 @@ export async function cachedVectors(texts, countTokens, request, directory, reco
     return { matrix, textsSHA256: sha256(JSON.stringify(texts)), vectorsSHA256, precomputation };
 }
 
-export function openEncoder(envFile) {
+export function openEncoder(envFile, directory = vectorDirectory) {
     const tokenizer = openTokenizer();
     let client;
     async function request(input) {
@@ -162,19 +164,19 @@ export function openEncoder(envFile) {
         }
     }
     return { ...tokenizer, vectors: (texts, recordKeys) =>
-        cachedVectors(texts, tokenizer.countTokens, request, join(cache, 'openai-embeddings'), recordKeys) };
+        cachedVectors(texts, tokenizer.countTokens, request, directory, recordKeys) };
 }
 
 // Index recorded provider batches by exact input. A new candidate order or
 // batch size can reuse their vectors. Coalesce misses from concurrent documents.
-export async function openReplay(envFile) {
-    const encoder = openEncoder(envFile), directory = join(cache, 'openai-embeddings');
+export async function openReplay(envFile, directory = vectorDirectory) {
+    const encoder = openEncoder(envFile, directory);
     await mkdir(directory, { recursive: true });
     const disk = new Map(), memory = new Map();
     for (const name of await readdir(directory)) {
-        if (!name.endsWith('.f32.keys')) continue;
+        if (!name.endsWith('.f32' + replaySuffix)) continue;
         const keys = JSON.parse(await readFile(join(directory, name), 'utf8'));
-        keys.forEach((key, row) => disk.set(key, { file: name.slice(0, -5), row, count: keys.length }));
+        keys.forEach((key, row) => disk.set(key, { file: name.slice(0, -replaySuffix.length), row, count: keys.length }));
     }
     const stats = { apiRequests: 0, apiInputs: 0, apiInputTokens: 0, diskTexts: 0, memoryTexts: 0, replayMs: 0 };
     let pending = [], flushing = false;

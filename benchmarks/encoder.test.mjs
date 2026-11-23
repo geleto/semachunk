@@ -3,7 +3,7 @@ import { mkdtemp, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { cachedVectors, dimension, embeddingBatches, model, openTokenizer } from './encoder.mjs';
+import { cachedVectors, dimension, embeddingBatches, model, openReplay, openTokenizer } from './encoder.mjs';
 import { retrieval } from './quality.mjs';
 import { prepare } from './rag.mjs';
 import { chunkText } from '../src/index.js';
@@ -52,6 +52,25 @@ test('malformed API rows are rejected before cache publication', async t => {
     await assert.rejects(run([row, row]), /row index/);
     await assert.rejects(run([row, { index: 1, embedding: 'AA==' }]), /dimension/);
     assert.deepEqual(await readdir(dir), []);
+});
+
+test('exact-string replay reorders rows across batches and reuses simultaneous requests', async t => {
+    const dir = await mkdtemp(join(tmpdir(), 'semachunk-replay-'));
+    t.after(() => rm(dir, { recursive: true, force: true }));
+    for (const input of [['a', 'b'], ['c']]) {
+        await cachedVectors(input, () => 1, texts => ({ model, usage: { prompt_tokens: texts.length },
+            data: texts.map((text, index) => {
+                const bytes = Buffer.alloc(dimension * 4);
+                bytes.writeFloatLE(text.charCodeAt(0));
+                return { index, embedding: bytes.toString('base64') };
+            }) }), dir, true);
+    }
+    const replay = await openReplay(undefined, dir);
+    t.after(replay.close);
+    const output = await Promise.all([replay.embed(['c', 'a']), replay.embed(['b', 'c'])]);
+    assert.deepEqual(output.map(rows => rows.map(v => v[0])), [[99, 97], [98, 99]]);
+    assert.equal(replay.stats.diskTexts, 3);
+    assert.equal(replay.stats.apiRequests, 0);
 });
 
 test('a budget ending inside a UTF-8 character cannot recover that character as an answer', t => {

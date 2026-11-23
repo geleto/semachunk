@@ -1,5 +1,5 @@
 import { alignDocument, compact, cuad, hotpotqa, lowerBound, qasper } from './corpora.mjs';
-import { costs, denseRanker, indexedChunks, internCandidates, measure, qualityPlans, split, vocabulary } from './chunking.mjs';
+import { costs, denseRanker, indexedChunks, internCandidates, measure, packSentences, qualityPlans, split, vocabulary } from './chunking.mjs';
 import { modelInputTokens } from './encoder.mjs';
 
 export const budgets = [256, 512, 1024];
@@ -32,6 +32,11 @@ export async function prepare(docs, questions, chunkText, encoder, plans) {
         const doc = { ...alignDocument(original, parts), raw, flat, parts };
         aligned.push(doc);
         internCandidates(parts, 500, vocab);
+        for (const plan of Object.values(plans)) {
+            if (plan.pack && plan.maxChunkTokens) {
+                packSentences(parts, plan.maxChunkSize, plan.maxChunkTokens, encoder.countTokens).forEach(vocab.intern);
+            }
+        }
         if (needFlat) {
             const flatParts = await split(chunkText, flat);
             if (flatParts.join(' ') !== doc.text) throw new Error('Flat control source positions differ in ' + doc.title);
