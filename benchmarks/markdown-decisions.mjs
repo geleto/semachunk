@@ -1,18 +1,18 @@
-function primary(task) { return task === 'hotpotqa' ? 'pooled/dense' : 'document/dense'; }
-export function macro(row) {
+function primary(task, ranker) { return (task === 'hotpotqa' ? 'pooled/' : 'document/') + ranker; }
+export function macro(row, ranker = 'dense') {
     const tasks = Object.keys(row.tasks);
-    return tasks.reduce((sum, t) => sum + row.tasks[t].retrieval[primary(t)][512].complete / row.tasks[t].questions, 0) / tasks.length;
+    return tasks.reduce((sum, t) => sum + row.tasks[t].retrieval[primary(t, ranker)][512].complete / row.tasks[t].questions, 0) / tasks.length;
 }
 
 // Resample whole contracts, papers, reports or independent question pools,
 // paired within task. Each of the four tasks gets the same weight.
-export function paired(a, b, data) {
+export function paired(a, b, data, ranker = 'dense', controlRanker = ranker) {
     const tasks = Object.keys(data);
     let seed = 20261123;
     const random = () => (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 2 ** 32;
     const groups = [], perTask = {};
     for (const t of tasks) {
-        const x = a.tasks[t].complete512[primary(t)], y = b.tasks[t].complete512[primary(t)];
+        const x = a.tasks[t].complete512[primary(t, ranker)], y = b.tasks[t].complete512[primary(t, controlRanker)];
         const byGroup = new Map(), wins = [], losses = [];
         data[t].questions.forEach(({ group, id }, i) => {
             if (!byGroup.has(group)) byGroup.set(group, [0, 0]);
@@ -38,7 +38,7 @@ export function paired(a, b, data) {
         draws.push(100 * sum / groups.length);
     }
     draws.sort((a, b) => a - b);
-    return { deltaPer100: 100 * (macro(a) - macro(b)), ci95: [draws[50], draws[1949]], perTask };
+    return { deltaPer100: 100 * (macro(a, ranker) - macro(b, controlRanker)), ci95: [draws[50], draws[1949]], perTask };
 }
 
 export function selectCombination(report, data) {

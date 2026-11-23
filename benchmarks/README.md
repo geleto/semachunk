@@ -104,7 +104,14 @@ The six primary settings are 500, 1,024 and 2,048 characters and 128, 256 and 51
 
 In a six-setting comparison, a question counts as a win if the rule recovered its complete evidence at more settings than the control. The paired difference and interval use the magnitude of each question's change.
 
-All arms search the same sources. QASPER uses the paper's heading hierarchy. FinQA includes pre-table prose, the table and post-table prose with offsets keyed by the annotation IDs. A financial hit requires every annotated row and prose span. The primary score averages the four dataset complete-evidence rates at 512 delivered tokens with pooled HotpotQA. The diagnostic shortlist searches each question's supplied articles. The report also records both rankers at 256 and 1,024 tokens, per-question paired outcomes and group bootstrap intervals. [Frozen sample IDs](results/2026-11-23-markdown-samples.json)
+The external comparison runs the public API, reference recursive splitters, sentence packing and overlapping token windows on the same 676 questions. It reports dense, BM25 and hybrid retrieval. Install the pinned reference implementation in the ignored benchmark cache and pass a new output path.
+
+```sh
+npm install --prefix benchmarks/.cache/reference --no-save --package-lock=false --ignore-scripts @langchain/textsplitters@1.0.2 @langchain/core@1.5.0
+node --max-old-space-size=6144 benchmarks/markdown-study.mjs baselines retrieval-baselines.json
+```
+
+All arms search the same sources. QASPER uses the paper's heading hierarchy. FinQA includes pre-table prose, the table and post-table prose with offsets keyed by the annotation IDs. A financial hit requires every annotated row and prose span. The primary score averages the four dataset complete-evidence rates at 512 delivered tokens with pooled HotpotQA. The diagnostic shortlist searches each question's supplied articles. Each report also records scores at 256 and 1,024 delivered tokens, per-question outcomes at 512 tokens and paired group bootstrap intervals. [Frozen sample IDs](results/2026-11-23-markdown-samples.json)
 
 ## Run the large-document benchmark
 

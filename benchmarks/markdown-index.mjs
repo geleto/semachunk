@@ -8,6 +8,8 @@ import { tokenBudget } from '../src/token-limit.js';
 import { packSentences } from './chunking.mjs';
 import { alignPlain, tokenWindows } from './delivered-context.mjs';
 import { combineMarkdown } from './markdown-merging.mjs';
+import { referenceChunks } from './retrieval-baselines.mjs';
+import { modelInputTokens } from './encoder.mjs';
 
 function parsed(doc, size, tokens, fits, sentences) {
     const key = [size, tokens, Boolean(sentences)].join('/');
@@ -81,22 +83,28 @@ export async function indexDocument(doc, policy, costs, initial, context, encode
     const required = doc.chunkPrefix?.trim() ? doc.chunkPrefix + ': ' : '';
     const maxChunkSize = policy.chars ?? Infinity, maxChunkTokens = policy.tokens ?? Infinity;
     const fits = tokenBudget(maxChunkTokens, countTokens, required);
+    const nativeSplitter = policy.method === 'recursive' || policy.method === 'recursive-markdown';
+    const publicAPI = policy.method === 'public-markdown' || policy.method === 'plain-priority';
+    const inputLimit = policy.contextCap ?? (nativeSplitter ? modelInputTokens : maxChunkTokens);
     function record(texts) {
         costs.calls++;
         costs.texts += texts.length;
         costs.singletons += Number(texts.length === 1);
         for (const text of texts) {
             costs.embeddedTokens += countTokens(text);
-            if (countTokens(text) > (policy.contextCap ?? maxChunkTokens)) throw new Error('Index input exceeds cap');
+            if (countTokens(text) > inputLimit) throw new Error('Index input exceeds cap');
         }
         return encoder.embed(texts);
     }
     const embed = createBatchEmbedder(record, 256);
     let chunks;
-    if (policy.method === 'plain-priority') {
-        const output = await chunkText(doc.source, record, { maxChunkSize, maxChunkTokens, countTokens, maxEmbeddingBatchSize: 256,
-            chunkPrefix: doc.chunkPrefix, excludeChunkPrefixInResults: true });
-        chunks = alignPlain(doc.source, output.map(c => c.text));
+    if (publicAPI) {
+        const markdown = policy.method === 'public-markdown';
+        const output = await chunkText(doc.source, record, { inputFormat: markdown ? 'markdown' : 'text', maxChunkSize,
+            maxChunkTokens, countTokens, maxEmbeddingBatchSize: 256, chunkPrefix: doc.chunkPrefix, excludeChunkPrefixInResults: true });
+        chunks = markdown ? output.map(({ embedding, ...chunk }) => chunk) : alignPlain(doc.source, output.map(c => c.text));
+    } else if (nativeSplitter) {
+        chunks = await referenceChunks(doc.source, policy, countTokens);
     } else if (policy.method === 'plain-pack') {
         chunks = alignPlain(doc.source, packSentences(doc.parts, maxChunkSize, maxChunkTokens, countTokens, required));
     } else if (policy.method === 'window') {
@@ -113,6 +121,6 @@ export async function indexDocument(doc, policy, costs, initial, context, encode
     const inputs = chunks.map(c => c.embeddingText ?? c.text);
     costs.indexTexts += chunks.length;
     costs.indexTokens += inputs.reduce((n, s) => n + countTokens(s), 0);
-    if (policy.method !== 'plain-priority') await embed(inputs);
+    if (!publicAPI) await embed(inputs);
     return chunks;
 }

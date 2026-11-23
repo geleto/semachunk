@@ -1,5 +1,43 @@
 # Chunking improvements and benchmark results
 
+## 2026-11-23 · Comparison with other chunking and retrieval methods
+
+At 256 body tokens with dense search, the shipped Markdown implementation gained **8.03 percentage points over sentence packing** (paired 95% interval +4.13 to +12.09) and **8.31 over overlapping token windows** (+4.57 to +12.15). Its lead over generic recursive splitting with 25% overlap was **0.81 points** (−3.05 to +4.56), at a cost of **28.6% more embedding tokens** to build the index. The two overlapping recursive splitters tied on the aggregate dense score, with different outcomes on 12 paper questions. [Full scores, per-question outcomes and paired intervals](results/2026-11-23-retrieval-baselines.json)
+
+Each percentage is the average of four dataset rates for retrieving all annotated evidence in 512 delivered tokens. Cold embedding tokens include each method's boundary-scoring and final indexing inputs. Indexed chunks count the vectors stored for retrieval.
+
+| Body setting | Chunker | Dense | BM25 | Hybrid | Indexed chunks | Cold embedding tokens |
+|---|---|---:|---:|---:|---:|---:|
+| 256 tokens | **Shipped Markdown** | **57.99%** | 44.26% | **55.43%** | 7,828 | 1,079,606 |
+| 256 tokens | Sentence packing | 49.95% | 41.99% | 50.27% | 3,996 | 753,054 |
+| 256 tokens | Recursive, zero overlap | 54.91% | 46.59% | 54.20% | 4,637 | 760,579 |
+| 256 tokens | Recursive, 25% overlap | 57.17% | 47.23% | 55.12% | 4,893 | 839,378 |
+| 256 tokens | Markdown recursive, 25% overlap | 57.17% | **48.15%** | 54.57% | 5,052 | 833,204 |
+| 256 tokens | Token windows, 25% overlap | 49.68% | 42.34% | 47.96% | 4,488 | 959,894 |
+| 500 characters | **Shipped Markdown** | **53.20%** | **42.72%** | **50.05%** | 9,887 | 767,454 |
+| 500 characters | Sentence packing | 48.09% | 41.99% | 47.34% | 8,848 | 752,027 |
+| 500 characters | Recursive, zero overlap | 48.29% | 38.93% | 45.98% | 10,549 | 759,421 |
+| 500 characters | Recursive, 25% overlap | 51.95% | 40.68% | 50.01% | 11,263 | 877,421 |
+| 500 characters | Markdown recursive, 25% overlap | 51.76% | 40.87% | 49.64% | 11,436 | 876,430 |
+
+At 256 body tokens, dense search with shipped Markdown recovered more complete contract evidence than overlapping generic recursion (37.58% vs 32.55%) and less financial evidence (63.48% vs 66.09%). Papers scored 49.63% vs 50.37% and pooled HotpotQA scored 81.25% vs 79.69%. Reducing the delivered budget to 256 tokens gave 39.22% vs 36.67%. Increasing it to 1,024 gave 74.77% vs 73.50%.
+
+With BM25 alone, the Markdown recursive splitter led shipped Markdown by 3.89 points (+1.07 to +6.58). On the shipped chunks, fusing dense and keyword ranks reduced complete evidence by 2.56 points at 256 body tokens (−5.12 to −0.14) and by 3.15 at 500 characters (−5.98 to −0.34).
+
+At the public 500-character default, shipped greedy packing scored 1.25 points above overlapping generic recursion with dense search (−1.59 to +3.99) and used 12.5% fewer embedding tokens. The character setting is a soft target for shipped Markdown and sentence packing. They exceeded it on 511 of 9,887 and 400 of 8,848 chunks respectively. All recursive character chunks met it. At the 256-token setting every shipped chunk met the hard limit. The three recursive configurations exceeded their token target on 8, 14 and 14 chunks, with maxima of 257, 258 and 258 tokens. The delivered-context cap was enforced for every method.
+
+Retain the existing release rule. The results support the section-aware approach against flat sentence packing and fixed windows. Overlapping recursion was competitive on dense retrieval and used fewer indexing tokens at the token setting. The comparison covers one embedding model and four English-language datasets. For the contracts, papers and financial records, the search already knows the source document. Generated answers, citation support and full-corpus search across those collections would require a separate evaluation.
+
+### Measurement and verification
+
+Use the existing 676-question replication sample with the release settings fixed. The primary comparison uses 256-token chunks and 512 delivered tokens. Also measure the public 500-character default and the 256- and 1,024-token retrieval budgets. Keep all four datasets, document pools, source annotations, query vectors and the embedding model identical. The sample was previously used to validate the release rule.
+
+Run the public Markdown API, sentence packing, 256-token windows with 64 tokens of overlap, and the published JavaScript recursive text splitters. Use the generic recursive splitter with zero and 25% target overlap and the Markdown recursive splitter with 25%. Pass the same tokenizer to the reference splitters for token sizing and preserve their native output. Count actual target overruns. Verify that each sequence of reference chunks has a single placement covering the source in order. The splitter can trim whitespace and repeat text when overlap is enabled. [Recursive splitter](https://docs.langchain.com/oss/javascript/integrations/splitters/recursive_text_splitter)
+
+Dense cosine and standalone BM25 each rank the full candidate set, with ties in source order. Hybrid uses equal-weight reciprocal rank fusion of all dense results and positive BM25 matches with the published rank constant of 60. Compare paired complete-evidence outcomes at 512 delivered tokens using 2,000 group bootstrap draws. Resample contracts, papers, financial reports and whole HotpotQA search pools. Each of the four HotpotQA pools shares its distractors across 32 questions. Report cold indexing costs separately from API cache misses. [Reciprocal rank fusion](https://cormack.uwaterloo.ca/cormack/cormacksigir09-rrf.pdf)
+
+The test indexed 1,411 source documents. Its 298 contract, 135 paper, 115 financial and 128 multi-hop questions contributed 24, 46, 68 and 4 bootstrap groups respectively. All 47,830 native recursive chunks mapped uniquely to source spans. The public API reproduced the prior body hashes and cold indexing costs for all eight dataset/size combinations, and all 60 prior dense and BM25 results across the three delivered budgets. The run made 138 provider requests for 30,501 new inputs and 3,856,342 reported tokens. All 79 tests passed. [Prior replication](results/2026-11-23-markdown-rule-replication.json) · [Reproduction commands](README.md#compare-markdown-retrieval)
+
 ## 2026-11-23 · Markdown combination by chunk budget
 
 Ship greedy section packing when `maxChunkSize < 1024` or `maxChunkTokens < 256`. When both limits allow that capacity, score the original eligible prose boundaries once, calibrate the cutoff from their cosines and keep it for every pass. The public 500-character default uses packing. Each hard token check still counts the actual raw and prefixed text. [Frozen rules](results/2026-11-23-markdown-rules.json) · [Replication on 676 independent questions](results/2026-11-23-markdown-rule-replication.json)

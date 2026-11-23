@@ -9,6 +9,40 @@ import { scoreAtBudget } from './markdown-rules.mjs';
 import { paired } from './markdown-decisions.mjs';
 import { parseMarkdown } from '../src/markdown.js';
 import { mergeOriginalBoundaries } from '../src/markdown-merge.js';
+import { locateChunks, reciprocalRankFusion, summarizeRetrieval } from './retrieval-baselines.mjs';
+import { bm25Ranker, wordCounts } from './rag.mjs';
+
+test('reference chunks map repeated occurrences, trimmed gaps and a repeated suffix uniquely', () => {
+    const body = 'ab cd cd\n\nnext';
+    const offsets = (...args) => locateChunks(...args).map(c => c.sourceRanges[0].start);
+    assert.deepEqual(offsets(body, ['ab cd', 'cd cd', 'cd', 'next'], 2), [0, 3, 6, 10]);
+    assert.deepEqual(offsets('x x', ['x', 'x'], 0), [0, 2]);
+    assert.throws(() => offsets('x missing y', ['x', 'y'], 0), /Unmapped/);
+    assert.deepEqual(offsets('aaaab', ['aaa', 'aa', 'b'], 2), [0, 2, 4]);
+    assert.throws(() => offsets('aaaaaX', ['aaa', 'aa', 'aaX'], 2), /Ambiguous/);
+});
+
+test('fusion uses positive lexical matches, one-based ranks and source order for ties', () => {
+    const bm25 = bm25Ranker(['other', 'word', 'absent'].map(wordCounts));
+    assert.deepEqual(bm25(wordCounts('word'), true), [1]);
+    assert.deepEqual(reciprocalRankFusion([2, 0, 1], []), [2, 0, 1]);
+    assert.deepEqual(reciprocalRankFusion([1, 0, 2], [0, 1]), [0, 1, 2]);
+    assert.deepEqual(reciprocalRankFusion([0, 1, 2], [2]), [2, 0, 1]);
+});
+
+test('paired retrieval comparisons keep questions from the same search pool together', () => {
+    const outcomes = { 'pooled/dense': '10', 'pooled/bm25': '01', 'pooled/hybrid': '11' };
+    const retrieval = Object.fromEntries(Object.entries(outcomes).map(([arm, bits]) =>
+        [arm, { 512: { complete: [...bits].filter(x => x === '1').length } }]));
+    const row = { tasks: { hotpotqa: { questions: 2, complete512: outcomes, retrieval } } };
+    const report = { policies: { 'shipped/t256': row } };
+    summarizeRetrieval(report, { hotpotqa: { questions: ['a', 'b'].map(id => ({ id, group: id, pooled: [0, 1] })) } });
+    assert.equal(report.bootstrapGroups.hotpotqa, 1);
+    const diff = report.comparisons['shipped/t256/hybrid vs dense'];
+    assert.equal(diff.deltaPer100, 50);
+    assert.deepEqual(diff.ci95, [50, 50]);
+    assert.deepEqual(diff.perTask.hotpotqa.wins, ['b']);
+});
 
 test('sentence packing budgets an oversized first sentence and the serialized join', () => {
     const parts = ['abcdefghij', 'abc', 'def'];

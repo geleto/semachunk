@@ -105,7 +105,7 @@ export function bm25Ranker(passages) {
     }
     const n = passages.length, mean = lengths.reduce((a, b) => a + b, 0) / n || 1;
     const norms = lengths.map(length => 1.2 * (0.25 + 0.75 * length / mean));
-    return query => {
+    return (query, matchingOnly = false) => {
         const scores = new Float64Array(n);
         for (const word of query.keys()) {
             const matches = postings.get(word);
@@ -113,7 +113,8 @@ export function bm25Ranker(passages) {
             const idf = Math.log1p((n - matches.length + 0.5) / (matches.length + 0.5));
             for (const [i, count] of matches) scores[i] += idf * count * 2.2 / (count + norms[i]);
         }
-        return lengths.map((_, i) => i).sort((a, b) => scores[b] - scores[a]);
+        const order = lengths.map((_, i) => i);
+        return (matchingOnly ? order.filter(i => scores[i] > 0) : order).sort((a, b) => scores[b] - scores[a]);
     };
 }
 

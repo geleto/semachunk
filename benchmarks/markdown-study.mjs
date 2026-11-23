@@ -11,12 +11,14 @@ import { studyRules } from './markdown-rules.mjs';
 import { macro, paired, selectCombination } from './markdown-decisions.mjs';
 import { manifest, markdownCorpora } from './markdown-corpora.mjs';
 import { bm25Ranker, budgets, wordCounts } from './rag.mjs';
+import { compareRetrieval, reciprocalRankFusion } from './retrieval-baselines.mjs';
 
 const read = async path => JSON.parse(await readFile(path, 'utf8'));
 const [experiment, output, previous, candidate] = process.argv.slice(2);
 const ruleStudy = ['rules', 'validate-rules', 'replicate-rules'].includes(experiment);
-const split = ({ 'validate-rules': 'rules-test', 'replicate-rules': 'replication', confirm: 'confirmation', final: 'final' })[experiment] ?? 'calibration';
-if (!output || (!ruleStudy && !['size', 'compare', 'context', 'final', 'confirm'].includes(experiment))) {
+const baselines = experiment === 'baselines';
+const split = ({ 'validate-rules': 'rules-test', 'replicate-rules': 'replication', baselines: 'replication', confirm: 'confirmation', final: 'final' })[experiment] ?? 'calibration';
+if (!output || (!ruleStudy && !baselines && !['size', 'compare', 'context', 'final', 'confirm'].includes(experiment))) {
     throw new Error('Supply a Markdown study experiment and a new JSON output path.');
 }
 if (existsSync(output)) throw new Error('Result already exists: ' + output);
@@ -42,7 +44,7 @@ async function prepare() {
         for (const doc of docs) {
             doc.offsets = encoder.offsets(doc.source);
             doc.ends = doc.offsets.map(o => o[1]);
-            if (experiment === 'size' || experiment === 'final') doc.parts = await splitPlain(chunkText, doc.source);
+            if (baselines || experiment === 'size' || experiment === 'final') doc.parts = await splitPlain(chunkText, doc.source);
             doc.parsed = new Map();
         }
         for (const q of questions) q.gold = q.references.map(ref => goldReference(ref, docs));
@@ -94,7 +96,10 @@ async function evaluate(task, policy) {
             let measured = q.scores?.get(layout);
             if (!measured) {
                 measured = [];
-                for (const [ranker, order] of [['dense', dense(vocab.id(q.text), indices)], ['bm25', bm25(wordCounts(q.text))]]) {
+                const semantic = dense(vocab.id(q.text), indices), terms = wordCounts(q.text);
+                const rankings = [['dense', semantic], ['bm25', bm25(terms)]];
+                if (baselines) rankings.push(['hybrid', reciprocalRankFusion(semantic, bm25(terms, true))]);
+                for (const [ranker, order] of rankings) {
                     const ranked = order.map(j => passages[j]);
                     for (const budget of budgets) {
                         const { projected, text } = deliver(ranked, budget, encoder);
@@ -113,7 +118,7 @@ async function evaluate(task, policy) {
                 total.complete += metrics.complete;
                 for (const k of ['recall', 'precision']) total[k] += metrics[k] / questions.length;
                 total.deliveredTokens += spent / questions.length;
-                if (budget === 512 && ranker === 'dense') {
+                if (budget === 512 && (ranker === 'dense' || baselines)) {
                     complete512[arm] = (complete512[arm] ?? '') + metrics.complete;
                     if (trace) examples[name] = trace;
                 }
@@ -121,7 +126,9 @@ async function evaluate(task, policy) {
         }
     }
     return { questions: questions.length, bodyHash, chunkTokens: distribution(byDoc.flat().map(c => countTokens(c.text))),
-        ...costs, ...(ruleStudy && { semanticDocuments }), ...(policy.context && { context }), ...(initial.length && { eligibleCosines: distribution(initial) }),
+        ...costs, ...(ruleStudy && { semanticDocuments }),
+        ...(baselines && { overTarget: byDoc.flat().filter(c => policy.tokens ? countTokens(c.text) > policy.tokens : c.text.length > policy.chars).length }),
+        ...(policy.context && { context }), ...(initial.length && { eligibleCosines: distribution(initial) }),
         retrieval, complete512, examples, milliseconds: performance.now() - start, peakRSSKiB: process.resourceUsage().maxRSS,
         encoder: Object.fromEntries(Object.entries(encoder.stats).map(([k, n]) => [k, n - paid[k]])) };
 }
@@ -137,6 +144,7 @@ async function run(name, policy, subset = tasks) {
 
 async function main() {
     await prepare();
+    if (baselines) return compareRetrieval(report, data, run);
     if (ruleStudy) return studyRules({ report, prior, data, run, validation: experiment !== 'rules' });
     const tokens = prior.tokens;
     if (experiment === 'size') {
