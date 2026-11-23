@@ -88,6 +88,13 @@ test('literal autolinks with parser-generated children keep their original sourc
     assert.ok(rows.some(c => c.text.includes('www.example.com/person.asp%3Fx')));
 });
 
+test('filtered whitespace-only Markdown paragraphs break both packing and pending heading attachment', async () => {
+    const source = '# A\n\n\u00a0\n\nFirst.\n\n\u00a0\n\nSecond.';
+    const rows = await chunks(source, { excludeNonLetterSentences: true });
+    assert.deepEqual(rows.map(c => c.text), ['First.', 'Second.']);
+    assert.ok(rows.every(c => c.headingPath[0] === 'A'));
+});
+
 test('split tables repeat the literal header and delimiter, oversized rows retain values without a misleading header', async () => {
     const h = '> | a | b |\r\n> |---|---|\r\n', first = '> | 1 | x\\|y |\r\n', last = '> | 2 | 🌍 |';
     const s = h + first + last;

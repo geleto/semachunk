@@ -51,7 +51,8 @@ export function markdownResult(source, unit) {
 }
 
 export function fitsMarkdownJoin(source, left, right, maxChunkSize, fits) {
-    return !left.parts && !right.parts && left.sectionId === right.sectionId && right.end - left.start <= maxChunkSize &&
+    return !left.parts && !right.parts && left.sectionId === right.sectionId && left.run === right.run &&
+        right.end - left.start <= maxChunkSize &&
         !/\S/u.test(source.slice(left.end, right.start)) && (!fits || fits(source.slice(left.start, right.end)));
 }
 
@@ -240,25 +241,29 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
         }
     }
 
-    function blocks(node, start, end) {
-        if (omitted(node)) return [];
+    let run = 0;
+    function* blocks(node, start, end) {
+        if (omitted(node)) { run++; return; }
         const kind = protectedBlocks.has(node) ? (containers.has(node.type) ? 'container' : node.type) : 'prose';
         if (!descend.has(node) && !(sentenceUnits && node.type === 'paragraph') &&
-            (node.type === 'code' ? within(source.slice(start, end)) : wholeFits(start, end))) return [raw(start, end, kind)];
-        if (containers.has(node.type)) {
-            return node.children.flatMap((child, i, all) => blocks(child, i ? lineStart(child) : start,
-                i + 1 < all.length ? lineStart(all[i + 1]) : end));
-        }
-        if (node.type === 'table') return table(node, start, end);
-        if (node.type === 'code') return code(node, start, end);
-        if (node.type !== 'paragraph') return leaf(start, end, kind, continuation(node));
-        const { spans, atoms } = prose.get(node) ?? sentences(node);
-        const prefix = continuation(node);
-        return spans.flatMap(([a, b], i) => {
-            if (excludeNonLetterSentences && !/\p{L}/u.test(source.slice(a, b))) return [];
-            const from = i ? a : start, to = i + 1 < spans.length ? b : end;
-            return leaf(from, to, 'prose', prefix, atoms, start);
-        });
+            (node.type === 'code' ? within(source.slice(start, end)) : wholeFits(start, end))) {
+            yield raw(start, end, kind);
+        } else if (containers.has(node.type)) {
+            const children = node.children;
+            for (let i = 0; i < children.length; i++) {
+                yield* blocks(children[i], i ? lineStart(children[i]) : start,
+                    i + 1 < children.length ? lineStart(children[i + 1]) : end);
+            }
+        } else if (node.type === 'table') yield* table(node, start, end);
+        else if (node.type === 'code') yield* code(node, start, end);
+        else if (node.type === 'paragraph') {
+            const { spans, atoms } = prose.get(node) ?? sentences(node);
+            const prefix = continuation(node);
+            for (const [i, [a, b]] of spans.entries()) {
+                if (excludeNonLetterSentences && !/\p{L}/u.test(source.slice(a, b))) { run++; continue; }
+                yield* leaf(i ? a : start, i + 1 < spans.length ? b : end, 'prose', prefix, atoms, start);
+            }
+        } else yield* leaf(start, end, kind, continuation(node));
     }
 
     const units = [], headings = [];
@@ -268,20 +273,20 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
         if (node.type === 'heading') {
             while (headings.length && headings.at(-1).depth >= node.depth) headings.pop();
             while (pending.length && pending.at(-1).depth >= node.depth) pending.pop();
-            const heading = { depth: node.depth, text: headingText(node).replace(/\s+/g, ' ').trim(), start, end };
+            const heading = { depth: node.depth, text: headingText(node).replace(/\s+/g, ' ').trim(), start, end, run };
             headings.push(heading);
             pending.push(heading);
             headingPath = headings.map(h => h.text);
             sectionId = offset(node.position.start);
             continue;
         }
-        if (['yaml', 'definition', 'thematicBreak'].includes(node.type)) { pending = []; continue; }
+        if (['yaml', 'definition', 'thematicBreak'].includes(node.type)) { pending = []; run++; continue; }
         inspect(node);
         for (const unit of blocks(node, start, end)) {
             let first = unit.start, adjacent = unit.start;
             for (let i = pending.length - 1; i >= 0; i--) {
                 const h = pending[i];
-                if (/\S/u.test(source.slice(h.end, adjacent))) break;
+                if (h.run !== run || /\S/u.test(source.slice(h.end, adjacent))) break;
                 adjacent = h.start;
                 if (!fits || fits(source.slice(h.start, unit.start) + markdownText(source, unit))) first = h.start;
             }
@@ -290,7 +295,7 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
                 unit.start = first;
             }
             pending = [];
-            units.push(Object.assign(unit, { headingPath, sectionId }));
+            units.push(Object.assign(unit, { headingPath, sectionId, run }));
         }
     }
     return units;

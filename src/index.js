@@ -123,15 +123,15 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
 		if (tokenLimit?.oversized.size) chunks = chunks.flatMap(text => tokenLimit.oversized.get(text) ?? [text]);
 		output = chunks.map(text => ({ text }));
 	}
-	const indexed = output.map(chunk => prefix + chunk.text);
-	if (prefix) {
-		output.forEach((chunk, i) => {
-			if (!excludeChunkPrefixInResults) {
-				chunk.text = indexed[i];
-				for (const range of chunk.sourceRanges ?? []) range.outputStart += prefix.length;
-			} else if (inputFormat === 'markdown') chunk.embeddingText = indexed[i];
-		});
-	}
+	if (!prefix && !returnEmbedding) return output;
+	const indexed = output.map(chunk => {
+		const text = prefix + chunk.text;
+		if (prefix && !excludeChunkPrefixInResults) {
+			chunk.text = text;
+			for (const range of chunk.sourceRanges ?? []) range.outputStart += prefix.length;
+		} else if (prefix && inputFormat === 'markdown') chunk.embeddingText = text;
+		return text;
+	});
 	if (returnEmbedding) {
 		const embeddings = await embedBatch(indexed);
 		const seen = new Set();
