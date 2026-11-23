@@ -10,7 +10,7 @@ export function alignPlain(source, texts) {
         cursor += spaces.exec(source)[0].length;
     }
     const chunks = texts.map(text => {
-        whitespace();
+        if (!/^\s/u.test(text)) whitespace();
         const sourceRanges = [];
         for (const { 0: word, index: outputStart } of text.matchAll(/\s+|\S+/gu)) {
             const start = cursor;

@@ -49,7 +49,7 @@ export function openTokenizer() {
         }
         return spans;
     }
-    return { countTokens, offsets, close: () => bpe.free() };
+    return { countTokens, offsets, tokenIds: text => bpe.encode_ordinary(text), close: () => bpe.free() };
 }
 
 async function apiKey(envFile) {
@@ -164,12 +164,12 @@ export function openEncoder(envFile, directory = vectorDirectory) {
         }
     }
     return { ...tokenizer, vectors: (texts, recordInputs) =>
-        cachedVectors(texts, tokenizer.countTokens, request, directory, recordInputs) };
+        cachedVectors(texts, input => Array.isArray(input) ? input.length : tokenizer.countTokens(input), request, directory, recordInputs) };
 }
 
 // Index recorded provider batches by exact input. A new candidate order or
 // batch size can reuse their vectors. Coalesce misses from concurrent documents.
-export async function openReplay(envFile, directory = vectorDirectory) {
+export async function openReplay(envFile, directory = vectorDirectory, { lengthSafe = false } = {}) {
     const encoder = openEncoder(envFile, directory);
     await mkdir(directory, { recursive: true });
     const disk = new Map(), memory = new Map();
@@ -181,6 +181,23 @@ export async function openReplay(envFile, directory = vectorDirectory) {
         input.forEach((text, row) => disk.set(text, { file, row, count: input.length }));
     }
     const stats = { apiRequests: 0, apiInputs: 0, apiInputTokens: 0, diskTexts: 0, memoryTexts: 0, replayMs: 0 };
+    async function vectors(inputs, recordInputs) {
+        const { matrix, precomputation } = await encoder.vectors(inputs, recordInputs);
+        for (const key of ['apiRequests', 'apiInputs', 'apiInputTokens']) stats[key] += precomputation[key];
+        return matrix;
+    }
+    // OpenAIEmbeddings pools oversized inputs by token count, then normalizes.
+    async function longVector(text) {
+        const ids = encoder.tokenIds(text), parts = [];
+        for (let i = 0; i < ids.length; i += 8191) parts.push(Array.from(ids.subarray(i, i + 8191)));
+        const matrix = await vectors(parts, false), sum = new Float64Array(dimension);
+        parts.forEach((p, i) => {
+            for (let j = 0; j < dimension; j++) sum[j] += p.length * matrix[i * dimension + j];
+        });
+        const norm = Math.hypot(...sum);
+        if (!Number.isFinite(norm) || !norm) throw new Error('Invalid pooled embedding');
+        return Float32Array.from(sum, x => x / norm);
+    }
     let pending = [], flushing = false;
     async function flush() {
         flushing = true;
@@ -188,11 +205,12 @@ export async function openReplay(envFile, directory = vectorDirectory) {
             const requests = pending;
             pending = [];
             try {
-                const started = performance.now(), files = new Map(), missing = [];
+                const started = performance.now(), files = new Map(), missing = [], long = [];
                 const unique = new Set(requests.flatMap(r => r.texts));
                 for (const text of unique) {
                     if (memory.has(text)) { stats.memoryTexts++; continue; }
                     const hit = disk.get(text);
+                    if (lengthSafe && encoder.countTokens(text) > 8191) { long.push(text); continue; }
                     if (!hit) { missing.push(text); continue; }
                     if (!files.has(hit.file)) files.set(hit.file, []);
                     files.get(hit.file).push({ text, ...hit });
@@ -206,9 +224,9 @@ export async function openReplay(envFile, directory = vectorDirectory) {
                     }
                 }
                 stats.replayMs += performance.now() - started;
+                for (const text of long) memory.set(text, await longVector(text));
                 if (missing.length) {
-                    const { matrix, precomputation: paid } = await encoder.vectors(missing, true);
-                    for (const key of ['apiRequests', 'apiInputs', 'apiInputTokens']) stats[key] += paid[key];
+                    const matrix = await vectors(missing, true);
                     missing.forEach((text, i) => memory.set(text, matrix.subarray(i * dimension, (i + 1) * dimension)));
                 }
                 for (const r of requests) r.resolve(r.texts.map(t => memory.get(t)));

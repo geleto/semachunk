@@ -4,7 +4,7 @@ import { chunkText } from '../src/index.js';
 import { createBatchEmbedder } from '../src/embeddings.js';
 import { markdownResult, parseMarkdown } from '../src/markdown.js';
 import { fitsMarkdownJoin } from '../src/markdown-merge.js';
-import { tokenBudget } from '../src/token-limit.js';
+import { splitSpans, tokenBudget } from '../src/token-limit.js';
 import { packSentences } from './chunking.mjs';
 import { alignPlain, tokenWindows } from './delivered-context.mjs';
 import { combineMarkdown } from './markdown-merging.mjs';
@@ -85,7 +85,9 @@ export async function indexDocument(doc, policy, costs, initial, context, encode
     const fits = tokenBudget(maxChunkTokens, countTokens, required);
     const nativeSplitter = policy.method === 'recursive' || policy.method === 'recursive-markdown';
     const publicAPI = policy.method === 'public-markdown' || policy.method === 'plain-priority';
-    const inputLimit = policy.contextCap ?? (nativeSplitter ? modelInputTokens : maxChunkTokens);
+    const semanticReference = policy.method === 'semantic-reference';
+    const semanticLimit = semanticReference && !policy.cap ? Infinity : maxChunkTokens;
+    const inputLimit = policy.contextCap ?? (nativeSplitter ? modelInputTokens : semanticLimit);
     function record(texts) {
         costs.calls++;
         costs.texts += texts.length;
@@ -105,6 +107,18 @@ export async function indexDocument(doc, policy, costs, initial, context, encode
         chunks = markdown ? output.map(({ embedding, ...chunk }) => chunk) : alignPlain(doc.source, output.map(c => c.text));
     } else if (nativeSplitter) {
         chunks = await referenceChunks(doc.source, policy, countTokens);
+    } else if (semanticReference) {
+        const { windows, windowTokens, layouts } = doc.breakpoints;
+        costs.calls += Number(windows > 0);
+        costs.singletons += Number(windows === 1);
+        costs.texts += windows;
+        costs.embeddedTokens += windowTokens;
+        let texts = layouts[policy.chunkCount ? 1 : 0];
+        if (policy.cap) texts = texts.flatMap(text => {
+            const spans = splitSpans(text, 0, text.length, (a, b) => fits(text.slice(a, b)));
+            return spans.map(([a, b]) => text.slice(a, b));
+        });
+        chunks = alignPlain(doc.source, texts.filter(s => s.trim()));
     } else if (policy.method === 'plain-pack') {
         chunks = alignPlain(doc.source, packSentences(doc.parts, maxChunkSize, maxChunkTokens, countTokens, required));
     } else if (policy.method === 'window') {

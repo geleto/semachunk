@@ -111,6 +111,16 @@ npm install --prefix benchmarks/.cache/reference --no-save --package-lock=false 
 node --max-old-space-size=6144 benchmarks/markdown-study.mjs baselines retrieval-baselines.json
 ```
 
+The semantic comparison uses the same recursive installation and the published Python splitter. It evaluates the 676 retrieval questions and all span-annotated specific queries from the QMSum test meetings, first with their source layout and then with whitespace collapsed. On Windows run
+
+```powershell
+python -m venv benchmarks/.cache/semantic-python
+.\benchmarks\.cache\semantic-python\Scripts\python.exe -m pip install langchain-experimental==0.4.2 langchain-community==0.4.2 langchain-core==1.8.4 numpy==2.5.5
+node --max-old-space-size=4096 benchmarks/semantic-study.mjs semantic-formatting.json .\benchmarks\.cache\semantic-python\Scripts\python.exe
+```
+
+On macOS and Linux use the environment's `bin/python` in both commands. Python 3.14 was used for the recorded run. The native splitter receives the same cached OpenAI vectors that the Node benchmark uses. Its default and requested-chunk-count configurations retain their original passage lengths. A third configuration subdivides only passages that exceed 256 tokens. [Semantic splitter](https://github.com/langchain-ai/langchain-experimental/blob/main/libs/experimental/langchain_experimental/text_splitter.py) · [Meeting annotations](https://github.com/Yale-LILY/QMSum)
+
 All arms search the same sources. QASPER uses the paper's heading hierarchy. FinQA includes pre-table prose, the table and post-table prose with offsets keyed by the annotation IDs. A financial hit requires every annotated row and prose span. The primary score averages the four dataset complete-evidence rates at 512 delivered tokens with pooled HotpotQA. The diagnostic shortlist searches each question's supplied articles. Each report also records scores at 256 and 1,024 delivered tokens, per-question outcomes at 512 tokens and paired group bootstrap intervals. [Frozen sample IDs](results/2026-11-23-markdown-samples.json)
 
 ## Run the large-document benchmark

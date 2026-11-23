@@ -4,26 +4,9 @@ export function macro(row, ranker = 'dense') {
     return tasks.reduce((sum, t) => sum + row.tasks[t].retrieval[primary(t, ranker)][512].complete / row.tasks[t].questions, 0) / tasks.length;
 }
 
-// Resample whole contracts, papers, reports or independent question pools,
-// paired within task. Each of the four tasks gets the same weight.
-export function paired(a, b, data, ranker = 'dense', controlRanker = ranker) {
-    const tasks = Object.keys(data);
+export function groupInterval(groups) {
     let seed = 20261123;
     const random = () => (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 2 ** 32;
-    const groups = [], perTask = {};
-    for (const t of tasks) {
-        const x = a.tasks[t].complete512[primary(t, ranker)], y = b.tasks[t].complete512[primary(t, controlRanker)];
-        const byGroup = new Map(), wins = [], losses = [];
-        data[t].questions.forEach(({ group, id }, i) => {
-            if (!byGroup.has(group)) byGroup.set(group, [0, 0]);
-            const delta = Number(x[i]) - Number(y[i]), pair = byGroup.get(group);
-            pair[0] += delta;
-            pair[1] += a.measurements ?? 1;
-            if (delta) (delta > 0 ? wins : losses).push(id);
-        });
-        perTask[t] = { winsPer100: 100 * wins.length / x.length, lossesPer100: 100 * losses.length / x.length, wins, losses };
-        groups.push([...byGroup.values()]);
-    }
     const draws = [];
     for (let i = 0; i < 2000; i++) {
         let sum = 0;
@@ -38,7 +21,28 @@ export function paired(a, b, data, ranker = 'dense', controlRanker = ranker) {
         draws.push(100 * sum / groups.length);
     }
     draws.sort((a, b) => a - b);
-    return { deltaPer100: 100 * (macro(a, ranker) - macro(b, controlRanker)), ci95: [draws[50], draws[1949]], perTask };
+    return [draws[50], draws[1949]];
+}
+
+// Resample whole contracts, papers, reports or independent question pools,
+// paired within task. Each of the four tasks gets the same weight.
+export function paired(a, b, data, ranker = 'dense', controlRanker = ranker) {
+    const tasks = Object.keys(data);
+    const groups = [], perTask = {};
+    for (const t of tasks) {
+        const x = a.tasks[t].complete512[primary(t, ranker)], y = b.tasks[t].complete512[primary(t, controlRanker)];
+        const byGroup = new Map(), wins = [], losses = [];
+        data[t].questions.forEach(({ group, id }, i) => {
+            if (!byGroup.has(group)) byGroup.set(group, [0, 0]);
+            const delta = Number(x[i]) - Number(y[i]), pair = byGroup.get(group);
+            pair[0] += delta;
+            pair[1] += a.measurements ?? 1;
+            if (delta) (delta > 0 ? wins : losses).push(id);
+        });
+        perTask[t] = { winsPer100: 100 * wins.length / x.length, lossesPer100: 100 * losses.length / x.length, wins, losses };
+        groups.push([...byGroup.values()]);
+    }
+    return { deltaPer100: 100 * (macro(a, ranker) - macro(b, controlRanker)), ci95: groupInterval(groups), perTask };
 }
 
 export function selectCombination(report, data) {
@@ -64,4 +68,43 @@ export function selectCombination(report, data) {
     const strongest = Object.keys(policies).filter(k => k.endsWith('-lead')).sort((a, b) => macro(policies[b]) - macro(policies[a]))[0];
     report.shortlist = Object.fromEntries([...new Set(['pack', 'pack-lead', fixed, rescore, strongest, winner])]
         .map(k => [k, policies[k].policy]));
+}
+
+// Keep all versions of the same question paired. Average task means equally.
+function contrast(report, tasks, terms) {
+    const groups = [], means = [];
+    for (const task of tasks) {
+        const arm = (task === 'hotpotqa' ? 'pooled/' : 'document/') + 'dense';
+        const scores = terms.map(([key, sign]) => [report.runs[key][task][task === 'qmsum' ? 'recall512' : 'complete512'][arm], sign]);
+        const totals = new Map();
+        let sum = 0;
+        report.samples[task].groups.forEach((group, i) => {
+            const diff = scores.reduce((v, [series, sign]) => v + sign * Number(series[i]), 0);
+            const pair = totals.get(group) ?? [0, 0];
+            pair[0] += diff; pair[1]++;
+            totals.set(group, pair);
+            sum += diff;
+        });
+        groups.push([...totals.values()]);
+        means.push(sum / report.samples[task].groups.length);
+    }
+    return { deltaPoints: 100 * means.reduce((s, v) => s + v) / means.length, ci95: groupInterval(groups) };
+}
+
+export function summarizeSemantic(report) {
+    for (const [label, tasks] of [['documents', Object.keys(report.samples).filter(t => t !== 'qmsum')], ['meetings', ['qmsum']]]) {
+        const comparisons = report.comparisons[label] = {};
+        for (const name of ['markdown', 'text', 'semantic-default', 'semantic-count', 'semantic-capped']) {
+            const terms = view => [[view + '/' + name, 1], [view + '/recursive', -1]];
+            for (const view of ['original', 'flat']) comparisons[view + '/' + name + ' vs recursive'] = contrast(report, tasks, terms(view));
+            comparisons['change in ' + name + ' lead'] = contrast(report, tasks, [...terms('flat'), ...terms('original').map(([k, s]) => [k, -s])]);
+        }
+        for (const view of ['original', 'flat']) {
+            for (const name of ['markdown', 'text']) {
+                comparisons[view + '/' + name + ' vs semantic-capped'] = contrast(report, tasks, [[view + '/' + name, 1], [view + '/semantic-capped', -1]]);
+            }
+            comparisons[view + '/semantic-capped vs recursive-zero'] = contrast(report, tasks,
+                [[view + '/semantic-capped', 1], [view + '/recursive-zero', -1]]);
+        }
+    }
 }

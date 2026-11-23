@@ -6,11 +6,37 @@ import { packSentences } from './chunking.mjs';
 import { combineMarkdown } from './markdown-merging.mjs';
 import { boundaryFractions, indexDocument } from './markdown-index.mjs';
 import { scoreAtBudget } from './markdown-rules.mjs';
-import { paired } from './markdown-decisions.mjs';
+import { paired, summarizeSemantic } from './markdown-decisions.mjs';
 import { parseMarkdown } from '../src/markdown.js';
 import { mergeOriginalBoundaries } from '../src/markdown-merge.js';
 import { locateChunks, reciprocalRankFusion, summarizeRetrieval } from './retrieval-baselines.mjs';
 import { bm25Ranker, wordCounts } from './rag.mjs';
+import { flattenCorpus } from './semantic-corpora.mjs';
+
+test('flattened evidence preserves the annotated occurrence across headings, CRLF and Unicode', () => {
+    const source = '# Repeated\r\n\r\n## Section 🙂\r\nRepeated  words\tend.';
+    const start = source.lastIndexOf('Repeated');
+    const flat = flattenCorpus({ docs: [{ source }], questions: [{ references: [[[0, start, source.length]]] }] });
+    assert.equal(flat.docs[0].source, 'Repeated Section 🙂 Repeated words end.');
+    const [[[, a, b]]] = flat.questions[0].references;
+    assert.equal(a, flat.docs[0].source.lastIndexOf('Repeated'));
+    assert.equal(flat.docs[0].source.slice(a, b), 'Repeated words end.');
+});
+
+test('a capped semantic layout preserves source occurrences and charges native boundary work', async () => {
+    const source = 'One.\n\nTwo three four.', native = ['One. Two three four.'];
+    const doc = { source, breakpoints: { windows: 3, windowTokens: 28, layouts: [native, native] } };
+    const costs = { calls: 0, texts: 0, singletons: 0, indexTexts: 0, indexTokens: 0, embeddedTokens: 0 };
+    const encoder = { countTokens: s => s.length, embed: async texts => texts.map(() => [1]) };
+    const chunks = await indexDocument(doc, { method: 'semantic-reference', tokens: 8, cap: true, chunkCount: true }, costs, [], {}, encoder);
+    assert.ok(chunks.length > 1 && chunks.every(c => c.text.length <= 8));
+    assert.equal(chunks.map(c => c.text).join(''), native[0]);
+    assert.equal(costs.embeddedTokens, costs.indexTokens + 28);
+    assert.equal(costs.texts, costs.indexTexts + 3);
+    assert.equal(chunks.flatMap(c => c.sourceRanges).at(-1).end, source.length);
+    const [, next] = alignPlain('one\n\ntwo', ['one', ' two']);
+    assert.deepEqual(next.sourceRanges[0], { start: 3, end: 5, outputStart: 0, outputLength: 1 });
+});
 
 test('reference chunks map repeated occurrences, trimmed gaps and a repeated suffix uniquely', () => {
     const body = 'ab cd cd\n\nnext';
@@ -42,6 +68,22 @@ test('paired retrieval comparisons keep questions from the same search pool toge
     assert.equal(diff.deltaPer100, 50);
     assert.deepEqual(diff.ci95, [50, 50]);
     assert.deepEqual(diff.perTask.hotpotqa.wins, ['b']);
+});
+
+test('the paired formatting effect uses complete document hits and continuous meeting recall', () => {
+    const report = { samples: { cuad: { groups: ['c', 'c'] }, qmsum: { groups: ['m', 'm'] } }, runs: {}, comparisons: {} };
+    for (const view of ['original', 'flat']) {
+        for (const method of ['markdown', 'text', 'recursive', 'recursive-zero', 'semantic-default', 'semantic-count', 'semantic-capped']) {
+            const changed = view === 'flat' && method === 'semantic-capped';
+            report.runs[view + '/' + method] = {
+                cuad: { complete512: { 'document/dense': changed ? '10' : '00' } },
+                qmsum: { recall512: { 'document/dense': changed ? [0.5, 0.5] : [0.25, 0.5] } },
+            };
+        }
+    }
+    summarizeSemantic(report);
+    assert.deepEqual(report.comparisons.documents['change in semantic-capped lead'], { deltaPoints: 50, ci95: [50, 50] });
+    assert.deepEqual(report.comparisons.meetings['change in semantic-capped lead'], { deltaPoints: 12.5, ci95: [12.5, 12.5] });
 });
 
 test('sentence packing budgets an oversized first sentence and the serialized join', () => {

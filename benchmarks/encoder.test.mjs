@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, readdir, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, readdir, rm, rmdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
@@ -70,6 +70,28 @@ test('exact-string replay reorders rows across batches and reuses simultaneous r
     const output = await Promise.all([replay.embed(['c', 'a']), replay.embed(['b', 'c'])]);
     assert.deepEqual(output.map(rows => rows.map(v => v[0])), [[99, 97], [98, 99]]);
     assert.equal(replay.stats.diskTexts, 3);
+    assert.equal(replay.stats.apiRequests, 0);
+});
+
+test('oversized native chunks pool exact token slices and replay as a single unit vector', async t => {
+    const dir = await mkdtemp(join(tmpdir(), 'semachunk-long-input-'));
+    t.after(async () => {
+        for (const name of await readdir(dir)) await rm(join(dir, name));
+        await rmdir(dir);
+    });
+    const replay = await openReplay(undefined, dir, { lengthSafe: true });
+    t.after(replay.close);
+    const text = ' word'.repeat(9000), ids = replay.tokenIds(text);
+    const parts = [Array.from(ids.subarray(0, 8191)), Array.from(ids.subarray(8191))];
+    await cachedVectors(parts, p => p.length, () => ({ model, usage: { prompt_tokens: ids.length },
+        data: parts.map((p, index) => {
+            const bytes = Buffer.alloc(dimension * 4);
+            bytes.writeFloatLE(1, 4 * index);
+            return { index, embedding: bytes.toString('base64') };
+        }) }), dir);
+    const [v] = await replay.embed([text]);
+    const magnitude = Math.hypot(parts[0].length, parts[1].length);
+    assert.deepEqual([...v.subarray(0, 2)], parts.map(p => Math.fround(p.length / magnitude)));
     assert.equal(replay.stats.apiRequests, 0);
 });
 
