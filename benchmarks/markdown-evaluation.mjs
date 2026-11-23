@@ -1,7 +1,7 @@
 import { chunkText } from '../src/index.js';
 import { denseRanker, split as splitPlain, vocabulary } from './chunking.mjs';
 import { sha256 } from './corpora.mjs';
-import { deliver, evidenceScore, goldReference } from './delivered-context.mjs';
+import { deliver, evidenceScore, goldReference, repeatedSourceFraction } from './delivered-context.mjs';
 import { documentRule, indexDocument } from './markdown-index.mjs';
 import { bm25Ranker, budgets, wordCounts } from './rag.mjs';
 import { dimension } from './encoder.mjs';
@@ -28,7 +28,7 @@ export async function prepareDataset(dataset, encoder, plainParts = false) {
 
 export async function evaluate(task, { docs, questions }, policy, encoder, mode) {
     const { countTokens } = encoder;
-    const ruleStudy = mode === 'rules', baselines = mode === 'baselines', denseOnly = mode === 'semantic';
+    const ruleStudy = mode === 'rules', baselines = mode === 'baselines', denseOnly = mode === 'semantic' || mode === 'overlap';
     const start = performance.now(), paid = { ...encoder.stats };
     const costs = { calls: 0, texts: 0, singletons: 0, embeddedTokens: 0, indexTexts: 0, indexTokens: 0 };
     const initial = [], context = { retained: 0, shortened: 0, omitted: 0, alreadyPresentOrUnavailable: 0 };
@@ -78,8 +78,9 @@ export async function evaluate(task, { docs, questions }, policy, encoder, mode)
                 for (const [ranker, order] of rankings) {
                     const ranked = order.map(j => passages[j]);
                     for (const budget of budgets) {
-                        const { projected, text } = deliver(ranked, budget, encoder);
+                        const { projected, text, ranges } = deliver(ranked, budget, encoder);
                         const metrics = evidenceScore(projected, q.gold);
+                        if (mode === 'overlap' && budget === 512) metrics.repeatedSource = repeatedSourceFraction(ranges);
                         const trace = i === 0 && budget === 512 && ranker === 'dense' && { id: q.id, first: ranked[0].sourceRanges,
                             doc: ranked[0].doc, deliveredSHA256: sha256(text), ...metrics };
                         measured.push({ ranker, budget, metrics, spent: projected.length, trace });
@@ -93,6 +94,7 @@ export async function evaluate(task, { docs, questions }, policy, encoder, mode)
                 const total = scores[budget] ??= { complete: 0, recall: 0, precision: 0, deliveredTokens: 0 };
                 total.complete += metrics.complete;
                 for (const k of ['recall', 'precision']) total[k] += metrics[k] / questions.length;
+                if (metrics.repeatedSource !== undefined) total.repeatedSource = (total.repeatedSource ?? 0) + metrics.repeatedSource / questions.length;
                 total.deliveredTokens += spent / questions.length;
                 if (budget === 512 && (ranker === 'dense' || baselines)) {
                     complete512[arm] = (complete512[arm] ?? '') + metrics.complete;
@@ -102,12 +104,13 @@ export async function evaluate(task, { docs, questions }, policy, encoder, mode)
             }
         }
     }
+    if (policy.growth) context.growth.cosines = distribution(context.growth.cosines);
     return { questions: questions.length, bodyHash, chunkTokens: distribution(byDoc.flat().map(c => countTokens(c.text))),
         ...costs, ...(ruleStudy && { semanticDocuments }),
         ...((baselines || denseOnly) && { overTarget: byDoc.flat().filter(c => policy.tokens ? countTokens(c.text) > policy.tokens : c.text.length > policy.chars).length }),
         ...(denseOnly && { overEmbeddingLimit: byDoc.flat().filter(c => countTokens(c.text) > 8191).length }),
         ...(denseOnly && task === 'qmsum' && { recall512 }),
-        ...(policy.context && { context }), ...(initial.length && { eligibleCosines: distribution(initial) }),
+        ...(policy.growth && { growth: context.growth }), ...(policy.context && { context }), ...(initial.length && { eligibleCosines: distribution(initial) }),
         retrieval, complete512, examples, milliseconds: performance.now() - start, peakRSSKiB: process.resourceUsage().maxRSS,
         encoder: Object.fromEntries(Object.entries(encoder.stats).map(([k, n]) => [k, n - paid[k]])) };
 }

@@ -84,7 +84,19 @@ export function deliver(ranked, budget, encoder) {
         }
         return spans;
     });
-    return { text, projected };
+    return { text, projected, ranges };
+}
+
+// Count a source position once per occurrence in the serialized context.
+export function repeatedSourceFraction(ranges) {
+    let doc, end = 0, total = 0, repeated = 0;
+    for (const r of ranges.toSorted((a, b) => a.doc - b.doc || a.from - b.from)) {
+        if (r.doc !== doc) { doc = r.doc; end = 0; }
+        total += r.to - r.from;
+        repeated += Math.max(0, Math.min(end, r.to) - r.from);
+        end = Math.max(end, r.to);
+    }
+    return total ? repeated / total : 0;
 }
 
 // A source token can straddle an annotation edge, or multiple tokenizer

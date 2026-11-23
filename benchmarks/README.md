@@ -123,6 +123,10 @@ On macOS and Linux use the environment's `bin/python` in both commands. Python 3
 
 All arms search the same sources. QASPER uses the paper's heading hierarchy. FinQA includes pre-table prose, the table and post-table prose with offsets keyed by the annotation IDs. A financial hit requires every annotated row and prose span. The primary score averages the four dataset complete-evidence rates at 512 delivered tokens with pooled HotpotQA. The diagnostic shortlist searches each question's supplied articles. Each report also records scores at 256 and 1,024 delivered tokens, per-question outcomes at 512 tokens and paired group bootstrap intervals. [Frozen sample IDs](results/2026-11-23-markdown-samples.json)
 
+### Compare overlap after Markdown merging
+
+Run `node --max-old-space-size=6144 benchmarks/overlap-study.mjs overlap.json` with a new output path. This uses the cached encoder and the same literal context scorer as the retrieval studies. The runner verifies the 256-token starting cores against the public API before every overlap run. It measures neighbor cutoffs, final body ceilings, per-side limits and similarity between the original core and the proposed body. The raw results include growth by round, embedding work and the fraction of delivered source characters repeated at 512 tokens. [Overlap results](results/2026-11-23-batched-overlap.json)
+
 ## Run the large-document benchmark
 
 Run `node benchmarks/markdown-performance.mjs` for the public Markdown entry point. An optional output path saves a new JSON report. A second argument sets the character target, for example `node benchmarks/markdown-performance.mjs performance.json 1024`. Each workload runs in its own process with one warmup and three timed iterations. The inputs include repeated and unique paragraphs, fenced code and tables in either one long section or 2,048 short sections.

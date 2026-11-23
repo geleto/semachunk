@@ -8,6 +8,7 @@ import { splitSpans, tokenBudget } from '../src/token-limit.js';
 import { packSentences } from './chunking.mjs';
 import { alignPlain, tokenWindows } from './delivered-context.mjs';
 import { combineMarkdown } from './markdown-merging.mjs';
+import { growMarkdown, measureGrowth } from './markdown-overlap.mjs';
 import { referenceChunks } from './retrieval-baselines.mjs';
 import { modelInputTokens } from './encoder.mjs';
 
@@ -99,7 +100,7 @@ export async function indexDocument(doc, policy, costs, initial, context, encode
         return encoder.embed(texts);
     }
     const embed = createBatchEmbedder(record, 256);
-    let chunks;
+    let chunks, cores, expanded;
     if (publicAPI) {
         const markdown = policy.method === 'public-markdown';
         const output = await chunkText(doc.source, record, { inputFormat: markdown ? 'markdown' : 'text', maxChunkSize,
@@ -124,10 +125,18 @@ export async function indexDocument(doc, policy, costs, initial, context, encode
     } else if (policy.method === 'window') {
         chunks = tokenWindows(doc, doc.offsets, policy.tokens, policy.tokens / 4);
     } else {
-        const input = parsed(doc, maxChunkSize, maxChunkTokens, fits, policy.sentences);
-        const units = await combineMarkdown(doc.source, input, embed, { ...policy, maxChunkSize, fits }, initial);
-        chunks = units.map(u => markdownResult(doc.source, u));
+        const coreTokens = policy.coreTokens ?? maxChunkTokens;
+        const coreFits = coreTokens === maxChunkTokens ? fits : tokenBudget(coreTokens, countTokens, required);
+        const input = parsed(doc, maxChunkSize, coreTokens, coreFits, policy.sentences);
+        cores = await combineMarkdown(doc.source, input, embed, { ...policy, maxChunkSize, fits: coreFits }, initial);
+        if (policy.growth) {
+            const stats = context.growth ??= { grewPerRound: [], duplicateSpans: 0, cosines: [],
+                oneAddition: { count: 0, below08: 0 }, multipleAdditions: { count: 0, below08: 0 } };
+            expanded = await growMarkdown(doc.source, input, cores, embed, { ...policy.growth, fits, maxChunkSize, countTokens }, stats);
+        }
+        chunks = (expanded ?? cores).map(u => markdownResult(doc.source, u));
     }
+    policy.checkCores?.(doc, expanded ? cores.map(u => markdownResult(doc.source, u)) : chunks);
     if (required) for (const chunk of chunks) chunk.embeddingText = required + chunk.text;
     if (policy.context) {
         for (const c of chunks) c.embeddingText = contextualize(c, doc, policy, context, countTokens, required);
@@ -136,5 +145,6 @@ export async function indexDocument(doc, policy, costs, initial, context, encode
     costs.indexTexts += chunks.length;
     costs.indexTokens += inputs.reduce((n, s) => n + countTokens(s), 0);
     if (!publicAPI) await embed(inputs);
+    if (expanded) await measureGrowth(doc.source, cores, expanded, encoder.embed, context.growth);
     return chunks;
 }

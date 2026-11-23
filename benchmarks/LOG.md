@@ -1,5 +1,44 @@
 # Chunking improvements and benchmark results
 
+## 2026-11-23 · Batched overlap after Markdown merging
+
+Checking the proposed **whole passage** against its frozen core helped control semantic drift. At a 320-token final ceiling, a 0.90 cosine floor recovered 1.76 percentage points of complete document evidence over the neighbor cutoff alone (paired 95% interval +0.17 to +3.93). Against the original 256-token cores its difference was −1.22 points (−2.94 to +0.40), with 36.9% more cold embedding tokens. Meeting recall changed by +0.24 points (−1.76 to +1.84). Keep the non-overlapping cores as the public default. [Raw configurations, source fingerprints, per-query results and paired comparisons](results/2026-11-23-batched-overlap.json)
+
+We scored each configuration on the same 347 document questions and 115 specific queries from 16 meetings at 512 delivered tokens. The table pools the two source-disjoint samples within each dataset, then gives each of the four document datasets equal weight. The document score measures complete annotated evidence. The meeting score measures the mean share of annotated tokens retrieved. Cold tokens include boundary scoring, accepted and rejected proposals that required embeddings, and the final index. The growth runs started from the same 8,065 public cores.
+
+| Growth rule | Final token ceiling | Document score | Meeting recall | Cores expanded | Cold embedding tokens |
+|---|---:|---:|---:|---:|---:|
+| Public cores | 256 | 62.68% | 30.80% | 0 | 928,577 |
+| Public cores | 320 | 62.92% | 31.20% | 0 | 937,990 |
+| Neighbor cutoff 0.50 | 256 | 60.26% | 31.16% | 872 | 1,160,438 |
+| Neighbor cutoff 0.50 | 320 | 59.70% | 30.87% | 1,205 | 1,317,461 |
+| Neighbor cutoff 0.50 | 384 | 57.95% | 30.81% | 1,350 | 1,435,121 |
+| Neighbor cutoff 0.35 | 320 | 53.59% | 30.14% | 2,679 | 2,832,855 |
+| Up to two original units per side | 320 | 60.91% | 31.23% | 1,205 | 1,242,303 |
+| Up to 64 added tokens per side | 320 | 61.88% | 31.03% | 824 | 1,107,605 |
+| Neighbor also scores 0.50 against the core | 320 | 60.51% | 30.71% | 1,205 | 1,267,942 |
+| Body up to twice the core's token length | 320 | 60.51% | 30.59% | 1,015 | 1,215,064 |
+| Proposed body scores at least 0.80 against the core | 320 | 60.51% | 30.80% | 1,123 | 1,299,054 |
+| Proposed body scores at least 0.90 against the core | 320 | 61.47% | 31.04% | 840 | 1,270,841 |
+| Same 0.90 floor, more room | 384 | 61.86% | 30.96% | 934 | 1,376,721 |
+| Same 0.90 floor, neighbor cutoff 0.35 | 320 | 59.14% | 31.36% | 1,774 | 2,055,129 |
+
+With the 0.50 neighbor cutoff and 320-token ceiling, 46 of 674 passages that added one unit ended below 0.80 core similarity (6.8%). Among passages that added several, 109 of 531 fell below it (20.5%). The longest run added ten units. Lowering the cutoff to 0.35 allowed 31 additions. The direct 0.90 floor held for every accepted body, including all 299 passages that grew more than once at 320.
+
+One limit of a cosine floor showed up in the financial evidence. The 0.90 floor recovered complete evidence for 40 of 62 questions, compared with 37 under the neighbor cutoff alone and 44 using the original cores. For papers those counts were 33, 32 and 32 of 63. Repeated source positions accounted for 4.28% of delivered document characters with the neighbor cutoff alone, 2.09% with the floor and 0.11% with the original cores. A separate retrieval experiment could rank the cores, then fill context from their expansions while counting each source range once.
+
+The intervals above resample paired contracts, papers, reports, shared search pools and meetings with the study's 2,000-draw bootstrap. They describe individual exploratory comparisons. The document splits contribute just two independent pooled Wikipedia searches. The raw file also reports retrieval at 256 and 1,024 delivered tokens. [Reproduction commands](README.md#compare-overlap-after-markdown-merging)
+
+The full run reproduced all 100 earlier layouts, cold embedding costs and 360 retrieval results from the first ten settings. A network-disabled replay reproduced the other 40 layouts, their costs, growth diagnostics and all 144 retrieval results. Every output stayed within its configured final cap. The initial run fetched 1,946,594 new provider tokens and the expanded study fetched 150,270 more. All 93 tests passed.
+
+### Overlap protocol
+
+Freeze the public 256-token Markdown cores. Every overlap arm must reproduce their text and source ranges before growth. Grow by one whole original prose unit per core per round, using its better eligible side and fresh span embeddings. Keep the existing section, omitted-source and protected-block boundaries. Count all repeated text against the same 512-token retrieval budget.
+
+Measure ten settings on two source-disjoint samples. Include the 256- and 320-token public cores, a 0.50 live cosine cutoff at final ceilings of 256, 320 and 384, and five variations at 320. Test a 0.35 cutoff, two units per side, 64 tokens per side, a second 0.50 test against the frozen core, and a final body at most twice its core's token length as separate runs. Both splits run the same settings. Use four published document datasets and eight whole QMSum meetings per split, selected by sorted hashes of meeting IDs before scoring. Assess complete evidence for documents and token recall for meetings. Record cold embedding work, identical output intervals, growth by round and final-to-core cosine for changed bodies. Use 0.80 as a descriptive drift marker.
+
+For the follow-up, check the actual proposed body against the original core after every addition. Test 0.80 and 0.90 floors at a 320-token ceiling, then test 0.90 with either a 384-token ceiling or a lower 0.35 neighbor cutoff. These four settings allow any number of original units on either side. In each round, batch the preferred sides first. Try the other qualifying side in a second batch when the preferred expansion fails the floor. The retrieval budget stays fixed.
+
 ## 2026-11-23 · Semantic splitters and document formatting
 
 The original layout favored recursive splitting in the four-document-dataset benchmark. Removing layout lowered the overlapping recursive splitter by **8.32 percentage points** (paired 95% interval −12.17 to −4.65). LangChain's chunk-count configuration with a 256-token cap held at 49.96% in both views. Its gain *relative to recursion* from removing layout was **8.32 points** (+4.38 to +12.25). Its final lead on flattened text was **1.11 points** (−2.48 to +4.77). [Full results, source fingerprints, chunk sizes, costs and paired intervals](results/2026-11-23-semantic-formatting.json)

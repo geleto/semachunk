@@ -70,25 +70,46 @@ export function selectCombination(report, data) {
         .map(k => [k, policies[k].policy]));
 }
 
-// Keep all versions of the same question paired. Average task means equally.
-function contrast(report, tasks, terms) {
+// Keep versions of each question paired and groups from separate samples independent.
+export function contrast(samples, tasks, terms) {
+    const reports = Array.isArray(samples) ? samples : [samples];
     const groups = [], means = [];
     for (const task of tasks) {
         const arm = (task === 'hotpotqa' ? 'pooled/' : 'document/') + 'dense';
-        const scores = terms.map(([key, sign]) => [report.runs[key][task][task === 'qmsum' ? 'recall512' : 'complete512'][arm], sign]);
-        const totals = new Map();
-        let sum = 0;
-        report.samples[task].groups.forEach((group, i) => {
-            const diff = scores.reduce((v, [series, sign]) => v + sign * Number(series[i]), 0);
-            const pair = totals.get(group) ?? [0, 0];
-            pair[0] += diff; pair[1]++;
-            totals.set(group, pair);
-            sum += diff;
-        });
-        groups.push([...totals.values()]);
-        means.push(sum / report.samples[task].groups.length);
+        const byGroup = [];
+        let sum = 0, count = 0;
+        for (const report of reports) {
+            const scores = terms.map(([key, sign]) => [report.runs[key][task][task === 'qmsum' ? 'recall512' : 'complete512'][arm], sign]);
+            const totals = new Map();
+            report.samples[task].groups.forEach((group, i) => {
+                const diff = scores.reduce((v, [series, sign]) => v + sign * Number(series[i]), 0);
+                const pair = totals.get(group) ?? [0, 0];
+                pair[0] += diff; pair[1]++;
+                totals.set(group, pair);
+                sum += diff; count++;
+            });
+            byGroup.push(...totals.values());
+        }
+        groups.push(byGroup);
+        means.push(sum / count);
     }
     return { deltaPoints: 100 * means.reduce((s, v) => s + v) / means.length, ci95: groupInterval(groups) };
+}
+
+export function summarizeOverlap(report) {
+    const splits = Object.values(report.splits);
+    for (const result of [...splits, report]) {
+        const samples = result === report ? splits : result;
+        const comparisons = result.comparisons = {};
+        for (const [label, tasks] of [['documents', ['cuad', 'qasper', 'finqa', 'hotpotqa']], ['meetings', ['qmsum']]]) {
+            const outcomes = comparisons[label] = {};
+            for (const name of Object.keys(report.policies)) {
+                for (const control of ['core256', 'live320']) {
+                    if (name !== control) outcomes[name + '/' + control] = contrast(samples, tasks, [[name, 1], [control, -1]]);
+                }
+            }
+        }
+    }
 }
 
 export function summarizeSemantic(report) {
