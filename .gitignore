@@ -52,14 +52,18 @@ node_modules/
 
 # dotenv environment variable files
 .env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
+.env.*
+!.env.example
 
 # OS metadata
 .DS_Store
 
 # IDEs
 .vscode/
+
+# Local benchmark datasets and cached API embeddings
+/benchmarks/.cache/
+# Environments from archived benchmark runs
+/benchmarks/.venv/
+/benchmarks/__pycache__/
 
