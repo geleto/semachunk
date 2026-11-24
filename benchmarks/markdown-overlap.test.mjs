@@ -1,10 +1,13 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { createBatchEmbedder } from '../src/embeddings.js';
+import { parseMarkdown } from '../src/markdown.js';
 import { tokenBudget } from '../src/token-limit.js';
 import { deliver, repeatedSourceFraction } from './delivered-context.mjs';
 import { contrast } from './markdown-decisions.mjs';
 import { indexDocument } from './markdown-index.mjs';
 import { growMarkdown } from './markdown-overlap.mjs';
+import { auditBoundaries } from './overlap-boundaries.mjs';
 
 function fixture(words) {
     const source = words.join(' ');
@@ -20,10 +23,10 @@ function fixture(words) {
 async function grow({ source, originals }, ranges, vectors = {}, options = {}) {
     const cores = ranges.map(([first, last]) => ({ ...originals[first], end: originals[last].end, first, last }));
     const snapshot = structuredClone({ originals, cores }), batches = [], stats = { grewPerRound: [] };
-    const spans = await growMarkdown(source, originals, cores, async texts => {
+    const spans = await growMarkdown(source, originals, cores, createBatchEmbedder(texts => {
         batches.push(texts);
         return texts.map(text => vectors[text] ?? [1, 0]);
-    }, { cutoff: 0.5, maxChunkSize: Infinity, countTokens: s => s.length, ...options }, stats);
+    }), { cutoff: 0.5, maxChunkSize: Infinity, countTokens: s => s.length, ...options }, stats);
     assert.deepEqual({ originals, cores }, snapshot);
     for (const span of spans) {
         assert.equal(span.start, originals[span.first].start);
@@ -43,7 +46,7 @@ test('both outer cores can take the same original unit in a single batch', async
 
 test('each core grows once per round, ties go left and finished wings stay capped', async () => {
     const data = fixture(['A', 'B', 'C', 'D', 'E']);
-    const out = await grow(data, data.originals.map((_, i) => [i, i]), {}, { sideUnits: 1 });
+    const out = await grow(data, data.originals.map((_, i) => [i, i]), {}, { sideUnits: 1, scoreFromCore: false });
     assert.deepEqual(out.ranges, [[0, 1], [0, 2], [1, 3], [2, 4], [3, 4]]);
     assert.deepEqual(out.rounds, [5, 3]);
     assert.equal(out.batches.length, 2);
@@ -53,20 +56,54 @@ test('each core grows once per round, ties go left and finished wings stay cappe
 test('a refreshed span can admit a previously weak side and the frozen-core test can reject it', async () => {
     const data = fixture(['L', 'C', 'R', 'S']);
     const vectors = { L: [0, 1], S: [-1, 0], 'C R': [0, 1], 'L C R': [0, 1] };
-    const local = await grow(data, [[1, 1]], vectors);
+    const local = await grow(data, [[1, 1]], vectors, { scoreFromCore: false });
     assert.deepEqual(local.ranges, [[0, 2]]);
     assert.deepEqual(local.batches.slice(1), [['S', 'C R'], ['L C R']]);
-    const anchored = await grow(data, [[1, 1]], vectors, { anchor: true });
+    const anchored = await grow(data, [[1, 1]], vectors, { scoreFromCore: false, anchor: true });
     assert.deepEqual(anchored.ranges, [[1, 2]]);
+    const frozen = await grow(data, [[1, 1]], vectors);
+    assert.deepEqual(frozen.ranges, [[1, 2]]);
+    assert.ok(!frozen.batches.flat().includes('C R'));
 });
 
-test('the proposed-body floor tries the other side when the preferred expansion moves too far', async () => {
+test('a rejected side locks and the other side can win the next round', async () => {
     const data = fixture(['L', 'C', 'R', 'S']);
-    const vectors = { R: [0.8, 0.6], S: [-1, 0], 'L C': [0, 1], 'C R': [1, 0], 'L C R': [0, 1] };
+    const vectors = { R: [0.8, 0.6], S: [-1, 0], 'L C': [0, 1] };
     const out = await grow(data, [[1, 1]], vectors, { coreFloor: 1 });
     assert.deepEqual(out.ranges, [[1, 2]]);
-    assert.deepEqual(out.rounds, [1, 0]);
-    assert.deepEqual(out.batches.slice(1), [['L C'], ['C R'], ['S'], ['L C R']]);
+    assert.deepEqual(out.rounds, [0, 1, 0]);
+    assert.deepEqual(out.guard, { tried: 2, rejected: 1, reopened: 0 });
+    assert.deepEqual(out.batches.slice(1), [['L C'], ['C R'], ['S']]);
+    const reopened = await grow(data, [[1, 1]], vectors, { coreFloor: 1, reopen: true });
+    assert.deepEqual(reopened.ranges, [[0, 2]]);
+    assert.deepEqual(reopened.rounds, [0, 1, 1, 0]);
+    assert.deepEqual(reopened.guard, { tried: 3, rejected: 1, reopened: 1 });
+    assert.deepEqual(reopened.batches.at(-1), ['L C R']);
+    const bothFail = await grow(data, [[1, 1]], { ...vectors, 'C R': [0, 1] }, { coreFloor: 1, reopen: true });
+    assert.deepEqual(bothFail.rounds, [0, 0]);
+    assert.deepEqual(bothFail.guard, { tried: 2, rejected: 2, reopened: 0 });
+    assert.deepEqual(bothFail.ranges, [[1, 1]]);
+});
+
+test('two eligible sides are ranked by the chosen reference after the first expansion', async () => {
+    const data = fixture(['A', 'L', 'C', 'R']);
+    const vectors = { A: [0.95, -0.31], R: [0.8, 0.6], 'L C': [0.93, 0.37] };
+    const options = { coreFloor: 0.9, fits: text => text.length <= 5 };
+    const frozen = await grow(data, [[2, 2]], vectors, options);
+    const live = await grow(data, [[2, 2]], vectors, { ...options, scoreFromCore: false });
+    assert.deepEqual(frozen.ranges, [[0, 2]]);
+    assert.deepEqual(live.ranges, [[1, 3]]);
+    assert.deepEqual(frozen.rounds, [1, 1]);
+    assert.deepEqual(live.rounds, [1, 1]);
+});
+
+test('rejections defer only their own core and all selected proposals share one batch per round', async () => {
+    const data = fixture(['L', 'C', 'R', 'A', 'B', 'D']);
+    data.originals.slice(3).forEach(u => u.sectionId = 1);
+    const out = await grow(data, [[1, 1], [4, 4]], { 'L C': [0, 1], A: [0.6, 0.8] }, { coreFloor: 1, sideUnits: 1 });
+    assert.deepEqual(out.ranges, [[1, 2], [3, 5]]);
+    assert.deepEqual(out.rounds, [1, 2]);
+    assert.deepEqual(out.batches.slice(1), [['L C', 'B D'], ['C R', 'A B D']]);
 });
 
 test('each whole proposed body must clear the floor against the same starting core', async () => {
@@ -75,7 +112,7 @@ test('each whole proposed body must clear the floor against the same starting co
     assert.deepEqual((await grow(data, [[0, 0]], vectors)).ranges, [[0, 3]]);
     const guarded = await grow(data, [[0, 0]], vectors, { coreFloor: 0.8 });
     assert.deepEqual(guarded.ranges, [[0, 1]]);
-    assert.deepEqual(guarded.guard, { preferred: { tried: 2, rejected: 1 }, fallback: { tried: 0, rejected: 0 } });
+    assert.deepEqual(guarded.guard, { tried: 2, rejected: 1, reopened: 0 });
     assert.equal(guarded.batches.flat().filter(text => text === 'C X').length, 1);
     assert.ok(!guarded.batches.flat().includes('C X Y Z'));
 });
@@ -100,7 +137,7 @@ for (const title of ['', 'Study']) test('the drift check uses the indexed window
     assert.deepEqual(chunks.map(c => [c.text, c.embeddingText]), [['Alpha.', prefix + 'Alpha.'], ['Beta.', good], ['Gamma.', good]]);
     assert.deepEqual(chunks.map(c => c.sourceRanges), [[{ start: 0, end: 6, outputStart: 0 }],
         [{ start: 8, end: 13, outputStart: 0 }], [{ start: 15, end: 21, outputStart: 0 }]]);
-    assert.deepEqual(context.growth.guard, { preferred: { tried: 3, rejected: 2 }, fallback: { tried: 1, rejected: 0 } });
+    assert.deepEqual(context.growth.guard, { tried: 4, rejected: 2, reopened: 0 });
     assert.deepEqual(batches, [[prefix + 'Beta.', prefix + 'Alpha.', prefix + 'Gamma.'], [bad, good]]);
     assert.equal(context.retained, title ? 3 : 0);
     const delivered = deliver([{ ...chunks[1], doc: 0 }], 20, encoder);
@@ -135,6 +172,66 @@ test('sections, runs, omitted text, protected blocks and generated fragments sto
         assert.deepEqual(out.ranges, [[0, 0], [1, 1]]);
         assert.deepEqual(out.batches, []);
     }
+});
+
+test('real Markdown growth stays on its side of each structural block or skipped range', async () => {
+    const blocks = ['# Topic', 'Topic\n=====', '---', '[ref]: /target', '123.', '~~~js\nlet n = 1\n~~~',
+        '    indented code', '| Header |\n| --- |\n| Cell |', '- item\n- another', '> ## Nested\n> quote', '<div>raw</div>'];
+    for (const block of blocks) {
+        const source = '\uFEFF---\nkey: value\n---\n\n# Topic\n\nLeft one.\n\nLeft two.\n\n' + block + '\n\nRight one.\n\nRight two.';
+        const originals = parseMarkdown(source, { excludeNonLetterSentences: true });
+        const out = await grow({ source, originals }, originals.map((_, i) => [i, i]));
+        const windows = out.ranges.map(([a, b]) => source.slice(originals[a].start, originals[b].end));
+        assert.equal(windows.filter(s => s.includes('Left one.') && s.includes('Left two.')).length, 2, block);
+        assert.equal(windows.filter(s => s.includes('Right one.') && s.includes('Right two.')).length, 2, block);
+        assert.ok(windows.every(s => !(s.includes('Left two.') && s.includes('Right one.'))), block);
+        if (originals.length === 5) {
+            assert.deepEqual(out.ranges[2], [2, 2], block);
+            assert.deepEqual(out.ranges[1], [0, 1], block);
+            assert.deepEqual(out.ranges[3], [3, 4], block);
+            const mixedCore = await grow({ source, originals }, [[1, 3]]);
+            assert.deepEqual(mixedCore.ranges, [[1, 3]], block);
+        }
+    }
+});
+
+test('overlap adds a complete paragraph or detected sentence and stops on both sides of a hard split', async () => {
+    const source = 'Two sentences. In one unit.\n\nReady.\n\nAn exceptionally long sentence with many words that must be cut.\n\nAfter. End.';
+    const originals = parseMarkdown(source, { maxChunkSize: Infinity, fits: s => s.length <= 28 });
+    const texts = originals.map(u => source.slice(u.start, u.end));
+    assert.deepEqual(texts.slice(0, 2), ['Two sentences. In one unit.', 'Ready.']);
+    assert.ok(originals.slice(2, -1).length >= 2);
+    assert.ok(originals.slice(2, -1).every(u => u.overlapBarrier));
+    const ranges = originals.map((_, i) => [i, i]);
+    const out = await grow({ source, originals }, ranges);
+    assert.deepEqual(out.ranges, [[0, 1], [0, 1], ...ranges.slice(2)]);
+    const segmented = 'Alpha begins. Bravo ends. Charlie waits.';
+    const units = parseMarkdown(segmented, { maxChunkSize: 20 });
+    assert.deepEqual(units.map(u => segmented.slice(u.start, u.end).trim()), ['Alpha begins.', 'Bravo ends.', 'Charlie waits.']);
+    const full = await grow({ source: segmented, originals: units }, [[1, 1]]);
+    assert.deepEqual(full.ranges, [[0, 2]]);
+});
+
+test('the source audit distinguishes new turn crossings and detects invalid sentence or block endpoints', () => {
+    const source = 'A: Alpha.\nB: Bravo.\nC: Charlie.\n\n---\n\nDelta.';
+    const units = parseMarkdown(source, { sentenceUnits: true });
+    const core = { ...units[0], first: 0, last: 1, end: units[1].end };
+    const span = { ...core, last: 2, end: units[2].end };
+    const stats = {};
+    auditBoundaries({ source }, units, [core], [span], stats, true);
+    assert.deepEqual(stats.boundaries, { expandedWindows: 1, addedUnits: 1, windowsCrossingNewTurns: 1 });
+    const partial = units.map((u, i) => i === 2 ? { ...u, end: u.end - 2 } : u);
+    assert.throws(() => auditBoundaries({ source }, partial, [core], [{ ...span, end: partial[2].end }], {}, false), assert.AssertionError);
+    assert.throws(() => auditBoundaries({ source }, units, [core], [{ ...span, last: 3, end: units[3].end }], {}, false), assert.AssertionError);
+});
+
+test('explicit turn starts allow growth within either outer turn of a core', async () => {
+    const data = fixture(['A', 'B', 'C', 'D', 'E', 'F']);
+    // Turns contain A, B+C, D+E, and F respectively. The middle core spans two turns.
+    const boundaries = [1, 3, 5].map(i => data.originals[i].start);
+    const out = await grow(data, [[2, 3], [1, 1], [5, 5]], {}, { boundaries, coreFloor: 1 });
+    assert.deepEqual(out.ranges, [[1, 4], [1, 2], [5, 5]]);
+    assert.ok(!out.batches.flat().some(s => s.includes('A') || s.includes('F')));
 });
 
 test('delivered redundancy counts repeated source positions within a document including nested and partial ranges', () => {

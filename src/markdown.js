@@ -5,7 +5,7 @@ import { gfm } from 'micromark-extension-gfm';
 import { frontmatter } from 'micromark-extension-frontmatter';
 import { splitSpans, TokenLimitError } from './token-limit.js';
 
-const grammar = {
+export const markdownGrammar = {
     extensions: [gfm(), frontmatter(['yaml'])],
     mdastExtensions: [gfmFromMarkdown(), frontmatterFromMarkdown(['yaml'])],
 };
@@ -52,7 +52,7 @@ export function markdownResult(source, unit) {
 
 export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en', excludeNonLetterSentences, sentenceUnits }) {
     if (typeof locale !== 'string') throw new TypeError('locale must be a language tag string.');
-    const root = fromMarkdown(source, grammar);
+    const root = fromMarkdown(source, markdownGrammar);
     // micromark consumes a leading BOM before assigning positions.
     const bom = Number(source.startsWith('\uFEFF'));
     const offset = p => bom + p.offset;
@@ -69,6 +69,9 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
     function leaf(start, end, kind, prefix = '', protectedSpans = [], continuationStart = start) {
         function make(a, b) {
             const unit = raw(a, b, kind);
+            // A hard cap can split a sentence. It remains a core unit, but
+            // cannot supply a whole sentence of neighboring context.
+            if (kind === 'prose' && (a !== start || b !== end)) unit.overlapBarrier = true;
             if (prefix && a !== continuationStart && !/[\r\n]/.test(source[a - 1])) unit.parts = [prefix, [a, b]];
             return unit;
         }
@@ -267,6 +270,9 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
         if (['yaml', 'definition', 'thematicBreak'].includes(node.type)) { pending = []; run++; continue; }
         inspect(node);
         for (const unit of blocks(node, start, end)) {
+            // Ordinary packing also accepts fitting containers. Context
+            // expansion may borrow only top-level paragraph text.
+            if (node.type !== 'paragraph' && unit.kind === 'prose') unit.overlapBarrier = true;
             let first = unit.start, adjacent = unit.start;
             for (let i = pending.length - 1; i >= 0; i--) {
                 const h = pending[i];

@@ -98,6 +98,26 @@ export function contrast(samples, tasks, terms) {
 
 export function summarizeOverlap(report) {
     const splits = Object.values(report.splits);
+    if (report.study === 'side-locks') {
+        report.comparisons = {};
+        for (const [label, tasks] of [['documents', ['cuad', 'qasper', 'finqa', 'hotpotqa']], ['meetings', ['qmsum']]]) {
+            const outcomes = report.comparisons[label] = {};
+            for (const name of ['frozenLock', 'frozenReopen', 'liveLock', 'liveReopen']) {
+                const gain = prefix => [[prefix + name, 1], [prefix + 'core256', -1]];
+                for (const prefix of ['', 'flat/']) outcomes[prefix + name + ' vs core'] = contrast(splits, tasks, gain(prefix));
+                outcomes[name + ' change after flattening'] = contrast(splits, tasks, [...gain('flat/'), [name, -1], ['core256', 1]]);
+            }
+            for (const prefix of ['', 'flat/']) {
+                for (const [a, b] of [['frozenReopen', 'frozenLock'], ['liveReopen', 'liveLock'], ['frozenLock', 'liveLock']]) {
+                    outcomes[prefix + a + ' vs ' + b] = contrast(splits, tasks, [[prefix + a, 1], [prefix + b, -1]]);
+                }
+            }
+            if (label === 'meetings') for (const control of ['core256', 'frozenLock']) {
+                outcomes['frozenLockTurns vs ' + control] = contrast(splits, tasks, [['frozenLockTurns', 1], [control, -1]]);
+            }
+        }
+        return;
+    }
     const controls = (report.study === 'embedding-context' ? ['core256', 'live512', 'guard512'] : ['core256', 'live320'])
         .filter(name => report.policies[name]);
     for (const result of [...splits, report]) {

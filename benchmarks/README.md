@@ -131,6 +131,8 @@ Run `node --max-old-space-size=6144 benchmarks/overlap-study.mjs embedding-conte
 
 Append `confirmation` and choose a new output path to compare the guarded 384- and 512-token windows with the original cores on the separate document and meeting sample. [Confirmation results](results/2026-11-24-embedding-confirmation.json)
 
+Run `node --max-old-space-size=6144 benchmarks/overlap-study.mjs side-locks.json side-locks` to compare the frozen core and current window as neighbor-scoring references, with either permanent locks or reopening after opposite-side growth. It tests both source formats and one additional meeting condition with speaker-turn starts enforced. Every expansion is checked against source paragraph runs and sentence endpoints. The earlier archived passage and embedding-context results used same-round fallback. Check out `0e78990` and `5261906` respectively to reproduce those runs. [Side-lock and boundary results](results/2026-11-24-overlap-side-locks.json)
+
 ## Run the large-document benchmark
 
 Run `node benchmarks/markdown-performance.mjs` for the public Markdown entry point. An optional output path saves a new JSON report. A second argument sets the character target, for example `node benchmarks/markdown-performance.mjs performance.json 1024`. Each workload runs in its own process with one warmup and three timed iterations. The inputs include repeated and unique paragraphs, fenced code and tables in either one long section or 2,048 short sections.

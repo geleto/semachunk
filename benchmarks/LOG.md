@@ -1,5 +1,30 @@
 # Chunking improvements and benchmark results
 
+## 2026-11-24 · Locking a rejected side during context expansion
+
+Keep the frozen core as the experimental scoring reference and keep a rejected side locked. Reopening produced identical final index strings and retrieval at all three delivery budgets for both scoring references, on both source formats. With the frozen reference it added 44 proposals on the original sources and 58 on the flattened sources. These cost 11,938 and 13,669 additional cold input tokens respectively. Scoring neighbors against the current window tied the frozen reference on original document completions and gained 0.38 meeting recall points (paired 95% interval −0.08 to +1.03). The public chunker continues to return and index the original cores. [Full results, source fingerprints and paired comparisons](results/2026-11-24-overlap-side-locks.json)
+
+| Source and outcome at 512 delivered tokens | Core alone | Frozen score and permanent lock | Difference in points (paired 95% interval) |
+|---|---:|---:|---:|
+| Documents with original formatting, complete evidence | 62.53% | 59.74% | −2.80 (−6.11 to +0.27) |
+| Same documents flattened, complete evidence | 55.02% | 55.02% | 0.00 (−2.28 to +1.92) |
+| Meetings with original turn lines, annotated token recall | 23.61% | 24.56% | +0.95 (−0.55 to +2.23) |
+| Same meetings flattened, annotated token recall | 23.14% | 22.55% | −0.60 (−1.81 to +0.83) |
+
+The 199 document questions cover contracts, scientific papers, financial reports and multi-hop Wikipedia searches. On the original sources expansion gained two complete answers and lost eight. With an equal weight for each of the four datasets, document token recall also fell, from 73.83% to 71.47%. Flattening changed the effect of expansion by +2.80 points on complete document evidence (paired interval −0.62 to +6.08) and −1.54 points on meeting recall (−2.59 to −0.36). The flattened sources preserve word order, speaker labels and table delimiters. This comparison measures the effect of removing layout from these sources. Across the original documents and meetings the frozen policy grew 538 of 4,074 cores, accepted 990 of 1,417 trials and used 807,636 cold embedding tokens against 485,466 for the control.
+
+Meeting turn lines are soft breaks in Markdown. With only Markdown boundaries, 181 of 209 expanded meeting cores crossed at least one additional turn. Enforcing the known turn starts reduced that to zero across 38 expanded cores. Recall was 24.66%, compared with 24.56% when crossing was allowed (+0.10 points, −1.87 to +2.23). Cold meeting embedding work fell from 255,838 to 187,938 tokens, compared with 178,492 for the core index. The improvement over the core index came from three of 59 queries in two of eight meetings. A core that already spans turns keeps its original text and may grow within its outermost turns.
+
+A cache-only replay of the earlier 512-token guarded run at `5261906` reproduced every per-dataset final index hash and the cited 824 rejections, 171 opposite-side trials and 89 recoveries. Of its 965 expanded windows, 30 borrowed a piece of a hard-split sentence and 22 borrowed a non-paragraph block. Nine more had such a barrier inside their original core. The corrected pass treats those units and mixed cores as barriers. It can take an entire fitting paragraph or a complete detected sentence, including an attached section heading when present. Same-section paragraphs may join across whitespace. The source audit checked 4,574 expanded windows and 9,227 whole-unit additions across the new policies and formatting conditions. Counts include each policy's independently checked occurrences. [Earlier run](results/2026-11-24-embedding-context.json)
+
+### Side-lock protocol
+
+Use the 199 document questions and eight meetings from the earlier confirmation sample. Compare four 512-token indexing windows on the same 256-token cores. Rank both neighbors by cosine to either the frozen core or the current window. Try the better eligible side once per round. At a 0.50 neighbor cutoff and 0.90 prospective-window floor, compare a permanent side lock with reopening after the opposite side succeeds. Repeat on the same words and questions after stripping heading markers and collapsing whitespace, with evidence offsets remapped. Compare each policy with its own formatting-matched core control. Audit every expanded interval against top-level Markdown blocks and sentence endpoints, and count original meeting windows that cross an additional turn. The primary delivery budget is 512 tokens.
+
+On the original meeting transcripts also test enforcing the known turn starts when adding context. Keep any turns already present in a public core. Use the frozen-core score and permanent lock for this comparison.
+
+The main comparison fetched 664,550 new provider input tokens. The turn-boundary condition fetched another 954. A network-disabled replay reproduced all 51 layouts, 183 retrieval results, cold embedding costs, source checks and paired comparisons. All 101 tests passed.
+
 ## 2026-11-24 · Neighbor context for embeddings
 
 Keep neighbor expansion experimental. On 199 separate document questions, embedding the original 256-token cores recovered complete evidence for 62.53%, compared with 60.01% at a guarded 384-token window and 59.19% at 512. The 512-token difference against the original cores was −3.35 points (paired 95% interval −6.76 to −0.25). It used 75.9% more cold embedding tokens. On 59 queries from eight separate meetings, both guarded windows retrieved 24.94% of annotated tokens, compared with 23.61% for the cores (+1.33 points, −0.39 to +2.85). The two guarded sizes had identical per-query meeting recall at 512 delivered tokens. [Confirmation results and source fingerprints](results/2026-11-24-embedding-confirmation.json)

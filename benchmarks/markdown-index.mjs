@@ -8,6 +8,7 @@ import { packSentences } from './chunking.mjs';
 import { alignPlain, tokenWindows } from './delivered-context.mjs';
 import { combineMarkdown } from './markdown-merging.mjs';
 import { growMarkdown, measureGrowth } from './markdown-overlap.mjs';
+import { auditBoundaries, meetingTurnStarts } from './overlap-boundaries.mjs';
 import { referenceChunks } from './retrieval-baselines.mjs';
 import { modelInputTokens } from './encoder.mjs';
 
@@ -133,7 +134,9 @@ export async function indexDocument(doc, policy, costs, initial, context, encode
         if (policy.growth) {
             const stats = context.growth ??= { grewPerRound: [], duplicateSpans: 0, cosines: [],
                 oneAddition: { count: 0, below08: 0 }, multipleAdditions: { count: 0, below08: 0 } };
-            expanded = await growMarkdown(doc.source, input, cores, embed, { ...policy.growth, fits, maxChunkSize, countTokens, indexText }, stats);
+            const boundaries = policy.turnBoundaries ? meetingTurnStarts(doc) : undefined;
+            expanded = await growMarkdown(doc.source, input, cores, embed, { ...policy.growth, fits, maxChunkSize, countTokens, indexText, boundaries }, stats);
+            if (policy.auditBoundaries) auditBoundaries(doc, input, cores, expanded, stats, policy.countTurns);
         }
         const returned = returnCore ? cores : expanded ?? cores;
         chunks = returned.map(unit => markdownResult(doc.source, unit));
