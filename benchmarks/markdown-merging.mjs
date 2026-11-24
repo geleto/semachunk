@@ -5,10 +5,11 @@ import { DEFAULT_CONFIG as defaults } from '../config.js';
 
 // All experiments share the production section, source-gap and budget check.
 // The comparison uses a stable sorted list of live boundaries each pass.
-export async function combineMarkdown(source, units, embed, options, initialScores = []) {
+export async function combineMarkdown(source, units, embed, options, calibration = {}) {
     const { method, maxChunkSize, fits, leadIn, maxPasses = Infinity, maxUncappedPasses = defaults.MAX_UNCAPPED_PASSES,
         maxMergesPerPass = defaults.MAX_MERGES_PER_PASS, candidateMergesPercentageCap = defaults.MAX_MERGES_PER_PASS_PERCENTAGE,
         uncappedCandidateMerges = defaults.UNCAPPED_CANDIDATE_MERGES } = options;
+    calibration.cutoff = options.cutoff ?? 0.5;
     if (method === 'pack' && !leadIn) return packMarkdown(source, units, maxChunkSize, fits);
     let live = units.map((u, i) => ({ ...u, first: i, last: i }));
     function eligible(a, b) {
@@ -26,7 +27,7 @@ export async function combineMarkdown(source, units, embed, options, initialScor
         return packed;
     }
     const directions = new WeakMap(), scores = new Map();
-    let threshold = options.cutoff ?? 0.5, initialCutoff = threshold, initialMean = threshold, uncapped = 0;
+    let threshold = calibration.cutoff, initialMean = threshold, uncapped = 0;
     for (let pass = 0; pass < maxPasses && uncapped < maxUncappedPasses && maxMergesPerPass > 0; pass++) {
         const edges = [], missing = new Set();
         for (let i = 0; i + 1 < live.length; i++) {
@@ -53,15 +54,18 @@ export async function combineMarkdown(source, units, embed, options, initialScor
             const stats = new SimilarityStatistics();
             for (const { score } of edges) {
                 stats.add(score);
-                if (!pass) initialScores.push(score);
+                if (!pass) calibration.scores?.push(score);
             }
-            if (options.adaptive) threshold = documentMergeThreshold(stats, initialCutoff);
+            if (options.adaptive) threshold = documentMergeThreshold(stats, calibration.cutoff);
             if (!pass && options.density && stats.boundaryCount >= 2) {
                 const fraction = edges.length / (units.length - 1);
                 const weight = options.density === 'relax' ? fraction : 1 - fraction;
                 threshold = stats.average - weight * Math.sqrt(stats.variance);
             }
-            if (!pass) { initialCutoff = threshold; initialMean = stats.boundaryCount >= 2 ? stats.average : threshold; }
+            if (!pass) {
+                calibration.cutoff = threshold;
+                initialMean = stats.boundaryCount >= 2 ? stats.average : threshold;
+            }
         } else if (options.schedule === 'tighten') threshold = initialMean;
         const merged = mergePass(live, edges, threshold, { maxMergesPerPass, candidateMergesPercentageCap, uncappedCandidateMerges });
         if (!merged) break;

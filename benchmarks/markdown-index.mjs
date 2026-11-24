@@ -130,12 +130,18 @@ export async function indexDocument(doc, policy, costs, initial, context, encode
         const coreTokens = policy.coreTokens ?? maxChunkTokens;
         const coreFits = coreTokens === maxChunkTokens ? fits : tokenBudget(coreTokens, countTokens, required);
         const input = parsed(doc, maxChunkSize, coreTokens, coreFits, policy.sentences);
-        cores = await combineMarkdown(doc.source, input, embed, { ...policy, maxChunkSize, fits: coreFits }, initial);
+        const calibration = { scores: initial };
+        cores = await combineMarkdown(doc.source, input, embed, { ...policy, maxChunkSize, fits: coreFits }, calibration);
         if (policy.growth) {
             const stats = context.growth ??= { grewPerRound: [], duplicateSpans: 0, cosines: [],
                 oneAddition: { count: 0, below08: 0 }, multipleAdditions: { count: 0, below08: 0 } };
             const boundaries = policy.turnBoundaries ? meetingTurnStarts(doc) : undefined;
-            expanded = await growMarkdown(doc.source, input, cores, embed, { ...policy.growth, fits, maxChunkSize, countTokens, indexText, boundaries }, stats);
+            const growth = { ...policy.growth, fits, maxChunkSize, countTokens, indexText, boundaries };
+            if (growth.cutoff === 'merge') {
+                growth.cutoff = calibration.cutoff;
+                (stats.mergeCutoffs ??= []).push(growth.cutoff);
+            }
+            expanded = await growMarkdown(doc.source, input, cores, embed, growth, stats);
             if (policy.auditBoundaries) auditBoundaries(doc, input, cores, expanded, stats, policy.countTurns);
         }
         const returned = returnCore ? cores : expanded ?? cores;

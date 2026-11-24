@@ -36,6 +36,7 @@ export async function prepareDataset(dataset, encoder, plainParts = false) {
 export async function evaluate(task, { docs, questions }, policy, encoder, mode) {
     const { countTokens } = encoder;
     const ruleStudy = mode === 'rules', baselines = mode === 'baselines', denseOnly = mode === 'semantic' || mode === 'overlap';
+    const reuseScores = ruleStudy || mode === 'overlap';
     const start = performance.now(), paid = { ...encoder.stats };
     const costs = { calls: 0, texts: 0, singletons: 0, embeddedTokens: 0, indexTexts: 0, indexTokens: 0 };
     const initial = [], context = { retained: 0, shortened: 0, omitted: 0, alreadyPresentOrUnavailable: 0 };
@@ -57,7 +58,7 @@ export async function evaluate(task, { docs, questions }, policy, encoder, mode)
         return layout.rows;
     }));
     const bodyHash = sha256(JSON.stringify(byDoc.map(rows => rows.map(c => [c.text, c.sourceRanges]))));
-    const layouts = ruleStudy && byDoc.map(rows => sha256(JSON.stringify(rows.map(c => [c.text, c.sourceRanges, c.embeddingText]))));
+    const layouts = reuseScores && byDoc.map(rows => sha256(JSON.stringify(rows.map(c => [c.text, c.sourceRanges, c.embeddingText ?? c.text]))));
     const vocab = vocabulary();
     for (const c of byDoc.flat()) c.index = vocab.intern(c.embeddingText ?? c.text);
     for (const q of questions) vocab.intern(q.text);
@@ -71,11 +72,11 @@ export async function evaluate(task, { docs, questions }, policy, encoder, mode)
             if (!pools.has(key)) {
                 const passages = pool.flatMap(d => byDoc[d]);
                 pools.set(key, { passages, indices: passages.map(p => p.index), bm25: !denseOnly && bm25Ranker(passages.map(p => wordCounts(p.text))),
-                    layout: ruleStudy && sha256(pool.map(d => d + '/' + layouts[d]).join(',')) });
+                    layout: reuseScores && mode + '/' + sha256(pool.map(d => d + '/' + layouts[d]).join(',')) });
             }
             const { passages, indices, bm25, layout } = pools.get(key);
-            if (ruleStudy) q.scores ??= new Map();
-            let measured = q.scores?.get(layout);
+            const cache = reuseScores ? (q.scores ??= new Map()) : null;
+            let measured = cache?.get(layout);
             if (!measured) {
                 measured = [];
                 const semantic = dense(vocab.id(q.text), indices), terms = !denseOnly && wordCounts(q.text);
@@ -93,7 +94,7 @@ export async function evaluate(task, { docs, questions }, policy, encoder, mode)
                         measured.push({ ranker, budget, metrics, spent: projected.length, trace });
                     }
                 }
-                q.scores?.set(layout, measured);
+                cache?.set(layout, measured);
             }
             for (const { ranker, budget, metrics, spent, trace } of measured) {
                 const arm = name + '/' + ranker;
@@ -112,6 +113,7 @@ export async function evaluate(task, { docs, questions }, policy, encoder, mode)
         }
     }
     if (policy.growth) context.growth.cosines = distribution(context.growth.cosines);
+    if (context.growth?.mergeCutoffs) context.growth.mergeCutoffs = distribution(context.growth.mergeCutoffs);
     const bodyCap = policy.growth?.returnCore ? (policy.coreTokens ?? policy.tokens) : policy.tokens;
     return { questions: questions.length, bodyHash, chunkTokens: distribution(byDoc.flat().map(c => countTokens(c.text))),
         ...(mode === 'overlap' && indexedWindows(byDoc, countTokens)),

@@ -4,7 +4,8 @@ import { createBatchEmbedder } from '../src/embeddings.js';
 import { parseMarkdown } from '../src/markdown.js';
 import { tokenBudget } from '../src/token-limit.js';
 import { deliver, repeatedSourceFraction } from './delivered-context.mjs';
-import { contrast } from './markdown-decisions.mjs';
+import { contrast, selectExpansion } from './markdown-decisions.mjs';
+import { evaluate, prepareDataset } from './markdown-evaluation.mjs';
 import { indexDocument } from './markdown-index.mjs';
 import { growMarkdown } from './markdown-overlap.mjs';
 import { auditBoundaries } from './overlap-boundaries.mjs';
@@ -232,6 +233,48 @@ test('explicit turn starts allow growth within either outer turn of a core', asy
     const out = await grow(data, [[2, 3], [1, 1], [5, 5]], {}, { boundaries, coreFloor: 1 });
     assert.deepEqual(out.ranges, [[1, 4], [1, 2], [5, 5]]);
     assert.ok(!out.batches.flat().some(s => s.includes('A') || s.includes('F')));
+});
+
+test('an expansion can reuse the actual ordinary cutoff while preserving the same cores', async () => {
+    const doc = { source: 'A.\n\nB.\n\nC.', parsed: new Map() };
+    const first = 'A.\n\nB.';
+    const encoder = { countTokens: s => s.length, embed: texts => texts.map(t => t === first ? [0.6, 0.8] : [1, 0]) };
+    const policy = { method: 'fixed', adaptive: true, coreTokens: 6, tokens: 10 };
+    const run = (cutoff, stats) => indexDocument(doc, { ...policy, growth: { cutoff, returnCore: true } }, {}, [], stats, encoder);
+    const stats = {}, shared = await run('merge', stats), fixed = await run(0.5, {});
+    assert.deepEqual(stats.growth.mergeCutoffs, [1]);
+    assert.deepEqual(shared.map(c => [c.text, c.sourceRanges]), fixed.map(c => [c.text, c.sourceRanges]));
+    assert.equal(shared[0].embeddingText, first);
+    assert.equal(fixed[0].embeddingText, doc.source);
+});
+
+test('expansion nomination keeps the control independent and uses cost and complexity inside the score tolerance', () => {
+    const rows = { core256: { percent: 90, embeddedTokens: 1 }, top: { percent: 60, embeddedTokens: 25 },
+        wing: { percent: 59.9, embeddedTokens: 5 }, cheaper: { percent: 59.5, embeddedTokens: 10 }, low: { percent: 59.49, embeddedTokens: 2 } };
+    const policies = Object.fromEntries(Object.keys(rows).map(name => [name, { growth: name === 'wing' ? { sideTokens: 64 } : {} }]));
+    assert.equal(selectExpansion(rows, policies), 'cheaper');
+    rows.wing.percent = 61;
+    assert.equal(selectExpansion(rows, policies), 'wing');
+});
+
+test('cached retrieval distinguishes changed index text on identical cores and still measures cold work', async () => {
+    const source = 'Alpha.\n\nBeta.', query = { id: 'q', group: 'd', text: 'Beta?', pool: [0], references: [[[0, 8, 13]]] };
+    const dataset = { docs: [{ source }], questions: [query] };
+    const encoder = { stats: {}, countTokens: text => text.length, offsets: text => Array.from(text, (_, i) => [i, i + 1, i + 1]),
+        embed: texts => texts.map(t => t === 'Beta.' || t === 'Beta?' ? [1, 0] : [0, 1]) };
+    await prepareDataset(dataset, encoder);
+    const control = await evaluate('cuad', dataset, { method: 'public-markdown', tokens: 6 }, encoder, 'overlap');
+    const run = cutoff => evaluate('cuad', dataset, { method: 'fixed', coreTokens: 6, tokens: 13,
+        growth: { cutoff, returnCore: true } }, encoder, 'overlap');
+    await run(1);
+    assert.equal(query.scores.size, 1);
+    const expanded = await run(0), repeated = await run(0);
+    assert.equal(query.scores.size, 2);
+    assert.equal(expanded.bodyHash, control.bodyHash);
+    assert.notEqual(expanded.indexHash, control.indexHash);
+    assert.notDeepEqual(expanded.examples.document.first, control.examples.document.first);
+    assert.deepEqual(repeated.retrieval, expanded.retrieval);
+    assert.equal(repeated.embeddedTokens, expanded.embeddedTokens);
 });
 
 test('delivered redundancy counts repeated source positions within a document including nested and partial ranges', () => {

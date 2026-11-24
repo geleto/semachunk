@@ -96,6 +96,39 @@ export function contrast(samples, tasks, terms) {
     return { deltaPoints: 100 * means.reduce((s, v) => s + v) / means.length, ci95: groupInterval(groups) };
 }
 
+export function summarizeExpansion(result) {
+    const outcomes = {};
+    for (const [group, tasks] of [['documents', ['cuad', 'qasper', 'finqa', 'hotpotqa']], ['meetings', ['qmsum']]]) {
+        if (!result.samples[tasks[0]]) continue;
+        const rows = outcomes[group] = {};
+        for (const [name, run] of Object.entries(result.runs)) {
+            let percent = 0, embeddedTokens = 0, expandedCores = 0;
+            for (const task of tasks) {
+                const row = run[task], score = row.retrieval[primary(task, 'dense')][512];
+                percent += 100 * (task === 'qmsum' ? score.recall : score.complete / row.questions) / tasks.length;
+                embeddedTokens += row.embeddedTokens;
+                expandedCores += row.growth?.cosines.count ?? 0;
+            }
+            rows[name] = { percent, embeddedTokens, expandedCores, ...contrast(result, tasks, [[name, 1], ['core256', -1]]),
+                vsReference: contrast(result, tasks, [[name, 1], ['384/0.5/0.9', -1]]) };
+        }
+    }
+    return outcomes;
+}
+
+// Calibrate among expansion settings. Keep core-only as an independent control.
+export function selectExpansion(rows, policies) {
+    const names = Object.keys(rows).filter(name => name !== 'core256');
+    const best = Math.max(...names.map(name => rows[name].percent));
+    function extraLimit(name) {
+        const { sideTokens, sideUnits, limitToCore } = policies[name].growth;
+        return Number(Boolean(sideTokens || sideUnits || limitToCore));
+    }
+    return names.filter(name => rows[name].percent >= best - 0.5)
+        .sort((a, b) => extraLimit(a) - extraLimit(b) || rows[a].embeddedTokens - rows[b].embeddedTokens ||
+            rows[b].percent - rows[a].percent)[0];
+}
+
 export function summarizeOverlap(report) {
     const splits = Object.values(report.splits);
     if (report.study === 'side-locks') {

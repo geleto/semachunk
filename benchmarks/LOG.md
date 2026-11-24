@@ -1,5 +1,55 @@
 # Chunking improvements and benchmark results
 
+## 2026-11-24 · Choosing expansion limits and similarity thresholds
+
+Keep core-only indexing for general Markdown. The document setting selected on calibration used a 256-token total ceiling, a 0.65 neighbor cutoff and a 0.95 final floor. On 676 held-out questions it expanded 80 of 7,828 cores and changed zero complete-evidence outcomes at 512 delivered tokens. Both indexes scored 57.99%. Expansion used 1,115,273 cold embedding tokens versus 1,079,606 (+3.30%). Both recovered complete evidence for 112 of 298 contract questions, 67 of 135 paper questions, 73 of 115 financial questions and 104 of 128 multi-hop questions. Their macro scores also tied at 256 delivered tokens. At 1,024 the difference was +0.08 points. [Full grid, held-out results, costs and paired comparisons](results/2026-11-24-expansion-settings.json)
+
+| Index window, neighbor cutoff, final floor | Complete document evidence | Cold document tokens vs core | Meeting evidence recall on 11 held-out transcripts |
+|---|---:|---:|---:|
+| Core alone | 57.99% | — | 21.13% |
+| 256, 0.65, 0.95 (document nominee) | 57.99% | +3.3% | 21.13% |
+| 320, 0.50, off (meeting nominee) | 57.25% | +23.3% | 20.85% |
+| 256, 0.50, 0.90 | 57.20% | +12.9% | 20.86% |
+| 320, 0.50, 0.90 | 57.33% | +31.9% | 20.86% |
+| 384, 0.50, 0.90 | 56.79% | +46.6% | 20.86% |
+| 512, 0.50, 0.90 | 56.61% | +66.7% | 20.86% |
+| 384, 0.35, 0.90 | 56.90% | +90.4% | 21.85% |
+| 384, 0.65, 0.90 | 57.55% | +17.3% | 21.06% |
+| 384, ordinary merge cutoff, 0.90 | 56.63% | +74.2% | 21.32% |
+| 384, 0.50, off | 56.47% | +31.3% | 20.85% |
+| 384, 0.50, 0.80 | 56.47% | +50.0% | 20.85% |
+| 384, 0.50, 0.95 | 57.23% | +42.6% | 20.91% |
+
+At 0.50/0.90, the 320-, 384- and 512-token ceilings produced byte-identical meeting indexes on the 11 transcripts. The largest accepted window was 313 tokens. On documents, 283 windows used more than 384 tokens at the 512 ceiling. Reusing the ordinary cutoff allowed more neighbors. Its median on these meetings was 0.31, and it increased meeting embedding work by 39.4% over the core. The fixed 0.50 cutoff increased it by 4.2%.
+
+The two similarity tests had different effects. Averaged across the other factors in the 48-setting calibration grid, raising the neighbor cutoff from 0.50 to 0.65 improved complete document evidence by 1.03 points (paired 95% interval +0.15 to +2.41) and reduced meeting token recall by 0.63 points (−1.32 to −0.08). Adding a 0.90 final floor to the neighbor check improved document completions by 1.39 points (+0.24 to +2.51) and reduced meeting recall by 0.22 points (−0.38 to −0.06). These exploratory comparisons weight each combination of the other two parameters equally and keep every outcome for a question in its source group. On document calibration, the 64-token per-side limit tied the control on the macro score and used 17.8% more embedding tokens. Limiting each side to one original unit or doubling the core size fell 1.72 and 2.31 points below the control respectively.
+
+### Transcript results
+
+The original transcript layout contains speaker-turn starts. Every expansion stayed within the outermost turns already in its core. The cheaper meeting nominee improved calibration recall by 0.78 points (+0.17 to +1.51). Its difference was −0.27 points on the next 11 meetings (−1.23 to +0.60) and −0.19 on a further 35 meetings (−0.66 to +0.25). Across those 307 held-out questions in 46 meetings, the paired difference was −0.21 points (−0.65 to +0.19). The earlier gain survived turn preservation on its own sample and failed to repeat on separate meetings. [Independent transcripts, per-query recall, costs and intervals](results/2026-11-24-expansion-meetings.json)
+
+| Index window, neighbor cutoff, final floor | Calibration recall (174 queries) | Further 35 meetings (237 queries) | Difference vs core on the 35 meetings, points (95% interval) | Cold embedding tokens vs core on the 35 meetings |
+|---|---:|---:|---:|---:|
+| Core alone | 28.36% | 22.52% | — | — |
+| 320, 0.50, off (cheaper nominee) | 29.14% | 22.33% | −0.19 (−0.66 to +0.25) | +4.8% |
+| 320, 0.35, off (highest calibration recall) | 29.63% | 22.94% | +0.41 (−0.56 to +1.50) | +17.0% |
+| 384, 0.50, 0.90 | 29.13% | 22.22% | −0.30 (−0.72 to +0.07) | +6.9% |
+| 384, 0.35, 0.90 | 28.81% | 22.62% | +0.10 (−0.81 to +1.08) | +26.5% |
+
+The highest-recall calibration setting improved 50 of the 237 new queries and worsened 43 at the primary delivery budget. At the secondary budgets of 256 and 1,024 delivered tokens it gained 1.15 and 1.17 recall points on average. The 384/0.35/0.90 setting gained 0.73 points in the first 11 held-out meetings, then 0.10 on the next 35. Its combined difference was +0.24 points (−0.55 to +1.09). These estimates leave room for a workload-specific benefit at the lower neighbor cutoff.
+
+### Expansion settings protocol
+
+Freeze the public 256-token cores, use the frozen core to score both sides, lock rejected sides, and enforce Markdown and explicit meeting-turn boundaries. Return only core text. Cross total indexing ceilings of 256, 320, 384 and 512 tokens with neighbor cutoffs of 0.35, 0.50 and 0.65. For each combination, compare the final-window cosine floor switched off, at 0.80, at 0.90 and at 0.95. A 256-token ceiling still allows a short core to grow. At 384/0.50/0.90 also test a 64-token allowance per side, one original unit per side, and a window up to twice the core length. At 384/0.90 test allowing either neighbor regardless of its cosine score.
+
+Calibrate on the frozen calibration document sample and the first 24 QMSum meetings in the existing hash order. Nominate one expansion setting each for complete document evidence and meeting token recall at 512 delivered tokens. Within half a percentage point of the best calibration result, prefer a setting without an extra side or relative-size limit, then the lowest cold embedding token cost. Always keep core-only as a separate control. Validate both nominees on the larger replication documents and the remaining 11 meetings. Also repeat the one-factor comparisons around 384/0.50/0.90 on validation. Report paired 95% intervals over whole source groups, embedding costs, actual growth and results at 256 and 1,024 delivered tokens. A general default needs a positive validation interval on its primary outcome and enough improvement to justify the indexing cost.
+
+At 384 tokens with a 0.90 final floor, also reuse each document's ordinary merge cutoff as the expansion neighbor cutoff on both samples. Calculate it from the same eligible original pairs used to create the cores. The ordinary Markdown merge accepts a pair on the boundary score. Expansion has a separate acceptance decision that compares the actual candidate indexing string's embedding with the frozen core embedding. [Markdown merging](../src/markdown-merge.js) · [Expansion](markdown-overlap.mjs)
+
+The initial fixed-cutoff results on 11 meetings put the cheaper calibration nominee below core-only and the 384/0.35/0.90 setting above it, with both intervals spanning zero. Freeze a follow-up on the 35 transcripts in the separate QMSum validation file. Compare core-only, the cheaper calibration nominee, the highest-recall calibration setting (breaking ties by cold tokens), and the matched 384/0.50/0.90 and 384/0.35/0.90 settings. Check transcript hashes against all 35 QMSum test meetings before scoring. [Pinned meeting data](https://github.com/Yale-LILY/QMSum/blob/83d7768c1f2b4dfeb091385d3dc7e239b8e5bb7e/data/ALL/jsonl/val.jsonl)
+
+Verification matched 325 dataset and policy combinations against a run that scored every query afresh. Network-disabled replays matched the ten combinations sharing the ordinary cutoff and all five runs on the independent meeting split. Across those 340 combinations, the core hashes, index hashes, cold embedding work and all 1,221 retrieval results matched. Source audits covered 53,057 expanded windows and 91,228 original-unit additions, counting each setting's occurrences. Every meeting expansion passed the turn-boundary check. The runs fetched 2,551,857 new provider input tokens for calibration and replication and 1,148,935 for the further meetings. All 104 tests passed.
+
 ## 2026-11-24 · Locking a rejected side during context expansion
 
 Keep the frozen core as the experimental scoring reference and keep a rejected side locked. Reopening produced identical final index strings and retrieval at all three delivery budgets for both scoring references, on both source formats. With the frozen reference it added 44 proposals on the original sources and 58 on the flattened sources. These cost 11,938 and 13,669 additional cold input tokens respectively. Scoring neighbors against the current window tied the frozen reference on original document completions and gained 0.38 meeting recall points (paired 95% interval −0.08 to +1.03). The public chunker continues to return and index the original cores. [Full results, source fingerprints and paired comparisons](results/2026-11-24-overlap-side-locks.json)

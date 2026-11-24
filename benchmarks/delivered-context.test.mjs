@@ -148,12 +148,12 @@ test('both priority experiments batch eligible endpoints across sections and mer
 
 test('original-boundary scoring can discover a newly token-eligible gap without scoring a merged body', async () => {
     const source = 'A\n\nB\n\nC', units = parseMarkdown(source, { maxChunkSize: Infinity });
-    const batches = [], initial = [];
+    const batches = [], calibration = { scores: [] };
     const result = await combineMarkdown(source, units, texts => {
         batches.push(texts);
         return texts.map(() => [1]);
-    }, { method: 'fixed', maxChunkSize: Infinity, fits: s => s !== 'A\n\nB', adaptive: true }, initial);
-    assert.deepEqual(initial, [1]);
+    }, { method: 'fixed', maxChunkSize: Infinity, fits: s => s !== 'A\n\nB', adaptive: true }, calibration);
+    assert.deepEqual(calibration, { scores: [1], cutoff: 0.5 });
     assert.deepEqual(batches, [['B', 'C'], ['A']]);
     assert.equal(result.length, 1);
     assert.equal(source.slice(result[0].start, result[0].end), source);
