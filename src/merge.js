@@ -32,25 +32,18 @@ export async function mergeChunks(texts, embedBatch, options) {
 
         // 3. Set this pass's cap from the number of live candidates. Take the highest
         //    cosine first, with earlier candidates winning ties just as in a stable sort.
-        const limit = mergeLimit(queue.size, options);
-        if (!queue.size || !(limit > 0)) break;
+        changed = queue.takeDisjoint(options);
+        if (!changed.length) break;
 
-        // 4. Merge disjoint pairs and collect the surviving left nodes for the next embedding batch.
-        changed = [];
-        while (queue.size && changed.length < limit) {
-            const left = queue.takeBest();
+        // 4. The selected left nodes survive the join and form the next scoring batch.
+        for (const left of changed) {
             const right = left.next;
-            // takeBest removed the selected boundary. Drop its two overlapping neighbors
-            // so each chunk participates in at most one merge in this pass.
-            queue.invalidate(left.prev);
-            queue.invalidate(right);
             left.text += ' ' + right.text;
             left.embedding = null;
             left.next = right.next;
             if (left.next) left.next.prev = left;
             // A stale heap entry can still reference the retired node.
             right.embedding = right.prev = right.next = null;
-            changed.push(left);
         }
 
         // 5. Charge the pass budget once all available disjoint pairs have been processed.
@@ -65,7 +58,8 @@ export async function mergeChunks(texts, embedBatch, options) {
 }
 
 async function scoreChangedChunks(changed, pass, queue, embedBatch, options, cutoff) {
-    const { maxChunkSize, canJoin = createJoinCheck(maxChunkSize), tokenLimit, finalEmbeddingText } = options;
+    const { maxChunkSize, tokenLimit, finalEmbeddingText } = options;
+    const canJoin = createJoinCheck(maxChunkSize, tokenLimit);
     const pending = [], finalTexts = [];
     for (const chunk of changed) {
         if (fitsNext(chunk) || fitsNext(chunk.prev)) pending.push(chunk);
@@ -154,6 +148,19 @@ class CandidateQueue {
             left.candidate = null;
             this.size--;
         }
+    }
+
+    takeDisjoint(options) {
+        const limit = mergeLimit(this.size, options);
+        const selected = [];
+        while (this.size && selected.length < limit) {
+            const left = this.takeBest();
+            // These two boundaries share an endpoint with the selected pair.
+            this.invalidate(left.prev);
+            this.invalidate(left.next);
+            selected.push(left);
+        }
+        return selected;
     }
 
     takeBest() {

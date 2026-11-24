@@ -14,15 +14,11 @@ export interface ChunkingOptions {
 	maxEmbeddingBatchSize?: number;
 	/** Maximum cached vectors retained between stages. Evicted texts may be embedded again. Default Infinity. */
 	maxCachedEmbeddings?: number;
-	/** Minimum merge cosine and base cutoff for optional sentence grouping. */
+	/** Base cosine cutoff. Defaults to 0.05 for fixed text/HTML merging and 0.5 for document calibration or Markdown. */
 	similarityThreshold?: number;
-	/** Group by adjacent and centroid cosine. Adapt the bounded base with two or more size-eligible boundaries. Default false. */
-	groupSentences?: boolean;
 	excludeNonLetterSentences?: boolean;
-	dynamicThresholdLowerBound?: number;
-	dynamicThresholdUpperBound?: number;
 	combineChunks?: boolean;
-	/** Overrides similarityThreshold for the priority merge only. */
+	/** Sets a fixed priority merge cutoff, overriding similarityThreshold and document calibration. */
 	combineChunksSimilarityThreshold?: number;
 	/** Calibrate the priority cutoff from original eligible neighbors. Defaults to 'document' for Markdown and 'fixed' for text and HTML. */
 	mergeThresholdMode?: 'fixed' | 'document';

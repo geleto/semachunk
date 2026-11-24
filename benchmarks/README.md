@@ -35,7 +35,7 @@ Exact boundary precision, recall and F1 pool counts across articles in each spli
 ### Settings, costs and repeatability
 
 - The priority-merge grid crosses maximum sizes of 250, 500 and 1,000 UTF-16 code units with cosine cutoffs of 0.3, 0.4, 0.5, 0.6, 0.7 and a per-document cutoff. Each task selects its own setting on calibration, maximizing answer hits or exact boundary F1. Ties favor fewer indexed chunks, then the first setting in the listed grid order. Held-out results are reported for every setting.
-- Comparisons include one sentence per chunk, greedy sentence packing at all three sizes, adaptive grouping alone and with priority merging at all three sizes, and both grouping modes with a fixed 0.5 cutoff at size 500.
+- Controls include one sentence per chunk and greedy sentence packing at all three sizes.
 - All methods use `text-embedding-3-small` at its full 1,536 dimensions. The runner precomputes the union of contiguous chunks up to the largest candidate size, individual long sentences and queries. It sends up to 256 inputs per request, checks the 8,192-token input limit and the 300,000-token request limit, and preserves the provider's row indices. [OpenAI embeddings](https://developers.openai.com/api/docs/guides/embeddings) · [API limits](https://developers.openai.com/api/reference/resources/embeddings/methods/create)
 - The runner imports the checkout's `chunkText` directly. Costs count its actual provider calls, input texts and single-item calls, including final indexing. Greedy packing makes one indexing call per document. Offline precomputation and query encoding are excluded from these counts.
 - Each report records the embedding model, tokenizer, dimensions, sample IDs and hashes of the ordered inputs and vector bytes. Per-dataset `precomputation` records successful live requests, inputs, API-reported input tokens and batches read from cache. Compare vector hashes when reproducing a run. Older reports record their original model and token budgets.
@@ -51,7 +51,7 @@ npm run benchmark:rag
 
 To run one dataset, use `npm run benchmark:rag -- --task cuad` with a task name of `cuad`, `qasper` or `hotpotqa`. The three pinned data files total about 72 MB. CUAD and HotpotQA use checksummed JSON mirrors of the original splits. A cache from the ZIP/Parquet loader needs one download per changed dataset. The sample IDs, texts and gold evidence are identical. Each report records sample IDs, lengths in `cl100k_base` tokens, exclusions, indexing costs and source ranges for example queries.
 
-Use `--methods merge-500-0.5 merge-500-document` to run selected policies alongside the token window. For an older implementation, select settings it supports. Include `flat-merge-500-0.5` to compare its normal input with a flattened control on a shared vector matrix.
+Use `--methods priority-default merge-500-0.5 merge-500-document` to compare the checkout's default, the previous 0.5 cutoff and document calibration alongside the token window. For an older implementation, select settings it supports. Include `flat-merge-500-0.5` to compare its normal input with a flattened control on a shared vector matrix.
 
 | Task | What the retriever can search | What constitutes complete evidence |
 |---|---|---|
@@ -60,7 +60,7 @@ Use `--methods merge-500-0.5 merge-500-document` to run selected policies alongs
 | HotpotQA, distractors | A question's ten supplied Wikipedia passages, with the title at the start of each passage. We take 32 bridge and 32 comparison questions at evenly spaced indices within their validation categories. | Every annotated supporting sentence from both source articles. [HotpotQA dataset and evaluation](https://hotpotqa.github.io/) |
 | HotpotQA, pooled search | All distinct passages from those same 64 cases in one index. Each question searches the entire index with the same ranking rules and evidence labels. | The same supporting sentences. This is a local pooled-corpus experiment. The official full-wiki task searches a much larger collection. |
 
-The suite crosses twelve chunking methods with two rankers. It compares single sentences, greedy packing to 500 UTF-16 units, priority merging at 250/0.5 and 500/0.3, 0.5 and 0.7, initial grouping plus priority at 500/0.5, and 128-token windows with a 32-token overlap. Window edges move to complete Unicode characters if necessary. Four additional size-500 configurations measure a flattened-input control, the document-relative cutoff, a strict 256-token chunk budget, and a ceiling of two priority passes.
+The suite evaluates the public default and fixed controls with two rankers. It compares single sentences, greedy packing to 500 UTF-16 units, priority merging at 250/0.5 and 500/0.3, 0.5 and 0.7, and 128-token windows with a 32-token overlap. Window edges move to complete Unicode characters if necessary. Four additional size-500 configurations measure a flattened-input control, the document-relative cutoff, a strict 256-token chunk budget, and a ceiling of two priority passes.
 
 CUAD passes the original contract whitespace to the chunker. QASPER supplies headings, paragraphs and captions as blocks. HotpotQA separates article titles from passage bodies. The flat control receives the same words and labels with whitespace normalized. All methods share the vectors for identical strings. One `cl100k_base` tokenizer supplies the synchronous chunk budget and source offsets. The dense ranker uses OpenAI cosine similarity. BM25 uses lowercased Unicode word counts and document frequencies over the query's pool, with `k1=1.2` and `b=0.75`. Both break ties by source order.
 
@@ -74,6 +74,32 @@ For a disjoint chunking policy, the scorer checks that every source token belong
 - The provider counts describe building the chunk index with output embeddings. BM25 reuses the same chunk text for lexical ranking. The overlapping-window baseline models one dense indexing batch per document.
 
 Retrieval benchmarks such as BEIR also use rank-based metrics including nDCG and Recall@k. A token budget makes comparisons across chunk sizes meaningful here. LegalBench-RAG measures overlap with cited source spans. End-to-end benchmarks such as RAGBench additionally evaluate how faithfully a generated response uses the supplied context. This suite measures the evidence a generator would receive. [BEIR evaluation](https://github.com/beir-cellar/beir) · [LegalBench-RAG](https://github.com/zeroentropy-ai/legalbenchrag) · [RAGBench metrics](https://arxiv.org/html/2407.11005v2)
+
+### Tune the priority merge cutoff
+
+The first command sweeps fixed cutoffs on the two historical cohorts and writes the chosen settings. The second scores those settings, the historical 0.5 control and greedy packing on new sources. Run both from the repository root with fresh output paths.
+
+```sh
+node benchmarks/cutoff-study.mjs calibrate benchmarks/.cache/cutoff-calibration.json
+node benchmarks/cutoff-study.mjs confirm benchmarks/.cache/cutoff-calibration.json benchmarks/results/cutoff-confirmation.json
+```
+
+### Compare centroid passes and pair order
+
+The centroid experiments are archived. Apply the study patch with `git apply` in a disposable checkout of `0bc7e8f`. In its `benchmarks/results/` directory, place the frozen cutoff report and Markdown sample manifest under their original names with LF line endings. The study hashes their exact bytes. Run `npm ci`, make the cached vectors available under `benchmarks/.cache`, then run the commands below from that checkout. [Study patch](baselines/2026-11-24-centroid-passes.patch) · [Frozen cutoff report](results/2026-11-24-retrieval-budget-cutoffs.json) · [Markdown sample manifest](results/2026-11-23-markdown-samples.json)
+
+```sh
+node benchmarks/centroid-pass-study.mjs benchmarks/results/centroid-sweeps.json
+node benchmarks/centroid-pass-study.mjs benchmarks/results/centroid-pair-order.json --pairs
+```
+
+The first command compares sequential sweeps with full-text priority rounds. The second compares leftmost-first with highest-cosine-first centroid pairs. Both replay the frozen vectors. Each character in a `hits` string records one question's complete-evidence outcome in the cutoff report's order.
+
+To confirm the selected leftmost-first schedule on new sources, run the following command. It includes contracts outside the earlier CUAD test partition, fresh papers and two fresh multi-hop indexes. It uses the usual embedding credentials on a cold run and reuses checksummed batches on replay.
+
+```sh
+node benchmarks/centroid-pass-study.mjs benchmarks/results/centroid-fresh.json --confirm
+```
 
 ## Compare Markdown retrieval
 

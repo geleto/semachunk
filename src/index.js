@@ -1,9 +1,8 @@
-import { computeAdvancedSimilarities, documentMergeThreshold, groupAdjacentSentences } from './similarity.js';
 import { parseSentences } from './sentences.js';
 import { copyEmbedding, createBatchEmbedder } from './embeddings.js';
 import { mergeChunks } from './merge.js';
 import { DEFAULT_CONFIG } from '../config.js';
-import { createJoinCheck, sentenceTokenLimit, tokenBudget } from './token-limit.js';
+import { sentenceTokenLimit, tokenBudget } from './token-limit.js';
 
 /**
  * Chunk text semantically using batch embeddings
@@ -22,14 +21,13 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
 		countTokens,
 		maxEmbeddingBatchSize = DEFAULT_CONFIG.MAX_EMBEDDING_BATCH_SIZE,
 		maxCachedEmbeddings = DEFAULT_CONFIG.MAX_CACHED_EMBEDDINGS,
-		similarityThreshold = DEFAULT_CONFIG.SIMILARITY_THRESHOLD,
-		groupSentences = DEFAULT_CONFIG.GROUP_SENTENCES,
-		excludeNonLetterSentences = DEFAULT_CONFIG.EXCLUDE_NON_LETTER_SENTENCES,
-		dynamicThresholdLowerBound = DEFAULT_CONFIG.DYNAMIC_THRESHOLD_LOWER_BOUND,
-		dynamicThresholdUpperBound = DEFAULT_CONFIG.DYNAMIC_THRESHOLD_UPPER_BOUND,
-		combineChunks = DEFAULT_CONFIG.COMBINE_CHUNKS,
-		combineChunksSimilarityThreshold = options?.similarityThreshold ?? DEFAULT_CONFIG.COMBINE_CHUNKS_SIMILARITY_THRESHOLD,
 		mergeThresholdMode = inputFormat === 'markdown' ? 'document' : DEFAULT_CONFIG.MERGE_THRESHOLD_MODE,
+		similarityThreshold = inputFormat !== 'markdown' && mergeThresholdMode === 'fixed'
+			? DEFAULT_CONFIG.COMBINE_CHUNKS_SIMILARITY_THRESHOLD
+			: DEFAULT_CONFIG.SIMILARITY_THRESHOLD,
+		excludeNonLetterSentences = DEFAULT_CONFIG.EXCLUDE_NON_LETTER_SENTENCES,
+		combineChunks = DEFAULT_CONFIG.COMBINE_CHUNKS,
+		combineChunksSimilarityThreshold = similarityThreshold,
 		maxPasses = DEFAULT_CONFIG.MAX_PASSES,
 		maxUncappedPasses = DEFAULT_CONFIG.MAX_UNCAPPED_PASSES,
 		returnEmbedding = DEFAULT_CONFIG.RETURN_EMBEDDING,
@@ -44,13 +42,8 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
 	if (typeof text !== 'string') {
 		throw new TypeError('Input must be a string');
 	}
-	for (const [name, value] of Object.entries({
-		similarityThreshold, combineChunksSimilarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound
-	})) {
+	for (const [name, value] of Object.entries({ similarityThreshold, combineChunksSimilarityThreshold })) {
 		if (!Number.isFinite(value)) throw new RangeError(`${name} must be finite.`);
-	}
-	if (dynamicThresholdLowerBound > dynamicThresholdUpperBound) {
-		throw new RangeError('dynamicThresholdLowerBound must be at most dynamicThresholdUpperBound.');
 	}
 	for (const [name, value] of Object.entries({ maxChunkSize, maxPasses, maxUncappedPasses, maxMergesPerPass, uncappedCandidateMerges })) {
 		if (value !== Infinity && !(Number.isSafeInteger(value) && value >= 0)) {
@@ -80,7 +73,6 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
 	};
 	let output;
 	if (inputFormat === 'markdown') {
-		if (groupSentences) throw new TypeError('Markdown does not support groupSentences.');
 		const { chunkMarkdown } = await import('./markdown-merge.js').catch(error => {
 			if (error.code === 'ERR_MODULE_NOT_FOUND' && /package '(?:mdast-util|micromark-extension)-/.test(error.message)) {
 				throw new Error('Markdown input requires optional packages. Run npm install mdast-util-from-markdown mdast-util-gfm mdast-util-frontmatter micromark-extension-gfm micromark-extension-frontmatter.', { cause: error });
@@ -89,28 +81,15 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
 		});
 		output = await chunkMarkdown(text, embedBatch, { ...priority, maxChunkTokens, fits, locale, excludeNonLetterSentences, combineChunks });
 	} else {
-		const sentences = await parseSentences(text, { inputFormat, locale, excludeNonLetterSentences });
-		if (sentences.length === 0) return [];
-
-		const tokenLimit = sentenceTokenLimit(sentences, fits);
-		const canJoin = createJoinCheck(maxChunkSize, tokenLimit);
-		let chunks = sentences;
-		if (groupSentences && sentences.length > 1) {
-			const grouping = { maxChunkSize, canJoin, similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound, logging };
-			const analysis = await computeAdvancedSimilarities(sentences, embedBatch, grouping);
-			chunks = await groupAdjacentSentences(sentences, embedBatch, grouping, analysis);
-			if (priority.calibrate) {
-				priority.combineChunksSimilarityThreshold = documentMergeThreshold(analysis, combineChunksSimilarityThreshold);
-				priority.calibrate = false;
-			}
-		}
+		let chunks = await parseSentences(text, { inputFormat, locale, excludeNonLetterSentences });
+		if (chunks.length === 0) return [];
 		if (logging) console.log('Initial chunks', chunks.map(chunk => chunk.slice(0, 50)));
 
-		const outputText = text => prefix + text;
+		const tokenLimit = sentenceTokenLimit(chunks, fits);
 		if (combineChunks && chunks.length > 1) {
 			chunks = await mergeChunks(chunks, embedBatch, {
-				...priority, canJoin, tokenLimit, logging,
-				finalEmbeddingText: returnEmbedding && maxCachedEmbeddings === Infinity ? outputText : undefined
+				...priority, tokenLimit, logging,
+				finalEmbeddingText: returnEmbedding && maxCachedEmbeddings === Infinity ? text => prefix + text : undefined
 			});
 			if (logging) console.log('Combined chunks', chunks.map(chunk => chunk.slice(0, 100)));
 		}

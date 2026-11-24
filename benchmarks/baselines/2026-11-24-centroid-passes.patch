@@ -1,0 +1,734 @@
+diff --git a/benchmarks/chunking.mjs b/benchmarks/chunking.mjs
+index 775958c..ed1ddf3 100644
+--- a/benchmarks/chunking.mjs
++++ b/benchmarks/chunking.mjs
+@@ -62,10 +62,12 @@ export async function split(chunkText, text, options) {
+ }
+ 
+ export async function measure(chunkText, doc, plan, vocab, matrix, countTokens) {
+-    let calls = 0, inputs = 0, singletons = 0;
++    let calls = 0, inputs = 0, singletons = 0, providerTokens = 0;
+     function embed(batch) {
+-        if (plan.maxChunkTokens && batch.some(text => countTokens(text) > plan.maxChunkTokens)) {
+-            throw new Error('Token limit exceeded in an embedding request');
++        for (const text of batch) {
++            const tokens = countTokens(text);
++            if (plan.maxChunkTokens && tokens > plan.maxChunkTokens) throw new Error('Token limit exceeded in an embedding request');
++            providerTokens += tokens;
+         }
+         calls++;
+         inputs += batch.length;
+@@ -84,7 +86,7 @@ export async function measure(chunkText, doc, plan, vocab, matrix, countTokens)
+         if (options.maxChunkTokens) options.countTokens = countTokens;
+         output = (await chunkText(flatInput ? doc.flat : doc.raw, embed, { ...options, returnEmbedding: true })).map(c => c.text);
+     }
+-    return { ids: output.map(vocab.id), calls, inputs, singletons };
++    return { ids: output.map(vocab.id), calls, inputs, singletons, providerTokens };
+ }
+ 
+ export function indexedChunks(docs, rows, texts) {
+diff --git a/benchmarks/corpora.mjs b/benchmarks/corpora.mjs
+index e2c0899..1aeeca5 100644
+--- a/benchmarks/corpora.mjs
++++ b/benchmarks/corpora.mjs
+@@ -25,6 +25,11 @@ export const assets = {
+         url: 'https://raw.githubusercontent.com/Break-Through-Tech/Accenture-1T-contract-review-challenge/06410c6b3cdb2c0cf80a0a3dc9b6bb64c85338e4/data/test.json',
+         checksum: '007b6a40b0c65247f881627375c3d2e9b6aeeb5dfa89957494feed0765a1a073',
+     },
++    cuadFull: {
++        name: 'cuad-v1.json',
++        url: 'https://raw.githubusercontent.com/Break-Through-Tech/Accenture-1T-contract-review-challenge/06410c6b3cdb2c0cf80a0a3dc9b6bb64c85338e4/data/CUADv1.json',
++        checksum: 'ed0b77d85bdf4014d7495800e8e4a70565b48ee6f8a2e5dca9cf8655dbf10eae',
++    },
+     qasper: {
+         name: 'qasper-test.tgz',
+         url: 'https://qasper-dataset.s3.us-west-2.amazonaws.com/qasper-test-and-evaluator-v0.3.tgz',
+@@ -210,12 +215,41 @@ export function joinParts(parts) {
+     return { text: blocks.join(' '), spans };
+ }
+ 
++export const ragRowId = { cuad: row => row.title, qasper: row => row[0], hotpotqa: row => row._id };
++
++// Alternate source positions between two shards. Multi-hop questions also
++// reserve all their article titles so the two search pools are disjoint.
++export function heldoutRows(task, { seed, count, shard, sources, questions }) {
++    const id = ragRowId[task];
++    return rows => {
++        const sorted = rows.map(row => [sha256(seed + id(row)), row])
++            .sort(([a], [b]) => a.localeCompare(b)).map(([, row]) => row);
++        if (task !== 'hotpotqa') {
++            const chosen = sorted.filter(row => !sources.has(id(row))).slice(0, count);
++            if (chosen.length !== count) throw new Error('Insufficient fresh sources for ' + task);
++            return chosen.filter((_, i) => i % 2 === shard);
++        }
++        const used = new Set(sources), chosen = [];
++        for (const kind of ['bridge', 'comparison']) {
++            let n = 0;
++            for (const row of sorted) {
++                if (row.type !== kind || questions.has(row._id) || row.context.some(([title]) => used.has(title))) continue;
++                for (const [title] of row.context) used.add(title);
++                if (n % 2 === shard) chosen.push(row);
++                if (++n === count / 2) break;
++            }
++            if (n !== count / 2) throw new Error('Insufficient fresh ' + kind + ' cases');
++        }
++        return chosen;
++    };
++}
++
+ function increment(counts, name) { counts[name] = (counts[name] ?? 0) + 1; }
+ 
+-export async function cuad() {
+-    const { data } = JSON.parse(await readFile(await asset(assets.cuad), 'utf8'));
++export async function cuad(select = rows => evenly(rows, 8), source = assets.cuad) {
++    const { data } = JSON.parse(await readFile(await asset(source), 'utf8'));
+     const docs = [], questions = [], exclusions = {};
+-    for (const row of evenly(data, 8)) {
++    for (const row of select(data)) {
+         const [{ context: raw, qas }] = row.paragraphs;
+         const text = compact(raw), positions = utf16Offsets(raw), d = docs.length;
+         docs.push({ title: row.title, text, raw });
+@@ -228,10 +262,10 @@ export async function cuad() {
+     return { docs, questions, exclusions };
+ }
+ 
+-export async function qasper() {
++export async function qasper(select = rows => evenly(rows, 16)) {
+     const rows = await tarJSON(await asset(assets.qasper), 'qasper-test-v0.3.json');
+     const docs = [], questions = [], exclusions = {};
+-    for (const [paper, row] of evenly(Object.entries(rows), 16)) {
++    for (const [paper, row] of select(Object.entries(rows))) {
+         const parts = [row.title, row.abstract, ...row.full_text.flatMap(s => [s.section_name, ...s.paragraphs]),
+             ...row.figures_and_tables.map(f => f.caption)];
+         const { text, spans } = joinParts(parts), d = docs.length, positions = new Map();
+@@ -257,13 +291,17 @@ export async function qasper() {
+     return { docs, questions, exclusions };
+ }
+ 
+-export async function hotpotqa() {
+-    const rows = JSON.parse(await readFile(await asset(assets.hotpotqa), 'utf8'));
++function historicalHotpotSample(rows) {
+     const indices = ['bridge', 'comparison'].flatMap(kind =>
+         evenly(rows.flatMap((row, i) => row.type === kind ? [i] : []), 32)).sort((a, b) => a - b);
++    return indices.map(i => rows[i]);
++}
++
++export async function hotpotqa(select = historicalHotpotSample) {
++    const rows = JSON.parse(await readFile(await asset(assets.hotpotqa), 'utf8'));
+     const docs = [], questions = [], docIds = new Map();
+-    for (const index of indices) {
+-        const row = rows[index], pool = [], facts = new Map();
++    for (const row of select(rows)) {
++        const pool = [], facts = new Map();
+         for (const [title, sentences] of row.context) {
+             const { text, spans } = joinParts([title + '.', ...sentences]);
+             if (!docIds.has(title)) {
+diff --git a/benchmarks/rag.mjs b/benchmarks/rag.mjs
+index eade8b7..278b33a 100644
+--- a/benchmarks/rag.mjs
++++ b/benchmarks/rag.mjs
+@@ -11,7 +11,7 @@ export function ragPlans() {
+     const grid = qualityPlans();
+     const selected = ['sentences', 'pack-500', 'merge-250-0.5', 'merge-500-0.3', 'merge-500-0.5', 'merge-500-0.7', 'group+merge-500'];
+     const base = grid['merge-500-0.5'];
+-    return { ...Object.fromEntries(selected.map(name => [name, grid[name]])),
++    return { 'priority-default': {}, ...Object.fromEntries(selected.map(name => [name, grid[name]])),
+         'flat-merge-500-0.5': { ...base, flatInput: true }, 'merge-500-document': grid['merge-500-document'],
+         'merge-500-token-256': { ...base, maxChunkTokens: 256 }, 'merge-500-two-passes': { ...base, maxPasses: 2 } };
+ }
+@@ -140,7 +140,7 @@ export function evidenceAtBudget(ranked, sources, references, budget, trace) {
+         budgetFeasible: Number(references.some(ref => ref.size <= budget)), tokensDelivered: spent };
+ }
+ 
+-export function scoreMethod(questions, pools, byDoc, sources, gold, vocab, dense, terms, examples = new Map()) {
++export function scoreMethod(questions, pools, byDoc, sources, gold, vocab, dense, terms, examples = new Map(), paired = false) {
+     const result = {};
+     for (const [pool, members] of pools) {
+         const passages = pool.flatMap(d => byDoc[d]), indices = passages.map(p => p.index);
+@@ -157,6 +157,7 @@ export function scoreMethod(questions, pools, byDoc, sources, gold, vocab, dense
+                         contextPrecision: 0, meanTokensDelivered: 0 };
+                     total.questions++;
+                     total.complete += score.complete;
++                    if (paired && ranker === 'dense' && score.complete) (total.completeIndices ??= []).push(i);
+                     total.budgetFeasible += score.budgetFeasible;
+                     total.evidenceRecall += score.evidenceRecall;
+                     total.contextPrecision += score.contextPrecision;
+@@ -205,8 +206,8 @@ function examineExamples(task, questions, sources, gold) {
+     }));
+ }
+ 
+-export async function evaluateRag(task, chunkText, encoder, plans) {
+-    const data = await ragTasks[task](), { questions, exclusions } = data;
++export async function evaluateRag(task, chunkText, encoder, plans, { sample, paired = false } = {}) {
++    const data = sample ?? await ragTasks[task](), { questions, exclusions } = data;
+     const { vocab, sources, windows, gold, docs } = await prepare(data.docs, questions, chunkText, encoder, plans);
+     const { matrix, textsSHA256, vectorsSHA256, precomputation } = await encoder.vectors(vocab.texts);
+     const dense = denseRanker(matrix), lexicon = new Map(), pools = new Map();
+@@ -220,8 +221,8 @@ export async function evaluateRag(task, chunkText, encoder, plans) {
+         pools.get(key)[1].push(i);
+     });
+     const all = task === 'hotpotqa' && [[docs.map((_, d) => d), questions.map((_, i) => i)]];
+-    const defaultName = 'merge-500-0.5';
+-    const examples = plans[defaultName] ? examineExamples(task, questions, sources, gold) : new Map();
++    const exampleName = plans['priority-default'] ? 'priority-default' : 'merge-500-0.5';
++    const examples = plans[exampleName] ? examineExamples(task, questions, sources, gold) : new Map();
+     const pooled = new Map([...examples.keys()].map(i => [i, {}]));
+     const scores = {};
+     for (const [name, plan] of Object.entries({ ...plans, [windowName]: windowPlan })) {
+@@ -256,8 +257,9 @@ export async function evaluateRag(task, chunkText, encoder, plans) {
+         const row = scores[name] = { chunks: passages.length, ...costs(rows), chunkTokens: distribution(passages.map(p => p.end - p.start)),
+             chunksOverModelInput: passages.filter(p => encoder.countTokens(vocab.texts[p.index]) > modelInputTokens).length,
+             chunksOver256Tokens: passages.filter(p => encoder.countTokens(vocab.texts[p.index]) > 256).length,
+-            retrieval: scoreMethod(questions, pools.values(), byDoc, sources, gold, vocab, dense, terms, name === defaultName ? examples : undefined) };
+-        if (all) row.pooledRetrieval = scoreMethod(questions, all, byDoc, sources, gold, vocab, dense, terms, name === defaultName ? pooled : undefined);
++            retrieval: scoreMethod(questions, pools.values(), byDoc, sources, gold, vocab, dense, terms, name === exampleName ? examples : undefined, paired) };
++        if (name !== windowName) row.providerTokens = rows.reduce((sum, r) => sum + r.providerTokens, 0);
++        if (all) row.pooledRetrieval = scoreMethod(questions, all, byDoc, sources, gold, vocab, dense, terms, name === exampleName ? pooled : undefined, paired);
+     }
+     if (all) for (const [i, trace] of pooled) examples.get(i).pooledAt256 = trace;
+     const lengths = sources.map(source => source.starts.length);
+diff --git a/config.js b/config.js
+index fec2030..e23ef2c 100644
+--- a/config.js
++++ b/config.js
+@@ -13,7 +13,7 @@ export const DEFAULT_CONFIG = {
+     DYNAMIC_THRESHOLD_UPPER_BOUND: 0.8,
+     // Iterative Optimization
+     COMBINE_CHUNKS: true,
+-    COMBINE_CHUNKS_SIMILARITY_THRESHOLD: 0.5,
++    COMBINE_CHUNKS_SIMILARITY_THRESHOLD: 0.05,
+     MERGE_THRESHOLD_MODE: 'fixed',
+     MAX_PASSES: Infinity,
+     MAX_UNCAPPED_PASSES: 100,
+diff --git a/src/index.js b/src/index.js
+index 890f0f8..c10ad0d 100644
+--- a/src/index.js
++++ b/src/index.js
+@@ -22,14 +22,16 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
+ 		countTokens,
+ 		maxEmbeddingBatchSize = DEFAULT_CONFIG.MAX_EMBEDDING_BATCH_SIZE,
+ 		maxCachedEmbeddings = DEFAULT_CONFIG.MAX_CACHED_EMBEDDINGS,
+-		similarityThreshold = DEFAULT_CONFIG.SIMILARITY_THRESHOLD,
+ 		groupSentences = DEFAULT_CONFIG.GROUP_SENTENCES,
++		mergeThresholdMode = inputFormat === 'markdown' ? 'document' : DEFAULT_CONFIG.MERGE_THRESHOLD_MODE,
++		similarityThreshold = inputFormat !== 'markdown' && !groupSentences && mergeThresholdMode === 'fixed'
++			? DEFAULT_CONFIG.COMBINE_CHUNKS_SIMILARITY_THRESHOLD
++			: DEFAULT_CONFIG.SIMILARITY_THRESHOLD,
+ 		excludeNonLetterSentences = DEFAULT_CONFIG.EXCLUDE_NON_LETTER_SENTENCES,
+ 		dynamicThresholdLowerBound = DEFAULT_CONFIG.DYNAMIC_THRESHOLD_LOWER_BOUND,
+ 		dynamicThresholdUpperBound = DEFAULT_CONFIG.DYNAMIC_THRESHOLD_UPPER_BOUND,
+ 		combineChunks = DEFAULT_CONFIG.COMBINE_CHUNKS,
+-		combineChunksSimilarityThreshold = options?.similarityThreshold ?? DEFAULT_CONFIG.COMBINE_CHUNKS_SIMILARITY_THRESHOLD,
+-		mergeThresholdMode = inputFormat === 'markdown' ? 'document' : DEFAULT_CONFIG.MERGE_THRESHOLD_MODE,
++		combineChunksSimilarityThreshold = similarityThreshold,
+ 		maxPasses = DEFAULT_CONFIG.MAX_PASSES,
+ 		maxUncappedPasses = DEFAULT_CONFIG.MAX_UNCAPPED_PASSES,
+ 		returnEmbedding = DEFAULT_CONFIG.RETURN_EMBEDDING,
+diff --git a/src/merge.js b/src/merge.js
+index 787d0e3..0fdbe0a 100644
+--- a/src/merge.js
++++ b/src/merge.js
+@@ -32,25 +32,18 @@ export async function mergeChunks(texts, embedBatch, options) {
+ 
+         // 3. Set this pass's cap from the number of live candidates. Take the highest
+         //    cosine first, with earlier candidates winning ties just as in a stable sort.
+-        const limit = mergeLimit(queue.size, options);
+-        if (!queue.size || !(limit > 0)) break;
++        changed = queue.takeDisjoint(options);
++        if (!changed.length) break;
+ 
+-        // 4. Merge disjoint pairs and collect the surviving left nodes for the next embedding batch.
+-        changed = [];
+-        while (queue.size && changed.length < limit) {
+-            const left = queue.takeBest();
++        // 4. The selected left nodes survive the join and form the next scoring batch.
++        for (const left of changed) {
+             const right = left.next;
+-            // takeBest removed the selected boundary. Drop its two overlapping neighbors
+-            // so each chunk participates in at most one merge in this pass.
+-            queue.invalidate(left.prev);
+-            queue.invalidate(right);
+             left.text += ' ' + right.text;
+             left.embedding = null;
+             left.next = right.next;
+             if (left.next) left.next.prev = left;
+             // A stale heap entry can still reference the retired node.
+             right.embedding = right.prev = right.next = null;
+-            changed.push(left);
+         }
+ 
+         // 5. Charge the pass budget once all available disjoint pairs have been processed.
+@@ -129,7 +122,7 @@ async function scoreChangedChunks(changed, pass, queue, embedBatch, options, cut
+ 
+ // Each live boundary belongs to its left node. Invalidation drops it from the
+ // live count immediately. Its heap entry can be discarded when it reaches the top.
+-class CandidateQueue {
++export class CandidateQueue {
+     heap = [];
+     size = 0;
+     nextOrder = 0;
+@@ -156,6 +149,19 @@ class CandidateQueue {
+         }
+     }
+ 
++    takeDisjoint(options) {
++        const limit = mergeLimit(this.size, options);
++        const selected = [];
++        while (this.size && selected.length < limit) {
++            const left = this.takeBest();
++            // These two boundaries share an endpoint with the selected pair.
++            this.invalidate(left.prev);
++            this.invalidate(left.next);
++            selected.push(left);
++        }
++        return selected;
++    }
++
+     takeBest() {
+         while (this.size > 0) {
+             const entry = this.heap[0];
+diff --git a/benchmarks/centroid-pass-study.mjs b/benchmarks/centroid-pass-study.mjs
+new file mode 100644
+index 0000000..f608e92
+--- /dev/null
++++ b/benchmarks/centroid-pass-study.mjs
+@@ -0,0 +1,179 @@
++import assert from 'node:assert/strict';
++import { existsSync } from 'node:fs';
++import { readFile, writeFile } from 'node:fs/promises';
++import { join } from 'node:path';
++import { chunkText } from '../src/index.js';
++import { passCounts, scheduledChunks } from './centroid-passes.mjs';
++import { split } from './chunking.mjs';
++import { asset, assets, cache, heldoutRows, here, ragRowId, sha256 } from './corpora.mjs';
++import { cachedVectors, dimension, model, openEncoder, openTokenizer } from './encoder.mjs';
++import { groupInterval } from './markdown-decisions.mjs';
++import { budgets, evaluateRag, ragTasks } from './rag.mjs';
++
++const [output, mode, ...extraArgs] = process.argv.slice(2);
++if (!output || ![undefined, '--pairs', '--confirm'].includes(mode) || extraArgs.length) {
++    throw new Error('Use centroid-pass-study.mjs NEW-OUTPUT.json [--pairs | --confirm]');
++}
++if (existsSync(output)) throw new Error('Result already exists: ' + output);
++const pairOrderStudy = mode === '--pairs';
++const archive = '2026-11-24-retrieval-budget-cutoffs.json';
++const bytes = await readFile(join(here, 'results', archive));
++const prior = JSON.parse(bytes);
++const tasks = Object.keys(ragTasks), cutoffs = [0.05, 0.5];
++const schedules = ['repeat-first', 'regroup-text', 'centroid-first', 'priority-first', 'round-control'];
++const mean = a => a.reduce((n, x) => n + x, 0) / a.length;
++
++function replayPlans() {
++    const plans = { 'once-only': { groupSentences: true, combineChunks: false } };
++    if (pairOrderStudy) for (const order of ['left', 'best']) {
++        plans['batch-' + order + '-only'] = { schedule: 'only', order, counts: passCounts() };
++    } else plans['repeat-only'] = { schedule: 'repeat-only', counts: passCounts() };
++    for (const t of cutoffs) {
++        plans['priority/' + t] = { combineChunksSimilarityThreshold: t };
++        plans['once/' + t] = { groupSentences: true, combineChunksSimilarityThreshold: t };
++        if (pairOrderStudy) {
++            plans['batch-text/' + t] = { schedule: 'full-only', order: 'best', cutoff: t, counts: passCounts() };
++            for (const order of ['left', 'best']) for (const schedule of ['centroid-first', 'priority-first']) {
++                plans[schedule + '-' + order + '/' + t] = { schedule, order, cutoff: t, counts: passCounts() };
++            }
++        } else for (const schedule of schedules) plans[schedule + '/' + t] = { schedule, cutoff: t, counts: passCounts() };
++    }
++    return plans;
++}
++
++async function score(task, sample, plans, encoder, extra = {}) {
++    async function implementation(source, embed, options) {
++        if (!options.schedule) return chunkText(source, embed, options);
++        return scheduledChunks(await split(chunkText, source), embed, options.schedule, options.cutoff, options.counts, options.order);
++    }
++    const run = await evaluateRag(task, implementation, encoder, { ...plans, ...extra }, { sample, paired: true });
++    const rows = {};
++    for (const [id, plan] of Object.entries(plans)) {
++        const row = run.scores[id], scores = (row.pooledRetrieval ?? row.retrieval).dense;
++        const hits = budgets.map(b => {
++            const indices = new Set(scores[b].completeIndices ?? []);
++            assert.equal(indices.size, scores[b].complete);
++            return run.questionIds.map((_, i) => indices.has(i) ? '1' : '0').join('');
++        });
++        rows[id] = { complete: budgets.map(b => scores[b].complete), hits, chunks: row.chunks, calls: row.providerCalls,
++            inputs: row.providerTexts, tokens: row.providerTokens, counts: plan.counts };
++    }
++    return { run, rows };
++}
++
++async function evaluate(task, ref, historicalMatrix) {
++    const ids = task === 'hotpotqa' ? ref.questionIds : ref.documents;
++    const sample = await ragTasks[task](rows => {
++        const byId = new Map(rows.map(r => [ragRowId[task](r), r]));
++        return ids.map(id => byId.get(id));
++    });
++    const tokenizer = openTokenizer();
++    const encoder = { ...tokenizer, vectors: texts => cachedVectors(texts, tokenizer.countTokens,
++        () => { throw new Error('Missing cutoff-study embedding batch'); }, join(cache, 'openai-embeddings')) };
++    const extra = historicalMatrix ? { flat: { flatInput: true }, tokenLimit: { maxChunkTokens: 256 } } : {};
++    try {
++        const { run, rows } = await score(task, sample, replayPlans(), encoder, extra);
++        assert.deepEqual([run.documents, run.questionIds, run.textsSHA256, run.vectorsSHA256],
++            [ref.documents, ref.questionIds, ref.textsSHA256, ref.vectorsSHA256]);
++        assert.equal(run.precomputation.apiRequests, 0);
++        for (const t of cutoffs) {
++            const actual = rows['priority/' + t], expected = ref.rows[t];
++            for (const k of ['complete', 'chunks', 'calls', 'inputs', 'tokens']) assert.deepEqual(actual[k], expected[k]);
++        }
++        console.log(task, run.questionIds.length, 'questions, all local sweeps verified');
++        return rows;
++    } finally { tokenizer.close(); }
++}
++
++function summarize(shards, refs, id, control) {
++    const scores = budgets.map((_, i) => 100 * mean(tasks.map(t =>
++        shards.reduce((n, s) => n + s[t][id].complete[i], 0) / refs.reduce((n, s) => n + s[t].questionIds.length, 0))));
++    const groups = [], counts = passCounts(), cost = { chunks: 0, calls: 0, inputs: 0, tokens: 0 };
++    for (const task of tasks) {
++        const clustered = new Map();
++        for (const [j, shard] of shards.entries()) {
++            const a = shard[task][id], b = shard[task][control];
++            for (const k of Object.keys(cost)) cost[k] += a[k];
++            if (a.counts) for (const k of Object.keys(counts)) {
++                if (k === 'maxCentroidSweeps') counts[k] = Math.max(counts[k], a.counts[k]);
++                else counts[k] += a.counts[k];
++            }
++            refs[j][task].groups.forEach((group, q) => {
++                if (!clustered.has(group)) clustered.set(group, [0, 0]);
++                const pair = clustered.get(group);
++                for (let i = 0; i < budgets.length; i++) pair[0] += a.hits[i][q] - b.hits[i][q];
++                pair[1] += budgets.length;
++            });
++        }
++        groups.push([...clustered.values()]);
++    }
++    const delta = 100 * mean(groups.map(g => g.reduce((s, [d]) => s + d, 0) / g.reduce((s, [, n]) => s + n, 0)));
++    return { scores, average: mean(scores), control, delta, ci95: groupInterval(groups), cost, counts };
++}
++
++async function confirm() {
++    const seed = 'semachunk-centroid-confirm-v1/', counts = { cuad: 32, qasper: 64, hotpotqa: 128 };
++    const markdownBytes = await readFile(join(here, 'results/2026-11-23-markdown-samples.json'));
++    const previous = [...prior.calibration.samples, ...prior.confirmation, ...Object.values(JSON.parse(markdownBytes))];
++    const refs = [{}, {}], shards = [{}, {}];
++    for (const task of tasks) {
++        const sources = new Set(previous.flatMap(s => s[task].documents));
++        const questions = new Set(previous.flatMap(s => s[task].questionIds ?? s[task].questions));
++        if (task === 'cuad') {
++            const { data } = JSON.parse(await readFile(await asset(assets.cuad), 'utf8'));
++            for (const doc of data) sources.add(doc.title);
++        }
++        const usedSources = new Set(sources), usedQuestions = new Set(questions);
++        for (const [shard, rowsByTask] of shards.entries()) {
++            const select = heldoutRows(task, { seed, count: counts[task], shard, sources, questions });
++            const sample = await ragTasks[task](select, task === 'cuad' ? assets.cuadFull : undefined);
++            for (const [set, ids] of [[usedSources, sample.docs.map(d => d.title)], [usedQuestions, sample.questions.map(q => q.id)]]) {
++                for (const id of ids) { assert.ok(!set.has(id), 'Reused source or question ' + id); set.add(id); }
++            }
++            const plans = { priority: { groupSentences: false, combineChunksSimilarityThreshold: 0.05 },
++                once: { groupSentences: true, similarityThreshold: 0.5, combineChunksSimilarityThreshold: 0.05 } };
++            for (const order of ['left', 'best']) {
++                plans[order] = { schedule: 'centroid-first', cutoff: 0.05, order, counts: passCounts() };
++            }
++            const encoder = openEncoder();
++            try {
++                const { run, rows } = await score(task, sample, plans, encoder);
++                const { documents, questionIds, exclusions, textsSHA256, vectorsSHA256, precomputation } = run;
++                const groups = sample.questions.map(q => task === 'hotpotqa' ? q.id : documents[q.pool[0]]);
++                refs[shard][task] = { documents, questionIds, groups, exclusions, textsSHA256, vectorsSHA256, precomputation };
++                rowsByTask[task] = rows;
++                console.log(task, shard + 1, documents.length, 'sources,', questionIds.length, 'questions,', precomputation.apiInputTokens, 'new embedding tokens');
++            } finally { encoder.close(); }
++        }
++    }
++    const summary = Object.fromEntries(Object.keys(shards[0].cuad).map(id => [id, summarize(shards, refs, id, 'priority')]));
++    console.log('Alternation vs priority', summary.left.delta, summary.left.ci95);
++    return { seed, counts, targetUTF16: 500, fullTextCutoff: 0.05, groupingBase: 0.5, markdownSamplesSHA256: sha256(markdownBytes),
++        dataSHA256: Object.fromEntries(['cuadFull', 'cuad', 'qasper', 'hotpotqa'].map(t => [t, assets[t].checksum])),
++        refs, shards, summary, leftVsBest: summarize(shards, refs, 'left', 'best'), leftVsOnce: summarize(shards, refs, 'left', 'once') };
++}
++
++async function replay() {
++    const results = {};
++    for (const [set, refs] of Object.entries({ earlier: prior.calibration.samples, later: prior.confirmation })) {
++        const shards = [];
++        for (const [j, ref] of refs.entries()) {
++            const shard = {};
++            for (const task of tasks) shard[task] = await evaluate(task, ref[task], set === 'earlier' && j === 0);
++            shards.push(shard);
++        }
++        const summary = {};
++        for (const id of Object.keys(shards[0].cuad)) {
++            const [kind, t] = id.split('/');
++            let control = !t ? 'once-only' : ['once', 'priority', 'batch-text'].includes(kind) ? 'priority/' + t : 'once/' + t;
++            if (pairOrderStudy && kind.includes('best')) control = id.replace('best', 'left');
++            summary[id] = summarize(shards, refs, id, control);
++        }
++        const primary = pairOrderStudy ? 'centroid-first-best/0.05' : 'centroid-first/0.05';
++        results[set] = { shards, summary, alternationVsDefault: summarize(shards, refs, primary, 'priority/0.05') };
++        console.log(set, primary, 'vs', summary[primary].control, summary[primary].delta, summary[primary].ci95);
++    }
++    return results;
++}
++const results = mode === '--confirm' ? { fresh: await confirm() } : await replay();
++await writeFile(output, JSON.stringify({ model, dimension, budgets, archive, archiveSHA256: sha256(bytes), results }, null, 2) + '\n', { flag: 'wx' });
+diff --git a/benchmarks/centroid-passes.mjs b/benchmarks/centroid-passes.mjs
+new file mode 100644
+index 0000000..a8ce70c
+--- /dev/null
++++ b/benchmarks/centroid-passes.mjs
+@@ -0,0 +1,204 @@
++import assert from 'node:assert/strict';
++import { DEFAULT_CONFIG } from '../config.js';
++import { createBatchEmbedder } from '../src/embeddings.js';
++import { CandidateQueue, mergeChunks } from '../src/merge.js';
++import { adjustThreshold, computeAdvancedSimilarities, directionCosine, groupAdjacentSentences, vectorDirection } from '../src/similarity.js';
++import { createJoinCheck } from '../src/token-limit.js';
++
++// This experiment uses a 500-unit character target and an unlimited per-document vector cache.
++const maxChunkSize = 500;
++const canJoin = createJoinCheck(maxChunkSize);
++const grouping = { maxChunkSize, canJoin, similarityThreshold: 0.5, dynamicThresholdLowerBound: 0.4, dynamicThresholdUpperBound: 0.8 };
++const priority = { maxChunkSize, canJoin, maxUncappedPasses: DEFAULT_CONFIG.MAX_UNCAPPED_PASSES,
++    maxMergesPerPass: DEFAULT_CONFIG.MAX_MERGES_PER_PASS, candidateMergesPercentageCap: DEFAULT_CONFIG.MAX_MERGES_PER_PASS_PERCENTAGE,
++    uncappedCandidateMerges: DEFAULT_CONFIG.UNCAPPED_CANDIDATE_MERGES, finalEmbeddingText: text => text };
++
++export function passCounts() {
++    return { laterSweeps: 0, localCosines: 0, fullCosines: 0, laterCentroidJoins: 0, maxCentroidSweeps: 0 };
++}
++
++// Both endpoints are inclusive indices of original sentences. Adding unnormalized
++// sums keeps a sentence's weight independent of which batch first merged it.
++function join(left, right) {
++    const sum = new Float64Array(left.sum.length);
++    for (let j = 0; j < sum.length; j++) sum[j] = left.sum[j] + right.sum[j];
++    return { first: left.first, last: right.last, text: left.text + ' ' + right.text, sum, direction: vectorDirection(sum) };
++}
++
++function sweep(nodes, dirty, cutoff, originalScores) {
++    const output = [], formed = new Set();
++    let group = nodes[0], cosines = 0;
++    function score(a, b) {
++        if (a.first === a.last && b.first === b.last) return originalScores[a.last];
++        cosines++;
++        return directionCosine(a.direction, b.direction);
++    }
++    for (let i = 1; i < nodes.length; i++) {
++        const previous = nodes[i - 1], next = nodes[i];
++        const active = !dirty || dirty.has(previous) || dirty.has(next) || group !== previous;
++        if (active && canJoin(group.text, next.text) &&
++            score(previous, next) >= cutoff && (group === previous || score(group, next) >= cutoff)) {
++            group = join(group, next);
++        } else {
++            if (group !== previous) formed.add(group);
++            output.push(group);
++            group = next;
++        }
++    }
++    if (group !== nodes.at(-1)) formed.add(group);
++    output.push(group);
++    return { output, formed, cosines };
++}
++
++async function alternate(schedule, centroidRound, priorityRound) {
++    assert.ok(schedule === 'centroid-first' || schedule === 'priority-first');
++    const [first, second] = schedule === 'centroid-first' ? [centroidRound, priorityRound] : [priorityRound, centroidRound];
++    for (;;) {
++        const changedFirst = await first();
++        const changedSecond = await second();
++        if (!changedFirst && !changedSecond) return;
++    }
++}
++
++// Both signals use the production queue, disjoint selection, caps and span
++// joins. A score belongs to a particular pair of immutable spans and signal.
++async function pairedRounds(nodes, embed, schedule, order, options, centroidCutoff, originalScores, counts) {
++    const centers = new WeakMap(), texts = new WeakMap(), full = new WeakMap();
++    for (const node of nodes) if (node.direction) full.set(node, node.direction);
++    let visits = 0;
++    async function round(centroid) {
++        const scores = centroid ? centers : texts, edges = [], missing = new Set();
++        if (centroid) visits++;
++        const audit = centroid && visits > 1;
++        const direction = node => centroid ? node.direction : full.get(node);
++        for (const [i, left] of nodes.entries()) {
++            left.prev = nodes[i - 1];
++            left.next = nodes[i + 1];
++            left.candidate = null;
++            const right = left.next;
++            if (!right || !canJoin(left.text, right.text)) continue;
++            edges.push(left);
++            if (!centroid && scores.get(left)?.right !== right) {
++                if (!full.has(left)) missing.add(left);
++                if (!full.has(right)) missing.add(right);
++            }
++        }
++        if (missing.size) {
++            const pending = [...missing], vectors = await embed(pending.map(n => n.text));
++            pending.forEach((n, i) => full.set(n, vectorDirection(vectors[i])));
++        }
++        const queue = new CandidateQueue();
++        const cutoff = centroid ? centroidCutoff : options.combineChunksSimilarityThreshold;
++        for (const left of edges) {
++            const right = left.next, singletonPair = left.first === left.last && right.first === right.last;
++            let entry = scores.get(left);
++            if (audit && !singletonPair) counts.fullCosines++;
++            if (entry?.right !== right) {
++                const score = singletonPair ? originalScores[left.last] : directionCosine(direction(left), direction(right));
++                entry = { right, score };
++                scores.set(left, entry);
++                if (audit && !singletonPair) counts.localCosines++;
++            } else if (audit && !singletonPair) {
++                assert.equal(entry.score, directionCosine(left.direction, right.direction), 'stale centroid score');
++            }
++            // Equal priorities use the heap's stable insertion order. Edges
++            // arrive in source order and both treatments apply the same cutoff.
++            if (entry.score >= cutoff) queue.add(left, centroid && order === 'left' ? 0 : entry.score);
++        }
++        const selected = new Set(queue.takeDisjoint(options));
++        if (centroid) counts.maxCentroidSweeps = Math.max(counts.maxCentroidSweeps, visits);
++        if (audit) { counts.laterSweeps++; counts.laterCentroidJoins += selected.size; }
++        if (!selected.size) return false;
++        const next = [];
++        for (let i = 0; i < nodes.length; i++) {
++            const left = nodes[i];
++            if (selected.has(left)) { next.push(join(left, nodes[i + 1])); i++; }
++            else next.push(left);
++        }
++        nodes = next;
++        return true;
++    }
++    if (schedule === 'only' || schedule === 'full-only') {
++        while (await round(schedule === 'only')) { /* continue while a pair qualifies */ }
++    } else await alternate(schedule, () => round(true), () => round(false));
++    return nodes.map(n => n.text);
++}
++
++export async function scheduledChunks(sentences, provider, schedule, priorityCutoff, counts, order) {
++    const embed = createBatchEmbedder(provider);
++    const options = { ...priority, combineChunksSimilarityThreshold: priorityCutoff };
++    async function index(texts) {
++        const vectors = await embed(texts);
++        return texts.map((text, i) => ({ text, embedding: vectors[i] }));
++    }
++    if (sentences.length < 2) return index(sentences);
++    const analysis = await computeAdvancedSimilarities(sentences, embed, grouping);
++    const cutoff = adjustThreshold(analysis.average, analysis.variance, grouping.similarityThreshold,
++        grouping.dynamicThresholdLowerBound, grouping.dynamicThresholdUpperBound, analysis.boundaryCount);
++
++    // Literal repeat of the public grouper: every current chunk gets one vote,
++    // using its full-text embedding. Keep the original document cutoff fixed.
++    if (schedule === 'regroup-text') {
++        let texts = sentences;
++        const fixed = { ...grouping, dynamicThresholdLowerBound: cutoff, dynamicThresholdUpperBound: cutoff };
++        for (;;) {
++            const next = await groupAdjacentSentences(texts, embed, fixed, texts === sentences ? analysis : undefined);
++            if (next.length === texts.length) break;
++            texts = next;
++        }
++        return index(await mergeChunks(texts, embed, options));
++    }
++
++    let nodes = sentences.map((text, i) => {
++        const direction = analysis.directions[i];
++        const sum = direction && new Float64Array(direction.vector.length);
++        if (sum) for (let j = 0; j < sum.length; j++) sum[j] = (direction.vector[j] / direction.scale) / direction.length;
++        return { first: i, last: i, text, sum, direction };
++    });
++    if (order) return index(await pairedRounds(nodes, embed, schedule, order, options, cutoff, analysis.similarities, counts));
++    let dirty = null, sweeps = 0;
++    async function centroidRound() {
++        const local = sweep(nodes, dirty, cutoff, analysis.similarities);
++        if (dirty) {
++            const full = sweep(nodes, null, cutoff, analysis.similarities);
++            assert.deepEqual(local.output.map(n => n.last), full.output.map(n => n.last), 'local centroid sweep diverged');
++            counts.laterSweeps++;
++            counts.localCosines += local.cosines;
++            counts.fullCosines += full.cosines;
++            counts.laterCentroidJoins += nodes.length - local.output.length;
++        } else if (nodes.length === sentences.length) {
++            const original = await groupAdjacentSentences(sentences, embed, grouping, analysis);
++            assert.deepEqual(local.output.map(n => n.text), original, 'initial sweep diverged from public grouping');
++        }
++        counts.maxCentroidSweeps = Math.max(counts.maxCentroidSweeps, ++sweeps);
++        const changed = local.output.length < nodes.length;
++        nodes = local.output;
++        dirty = local.formed;
++        return changed;
++    }
++    async function priorityRound() {
++        const texts = await mergeChunks(nodes.map(n => n.text), embed, { ...options, maxPasses: 1 });
++        if (texts.length === nodes.length) return false;
++        let i = 0;
++        nodes = texts.map(text => {
++            const left = nodes[i++];
++            if (text === left.text) return left;
++            const merged = join(left, nodes[i++]);
++            assert.equal(merged.text, text);
++            dirty?.add(merged);
++            return merged;
++        });
++        return true;
++    }
++
++    if (schedule === 'repeat-first' || schedule === 'repeat-only') {
++        while (await centroidRound()) { /* retry neighbors of the new groups */ }
++        const texts = nodes.map(n => n.text);
++        return index(schedule === 'repeat-only' ? texts : await mergeChunks(texts, embed, options));
++    }
++    if (schedule === 'round-control') {
++        await centroidRound();
++        while (await priorityRound()) { /* same priority scheduler as alternation */ }
++    } else await alternate(schedule, centroidRound, priorityRound);
++    return index(nodes.map(n => n.text));
++}
+diff --git a/benchmarks/centroid-passes.test.mjs b/benchmarks/centroid-passes.test.mjs
+new file mode 100644
+index 0000000..a2c9c88
+--- /dev/null
++++ b/benchmarks/centroid-passes.test.mjs
+@@ -0,0 +1,44 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++import { chunkText } from '../src/index.js';
++import { passCounts, scheduledChunks } from './centroid-passes.mjs';
++
++test('a second sweep can join an unchanged left neighbor using only the original sentence vectors', async () => {
++    const sentences = ['Alpha.', 'Beta.', 'Gamma.'];
++    const angles = [0, 70, 30].map(x => x * Math.PI / 180);
++    const vectors = new Map(sentences.map((text, i) => [text, [Math.cos(angles[i]), Math.sin(angles[i])]]));
++    const batches = [];
++    const embed = async texts => {
++        batches.push(texts);
++        return texts.map(t => vectors.get(t) ?? [1, 0]);
++    };
++    const once = await chunkText(sentences.join('\n\n'), embed, { groupSentences: true, combineChunks: false, returnEmbedding: false });
++    assert.deepEqual(once.map(c => c.text), ['Alpha.', 'Beta. Gamma.']);
++    batches.length = 0;
++    const counts = passCounts(), all = sentences.join(' ');
++    const repeated = await scheduledChunks(sentences, embed, 'repeat-only', 0.05, counts);
++    assert.deepEqual(repeated.map(c => c.text), [all]);
++    assert.equal(counts.laterCentroidJoins, 1);
++    assert.deepEqual(batches, [sentences, [all]]);
++
++    // No pair meets the first priority cutoff. The first centroid pass still
++    // needs to consider every eligible boundary, including Beta.–Gamma.
++    const alternating = await scheduledChunks(sentences, embed, 'priority-first', 1.01, passCounts());
++    assert.deepEqual(alternating.map(c => c.text), [all]);
++});
++
++test('both scorers select the strongest disjoint pair, which can block two qualifying neighbors', async () => {
++    const sentences = ['A', 'B', 'C', 'D'].map(s => s.repeat(180) + '.');
++    const angles = [0, 37, 50, 87].map(degrees => degrees * Math.PI / 180);
++    const vectors = new Map(sentences.map((s, i) => [s, [Math.cos(angles[i]), Math.sin(angles[i])]]));
++    const embed = async texts => texts.map(s => vectors.get(s) ?? [1, 0]);
++    const [a, b, c, d] = sentences;
++    for (const [schedule, order, expected] of [
++        ['only', 'left', [a + ' ' + b, c + ' ' + d]],
++        ['only', 'best', [a, b + ' ' + c, d]],
++        ['full-only', 'best', [a, b + ' ' + c, d]]
++    ]) {
++        const result = await scheduledChunks(sentences, embed, schedule, 0.5, passCounts(), order);
++        assert.deepEqual(result.map(chunk => chunk.text), expected);
++    }
++});

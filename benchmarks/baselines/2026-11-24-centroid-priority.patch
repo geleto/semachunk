@@ -1,0 +1,109 @@
+diff --git a/src/index.js b/src/index.js
+index 890f0f8..981794b 100644
+--- a/src/index.js
++++ b/src/index.js
+@@ -110,6 +110,7 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
+ 		if (combineChunks && chunks.length > 1) {
+ 			chunks = await mergeChunks(chunks, embedBatch, {
+ 				...priority, canJoin, tokenLimit, logging,
++				centroidRule: groupSentences ? undefined : process.env.SEMACHUNK_CENTROID_RULE,
+ 				finalEmbeddingText: returnEmbedding && maxCachedEmbeddings === Infinity ? outputText : undefined
+ 			});
+ 			if (logging) console.log('Combined chunks', chunks.map(chunk => chunk.slice(0, 100)));
+diff --git a/src/merge.js b/src/merge.js
+index 787d0e3..9018fbd 100644
+--- a/src/merge.js
++++ b/src/merge.js
+@@ -1,4 +1,4 @@
+-import { directionCosine, documentMergeThreshold, SimilarityStatistics, vectorDirection } from './similarity.js';
++import { addUnitVector, directionCosine, documentMergeThreshold, SimilarityStatistics, vectorDirection } from './similarity.js';
+ import { createJoinCheck } from './token-limit.js';
+ 
+ export function mergeLimit(candidateCount, { maxMergesPerPass, candidateMergesPercentageCap, uncappedCandidateMerges }) {
+@@ -8,6 +8,9 @@ export function mergeLimit(candidateCount, { maxMergesPerPass, candidateMergesPe
+ 
+ export async function mergeChunks(texts, embedBatch, options) {
+     const { maxPasses = Infinity, maxUncappedPasses } = options;
++    if (options.centroidRule && !['gate', 'minimum', 'mean'].includes(options.centroidRule)) {
++        throw new Error('Unexpected centroid rule: ' + options.centroidRule);
++    }
+     let cutoff = options.combineChunksSimilarityThreshold;
+     if (maxPasses < 1 || maxUncappedPasses < 1 || (!options.calibrate && cutoff > 1) || mergeLimit(texts.length - 1, options) <= 0) {
+         return texts;
+@@ -44,6 +47,10 @@ export async function mergeChunks(texts, embedBatch, options) {
+             // so each chunk participates in at most one merge in this pass.
+             queue.invalidate(left.prev);
+             queue.invalidate(right);
++            if (options.centroidRule) {
++                left.centroid = mergeCentroids(left, right);
++                right.centroid = null;
++            }
+             left.text += ' ' + right.text;
+             left.embedding = null;
+             left.next = right.next;
+@@ -64,6 +71,20 @@ export async function mergeChunks(texts, embedBatch, options) {
+     return chunks;
+ }
+ 
++// Store the unscaled sum so every original sentence contributes once, even
++// when the two chunks being merged contain different numbers of sentences.
++function mergeCentroids(left, right) {
++    const sum = left.centroid?.vector ?? new Float64Array(left.embedding.vector.length);
++    if (!left.centroid) addUnitVector(sum, left.embedding);
++    if (right.centroid) {
++        const other = right.centroid.vector;
++        for (let i = 0; i < sum.length; i++) sum[i] += other[i];
++    } else {
++        addUnitVector(sum, right.embedding);
++    }
++    return vectorDirection(sum);
++}
++
+ async function scoreChangedChunks(changed, pass, queue, embedBatch, options, cutoff) {
+     const { maxChunkSize, canJoin = createJoinCheck(maxChunkSize), tokenLimit, finalEmbeddingText } = options;
+     const pending = [], finalTexts = [];
+@@ -119,7 +140,16 @@ async function scoreChangedChunks(changed, pass, queue, embedBatch, options, cut
+         if (!left || left.scoredPass === pass) return;
+         left.scoredPass = pass; // Neighboring merges share a boundary.
+         if (!fitsNext(left)) return;
+-        const score = directionCosine(left.embedding, left.next.embedding);
++        const right = left.next;
++        let score = directionCosine(left.embedding, right.embedding);
++        if (options.centroidRule && (left.centroid || right.centroid)) {
++            const pooled = directionCosine(left.centroid ?? left.embedding, right.centroid ?? right.embedding);
++            switch (options.centroidRule) {
++                case 'gate': if (pooled < cutoff) return; break;
++                case 'minimum': score = Math.min(score, pooled); break;
++                case 'mean': score = (score + pooled) / 2; break;
++            }
++        }
+         if (initial) {
+             initial.set(left, score);
+             stats.add(score);
+diff --git a/src/similarity.js b/src/similarity.js
+index 66f271b..1727978 100644
+--- a/src/similarity.js
++++ b/src/similarity.js
+@@ -100,7 +100,7 @@ export function adjustThreshold(average, variance, baseThreshold = 0.5, lowerBou
+     return Math.min(Math.max(adjusted, lowerBound), upperBound);
+ }
+ 
+-function addUnitVector(sum, { vector, scale, length }) {
++export function addUnitVector(sum, { vector, scale, length }) {
+     for (let i = 0; i < vector.length; i++) sum[i] += (vector[i] / scale) / length;
+ }
+ 
+diff --git a/benchmarks/rag.mjs b/benchmarks/rag.mjs
+index eade8b7..ca852e8 100644
+--- a/benchmarks/rag.mjs
++++ b/benchmarks/rag.mjs
+@@ -157,6 +157,9 @@ export function scoreMethod(questions, pools, byDoc, sources, gold, vocab, dense
+                         contextPrecision: 0, meanTokensDelivered: 0 };
+                     total.questions++;
+                     total.complete += score.complete;
++                    if (ranker === 'dense' && budget === 256 && score.complete) {
++                        (total.completeQuestionIds ??= []).push(questions[i].id);
++                    }
+                     total.budgetFeasible += score.budgetFeasible;
+                     total.evidenceRecall += score.evidenceRecall;
+                     total.contextPrecision += score.contextPrecision;

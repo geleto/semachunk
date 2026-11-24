@@ -1,0 +1,614 @@
+diff --git a/src/index.js b/src/index.js
+index 890f0f8..6e4e14f 100644
+--- a/src/index.js
++++ b/src/index.js
+@@ -95,8 +95,9 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
+ 		const tokenLimit = sentenceTokenLimit(sentences, fits);
+ 		const canJoin = createJoinCheck(maxChunkSize, tokenLimit);
+ 		let chunks = sentences;
++		const seedCentroids = groupSentences && options?.centroid ? [] : undefined;
+ 		if (groupSentences && sentences.length > 1) {
+-			const grouping = { maxChunkSize, canJoin, similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound, logging };
++			const grouping = { maxChunkSize, canJoin, similarityThreshold, dynamicThresholdLowerBound, dynamicThresholdUpperBound, logging, seedCentroids };
+ 			const analysis = await computeAdvancedSimilarities(sentences, embedBatch, grouping);
+ 			chunks = await groupAdjacentSentences(sentences, embedBatch, grouping, analysis);
+ 			if (priority.calibrate) {
+@@ -109,7 +110,7 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
+ 		const outputText = text => prefix + text;
+ 		if (combineChunks && chunks.length > 1) {
+ 			chunks = await mergeChunks(chunks, embedBatch, {
+-				...priority, canJoin, tokenLimit, logging,
++				...priority, canJoin, tokenLimit, logging, centroid: options?.centroid, seedCentroids,
+ 				finalEmbeddingText: returnEmbedding && maxCachedEmbeddings === Infinity ? outputText : undefined
+ 			});
+ 			if (logging) console.log('Combined chunks', chunks.map(chunk => chunk.slice(0, 100)));
+diff --git a/src/merge.js b/src/merge.js
+index 787d0e3..cadbd08 100644
+--- a/src/merge.js
++++ b/src/merge.js
+@@ -1,4 +1,4 @@
+-import { directionCosine, documentMergeThreshold, SimilarityStatistics, vectorDirection } from './similarity.js';
++import { addUnitVector, directionCosine, documentMergeThreshold, SimilarityStatistics, vectorDirection } from './similarity.js';
+ import { createJoinCheck } from './token-limit.js';
+ 
+ export function mergeLimit(candidateCount, { maxMergesPerPass, candidateMergesPercentageCap, uncappedCandidateMerges }) {
+@@ -14,7 +14,7 @@ export async function mergeChunks(texts, embedBatch, options) {
+     }
+ 
+     // 1. Link chunks in document order. Each node represents the boundary with its next neighbor.
+-    let changed = texts.map(text => ({ text, prev: null, next: null, embedding: null, candidate: null, scoredPass: 0 }));
++    let changed = texts.map((text, i) => ({ text, prev: null, next: null, embedding: null, centroid: options.seedCentroids?.[i], candidate: null, scoredPass: 0 }));
+     const head = changed[0];
+     for (let i = 1; i < changed.length; i++) {
+         changed[i - 1].next = changed[i];
+@@ -44,6 +44,10 @@ export async function mergeChunks(texts, embedBatch, options) {
+             // so each chunk participates in at most one merge in this pass.
+             queue.invalidate(left.prev);
+             queue.invalidate(right);
++            if (options.centroid) {
++                left.centroid = mergeCentroids(left, right);
++                right.centroid = null;
++            }
+             left.text += ' ' + right.text;
+             left.embedding = null;
+             left.next = right.next;
+@@ -64,6 +68,36 @@ export async function mergeChunks(texts, embedBatch, options) {
+     return chunks;
+ }
+ 
++// A sum retains one vote per original sentence, including sentences in a pre-group.
++function mergeCentroids(left, right) {
++    const sum = left.centroid?.vector ?? new Float64Array(left.embedding.vector.length);
++    if (!left.centroid) addUnitVector(sum, left.embedding);
++    if (right.centroid) {
++        const other = right.centroid.vector;
++        for (let i = 0; i < sum.length; i++) sum[i] += other[i];
++    } else {
++        addUnitVector(sum, right.embedding);
++    }
++    return vectorDirection(sum);
++}
++
++function pairScore(left, right, rule) {
++    if (!rule) return directionCosine(left.embedding, right.embedding);
++    if (rule.mode === 'centroid') return directionCosine(left.centroid ?? left.embedding, right.centroid ?? right.embedding);
++    const full = directionCosine(left.embedding, right.embedding);
++    const compound = left.centroid || right.centroid;
++    if (rule.compoundOnly && !compound) return full;
++    const center = compound ? directionCosine(left.centroid ?? left.embedding, right.centroid ?? right.embedding) : full;
++    switch (rule.mode) {
++        case 'gate': return center >= rule.floor ? full : undefined;
++        case 'late': return !compound || center >= rule.floor ? full : undefined;
++        case 'min': return Math.min(full, rule.scale * center);
++        case 'max': return Math.max(full, rule.scale * center);
++        case 'blend': return full + rule.weight * (center - full);
++        default: throw new Error('Unknown experimental centroid rule: ' + rule.mode);
++    }
++}
++
+ async function scoreChangedChunks(changed, pass, queue, embedBatch, options, cutoff) {
+     const { maxChunkSize, canJoin = createJoinCheck(maxChunkSize), tokenLimit, finalEmbeddingText } = options;
+     const pending = [], finalTexts = [];
+@@ -90,6 +124,7 @@ async function scoreChangedChunks(changed, pass, queue, embedBatch, options, cut
+         }
+         needed = [...endpoints];
+     }
++    if (options.centroid?.mode === 'centroid') needed = needed.filter(chunk => !chunk.centroid);
+     const vectors = await embedBatch(needed.map(chunk => chunk.text), finalTexts);
+     needed.forEach((chunk, i) => { chunk.embedding = vectorDirection(vectors[i]); });
+ 
+@@ -119,7 +154,8 @@ async function scoreChangedChunks(changed, pass, queue, embedBatch, options, cut
+         if (!left || left.scoredPass === pass) return;
+         left.scoredPass = pass; // Neighboring merges share a boundary.
+         if (!fitsNext(left)) return;
+-        const score = directionCosine(left.embedding, left.next.embedding);
++        const score = pairScore(left, left.next, options.centroid);
++        if (score === undefined) return;
+         if (initial) {
+             initial.set(left, score);
+             stats.add(score);
+diff --git a/src/similarity.js b/src/similarity.js
+index 66f271b..b12ce01 100644
+--- a/src/similarity.js
++++ b/src/similarity.js
+@@ -100,7 +100,7 @@ export function adjustThreshold(average, variance, baseThreshold = 0.5, lowerBou
+     return Math.min(Math.max(adjusted, lowerBound), upperBound);
+ }
+ 
+-function addUnitVector(sum, { vector, scale, length }) {
++export function addUnitVector(sum, { vector, scale, length }) {
+     for (let i = 0; i < vector.length; i++) sum[i] += (vector[i] / scale) / length;
+ }
+ 
+@@ -133,12 +133,20 @@ export async function groupAdjacentSentences(sentences, embedBatch, options, ana
+         if (joins) {
+             current += ' ' + sentence;
+         } else {
+-            groups.push(current);
++            finishGroup(i);
+             current = sentence;
+             groupStart = i;
+             directionSum = null;
+         }
+     }
+-    groups.push(current);
++    finishGroup(sentences.length);
+     return groups;
++
++    function finishGroup(end) {
++        groups.push(current);
++        if (!options.seedCentroids || end === groupStart + 1) return;
++        const sum = new Float64Array(directions[groupStart].vector.length);
++        for (let j = groupStart; j < end; j++) addUnitVector(sum, directions[j]);
++        options.seedCentroids[groups.length - 1] = vectorDirection(sum);
++    }
+ }
+diff --git a/benchmarks/chunking.mjs b/benchmarks/chunking.mjs
+index 775958c..262ec54 100644
+--- a/benchmarks/chunking.mjs
++++ b/benchmarks/chunking.mjs
+@@ -62,13 +62,14 @@ export async function split(chunkText, text, options) {
+ }
+ 
+ export async function measure(chunkText, doc, plan, vocab, matrix, countTokens) {
+-    let calls = 0, inputs = 0, singletons = 0;
++    let calls = 0, inputs = 0, singletons = 0, providerTokens = 0;
+     function embed(batch) {
+         if (plan.maxChunkTokens && batch.some(text => countTokens(text) > plan.maxChunkTokens)) {
+             throw new Error('Token limit exceeded in an embedding request');
+         }
+         calls++;
+         inputs += batch.length;
++        for (const text of batch) providerTokens += countTokens(text);
+         if (batch.length === 1) singletons++;
+         return batch.map(text => {
+             const start = vocab.id(text) * dimension;
+@@ -84,7 +85,7 @@ export async function measure(chunkText, doc, plan, vocab, matrix, countTokens)
+         if (options.maxChunkTokens) options.countTokens = countTokens;
+         output = (await chunkText(flatInput ? doc.flat : doc.raw, embed, { ...options, returnEmbedding: true })).map(c => c.text);
+     }
+-    return { ids: output.map(vocab.id), calls, inputs, singletons };
++    return { ids: output.map(vocab.id), calls, inputs, singletons, providerTokens };
+ }
+ 
+ export function indexedChunks(docs, rows, texts) {
+diff --git a/benchmarks/corpora.mjs b/benchmarks/corpora.mjs
+index e2c0899..029c0a5 100644
+--- a/benchmarks/corpora.mjs
++++ b/benchmarks/corpora.mjs
+@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
+ import { promisify } from 'node:util';
+ 
+ export const here = fileURLToPath(new URL('./', import.meta.url));
+-export const cache = join(here, '.cache');
++export const cache = process.env.SEMACHUNK_BENCHMARK_CACHE ?? join(here, '.cache');
+ export const assets = {
+     squad: {
+         name: 'squad.json',
+@@ -212,10 +212,10 @@ export function joinParts(parts) {
+ 
+ function increment(counts, name) { counts[name] = (counts[name] ?? 0) + 1; }
+ 
+-export async function cuad() {
++export async function cuad(select = rows => evenly(rows, 8)) {
+     const { data } = JSON.parse(await readFile(await asset(assets.cuad), 'utf8'));
+     const docs = [], questions = [], exclusions = {};
+-    for (const row of evenly(data, 8)) {
++    for (const row of select(data)) {
+         const [{ context: raw, qas }] = row.paragraphs;
+         const text = compact(raw), positions = utf16Offsets(raw), d = docs.length;
+         docs.push({ title: row.title, text, raw });
+@@ -228,10 +228,10 @@ export async function cuad() {
+     return { docs, questions, exclusions };
+ }
+ 
+-export async function qasper() {
++export async function qasper(select = rows => evenly(rows, 16)) {
+     const rows = await tarJSON(await asset(assets.qasper), 'qasper-test-v0.3.json');
+     const docs = [], questions = [], exclusions = {};
+-    for (const [paper, row] of evenly(Object.entries(rows), 16)) {
++    for (const [paper, row] of select(Object.entries(rows))) {
+         const parts = [row.title, row.abstract, ...row.full_text.flatMap(s => [s.section_name, ...s.paragraphs]),
+             ...row.figures_and_tables.map(f => f.caption)];
+         const { text, spans } = joinParts(parts), d = docs.length, positions = new Map();
+@@ -257,9 +257,9 @@ export async function qasper() {
+     return { docs, questions, exclusions };
+ }
+ 
+-export async function hotpotqa() {
++export async function hotpotqa(select) {
+     const rows = JSON.parse(await readFile(await asset(assets.hotpotqa), 'utf8'));
+-    const indices = ['bridge', 'comparison'].flatMap(kind =>
++    const indices = select ? select(rows) : ['bridge', 'comparison'].flatMap(kind =>
+         evenly(rows.flatMap((row, i) => row.type === kind ? [i] : []), 32)).sort((a, b) => a - b);
+     const docs = [], questions = [], docIds = new Map();
+     for (const index of indices) {
+diff --git a/benchmarks/rag.mjs b/benchmarks/rag.mjs
+index eade8b7..71201ab 100644
+--- a/benchmarks/rag.mjs
++++ b/benchmarks/rag.mjs
+@@ -157,6 +157,9 @@ export function scoreMethod(questions, pools, byDoc, sources, gold, vocab, dense
+                         contextPrecision: 0, meanTokensDelivered: 0 };
+                     total.questions++;
+                     total.complete += score.complete;
++                    if (ranker === 'dense' && budget === 256 && score.complete) {
++                        (total.completeQuestionIds ??= []).push(questions[i].id);
++                    }
+                     total.budgetFeasible += score.budgetFeasible;
+                     total.evidenceRecall += score.evidenceRecall;
+                     total.contextPrecision += score.contextPrecision;
+@@ -205,9 +208,10 @@ function examineExamples(task, questions, sources, gold) {
+     }));
+ }
+ 
+-export async function evaluateRag(task, chunkText, encoder, plans) {
+-    const data = await ragTasks[task](), { questions, exclusions } = data;
+-    const { vocab, sources, windows, gold, docs } = await prepare(data.docs, questions, chunkText, encoder, plans);
++export async function evaluateRag(task, chunkText, encoder, plans, data, preparationPlans = plans) {
++    data ??= await ragTasks[task]();
++    const { questions, exclusions } = data;
++    const { vocab, sources, windows, gold, docs } = await prepare(data.docs, questions, chunkText, encoder, preparationPlans);
+     const { matrix, textsSHA256, vectorsSHA256, precomputation } = await encoder.vectors(vocab.texts);
+     const dense = denseRanker(matrix), lexicon = new Map(), pools = new Map();
+     function terms(id) {
+@@ -258,6 +262,7 @@ export async function evaluateRag(task, chunkText, encoder, plans) {
+             chunksOver256Tokens: passages.filter(p => encoder.countTokens(vocab.texts[p.index]) > 256).length,
+             retrieval: scoreMethod(questions, pools.values(), byDoc, sources, gold, vocab, dense, terms, name === defaultName ? examples : undefined) };
+         if (all) row.pooledRetrieval = scoreMethod(questions, all, byDoc, sources, gold, vocab, dense, terms, name === defaultName ? pooled : undefined);
++        if (name !== windowName) row.providerTokens = rows.reduce((sum, row) => sum + row.providerTokens, 0);
+     }
+     if (all) for (const [i, trace] of pooled) examples.get(i).pooledAt256 = trace;
+     const lengths = sources.map(source => source.starts.length);
+diff --git a/benchmarks/centroid-study.mjs b/benchmarks/centroid-study.mjs
+new file mode 100644
+--- /dev/null
++++ b/benchmarks/centroid-study.mjs
+@@ -0,0 +1,277 @@
++import assert from 'node:assert/strict';
++import { existsSync } from 'node:fs';
++import { mkdir, readFile, writeFile } from 'node:fs/promises';
++import { join, resolve } from 'node:path';
++import { chunkText } from '../src/index.js';
++import { assets, cuad, hotpotqa, qasper, sha256 } from './corpora.mjs';
++import { dimension, model, openEncoder } from './encoder.mjs';
++import { groupInterval } from './markdown-decisions.mjs';
++import { evaluateRag, prepare, ragPlans, ragTasks } from './rag.mjs';
++
++const [stage, directory, target] = process.argv.slice(2);
++const tasks = ['cuad', 'qasper', 'hotpotqa'];
++const thresholds = [0.3, 0.4, 0.5, 0.6, 0.7];
++const scales = [0.75, 0.9, 1, 1.1, 1.25];
++const read = async path => JSON.parse(await readFile(path, 'utf8'));
++const save = (path, data) => writeFile(path, JSON.stringify(data, null, 2) + '\n', {flag:'wx'});
++const file = name => join(directory, name + '.json');
++const priorResults = name => read(resolve('benchmarks/results', name + '.json'));
++
++function policyGrid() {
++    const policies = {};
++    function add(group, mode, cutoff, parameter) {
++        const name = [group === null ? 'off' : 'g' + group, mode, cutoff, parameter].filter(x => x !== undefined).join('/');
++        assert.ok(!policies[name], name);
++        const options = {maxChunkSize:500, groupSentences:group !== null, similarityThreshold:group ?? 0.5};
++        if (mode === 'group') options.combineChunks = false;
++        else if (cutoff === 'doc') options.mergeThresholdMode = 'document';
++        else options.combineChunksSimilarityThreshold = cutoff;
++        if (!['group','full'].includes(mode)) {
++            options.centroid = {mode};
++            if (mode === 'min' || mode === 'max') options.centroid.scale = parameter;
++            if (mode === 'gate' || mode === 'late') options.centroid.floor = parameter;
++            if (mode === 'blend') options.centroid.weight = parameter;
++        }
++        policies[name] = {name, group, mode, cutoff, parameter, options};
++    }
++    for (const base of thresholds) add(base, 'group');
++    for (const group of [null, 0.4, 0.5, 0.6]) {
++        add(group, 'full', 'doc');
++        for (const t of thresholds) {
++            add(group,'full',t);
++            add(group,'centroid',t);
++            for (const c of thresholds) {
++                add(group,'gate',t,c);
++                // For c <= t the delayed and immediate gates agree on single sentences.
++                if (c > t) add(group,'late',t,c);
++            }
++            for (const s of scales) for (const mode of ['min','max']) add(group,mode,t,s);
++            for (const w of [0.25,0.5,0.75]) add(group,'blend',t,w);
++        }
++    }
++    for (const group of [0.3,0.7]) for (const t of thresholds) add(group,'full',t);
++    return policies;
++}
++const grid = policyGrid();
++
++async function holdout(task) {
++    const prior = (await priorResults('2026-11-23-openai-rag')).tasks[task];
++    const md = await priorResults('2026-11-23-markdown-samples');
++    const excluded = new Set([...prior.documents,...Object.values(md).flatMap(part => part[task].documents)]);
++    const excludedQuestions = new Set([...prior.questionIds,...Object.values(md).flatMap(part => part[task].questions)]);
++    function order(rows, id) {
++        return rows.map(row => [sha256('semachunk-centroid-holdout-v1/' + id(row)),row])
++            .sort(([a],[b]) => a < b ? -1 : a > b ? 1 : 0).map(([,row]) => row);
++    }
++    function pick(rows, id, count) {
++        const chosen = order(rows.filter(row => !excluded.has(id(row))),id).slice(0,count);
++        assert.equal(chosen.length,count);
++        return chosen;
++    }
++    let data;
++    if (task === 'cuad') data = await cuad(rows => pick(rows, r => r.title,16));
++    if (task === 'qasper') data = await qasper(rows => pick(rows, r => r[0],32));
++    if (task === 'hotpotqa') data = await hotpotqa(rows => {
++        const previous = new Set(excluded), selected = [];
++        for (const kind of ['bridge','comparison']) {
++            const indices = rows.flatMap((r,i) => r.type === kind && !excludedQuestions.has(r._id) ? [i] : []);
++            let count = 0;
++            for (const i of order(indices,i => rows[i]._id)) {
++                const titles = rows[i].context.map(([title])=>title);
++                if (new Set(titles).size !== titles.length || titles.some(t => previous.has(t))) continue;
++                for (const t of titles) previous.add(t);
++                selected.push(i);
++                if (++count === 32) break;
++            }
++            assert.equal(count,32);
++        }
++        return selected;
++    });
++    assert.ok(data.docs.every(d=>!excluded.has(d.title)));
++    assert.ok(data.questions.every(q=>!excludedQuestions.has(q.id)));
++    return data;
++}
++
++function summarize(row, task, ids) {
++    const retrieval = task === 'hotpotqa' ? row.pooledRetrieval : row.retrieval;
++    const totals = ranker => [256,512,1024].map(b => retrieval[ranker][b].complete);
++    const primary = retrieval.dense[256];
++    return {dense:totals('dense'), bm25:totals('bm25'), recall:primary.evidenceRecall,
++        chunks:row.chunks, calls:row.providerCalls, inputs:row.providerTexts, tokens:row.providerTokens,
++        ...(ids ? {completeIds:primary.completeQuestionIds ?? []} : {})};
++}
++
++async function evaluate(split,task,names,policies = grid) {
++    const historical = split === 'calibration';
++    const data = historical ? await ragTasks[task]() : await holdout(task);
++    const plans = Object.fromEntries(names.map(n=>[n,policies[n].options]));
++    const encoder = openEncoder(resolve('.env'));
++    globalThis.fetch = async () => { throw new Error('Score comparisons must replay cached inputs'); };
++    try {
++        const run = await evaluateRag(task,chunkText,encoder,plans,data,historical ? ragPlans() : plans);
++        assert.equal(run.precomputation.apiRequests,0);
++        const rows = Object.fromEntries(names.map(n=>[n,summarize(run.scores[n],task,!historical)]));
++        const groups = data.questions.map(q=>task === 'hotpotqa' ? q.id : data.docs[q.pool[0]].title);
++        return {questionIds:run.questionIds, documents:run.documents, groups, exclusions:run.exclusions,
++            distinctTexts:run.distinctTexts,textsSHA256:run.textsSHA256,vectorsSHA256:run.vectorsSHA256,
++            precomputation:run.precomputation,rows};
++    } finally { encoder.close(); }
++}
++const isMixed = p => ['gate','late','min','max','blend'].includes(p.mode);
++function select(cal) {
++    const scores = Object.values(grid).map(p => {
++        let macro = 0, tokens = 0, calls = 0;
++        for (const task of tasks) {
++            const r = cal[task].rows[p.name];
++            macro += r.dense[0] / cal[task].questionIds.length / tasks.length;
++            tokens += r.tokens;
++            calls += r.calls;
++        }
++        return {p,macro,tokens,calls};
++    });
++    scores.sort((a,b)=>b.macro-a.macro || a.tokens-b.tokens || a.calls-b.calls);
++    const best = predicate => scores.find(x=>predicate(x.p)).p.name;
++    const existing = p => p.mode === 'group' || p.mode === 'full';
++    const nominees = {publicPriority:'off/full/0.5',publicSeparate:'g0.5/full/0.5',
++        tunedPriority:best(p=>p.group === null && p.mode === 'full'),
++        groupingOnly:best(p=>p.mode === 'group'),tunedSeparate:best(p=>p.group !== null && p.mode === 'full'),
++        incumbent:best(existing),challenger:best(p=>!existing(p)),
++        jointAlone:best(p=>p.group === null && isMixed(p)),both:best(p=>p.group !== null && isMixed(p)),
++        jointAtDefault:best(p=>p.group === null && p.cutoff === 0.5 && isMixed(p)),
++        bothAtDefault:best(p=>p.group === 0.5 && p.cutoff === 0.5 && isMixed(p))};
++    for (const mode of ['gate','late','min','max','blend','centroid']) {
++        nominees[mode] = best(p=>p.mode === mode && p.group === null);
++        nominees[mode+'AtDefault'] = best(p=>p.mode === mode && p.group === null && p.cutoff === 0.5);
++    }
++    for (const mode of ['min','max']) {
++        nominees[mode+'Unscaled'] = best(p=>p.mode === mode && p.group === null && p.parameter === 1);
++        nominees[mode+'AtDefaultUnscaled'] = 'off/'+mode+'/0.5/1';
++        for (const preference of ['down','up']) {
++            nominees[mode+'AtDefault'+preference] = best(p=>p.mode === mode && p.group === null && p.cutoff === 0.5 &&
++                (preference === 'up' ? p.parameter > 1 : p.parameter < 1));
++        }
++    }
++    return nominees;
++}
++
++function comparisons(valid,names,reference) {
++    const result = {};
++    for (const name of new Set(names)) {
++        const perTask = {}, groups = [];
++        let delta = 0;
++        for (const task of tasks) {
++            const v = valid[task], wins = [], losses = [], grouped = new Map();
++            const current = new Set(v.rows[name].completeIds), control = new Set(v.rows[reference].completeIds);
++            for (const [i,id] of v.questionIds.entries()) {
++                const change = Number(current.has(id)) - Number(control.has(id));
++                if (change > 0) wins.push(id);
++                if (change < 0) losses.push(id);
++                const label = v.groups[i];
++                if (!grouped.has(label)) grouped.set(label,[0,0]);
++                const g = grouped.get(label);
++                g[0] += change;
++                g[1]++;
++            }
++            perTask[task] = {wins,losses};
++            delta += (wins.length-losses.length) / v.questionIds.length * 100 / tasks.length;
++            groups.push([...grouped.values()]);
++        }
++        result[name] = {deltaPer100:delta,ci95:groupInterval(groups),perTask};
++    }
++    return result;
++}
++
++// Only a downscaled minimum or an upscaled maximum changes singleton eligibility.
++function singletonControls(nominees) {
++    const policies = {'off/full/0.5':grid['off/full/0.5']};
++    for (const key of ['minAtDefaultdown','maxAtDefaultup']) {
++        const name = nominees[key], p = grid[name], options = p.options;
++        const cutoff = p.cutoff / p.parameter;
++        policies[name] = p;
++        policies[name+'/compound-only'] = {options:{...options,centroid:{...options.centroid,compoundOnly:true}}};
++        policies[name+'/matched-full'] = {options:{maxChunkSize:500,combineChunksSimilarityThreshold:cutoff}};
++    }
++    return policies;
++}
++
++await mkdir(directory,{recursive:true});
++if (stage === 'preflight' || stage === 'prefill') {
++    assert.ok(tasks.includes(target));
++    const data = await holdout(target), encoder = openEncoder(resolve('.env'));
++    try {
++        const {vocab} = await prepare(data.docs,data.questions,chunkText,encoder,{});
++        let tokens = 0, max = 0;
++        for (const text of vocab.texts) { const n = encoder.countTokens(text); tokens += n; max = Math.max(n,max); }
++        const result = {documents:data.docs.length,questions:data.questions.length,inputs:vocab.texts.length,tokens,max,
++            orderedInputsSHA256:sha256(JSON.stringify(vocab.texts))};
++        if (stage === 'prefill') {
++            assert.deepEqual(result,await read(file('preflight-'+target)));
++            const {textsSHA256,vectorsSHA256,precomputation} = await encoder.vectors(vocab.texts,true);
++            assert.equal(textsSHA256,result.orderedInputsSHA256);
++            await save(file('prefill-'+target),{textsSHA256,vectorsSHA256,precomputation});
++            console.log(target,precomputation);
++        } else {
++            await save(file('preflight-'+target),result);
++            console.log(target, result);
++        }
++    } finally { encoder.close(); }
++} else if (stage === 'calibration' || stage === 'validation') {
++    assert.ok(tasks.includes(target));
++    const names = stage === 'calibration' ? Object.keys(grid) : [...new Set(Object.values(await read(file('nominees'))))];
++    console.log(stage,target,names.length,'policies');
++    const result = await evaluate(stage,target,names);
++    await save(file(stage+'-'+target),result);
++    console.log('Finished',stage,target,result.questionIds.length,'questions',result.precomputation);
++} else if (stage === 'diagnostic') {
++    assert.ok(tasks.includes(target));
++    const policies = singletonControls(await read(file('nominees')));
++    const result = await evaluate(stage,target,Object.keys(policies),policies);
++    await save(file('diagnostic-'+target),result);
++    console.log('Finished singleton cutoff controls for',target);
++} else if (stage === 'select') {
++    const cal = Object.fromEntries(await Promise.all(tasks.map(async t=>[t,await read(file('calibration-'+t))])));
++    const nominees = select(cal);
++    await save(file('nominees'),nominees);
++    console.log(nominees);
++} else if (stage === 'report') {
++    const load = async stage => Object.fromEntries(await Promise.all(tasks.map(async t=>[t,await read(file(stage+'-'+t))])));
++    const calibration = await load('calibration'), validation = await load('validation'), nominees = await read(file('nominees'));
++    assert.deepEqual(nominees,select(calibration));
++    for (const t of tasks) {
++        const prior = new Set(calibration[t].documents);
++        assert.ok(validation[t].documents.every(d=>!prior.has(d)));
++        const check = await read(file('preflight-'+t));
++        assert.equal(validation[t].textsSHA256,check.orderedInputsSHA256);
++    }
++    assert.ok(target && !existsSync(target));
++    const prefill = await load('prefill');
++    for (const t of tasks) assert.equal(prefill[t].vectorsSHA256,validation[t].vectorsSHA256);
++    const scaledAtDefault = {};
++    for (const mode of ['min','max']) {
++        const names = ['AtDefault','AtDefaultdown','AtDefaultup'].map(s=>nominees[mode+s]);
++        const reference = nominees[mode+'AtDefaultUnscaled'];
++        scaledAtDefault[mode] = {reference,comparisons:comparisons(validation,names,reference)};
++    }
++    const diagnostic = await load('diagnostic');
++    const singletonDiagnostics = {policies:singletonControls(nominees),rows:{},comparisons:{}};
++    for (const t of tasks) {
++        assert.equal(diagnostic[t].vectorsSHA256,validation[t].vectorsSHA256);
++        singletonDiagnostics.rows[t] = diagnostic[t].rows;
++        for (const n of Object.keys(diagnostic[t].rows)) {
++            if (validation[t].rows[n]) assert.deepEqual(diagnostic[t].rows[n],validation[t].rows[n]);
++        }
++    }
++    for (const key of ['minAtDefaultdown','maxAtDefaultup']) {
++        const reference = nominees[key];
++        singletonDiagnostics.comparisons[reference] = comparisons(diagnostic,
++            [reference+'/compound-only',reference+'/matched-full'], reference);
++    }
++    const result = {sourceRevision:'0bc7e8f30344a98f39bc25ddae107618fa3f001c',model,dimension,node:process.version,prefill,
++        artifactsSHA256:Object.fromEntries(tasks.map(t=>[t,assets[t].checksum])),targetUTF16:500,budgets:[256,512,1024],
++        thresholds,scales,centroidWeights:[0.25,0.5,0.75],policyCount:Object.keys(grid).length,nominees,
++        comparisonsAgainstTunedIncumbent:comparisons(validation,Object.values(nominees),nominees.incumbent),
++        comparisonsAtPublicCutoff:comparisons(validation,[nominees.minAtDefault,nominees.maxAtDefault,nominees.jointAtDefault],nominees.publicPriority),
++        scaledAtDefault,singletonDiagnostics,calibration,validation};
++    await save(target,result);
++    console.log('Saved',target);
++} else throw new Error('Choose preflight, prefill, calibration, select, validation, diagnostic or report');
+diff --git a/benchmarks/centroid-study.test.mjs b/benchmarks/centroid-study.test.mjs
+new file mode 100644
+--- /dev/null
++++ b/benchmarks/centroid-study.test.mjs
+@@ -0,0 +1,66 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++import { chunkText } from '../src/index.js';
++
++const sentences = ['Alpha rests.', 'Bravo rests.', 'Cedar rests.', 'Daffodil rests.'];
++const ab = sentences.slice(0,2).join(' '), abc = sentences.slice(0,3).join(' ');
++const vector = (degrees,magnitude=1) => [Math.cos(degrees*Math.PI/180)*magnitude,Math.sin(degrees*Math.PI/180)*magnitude];
++function example(directions) {
++    const calls = [];
++    async function embed(texts) {
++        calls.push([...texts]);
++        return texts.map(text => { assert.ok(directions.has(text),text); return directions.get(text); });
++    }
++    async function run(n,options) {
++        calls.length = 0;
++        return await chunkText(sentences.slice(0,n).join('\n\n'),embed,{similarityThreshold:0.5,returnEmbedding:false,...options});
++    }
++    return {run,calls};
++}
++test('scaling the centroid changes min and max eligibility at the same public cutoff', async () => {
++    const dirs = new Map([[sentences[0],vector(0,5)],[sentences[1],vector(30)],[sentences[2],vector(80,7)],[ab,vector(80)]]);
++    const {run} = example(dirs);
++    async function check(mode,scale,expected) {
++        assert.deepEqual((await run(3,{centroid:{mode,scale}})).map(c=>c.text),expected);
++    }
++    await check('min',1,[ab,sentences[2]]);
++    await check('min',1.25,[abc]);
++    dirs.set(ab,vector(170));
++    await check('max',1,[ab,sentences[2]]);
++    await check('max',1.25,[abc]);
++});
++test('an independent stricter centroid cutoff applies to singletons unless delayed', async () => {
++    const {run} = example(new Map([[sentences[0],vector(0)],[sentences[1],vector(53.13)]]));
++    for (const [mode,expected] of [['gate',sentences.slice(0,2)],['late',[ab]]]) {
++        assert.deepEqual((await run(2,{centroid:{mode,floor:0.7}})).map(c=>c.text),expected);
++    }
++});
++test('scaling only compound pairs preserves the full-text cutoff on the first join', async () => {
++    for (const [mode,scale,cosine,raw,delayed] of [
++        ['max',1.25,0.45,[ab],sentences.slice(0,2)],
++        ['min',0.9,0.53,sentences.slice(0,2),[ab]]
++    ]) {
++        const {run} = example(new Map([[sentences[0],[1,0]],[sentences[1],[cosine,Math.sqrt(1-cosine**2)]]]));
++        assert.deepEqual((await run(2,{centroid:{mode,scale}})).map(c=>c.text),raw);
++        assert.deepEqual((await run(2,{centroid:{mode,scale,compoundOnly:true}})).map(c=>c.text),delayed);
++    }
++});
++test('stacked passes use original sentence vectors on both sides of a grouped boundary', async () => {
++    const dirs = new Map([[sentences[0],vector(0,11)],[sentences[1],vector(20)],[sentences[2],vector(85,7)],[ab,vector(85)]]);
++    const {run,calls} = example(dirs);
++    const grouping = {groupSentences:true,dynamicThresholdLowerBound:0.8,dynamicThresholdUpperBound:0.8};
++    assert.deepEqual((await run(3,grouping)).map(c=>c.text),[abc]);
++    assert.deepEqual((await run(3,{...grouping,centroid:{mode:'min',scale:1}})).map(c=>c.text),[ab,sentences[2]]);
++    const chunks = await run(3,{...grouping,centroid:{mode:'centroid'}});
++    assert.deepEqual(chunks.map(c=>c.text),[ab,sentences[2]]);
++    assert.deepEqual(calls,[sentences.slice(0,3)]);
++    const indexed = await run(3,{...grouping,centroid:{mode:'centroid'},returnEmbedding:true});
++    assert.deepEqual(indexed[0].embedding,dirs.get(ab));
++});
++test('uneven merges retain one vote per sentence', async () => {
++    const {run} = example(new Map([[sentences[0],vector(0,4)],[sentences[1],vector(0,0.1)],[sentences[2],vector(60,7)],
++        [sentences[3],vector(82,23)],[ab,vector(60,2)],[abc,vector(82,5)]]));
++    const options = {similarityThreshold:0.49,maxMergesPerPass:1};
++    assert.deepEqual((await run(4,options)).map(c=>c.text),[sentences.join(' ')]);
++    assert.deepEqual((await run(4,{...options,centroid:{mode:'gate',floor:0.49}})).map(c=>c.text),[abc,sentences[3]]);
++});

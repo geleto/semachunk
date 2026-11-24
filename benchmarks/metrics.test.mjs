@@ -101,3 +101,13 @@ test('pooled search can rank a distractor outside the shortlist first', () => {
         }
     }
 });
+
+test('paired dense outcomes identify the original questions at each delivered budget', () => {
+    const byDoc = [[passage(0, 0, 700)]], gold = [600, 300, 10].map(token => [new Set([token])]);
+    const questions = gold.map(() => ({ text: 'query' }));
+    const scores = scoreMethod(questions, [[[0], [2, 0, 1]]], byDoc, [{ base: 0 }], gold,
+        { id: () => 0 }, () => [0], () => wordCounts('query'), undefined, true);
+    assert.deepEqual(scores.dense[256].completeIndices, [2]);
+    assert.deepEqual(scores.dense[512].completeIndices, [2, 1]);
+    assert.deepEqual(scores.dense[1024].completeIndices, [2, 0, 1]);
+});

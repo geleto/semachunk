@@ -49,7 +49,7 @@ for (const item of cases) {
     const options = {
         maxChunkSize: 500, similarityThreshold: 0.5, combineChunksSimilarityThreshold: 0.5,
         maxMergesPerPass: item.cap, maxUncappedPasses: 100, candiateMergesPercentageCap: 40,
-        uncappedCandidateMerges: 12, groupSentences: false, returnEmbedding: true
+        uncappedCandidateMerges: 12, returnEmbedding: true
     };
     const scores = {};
     for (let trial = 0; trial <= trials; trial++) {

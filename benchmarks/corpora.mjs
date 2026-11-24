@@ -212,10 +212,10 @@ export function joinParts(parts) {
 
 function increment(counts, name) { counts[name] = (counts[name] ?? 0) + 1; }
 
-export async function cuad() {
+export async function cuad(select = rows => evenly(rows, 8)) {
     const { data } = JSON.parse(await readFile(await asset(assets.cuad), 'utf8'));
     const docs = [], questions = [], exclusions = {};
-    for (const row of evenly(data, 8)) {
+    for (const row of select(data)) {
         const [{ context: raw, qas }] = row.paragraphs;
         const text = compact(raw), positions = utf16Offsets(raw), d = docs.length;
         docs.push({ title: row.title, text, raw });
@@ -228,10 +228,10 @@ export async function cuad() {
     return { docs, questions, exclusions };
 }
 
-export async function qasper() {
+export async function qasper(select = rows => evenly(rows, 16)) {
     const rows = await tarJSON(await asset(assets.qasper), 'qasper-test-v0.3.json');
     const docs = [], questions = [], exclusions = {};
-    for (const [paper, row] of evenly(Object.entries(rows), 16)) {
+    for (const [paper, row] of select(Object.entries(rows))) {
         const parts = [row.title, row.abstract, ...row.full_text.flatMap(s => [s.section_name, ...s.paragraphs]),
             ...row.figures_and_tables.map(f => f.caption)];
         const { text, spans } = joinParts(parts), d = docs.length, positions = new Map();
@@ -257,13 +257,17 @@ export async function qasper() {
     return { docs, questions, exclusions };
 }
 
-export async function hotpotqa() {
-    const rows = JSON.parse(await readFile(await asset(assets.hotpotqa), 'utf8'));
+function historicalHotpotSample(rows) {
     const indices = ['bridge', 'comparison'].flatMap(kind =>
         evenly(rows.flatMap((row, i) => row.type === kind ? [i] : []), 32)).sort((a, b) => a - b);
+    return indices.map(i => rows[i]);
+}
+
+export async function hotpotqa(select = historicalHotpotSample) {
+    const rows = JSON.parse(await readFile(await asset(assets.hotpotqa), 'utf8'));
     const docs = [], questions = [], docIds = new Map();
-    for (const index of indices) {
-        const row = rows[index], pool = [], facts = new Map();
+    for (const row of select(rows)) {
+        const pool = [], facts = new Map();
         for (const [title, sentences] of row.context) {
             const { text, spans } = joinParts([title + '.', ...sentences]);
             if (!docIds.has(title)) {

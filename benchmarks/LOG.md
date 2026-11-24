@@ -1,5 +1,171 @@
 # Chunking improvements and benchmark results
 
+## 2026-11-24 · Retiring the optional centroid pass
+
+Retire the centroid pass as a retrieval feature. At the tuned full-text cutoff of 0.05, adding a single sweep changed the complete-evidence rate by **−0.26, +0.32 and −0.52 percentage points** in the three cohorts (544, 553 and 702 questions). Pooling the 1,799 distinct questions and weighting tasks and retrieval budgets equally gives **−0.17 points** (paired 95% interval **−1.04 to +0.71**). The pooled estimate is retrospective. On the fresh cohort alone, the sweep saved 2.5% of indexing tokens and used 3.6% more calls. [First two cohorts](results/2026-11-24-centroid-passes.json) · [Fresh cohort](results/2026-11-24-centroid-fresh-confirmation.json)
+
+| Policy on the 702-question cohort | Mean complete evidence | Cold indexing tokens | Embedding calls |
+|---|---:|---:|---:|
+| Full-text best pairs, public default | 50.25% | 1,946,972 | 4,443 |
+| One centroid sweep, same 0.05 full-text cutoff | 49.73% | 1,899,252 | 4,604 |
+| `groupSentences: true` with its default 0.5 full-text cutoff | 40.66% | 1,204,288 | 2,954 |
+| Centroid grouping alone | 40.43% | 1,156,181 | 2,715 |
+| Greedy sentence packing | 49.42% | 836,179 | 1,371 |
+
+The matched-cutoff comparison isolates the effect of the sweep. Enabling the flag by itself also changed the downstream cutoff from 0.05 to 0.5. For standalone grouping, simple sentence packing gained 8.99 points (paired 95% interval +6.14 to +11.96) and used 27.7% fewer indexing tokens. All five policies used the same six cached matrices, a 500-unit size target and the same 256-, 512- and 1,024-token retrieval budgets. The additional three controls replayed the source and question order from the fresh cohort with zero provider requests. [Exact options and per-question outcomes](results/2026-11-24-grouping-retirement.json)
+
+Removed the centroid pass, `groupSentences`, `dynamicThresholdLowerBound` and `dynamicThresholdUpperBound` from the library. Text and HTML now go directly from sentence splitting to full-text priority merging. Callers using `combineChunks: false` receive the initial sentence units, subject to the token limit. Git callers who used the flag's implicit 0.5 full-text cutoff can request it explicitly with `combineChunksSimilarityThreshold: 0.5`. The published 0.3.2 package predates the pass. [Archived experiment and replay instructions](README.md#compare-centroid-passes-and-pair-order)
+
+After removal, the default reproduced every per-question result on the 702-question cohort at all three retrieval budgets. It produced 10,391 chunks with the same 4,443 embedding calls and 1,946,972 cold indexing tokens. The independent 553-question cutoff study also reproduced its original outcomes and costs. Both checks used cached vectors. [Default comparison](results/2026-11-24-centroid-fresh-confirmation.json) · [Cutoff study](results/2026-11-24-retrieval-budget-cutoffs.json)
+
+## 2026-11-24 · Fresh confirmation of alternating centroid batches
+
+Keep full-text best-pair merging as the text and HTML default. On 702 fresh questions it retrieved complete evidence **50.25%** of the time, averaged equally across tasks and budgets. Alternating leftmost centroid batches with full-text best-pair batches scored **49.47%**. The paired difference was **−0.78 percentage points** (95% interval −1.67 to +0.03). Alternation used **4.29% fewer indexing tokens** and **5.33% more embedding calls**. Its earlier retrieval gain did not repeat. [Per-question outcomes, source IDs and indexing costs](results/2026-11-24-centroid-fresh-confirmation.json)
+
+| Merge schedule | 256 retrieved tokens | 512 | 1,024 | Mean | Cold indexing tokens | Embedding calls |
+|---|---:|---:|---:|---:|---:|---:|
+| Full-text best pairs | 37.64% | 49.93% | 63.19% | 50.25% | 1,946,972 | 4,443 |
+| One left-to-right centroid sweep, then full-text best pairs | 37.82% | 48.45% | 62.93% | 49.73% | 1,899,252 | 4,604 |
+| Alternate leftmost centroid pairs with full-text best pairs | 36.86% | 48.97% | 62.58% | 49.47% | 1,863,389 | 4,680 |
+| Alternate highest-scoring centroid pairs with full-text best pairs | 37.21% | 48.97% | 61.79% | 49.32% | 1,869,475 | 4,691 |
+
+Within the alternating schedule, taking the leftmost qualifying centroid pairs gained 0.15 points over taking the highest-scoring pairs (95% interval −0.82 to +1.15). That comparison gives little reason to prefer either centroid order. A single optional grouping sweep scored 0.52 points below the default (95% interval −1.45 to +0.40). [Decision on the single pass](#2026-11-24--retiring-the-optional-centroid-pass)
+
+The sample contained 384 contract questions, 190 paper questions and 128 multi-hop questions. Intervals resample contracts, papers and multi-hop cases within their respective tasks, with the two multi-hop indexes fixed. Preparing the shared passage and query vectors used 464 requests and 7,407,192 tokens across all four schedules. The table gives the separate cost of indexing each schedule from scratch. An offline replay reproduced every per-question outcome and cost. [Reproduction command](README.md#compare-centroid-passes-and-pair-order)
+
+### Protocol fixed before scoring
+
+Freeze the leftmost disjoint centroid batch followed by a best-pair full-text batch, repeated until both stop. Compare it with the public text default at 500 UTF-16 units. Use the original adaptive grouping base of 0.5, full-text cutoff 0.05, ordinary pass caps and `text-embedding-3-small`. The primary outcome is the change in complete annotated evidence, equally weighted across the three tasks and the 256-, 512- and 1,024-token retrieval budgets. For this default decision, favor alternation if its paired source-resampled 95% interval is above zero and its cold indexing token count is no higher. Also measure a single grouping sweep and highest-first centroid batches on the same vectors.
+
+Use 32 contracts from the full CUAD release outside its 102-contract test split, 64 fresh QASPER papers and 128 fresh HotpotQA cases. Exclude the sources and question IDs in the cutoff study and all five Markdown samples. Select by the SHA-256 order of the seed `semachunk-centroid-confirm-v1/` plus source or case ID. Split deterministically into two shards, each with a separate 64-case multi-hop index balanced between bridge and comparison questions. Freeze the selection and settings before scoring.
+
+## 2026-11-24 · Repeating and alternating centroid passes
+
+Keep best-pairs-first for ordinary full-text merging and keep alternation experimental. With a centroid batch first and a 0.05 full-text cutoff, highest-cosine-first scored **0.36 percentage points below leftmost-first** on the later 553 questions (95% paired interval −1.01 to +0.33). On the earlier 544 questions the difference was −0.74 (−2.04 to +0.65). Both treatments used the same disjoint-pair scheduler. When full-text priority went first, the ordering difference reversed to +0.08 on the later set (−0.49 to +0.69) and +0.55 on the earlier set (+0.09 to +1.13). [Pair-order results, question outcomes and costs](results/2026-11-24-centroid-pair-order.json)
+
+| Policy at full-text cutoff 0.05 | Earlier mean | Later at 256 tokens | At 512 | At 1,024 | Later mean | Later cold indexing tokens |
+|---|---:|---:|---:|---:|---:|---:|
+| Full-text priority alone | 52.52% | 33.74% | 45.82% | 59.76% | 46.44% | 1,311,713 |
+| One left-to-right centroid sweep, then full-text priority | 52.26% | 33.77% | 46.80% | 59.70% | 46.76% | 1,272,965 |
+| Alternate a left-to-right centroid sweep with a full-text batch | 52.45% | 33.89% | 47.09% | 60.11% | 47.03% | 1,222,389 |
+| Alternate leftmost disjoint centroid pairs with full-text best pairs | 53.09% | 34.51% | 47.12% | 61.61% | 47.75% | 1,253,967 |
+| Alternate highest-cosine disjoint centroid pairs with full-text best pairs | 52.35% | 33.63% | 47.50% | 61.04% | 47.39% | 1,261,929 |
+
+The leftmost disjoint policy had the highest average on both sets. Against ordinary full-text priority it gained 1.31 points on the later set (+0.17 to +2.52) and 0.56 on the earlier set (−1.07 to +2.17), using about 4.4% fewer indexing tokens on each. Both sets had already been used to study merge cutoffs, so we tested that schedule again on fresh sources. [Fresh confirmation](#2026-11-24--fresh-confirmation-of-alternating-centroid-batches)
+
+### How the comparisons work
+
+Compare one initial grouping sweep, grouping until stable before priority merging, and alternating one grouping sweep with one disjoint priority round in either starting order. Include priority alone, grouping alone, and a literal repeat using fresh full-text embeddings of the current groups. Use a 500-unit target, an adaptive grouping base of 0.5 frozen from the original sentences, and full-text priority cutoffs of 0.05 and 0.5. For centroid sweeps over merged chunks, carry the sum of the original unit sentence vectors. Verify each local sweep against a full left-to-right rescan, including the first sweep after a priority-first start.
+
+Use the two archived sets of 544 and 553 questions and their cached matrices. The primary comparison on the 553-question set is centroid-first alternation versus one grouping sweep followed by priority at 0.05, averaged equally over tasks and the 256-, 512- and 1,024-token retrieval budgets. Compare both with the ungrouped public default. Use the earlier 544 questions to check consistency. These sets have been used in earlier studies. Record paired source-resampled intervals, indexing costs and how many boundary cosines the local sweeps evaluate.
+
+For the pair-order comparison, give both centroid policies the same cosine score, cutoff, size limit, disjoint-pair requirement and per-round cap. Compare taking the highest cosine first with taking the leftmost qualifying pair first. The primary comparison alternates a centroid batch followed by a full-text best-pairs batch at 0.05. Check the opposite starting order, centroid-only rounds, and a 0.5 full-text cutoff. Use the public priority queue for both scoring signals.
+
+The existing sequential grouper can extend one run several times during a sweep and also checks the immediately preceding input. The pair-order control allows each span to participate once per batch. Both scorers share the size check, priority queue, disjoint selection, caps and join operation in the pair prototype. Two singleton spans use the same original cosine. After a join, full-text scoring batch-embeds changed text and centroid scoring adds unit sentence vectors locally. Each scorer caches its own score for each pair of live spans, and qualifying pairs deferred by a cap can compete again.
+
+Alternating left-to-right centroid sweeps with priority batches gained **0.28 percentage points** over one initial sweep on the later set (95% paired interval −0.05 to +0.70) and **0.19** on the earlier set (−0.13 to +0.49). On the later set it used 1,222,389 cold indexing tokens versus 1,272,965 for one sweep. Repeating all centroid sweeps before starting priority gained 0.13 points on the later set and lost 0.42 on the earlier set. Literally regrouping the current full-text embeddings before priority changed the average by −0.02 and −0.04 points, respectively. These comparisons use the 0.05 priority cutoff. [Sweep results and paired outcomes](results/2026-11-24-centroid-passes.json)
+
+The first centroid sweep checks all eligible boundaries. Later sweeps check edges incident to newly formed chunks and follow any group that keeps growing to the right. Every resulting boundary matched a full rescan. On the later set, repeated grouping before priority needed 3,868 later centroid cosines versus 6,755 on full rescans. Alternating the two methods needed 4,183 versus 4,516. Both reuse the initial singleton cosines. These counts measure vector dot products. The prototype still walks the chunk list to emit each pass.
+
+The pair prototype rebuilds the queue in source order each round from cached scores. The production merger retains deferred candidates in the heap. A full-text-only control reproduced every question's retrieval outcome across both sets, both cutoffs and all three budgets. At cutoff 0.05 it produced one fewer stored chunk on the later set. All experiments used the archived vectors with zero new provider requests. [Reproduction commands](README.md#compare-centroid-passes-and-pair-order)
+
+## 2026-11-24 · Ordinary merge cutoff by retrieval budget
+
+The public text and HTML chunker now defaults to **0.05 for ordinary fixed priority merging**. One index at this cutoff gained **4.97 percentage points** of complete evidence over the previous 0.5 default across contracts, papers and multi-hop questions with `text-embedding-3-small` and `maxChunkSize: 500`. The average gives each task and retrieval budget equal weight (paired 95% interval **+2.18 to +7.61**). Building it used 51.6% more embedding tokens and produced 50.6% fewer chunks. [Full grid, source IDs, paired outcomes and costs](results/2026-11-24-retrieval-budget-cutoffs.json)
+
+| Held-out policy | 256 retrieved tokens | 512 retrieved tokens | 1,024 retrieved tokens | Stored chunks | Cold indexing tokens |
+|---|---:|---:|---:|---:|---:|
+| Ordinary merge, 0.05 | 33.74% | 45.82% | 59.76% | 7,057 | 1,311,713 |
+| Budget-specific, 0.05 / 0.05 / 0.10 | 33.74% | 45.82% | 59.24% | 14,137 | 2,623,780 |
+| Ordinary merge, previous default 0.5 | 30.85% | 41.05% | 52.53% | 14,295 | 865,499 |
+| Greedy sentence packing | 33.71% | 45.57% | 57.84% | 6,482 | 550,998 |
+
+The only budget-specific change was at 1,024 tokens. Switching from 0.05 to 0.10 lost complete evidence on two multi-hop questions and gained none. The paired difference was −0.52 points at that budget (95% interval −1.30 to 0.00) and −0.17 averaged across the three budgets (−0.43 to 0.00). Indexing costs count each distinct cutoff once, with a cold cache for each build.
+
+The gains over 0.5 were +2.89 points at 256 tokens (95% interval −0.48 to +6.15), +4.77 at 512 (+1.38 to +8.51) and +7.23 at 1,024 (+3.84 to +10.61). Papers gained the most. At 1,024 tokens, 0.05 retrieved complete evidence on **71/161** paper questions, **110/128** multi-hop questions and **130/264** contract questions. The 0.5 cutoff completed **40**, **103** and **138**, respectively. Contracts favored 0.5 at every budget.
+
+Greedy packing used 58% fewer cold indexing tokens than the tuned merge. The merge's average advantage over packing was +0.73 points (95% interval −1.65 to +3.10). The two methods were within 0.25 points at both shorter budgets.
+
+We replayed all 553 held-out questions with the cutoff and chunk size omitted. The public default matched the explicit 0.05 run on every question at every budget and reproduced its 7,057 chunks and 1,311,713 indexing tokens using cached vectors. The benchmark's `priority-default` method calls the chunker with its current defaults. Sentence grouping, document fallback and Markdown scoring use their existing 0.5 base. [Public options](../README.md#choosing-a-similarity-threshold)
+
+### Sampling and cutoff selection
+
+We fixed the tuning rule before scoring. Use the public text chunker with a 500 UTF-16 code unit target, sentence grouping off, the usual pass caps and `text-embedding-3-small`. Test fixed full-text cosine cutoffs from 0 to 1 in steps of 0.05, plus −1 to admit every size-eligible pair. Select a cutoff independently for each delivered context of 256, 512 and 1,024 tokens. Select a shared cutoff on the mean of the three budget scores. Each score is the mean complete-evidence rate across contracts, papers and pooled multi-hop search, weighting the three tasks equally. Break ties by fewer cold indexing tokens, then proximity to 0.5, the default at the time. Greedy packing and the 0.5 setting provide controls.
+
+Use both previously scored cohorts (544 questions) for calibration. Freeze the choices before scoring 24 new contracts, 48 new papers and 128 new multi-hop cases. Exclude calibration sources and all five earlier Markdown samples. Search two disjoint 64-question multi-hop indexes to match the calibration pool size. The primary comparison is the budget-specific policy against the best shared cutoff, paired across questions and budgets. Prefer a single index if the source-resampled 95% interval includes zero. Also compare both policies with 0.5 at each budget and measure the indexing cost of supporting all three budgets.
+
+Calibration selected **0.05, 0.05 and 0.10** in ascending budget order and **0.05** for one shared index. Cutoffs −1, 0 and 0.05 tied on complete evidence at all three budgets. The indexing-token tie-break chose 0.05. At 1,024 tokens, 0.10 recovered one additional contract question and tied the counts on the other two tasks. All six historical vector matrices matched their recorded checksums, and the 0.5 control reproduced every historical completion count and indexing-token total.
+
+| Calibration policy | 256 tokens | 512 tokens | 1,024 tokens |
+|---|---:|---:|---:|
+| Ordinary merge, 0.05 | 37.92% | 53.12% | 66.53% |
+| Ordinary merge, 0.10 | 37.69% | 52.89% | 66.65% |
+| Ordinary merge, previous default 0.5 | 35.18% | 45.29% | 57.17% |
+| Greedy sentence packing | 38.45% | 51.71% | 66.41% |
+
+Confirmation covered **553 new questions**. All 24 contracts and 47 of the 48 indexed papers contributed eligible questions. The two multi-hop pools contained 629 and 621 distinct articles, with 32 bridge and 32 comparison questions per pool. We resampled whole contracts, papers and multi-hop cases within task 2,000 times, keeping each question's outcomes together across policies and budgets. The multi-hop intervals are conditional on the two search pools. Preparing all held-out passage candidates and queries used 75,164 inputs and 4,649,185 provider tokens in 297 requests. An offline replay reproduced every score, interval, cost and vector checksum. The policy costs above measure only the work to build the deployed indexes. [Reproduction commands](README.md#tune-the-priority-merge-cutoff)
+
+## 2026-11-24 · Calibrating full-text and centroid merge scores
+
+Keep full-text batched priority merging as the default. For a quality-focused configuration, the existing separate sentence-grouping pass followed by full-text priority was competitive with every centroid rule. On 326 source-disjoint validation questions, adding the calibration-winning 50/50 blend after the same grouping pass raised the mean complete-evidence rate by **0.38 percentage points** (paired 95% interval **−0.79 to +1.83**). It gained one paper question, traded two contract wins for two losses, and matched every multi-hop outcome. It used 2.7% more cold embedding tokens and scored slightly lower at both longer retrieval budgets. [Full grid, frozen nominees, paired question IDs, and costs](results/2026-11-24-centroid-settings.json)
+
+| Policy | Calibration at 256 | Validation at 256 | At 512 | At 1,024 | Validation indexing tokens |
+|---|---:|---:|---:|---:|---:|
+| Public full-text priority, cutoff 0.5 | 32.55% | 36.85% | 47.64% | 59.75% | 573,984 |
+| Public grouping base 0.5, then full-text priority at 0.5 | 32.69% | 37.61% | 48.96% | 60.32% | 539,099 |
+| Full-text priority, tuned cutoff 0.3 | 33.27% | 37.64% | 53.45% | 68.84% | 782,732 |
+| Grouping alone, base 0.5 | 33.02% | 37.08% | 48.30% | 59.95% | 518,126 |
+| Grouping base 0.6, then full-text priority at 0.3 | 34.31% | 39.34% | 53.64% | 69.03% | 767,965 |
+| 50/50 blend alone, cutoff 0.3 | 36.07% | 37.64% | 52.54% | 68.51% | 801,751 |
+| Grouping base 0.6, then 50/50 blend at 0.3 | 37.63% | 39.72% | 53.11% | 68.51% | 788,557 |
+| Centroid-only priority, cutoff 0.3 | 36.07% | 36.74% | 53.30% | 69.26% | 629,526 |
+
+Percentages give each dataset equal weight. The tuned separate pass delivered complete evidence for 63/174 contract, 17/88 paper and 40/64 pooled multi-hop questions at 256 tokens. The prespecified comparison with the blend used those same questions and settings. Grouping bases feed the existing adaptive grouping cutoff. Centroid-only priority skipped intermediate full-text embeddings and used 1,374 indexing calls, compared with 2,164 for full-text priority at the same 0.3 cutoff. Both indexed their final chunks with full-text embeddings.
+
+### Scaling one cosine
+
+For positive scale `s`, a scaled minimum at cutoff `t` requires `F ≥ t` and `C ≥ t/s`. A scaled maximum accepts either condition. A gate with those two independent cutoffs can admit the same pairs as the minimum and still choose different merges, since the gate ranks by full-text cosine. A fixed scale gives callers one cutoff to set.
+
+| Rule with cutoff fixed at 0.5 | Calibration at 256 | Validation at 256 | At 512 | At 1,024 | Validation indexing tokens |
+|---|---:|---:|---:|---:|---:|
+| Full-text priority | 32.55% | 36.85% | 47.64% | 59.75% | 573,984 |
+| Minimum, scale 0.9 | 31.41% | 35.38% | 44.75% | 59.00% | 523,716 |
+| Minimum, scale 1 (calibration winner for minimum) | 32.89% | 36.85% | 47.64% | 59.38% | 571,167 |
+| Minimum, scale 1.1 | 32.55% | 36.85% | 47.64% | 59.38% | 573,175 |
+| Maximum, scale 0.9 | 32.89% | 37.37% | 48.02% | 59.75% | 577,821 |
+| Maximum, scale 1 | 33.45% | 36.85% | 47.50% | 59.18% | 590,819 |
+| Maximum, scale 1.25 (calibration winner for maximum) | 34.93% | 34.85% | 49.05% | 62.78% | 709,950 |
+
+The selected maximum cost 23.7% more indexing tokens than plain priority at 0.5. Its validation difference at 256 tokens was −2.00 points (paired 95% interval −4.90 to +0.80). Scaling also changes the first round, where single sentences have identical full-text and centroid scores. A maximum with `s = 1.25` and `t = 0.5` admits a singleton pair at 0.4. In a follow-up diagnostic, plain priority at 0.4 scored 36.32%, 49.10% and 62.21% at the three budgets using 688,690 indexing tokens. Applying the 1.25 scale only once a side contained multiple sentences scored 36.80%, 49.63% and 59.94%, using 646,988 tokens. The report also includes the analogous stricter minimum check. These diagnostics were run after the primary comparison.
+
+### Sampling and reproduction
+
+We fixed the comparison before scoring. At a 500 UTF-16 code unit target, let `F` be the full-text cosine and `C` the cosine between the sums of the original unit sentence vectors. Test full-text priority, centroid-only priority, separate full-text and centroid cutoffs, a centroid cutoff applied after a side contains multiple sentences, `min(F, sC)`, `max(F, sC)`, and `(1 − w)F + wC`. Test each with the grouping pass off and with adaptive grouping bases of 0.4, 0.5 and 0.6. Include grouping alone and the existing grouping-then-priority control. The threshold grid is 0.3, 0.4, 0.5, 0.6 and 0.7 for each cutoff, the scales are 0.75, 0.9, 1, 1.1 and 1.25, and the blend weights are 0.25, 0.5 and 0.75. Centroid-only priority can skip intermediate full-text embeddings.
+
+Use the 218 historical questions for calibration. Select by mean complete-evidence rate across contracts, papers and pooled multi-hop search at 256 delivered tokens, with equal weight per task. Break ties by fewer cold embedding tokens, then fewer calls and grid order. Freeze the best existing policy and the best centroid policy for the primary paired comparison. Also freeze nominees per rule and with the public cutoff fixed at 0.5. For validation, use 16 new contracts, 32 new papers and 64 new multi-hop cases, excluding source IDs from calibration and all five prior Markdown samples. Resample contracts, papers and multi-hop cases within task for a paired interval. Other budgets and rule-specific nominees are secondary checks.
+
+The grid contained 459 configurations and produced 24 distinct validation nominees. Preparing the new source, passage and query vectors used 48,122 inputs and 2,942,048 provider tokens with `text-embedding-3-small`. All scoring runs replayed the checksummed vectors offline. Apply the [study and tests](baselines/2026-11-24-centroid-settings.patch) to a disposable checkout of `0bc7e8f`. Run `node benchmarks/centroid-study.mjs STAGE OUTDIR TASK` from the repository root. Run `preflight`, `prefill` and `calibration` for each of `cuad`, `qasper` and `hotpotqa`, then `select OUTDIR` once. Run `validation` and `diagnostic` for each task. Finish with `report OUTDIR OUTPUT.json`. The historical RAG suite supplies the calibration cache. Set `SEMACHUNK_BENCHMARK_CACHE` to share an existing cache directory. [Benchmark setup](README.md)
+
+## 2026-11-24 · Sentence centroids in batched priority merging
+
+Keep full-text priority merging as the default and sentence grouping as an option. Requiring a second cosine score recovered one additional contract answer out of 100. The same 54 paper and 64 multi-hop questions had identical completion outcomes, including when all multi-hop passages shared one index. The separate grouping pass recovered one additional paper answer and one multi-hop answer, lost three contract answers, and used the fewest indexing calls. These are historical benchmark samples with one embedding model. [Scores, paired question IDs and costs](results/2026-11-24-centroid-priority.json)
+
+| Merge rule | Contracts / 100 | Papers / 54 | Multi-hop, pooled / 64 | Short-answer hits / 437 | Editorial boundary F1 | RAG indexing calls |
+|---|---:|---:|---:|---:|---:|---:|
+| Full-text priority | 34 | 4 | 36 | 423 | 0.3436 | 1,608 |
+| Group sentences, then run priority | 31 | 5 | 37 | 423 | 0.3467 | 1,409 |
+| Require both scores, rank by full text | 35 | 4 | 36 | 423 | 0.3421 | 1,591 |
+| Rank by the lower score | 35 | 4 | 36 | 423 | 0.3421 | 1,590 |
+| Rank by the mean score | 34 | 5 | 36 | 423 | 0.3378 | 1,620 |
+
+The table uses a target of 500 UTF-16 code units, a 0.5 priority cutoff and a 256-token retrieval budget. The first three result columns count questions with complete evidence under dense retrieval. At 512 tokens, requiring both scores still recovered one extra contract answer. At 1,024 tokens its complete counts matched full-text priority on all three tasks. With a larger 1,000-unit chunk target on the quality suite, it raised held-out short-answer hits from 405 to 408 and lowered editorial boundary F1 from 0.3349 to 0.3318.
+
+Each live chunk carries its full-text embedding and the sum of the unit vectors of its original sentences. Adding the sums gives every sentence equal weight across uneven merges. For two single sentences the centroid cosine and full-text cosine coincide. On later passes the primary candidate keeps a pair only when both cosines reach the cutoff, then ranks it by full-text cosine. The two alternatives use the lower score or the arithmetic mean for both eligibility and ranking. All three score the two existing chunks and re-embed accepted joins in the usual batches. The separate grouping pass also checks the immediate sentence boundary and visits sentences from left to right.
+
+Computing a centroid uses existing vectors. Different merge choices changed the number of texts sent to the embedder across the three RAG indexes from 10,501 under full-text priority to 10,474 with the centroid check. The extra vector arithmetic has a local cost. On the 4,096-sentence fixture with 384-dimensional vectors, the median went from 32 to 53 ms on one run and from 75 to 118 ms on a repeat. Both implementations produced identical boundaries and embedding requests on this fixture.
+
+For reproduction, apply the [prototype patch](baselines/2026-11-24-centroid-priority.patch) to a disposable checkout of `0bc7e8f`. Run the quality suite and the RAG suite with `--methods merge-500-0.5 group+merge-500 flat-merge-500-0.5 merge-500-token-256` for RAG. Leave `SEMACHUNK_CENTROID_RULE` unset for the control, then set it to `gate`, `minimum` or `mean` for each candidate. The grouped control always uses the original merger. All comparisons replayed identical checksummed vectors with zero live embedding requests. [Benchmark commands](README.md)
+
 ## 2026-11-24 · Choosing expansion limits and similarity thresholds
 
 Keep core-only indexing for general Markdown. The document setting selected on calibration used a 256-token total ceiling, a 0.65 neighbor cutoff and a 0.95 final floor. On 676 held-out questions it expanded 80 of 7,828 cores and changed zero complete-evidence outcomes at 512 delivered tokens. Both indexes scored 57.99%. Expansion used 1,115,273 cold embedding tokens versus 1,079,606 (+3.30%). Both recovered complete evidence for 112 of 298 contract questions, 67 of 135 paper questions, 73 of 115 financial questions and 104 of 128 multi-hop questions. Their macro scores also tied at 256 delivered tokens. At 1,024 the difference was +0.08 points. [Full grid, held-out results, costs and paired comparisons](results/2026-11-24-expansion-settings.json)
@@ -511,7 +677,7 @@ The four RAG columns count complete references with dense retrieval at 256 token
 - Fixed 0.3 beat 0.5 on dense complete evidence in all 12 original task/budget comparisons. On QASPER it reduced mean evidence recall at 256 from 30.9% to 28.6%. For pooled HotpotQA, BM25 complete at 256 fell from 30 to 27. On QASPER at 1,024, fixed 0.2 retrieved 17 complete references, the document-relative mean rule retrieved 14, and the existing greedy packing baseline retrieved 18. These tasks reward different chunk sizes. [Original RAG run](results/2026-11-23-rag.json)
 - The document-relative rules estimate the cutoff once from the original size-eligible adjacent pairs, reuse their scoring batch, and fall back to 0.5 with fewer than two scores. The mean rule uses population standard deviation. On CUAD it indexed 892 chunks with 44 provider calls, compared with 875 chunks and 43 calls at fixed 0.2. The relative rule remains a candidate for an opt-in setting. A second embedding model would test the portability claim.
 - The length penalty subtracts `0.15 × joined UTF-16 length / 500`. Applying it to eligibility gave the same four 256-token complete counts as fixed 0.6. Applying it only to queue order changed one count by one. Admitting short fragments regardless of cosine reduced CUAD chunks from 1,176 to 706, while increasing embedded texts from 1,594 to 2,064. It helped QASPER and gave mixed results on other tasks.
-- The current initial grouping heuristic left 26 of 32 documents at 0.5. With grouping enabled, removing the centroid guard preserved SQuAD hits but changed boundaries. With grouping plus merging, WikiSection F1 moved from .3276 to .3290 and pooled HotpotQA BM25 complete at 256 fell from 30 to 29. The centroid uses existing sentence vectors. [Grouping implementation](../src/similarity.js)
+- The initial grouping heuristic left 26 of 32 documents at 0.5. With grouping enabled, removing the centroid guard preserved SQuAD hits but changed boundaries. With grouping plus merging, WikiSection F1 moved from .3276 to .3290 and pooled HotpotQA BM25 complete at 256 fell from 30 to 29. The centroid used existing sentence vectors. [Archived grouping implementation](README.md#compare-centroid-passes-and-pair-order)
 - The original length-drift diagnostic includes hypothetical pairs longer than the 500-unit merge limit and windows that can cross extra section boundaries. A matched comparison on held-out WikiSection kept only legal pairs whose sides contained no internal section break. With two sentences per side, the same 20 gold and 82 other boundaries scored AUC .631 using the nearest sentence on each side and .786 using both. With three per side, zero gold boundaries qualified. This measures classification of the central boundary. It supplies no retrieval result for lookahead.
 
 ### Batched merges and request cost

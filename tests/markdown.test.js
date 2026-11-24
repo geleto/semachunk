@@ -55,7 +55,6 @@ test('greedy joins count actual separators, recheck hard caps and protect tables
     assert.equal((await chunks(s, { combineChunks: false })).length, 2);
     const bodies = ['Lead.', '| A |\n|---|\n| 1 |', 'Middle.', '    code', 'End.', '<div>literal</div>'];
     assert.deepEqual((await chunks(bodies.join('\n\n'))).map(c => c.text), [...bodies.slice(0, 4), bodies.slice(4).join('\n\n')]);
-    await assert.rejects(chunks('', { groupSentences: true }), /groupSentences/);
     await assert.rejects(chunks('', { locale: 'bad tag' }), RangeError);
 });
 

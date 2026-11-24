@@ -140,8 +140,27 @@ test('the Unicode letter filter is optional and runs before embedding', async ()
     }
 });
 
-// The two initial vectors have cosine 0.6.
-const embedPair = async texts => texts.map(text => text.startsWith('First') ? [1, 0] : [0.6, 0.8]);
+function embedPairAt(cosine) {
+    return async texts => texts.map(text => text.startsWith('First') ? [1, 0] : [cosine, Math.sqrt(1 - cosine ** 2)]);
+}
+const embedPair = embedPairAt(0.6);
+
+test('ordinary text and HTML merges default to an inclusive 0.05 cutoff', async () => {
+    for (const [cosine, expected] of [[0.049, sentences], [0.05, [pair]]]) {
+        const embed = embedPairAt(cosine);
+        assert.deepEqual((await chunkText(pair, embed)).map(c => c.text), expected);
+        assert.deepEqual((await chunkText('<p>' + pair + '</p>', embed, { inputFormat: 'html' })).map(c => c.text), expected);
+    }
+});
+
+test('document fallback and Markdown scoring use a 0.5 base', async () => {
+    const markdown = sentences.join('\n\n'), large = { inputFormat: 'markdown', maxChunkSize: 1024 };
+    for (const [text, options] of [[pair, { mergeThresholdMode: 'document' }],
+        [markdown, large], [markdown, { ...large, mergeThresholdMode: 'fixed' }]]) {
+        assert.equal((await chunkText(text, embedPairAt(0.49), options)).length, 2);
+        assert.equal((await chunkText(text, embedPairAt(0.5), options)).length, 1);
+    }
+});
 
 test('the base cutoff controls the priority merge and its explicit override wins', async () => {
     assert.deepEqual((await chunkText(pair, embedPair)).map(c => c.text), [pair]);
@@ -152,63 +171,11 @@ test('the base cutoff controls the priority merge and its explicit override wins
     assert.deepEqual(textOnly, sentences.map(text => ({ text })));
 });
 
-test('one eligible boundary uses the inclusive base cutoff clamped to the configured bounds', async () => {
-    const options = { groupSentences: true, combineChunks: false, similarityThreshold: 0.6 };
-    const grouped = await chunkText(pair, embedPair, { ...options, maxChunkSize: pair.length });
-    assert.deepEqual(grouped, [{ text: pair, embedding: [1, 0] }]);
-    for (const changes of [
-        { similarityThreshold: 0.65 },
-        { dynamicThresholdLowerBound: 0.61 },
-        { dynamicThresholdLowerBound: 0.61, dynamicThresholdUpperBound: 0.61 },
-        { maxChunkSize: pair.length - 1 }
-    ]) {
-        assert.deepEqual((await chunkText(pair, embedPair, { ...options, ...changes })).map(c => c.text), sentences);
-    }
-    const clamped = { ...options, similarityThreshold: 0.95, dynamicThresholdUpperBound: 0.59 };
-    assert.deepEqual((await chunkText(pair, embedPair, clamped)).map(c => c.text), [pair]);
-});
-
-test('the adjusted grouping cutoff includes equal scores and respects higher bounds', async () => {
-    const texts = ['First topic.', 'Second topic.', 'First again.'];
-    const embed = async batch => batch.map(s => s.startsWith('First') ? [10, 0, 0, 0] : [7, 7, 1, 1]);
-    // Both original boundaries score exactly 0.7. Low variance subtracts 0.1.
-    const options = { groupSentences: true, combineChunks: false, returnEmbedding: false, similarityThreshold: 0.8 };
-    const run = async changes => (await chunkText(texts.join(' '), embed, { ...options, ...changes })).map(c => c.text);
-    assert.deepEqual(await run({}), [texts.join(' ')]);
-    assert.deepEqual(await run({ similarityThreshold: 0.81 }), texts);
-    assert.deepEqual(await run({ dynamicThresholdLowerBound: 0.71 }), texts);
-});
-
-test('grouping batches eligible endpoints and excludes an unjoinable boundary between two embedded sentences', async () => {
-    const texts = ['Oversized opening sentence.', 'One.', 'Longleft.', 'Longright.', 'Two.', 'Oversized closing sentence.'];
-    const vectors = new Map([['One.', [8, 15]], ['Longleft.', [1, 0]], ['Longright.', [-1, 0]], ['Two.', [-8, 15]]]);
-    const { embed, batches } = recordingEmbedder(s => vectors.get(s));
-    // The two eligible scores are 8/17. Counting the middle score (-1) would raise the cutoff.
-    const chunks = await chunkText(texts.join(' '), embed, {
-        groupSentences: true, combineChunks: false, returnEmbedding: false, maxChunkSize: 15
-    });
-    assert.deepEqual(chunks.map(c => c.text), [texts[0], 'One. Longleft.', 'Longright. Two.', texts[5]]);
-    assert.deepEqual(batches, [texts.slice(1, 5)]);
-});
-
 test('matching outer sentences stay separate across an unrelated middle sentence', async () => {
     const texts = ['First topic.', 'Other subject.', 'First again.'];
-    for (const combineChunks of [false, true]) {
-        const { embed, batches } = recordingEmbedder(s => s.startsWith('First') ? [1, 0] : [0, 1]);
-        const chunks = await chunkText(texts.join(' '), embed, { groupSentences: true, combineChunks });
-        assert.deepEqual(chunks.map(c => c.text), texts);
-        assert.deepEqual(batches, [texts]);
-    }
-});
-
-test('the adaptive cutoff uses the distribution of adjacent sentence scores', async () => {
-    const texts = ['Alpha one.', 'Beta one.', 'Alpha two.', 'Beta two.'];
-    // Every boundary has cosine 8/17. Zero variance lowers the default cutoff to 0.4.
-    const { embed, batches } = recordingEmbedder(s => s.startsWith('Alpha') ? [1, 0] : [8, 15]);
-    const chunks = await chunkText(texts.join(' '), embed, {
-        groupSentences: true, combineChunks: false, returnEmbedding: false
-    });
-    assert.deepEqual(chunks, [{ text: texts.join(' ') }]);
+    const { embed, batches } = recordingEmbedder(s => s.startsWith('First') ? [1, 0] : [0, 1]);
+    const chunks = await chunkText(texts.join(' '), embed);
+    assert.deepEqual(chunks.map(c => c.text), texts);
     assert.deepEqual(batches, [texts]);
 });
 
@@ -253,22 +220,21 @@ test('paragraphs, headings and list items become units while soft line wraps sta
 test('token fallback checks the prefix, preserves every word and batches final vectors', async () => {
     const countTokens = text => text.split(' ').length + 2; // Includes the tokenizer's two special tokens.
     const text = 'red blue green gold silver violet\n\nShort.\n\nEnd.';
-    for (const groupSentences of [false, true]) {
-        const { embed, batches } = recordingEmbedder(s => [s.length]);
-        const chunks = await chunkText(text, embed, {
-            groupSentences, maxChunkTokens: 5, countTokens, chunkPrefix: 'Title', excludeChunkPrefixInResults: true
-        });
-        assert.equal(chunks.map(c => c.text).join(' '), text.replaceAll('\n\n', ' '));
-        assert.ok(batches.flat().every(s => countTokens(s) <= 5));
-        assert.ok(chunks.every(c => countTokens('Title: ' + c.text) <= 5 && c.embedding[0] === ('Title: ' + c.text).length));
-        assert.ok(batches.some(batch => batch.length >= 2));
-    }
-    const { embed, batches } = recordingEmbedder();
+    const { embed, batches } = recordingEmbedder(s => [s.length]);
+    const chunks = await chunkText(text, embed, {
+        maxChunkTokens: 5, countTokens, chunkPrefix: 'Title', excludeChunkPrefixInResults: true
+    });
+    assert.equal(chunks.map(c => c.text).join(' '), text.replaceAll('\n\n', ' '));
+    assert.ok(batches.flat().every(s => countTokens(s) <= 5));
+    assert.ok(chunks.every(c => countTokens('Title: ' + c.text) <= 5 && c.embedding[0] === ('Title: ' + c.text).length));
+    assert.ok(batches.some(batch => batch.length >= 2));
+
+    const unicode = recordingEmbedder();
     const unbroken = '東京🌍🌗星海雪霞';
-    const chunks = await chunkText(unbroken, embed, { maxChunkTokens: 3, countTokens: s => [...s].length });
-    assert.equal(chunks.map(c => c.text).join(''), unbroken);
-    assert.ok(chunks.every(c => c.text.isWellFormed() && [...c.text].length <= 3));
-    assert.deepEqual(batches, [chunks.map(c => c.text)]);
+    const pieces = await chunkText(unbroken, unicode.embed, { maxChunkTokens: 3, countTokens: s => [...s].length });
+    assert.equal(pieces.map(c => c.text).join(''), unbroken);
+    assert.ok(pieces.every(c => c.text.isWellFormed() && [...c.text].length <= 3));
+    assert.deepEqual(unicode.batches, [pieces.map(c => c.text)]);
 });
 
 test('token-limited joins recheck the actual text and batch a newly eligible neighbor', async () => {
@@ -279,14 +245,12 @@ test('token-limited joins recheck the actual text and batch a newly eligible nei
     assert.deepEqual(chunks, [{ text: 'One. Two. Red.' }]);
     assert.deepEqual(batches, [['Two.', 'Red.'], ['Two. Red.', 'One.']]);
 
-    for (const groupSentences of [false, true]) {
-        const run = recordingEmbedder(() => [1]);
-        const chunks = await chunkText('One. Two. Red.', run.embed, {
-            groupSentences, maxChunkSize: Infinity, maxChunkTokens: 2, countTokens: s => s.split(' ').length
-        });
-        assert.ok(chunks.every(c => c.text.split(' ').length <= 2));
-        assert.ok(run.batches.flat().every(s => s.split(' ').length <= 2));
-    }
+    const run = recordingEmbedder(() => [1]);
+    const limited = await chunkText('One. Two. Red.', run.embed, {
+        maxChunkSize: Infinity, maxChunkTokens: 2, countTokens: s => s.split(' ').length
+    });
+    assert.ok(limited.every(c => c.text.split(' ').length <= 2));
+    assert.ok(run.batches.flat().every(s => s.split(' ').length <= 2));
 });
 
 test('invalid token budgets and unrepresentable input fail before embedding', async () => {
@@ -352,15 +316,12 @@ test('cosine cutoffs include parallel vectors at any finite scale and handle zer
     }
 });
 
-test('invalid thresholds, reversed bounds and invalid provider limits fail before embedding', async () => {
-    for (const key of ['similarityThreshold', 'combineChunksSimilarityThreshold', 'dynamicThresholdLowerBound', 'dynamicThresholdUpperBound']) {
+test('invalid thresholds and provider limits fail before embedding', async () => {
+    for (const key of ['similarityThreshold', 'combineChunksSimilarityThreshold']) {
         for (const value of [NaN, Infinity, -Infinity]) {
             await assert.rejects(chunkText(pair, assert.fail, { [key]: value }), new RegExp(key));
         }
     }
-    await assert.rejects(chunkText(pair, assert.fail, {
-        dynamicThresholdLowerBound: 0.7, dynamicThresholdUpperBound: 0.6
-    }), /dynamicThresholdLowerBound/);
     for (const value of [0, -1, 1.5, NaN]) {
         await assert.rejects(chunkText(pair, assert.fail, { maxEmbeddingBatchSize: value }), /maxEmbeddingBatchSize/);
     }
@@ -375,13 +336,11 @@ test('initial merge scoring requests only endpoints of size-eligible boundaries'
     const chunks = await chunkText(texts.join(' '), embed, options);
     assert.deepEqual(chunks.map(c => c.text), [texts[0], 'One. Two.', texts[3], 'Red. Sun.', texts[6]]);
     assert.deepEqual(batches, [['One.', 'Two.', 'Red.', 'Sun.']]);
-    for (const groupSentences of [true, false]) {
-        const isolated = { ...options, maxChunkSize: 4, groupSentences };
-        await chunkText(texts.join(' '), assert.fail, isolated);
-        const final = recordingEmbedder();
-        await chunkText(texts.join(' '), final.embed, { ...isolated, chunkPrefix: 'Doc', returnEmbedding: true });
-        assert.deepEqual(final.batches, [texts.map(t => 'Doc: ' + t)]);
-    }
+    const isolated = { ...options, maxChunkSize: 4 };
+    await chunkText(texts.join(' '), assert.fail, isolated);
+    const final = recordingEmbedder();
+    await chunkText(texts.join(' '), final.embed, { ...isolated, chunkPrefix: 'Doc', returnEmbedding: true });
+    assert.deepEqual(final.batches, [texts.map(t => 'Doc: ' + t)]);
 });
 
 test('the provider limit applies to initial, intermediate and final vectors with balanced batches', async () => {
@@ -417,13 +376,4 @@ test('known final vectors share spare scoring capacity using their exact output 
     const textOnly = recordingEmbedder(vector);
     await chunkText(all.join(' '), textOnly.embed, { ...options, returnEmbedding: false });
     assert.deepEqual(textOnly.batches, [short]);
-});
-
-test('adaptive grouping rejects gradual topic drift using the existing sentence batch', async () => {
-    const texts = ['East.', 'Northeast.', 'Northwest.', 'West.'];
-    const vectors = [[1e-200, 0], [1e200, Math.sqrt(3) * 1e200], [-1, Math.sqrt(3)], [-1, 0]];
-    const { embed, batches } = recordingEmbedder(s => vectors[texts.indexOf(s)]);
-    const chunks = await chunkText(texts.join(' '), embed, { groupSentences: true, combineChunks: false, returnEmbedding: false });
-    assert.deepEqual(chunks.map(c => c.text), ['East. Northeast.', 'Northwest. West.']);
-    assert.deepEqual(batches, [texts]);
 });

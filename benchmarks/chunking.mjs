@@ -21,12 +21,6 @@ export function qualityPlans() {
             plans['merge-' + size + '-' + cutoff] = { maxChunkSize: size, similarityThreshold: cutoff };
         }
         plans['merge-' + size + '-document'] = { maxChunkSize: size, mergeThresholdMode: 'document' };
-        for (const combine of [false, true]) {
-            plans[(combine ? 'group+merge-' : 'group-') + size] = { maxChunkSize: size, groupSentences: true, combineChunks: combine };
-        }
-    }
-    for (const name of ['group-500', 'group+merge-500']) {
-        plans[name + '-fixed'] = { ...plans[name], dynamicThresholdLowerBound: 0.5, dynamicThresholdUpperBound: 0.5 };
     }
     return plans;
 }
@@ -57,15 +51,17 @@ export function internCandidates(parts, maxSize, vocab) {
 
 export async function split(chunkText, text, options) {
     const unexpected = () => { throw new Error('Splitting requested embeddings'); };
-    const chunks = await chunkText(text, unexpected, { groupSentences: false, combineChunks: false, returnEmbedding: false, ...options });
+    const chunks = await chunkText(text, unexpected, { combineChunks: false, returnEmbedding: false, ...options });
     return chunks.map(chunk => chunk.text);
 }
 
 export async function measure(chunkText, doc, plan, vocab, matrix, countTokens) {
-    let calls = 0, inputs = 0, singletons = 0;
+    let calls = 0, inputs = 0, singletons = 0, providerTokens = 0;
     function embed(batch) {
-        if (plan.maxChunkTokens && batch.some(text => countTokens(text) > plan.maxChunkTokens)) {
-            throw new Error('Token limit exceeded in an embedding request');
+        for (const text of batch) {
+            const tokens = countTokens(text);
+            if (plan.maxChunkTokens && tokens > plan.maxChunkTokens) throw new Error('Token limit exceeded in an embedding request');
+            providerTokens += tokens;
         }
         calls++;
         inputs += batch.length;
@@ -84,7 +80,7 @@ export async function measure(chunkText, doc, plan, vocab, matrix, countTokens) 
         if (options.maxChunkTokens) options.countTokens = countTokens;
         output = (await chunkText(flatInput ? doc.flat : doc.raw, embed, { ...options, returnEmbedding: true })).map(c => c.text);
     }
-    return { ids: output.map(vocab.id), calls, inputs, singletons };
+    return { ids: output.map(vocab.id), calls, inputs, singletons, providerTokens };
 }
 
 export function indexedChunks(docs, rows, texts) {

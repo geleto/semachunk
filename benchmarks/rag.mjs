@@ -9,9 +9,9 @@ export const windowPlan = { tokens: 128, overlap: 32 };
 
 export function ragPlans() {
     const grid = qualityPlans();
-    const selected = ['sentences', 'pack-500', 'merge-250-0.5', 'merge-500-0.3', 'merge-500-0.5', 'merge-500-0.7', 'group+merge-500'];
+    const selected = ['sentences', 'pack-500', 'merge-250-0.5', 'merge-500-0.3', 'merge-500-0.5', 'merge-500-0.7'];
     const base = grid['merge-500-0.5'];
-    return { ...Object.fromEntries(selected.map(name => [name, grid[name]])),
+    return { 'priority-default': {}, ...Object.fromEntries(selected.map(name => [name, grid[name]])),
         'flat-merge-500-0.5': { ...base, flatInput: true }, 'merge-500-document': grid['merge-500-document'],
         'merge-500-token-256': { ...base, maxChunkTokens: 256 }, 'merge-500-two-passes': { ...base, maxPasses: 2 } };
 }
@@ -140,7 +140,7 @@ export function evidenceAtBudget(ranked, sources, references, budget, trace) {
         budgetFeasible: Number(references.some(ref => ref.size <= budget)), tokensDelivered: spent };
 }
 
-export function scoreMethod(questions, pools, byDoc, sources, gold, vocab, dense, terms, examples = new Map()) {
+export function scoreMethod(questions, pools, byDoc, sources, gold, vocab, dense, terms, examples = new Map(), paired = false) {
     const result = {};
     for (const [pool, members] of pools) {
         const passages = pool.flatMap(d => byDoc[d]), indices = passages.map(p => p.index);
@@ -157,6 +157,7 @@ export function scoreMethod(questions, pools, byDoc, sources, gold, vocab, dense
                         contextPrecision: 0, meanTokensDelivered: 0 };
                     total.questions++;
                     total.complete += score.complete;
+                    if (paired && ranker === 'dense' && score.complete) (total.completeIndices ??= []).push(i);
                     total.budgetFeasible += score.budgetFeasible;
                     total.evidenceRecall += score.evidenceRecall;
                     total.contextPrecision += score.contextPrecision;
@@ -205,8 +206,8 @@ function examineExamples(task, questions, sources, gold) {
     }));
 }
 
-export async function evaluateRag(task, chunkText, encoder, plans) {
-    const data = await ragTasks[task](), { questions, exclusions } = data;
+export async function evaluateRag(task, chunkText, encoder, plans, { sample, paired = false } = {}) {
+    const data = sample ?? await ragTasks[task](), { questions, exclusions } = data;
     const { vocab, sources, windows, gold, docs } = await prepare(data.docs, questions, chunkText, encoder, plans);
     const { matrix, textsSHA256, vectorsSHA256, precomputation } = await encoder.vectors(vocab.texts);
     const dense = denseRanker(matrix), lexicon = new Map(), pools = new Map();
@@ -220,8 +221,8 @@ export async function evaluateRag(task, chunkText, encoder, plans) {
         pools.get(key)[1].push(i);
     });
     const all = task === 'hotpotqa' && [[docs.map((_, d) => d), questions.map((_, i) => i)]];
-    const defaultName = 'merge-500-0.5';
-    const examples = plans[defaultName] ? examineExamples(task, questions, sources, gold) : new Map();
+    const exampleName = plans['priority-default'] ? 'priority-default' : 'merge-500-0.5';
+    const examples = plans[exampleName] ? examineExamples(task, questions, sources, gold) : new Map();
     const pooled = new Map([...examples.keys()].map(i => [i, {}]));
     const scores = {};
     for (const [name, plan] of Object.entries({ ...plans, [windowName]: windowPlan })) {
@@ -256,8 +257,9 @@ export async function evaluateRag(task, chunkText, encoder, plans) {
         const row = scores[name] = { chunks: passages.length, ...costs(rows), chunkTokens: distribution(passages.map(p => p.end - p.start)),
             chunksOverModelInput: passages.filter(p => encoder.countTokens(vocab.texts[p.index]) > modelInputTokens).length,
             chunksOver256Tokens: passages.filter(p => encoder.countTokens(vocab.texts[p.index]) > 256).length,
-            retrieval: scoreMethod(questions, pools.values(), byDoc, sources, gold, vocab, dense, terms, name === defaultName ? examples : undefined) };
-        if (all) row.pooledRetrieval = scoreMethod(questions, all, byDoc, sources, gold, vocab, dense, terms, name === defaultName ? pooled : undefined);
+            retrieval: scoreMethod(questions, pools.values(), byDoc, sources, gold, vocab, dense, terms, name === exampleName ? examples : undefined, paired) };
+        if (name !== windowName) row.providerTokens = rows.reduce((sum, r) => sum + r.providerTokens, 0);
+        if (all) row.pooledRetrieval = scoreMethod(questions, all, byDoc, sources, gold, vocab, dense, terms, name === exampleName ? pooled : undefined, paired);
     }
     if (all) for (const [i, trace] of pooled) examples.get(i).pooledAt256 = trace;
     const lengths = sources.map(source => source.starts.length);

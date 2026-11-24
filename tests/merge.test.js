@@ -57,18 +57,11 @@ test('document cutoff uses the eligible original scores once, then stays fixed',
         vectors.set(b, [c, Math.sqrt(1 - c*c)]);
     });
     const options = { maxChunkSize: 7, mergeThresholdMode: 'document', similarityThreshold: 0.98, returnEmbedding: false };
-    for (const groupSentences of [false, true]) {
-        const batches = [];
-        const embed = async texts => { batches.push([...texts]); return texts.map(s => vectors.get(s)); };
-        // The original cutoff is about .469. Recalibrating on just the two weak
-        // pairs after the initial grouping would incorrectly admit Red + Sun.
-        const result = await chunkText(sources, embed, {
-            ...options, groupSentences, dynamicThresholdLowerBound: 0.8, dynamicThresholdUpperBound: 0.8
-        });
-        assert.deepEqual(result.map(c => c.text), ['One', 'Two', barrier, 'Red', 'Sun', barrier, 'Cat Dog', barrier, 'Tin Box']);
-        assert.deepEqual(batches, [pairs.flat()]);
-    }
-    const embed = async texts => texts.map(s => vectors.get(s));
+    const batches = [];
+    const embed = async texts => { batches.push([...texts]); return texts.map(s => vectors.get(s)); };
+    const result = await chunkText(sources, embed, options);
+    assert.deepEqual(result.map(c => c.text), ['One', 'Two', barrier, 'Red', 'Sun', barrier, 'Cat Dog', barrier, 'Tin Box']);
+    assert.deepEqual(batches, [pairs.flat()]);
     const forced = await chunkText(sources, embed, { ...options, combineChunksSimilarityThreshold: 0.94 });
     assert.deepEqual(forced.map(c => c.text).slice(-4), ['Cat', 'Dog', barrier, 'Tin Box']);
     const pair = 'Red\n\nSun';
@@ -122,7 +115,7 @@ test('size and merge limits reject invalid values before parsing or calling the 
         ...unlimited, returnEmbedding: false, candidateMergesPercentageCap: 0.5, candiateMergesPercentageCap: -1
     }), [{ text }]);
     assert.deepEqual(await chunkText(text, assert.fail, {
-        groupSentences: true, maxChunkSize: 0, returnEmbedding: false
+        maxChunkSize: 0, returnEmbedding: false
     }), [{ text: 'One.' }, { text: 'Two.' }]);
 });
 

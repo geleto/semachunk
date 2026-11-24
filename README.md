@@ -10,6 +10,15 @@ A lightweight TypeScript/JavaScript library for semantically chunking text.
 - Batch Embeddings for Efficiency and handling API Rate Limiting
 - Optimized Sentence/Chunk Merging Algorithm
 
+## Chunking algorithms
+
+- **Batched priority merging** is the default for text and HTML. It ranks eligible adjacent chunk pairs across the document by cosine similarity. Each pass merges the strongest disjoint pairs, then re-embeds changed chunks in batches to update neighboring scores.
+- **Document-relative cutoff** takes the mean cosine similarity of eligible original neighbors, subtracts half the standard deviation, and uses that threshold throughout the document.
+- **Markdown block splitting** uses `mdast-util-from-markdown` to identify sections, code and tables. Oversized lists split by item and tables by row.
+- **Section-aware greedy packing** appends consecutive prose from the same Markdown section while it fits, following [Docling’s peer merging](https://docling-project.github.io/docling/concepts/chunking/#hybrid-chunker).
+- **Original-boundary merging** scores adjacent prose units once, as in Aurelio’s `semantic-chunkers`, and reuses those scores to rank disjoint merges at larger Markdown budgets. Semachunk’s JavaScript merger joins only prose within the same section, a rule inspired by [LightRAG Java’s merge checks](https://github.com/dargoner/lightrag-java/blob/af70d08df7fd7fb2b6d979321f05008d9c250305/lightrag-core/src/main/java/io/github/lightrag/indexing/SemanticChunkRefiner.java#L162-L173).
+- **Overlap through context expansion (benchmark only)** lets neighboring chunks share text for embedding after all merges. In each batched round, a chunk can borrow one whole prose unit from its better-scoring side within the same section. An optional check rejects expansions whose embeddings drift too far from the original. Retrieval returns the original chunk text. [Overlap results](benchmarks/LOG.md#2026-11-24--choosing-expansion-limits-and-similarity-thresholds)
+
 ## Installation
 
 ```bash
@@ -34,10 +43,7 @@ async function myEmbedder(texts) {
 }
 
 const text = "Your long document text...";
-const chunks = await chunkText(text, myEmbedder, {
-    maxChunkSize: 500,
-    similarityThreshold: 0.5
-});
+const chunks = await chunkText(text, myEmbedder);
 
 console.log(chunks);
 // Output: [{ text: "...", embedding: [...] }, ...]
@@ -59,7 +65,7 @@ Install the optional parser dependencies in applications that use Markdown.
 npm install mdast-util-from-markdown mdast-util-gfm mdast-util-frontmatter micromark-extension-gfm micromark-extension-frontmatter
 ```
 
-Pass `inputFormat: 'markdown'` to preserve spelling, whitespace, tables, code and the heading hierarchy. Joins use the exact intervening source within one section. A thematic break or skipped definition ends a run. Tables and code have their own chunks. Set `combineChunks: false` to return the initial units. Markdown rejects `groupSentences: true`.
+Pass `inputFormat: 'markdown'` to preserve spelling, whitespace, tables, code and the heading hierarchy. Joins use the exact intervening source within one section. A thematic break or skipped definition ends a run. Tables and code have their own chunks. Set `combineChunks: false` to return the initial units.
 
 At the default 500-character target, Markdown greedily packs adjacent prose and embeds only the requested final texts. When **both** limits allow at least **1,024 UTF-16 code units and 256 tokens**, it scores each eligible original prose boundary once and merges the highest-scoring disjoint pairs that fit. An unlimited setting satisfies its side of the rule. For a token-only budget, set `maxChunkSize: Infinity` along with `maxChunkTokens` and `countTokens`. [Retrieval and indexing costs](benchmarks/LOG.md)
 
@@ -84,19 +90,17 @@ const chunks = await chunkText(text, myEmbedder, {
 
 ### Choosing a similarity threshold
 
-For text and HTML, each sentence starts as its own chunk by default. The priority merge scores adjacent chunks by cosine similarity and merges the highest-scoring disjoint pairs in each pass. A score equal to the cutoff qualifies. Start with `similarityThreshold: 0.5` and `maxChunkSize: 500`. Tune them together with your embedding model and retrieval budget. The size limit determines which pairs can compete, and the cutoff determines which of those pairs can join. Earlier versions ignored `similarityThreshold`. An explicit `combineChunksSimilarityThreshold` takes precedence during the priority merge. [Benchmark results and settings](benchmarks/LOG.md)
+For text and HTML, each sentence starts as its own chunk. Each pass merges the highest-scoring disjoint pairs whose joined length fits `maxChunkSize` (500 UTF-16 code units by default). The ordinary merge accepts adjacent pairs with cosine similarity **at least 0.05**. Set `similarityThreshold` to choose another cutoff. An explicit `combineChunksSimilarityThreshold` takes precedence. Set `combineChunks: false` to return the initial sentence units.
 
-Set `mergeThresholdMode: 'document'` to derive one priority cutoff from the original size-eligible adjacent sentence pairs. It uses their mean cosine minus half their population standard deviation, reusing the first scoring batch. Later rounds use that same cutoff. With fewer than two eligible pairs it falls back to `similarityThreshold`. An explicit `combineChunksSimilarityThreshold` selects a fixed cutoff in either mode. With initial grouping enabled, both stages share the original sentence statistics. [Cutoff comparison and retrieval costs](benchmarks/LOG.md)
+We selected 0.05 on plain text using `text-embedding-3-small` and `maxChunkSize: 500`. One index served 256, 512 and 1,024 retrieved tokens. On 553 held-out questions, the share that received all annotated evidence rose by 2.89, 4.77 and 7.23 percentage points over 0.5 at those budgets, with equal weight per task. Papers gained the most. Contracts favored 0.5 at every budget. Building the 0.05 index used 52% more embedding tokens and stored about half as many chunks. [Cutoff study and greedy packing comparison](benchmarks/LOG.md#2026-11-24--ordinary-merge-cutoff-by-retrieval-budget)
 
-Set `groupSentences: true` to group consecutive sentences before priority merging. The grouping stage batches the endpoints of adjacent sentence pairs that fit `maxChunkSize`. To join a group, the next sentence must meet the grouping cutoff against both its predecessor and the group's centroid, and the whole group must fit. The centroid is the mean of the existing sentences' unit vectors, computed locally. Each initial group stays together. The priority stage can subsequently join neighboring groups if their full-text embeddings meet the merge cutoff. Set `combineChunks: false` to return the initial groups.
-
-The grouping cutoff starts at `similarityThreshold`. With at least two size-eligible boundaries, population variance below 0.01 lowers it by 0.1, and variance above 0.05 raises it by 0.1. A mean below 0.3 adds 0.05, and a mean above 0.7 subtracts 0.05. With one eligible boundary, grouping uses the base directly. In both cases the configured bounds apply (0.4–0.8 by default). With zero eligible boundaries, grouping skips embedding. To use a fixed grouping cutoff, set both bounds to the same value. [Upstream threshold calculation](https://github.com/jparkerweb/semantic-chunking/blob/3.0.2/similarityUtils.js#L62-L81)
+Set `mergeThresholdMode: 'document'` to derive one priority cutoff from the original size-eligible adjacent sentence pairs. It uses their mean cosine minus half their population standard deviation, reusing the first scoring batch. Later rounds use that same cutoff. With fewer than two eligible pairs it falls back to `similarityThreshold`. An explicit `combineChunksSimilarityThreshold` selects a fixed cutoff in either mode. [Cutoff comparison and retrieval costs](benchmarks/LOG.md)
 
 The RAG benchmark measures how much annotated evidence reaches a 256-, 512- or 1,024-token context in full contracts, scientific papers and multi-hop question answering. It compares semantic merging with sentence packing and overlapping token windows under both dense and lexical retrieval. [RAG benchmark and commands](benchmarks/README.md#run-the-rag-evidence-benchmark)
 
 ## Configuration
 
-Character size and merge counts accept nonnegative safe integers or `Infinity`. Zero disables joins for `maxChunkSize`, priority passes for either pass limit, priority merges for `maxMergesPerPass`, and the soft minimum for `uncappedCandidateMerges`. The embedding batch size and token limit accept positive safe integers or `Infinity`. All cosine cutoffs and grouping bounds must be finite, and the lower bound must be at most the upper bound.
+Character size and merge counts accept nonnegative safe integers or `Infinity`. Zero disables joins for `maxChunkSize`, priority passes for either pass limit, priority merges for `maxMergesPerPass`, and the soft minimum for `uncappedCandidateMerges`. The embedding batch size and token limit accept positive safe integers or `Infinity`. Cosine cutoffs must be finite.
 
 | Option | Default | Description |
 |---|---|---|
@@ -107,10 +111,7 @@ Character size and merge counts accept nonnegative safe integers or `Infinity`. 
 | `countTokens` | — | Synchronous tokenizer callback required for a finite token budget. Returns a nonnegative safe integer. |
 | `maxEmbeddingBatchSize` | `Infinity` | Maximum distinct texts per provider request. Use a positive integer to set a limit. |
 | `maxCachedEmbeddings` | `Infinity` | Maximum cached vectors between stages, in insertion order. Zero disables reuse between stages. |
-| `similarityThreshold` | 0.5 | Minimum cosine for priority merging and base cutoff for optional sentence grouping |
-| `groupSentences` | `false` | Enable initial grouping using the document's similarity scores |
-| `dynamicThresholdLowerBound` | 0.4 | Minimum cutoff for initial grouping |
-| `dynamicThresholdUpperBound` | 0.8 | Maximum cutoff for initial grouping |
+| `similarityThreshold` | 0.05 for fixed text and HTML merges, 0.5 for document calibration or Markdown | Minimum cosine for fixed merging and fallback for document calibration. |
 | `combineChunks` | `true` | Combine initial units using the input format's strategy. Set to `false` to keep those units. |
 | `combineChunksSimilarityThreshold` | `similarityThreshold` in fixed mode | Supply a fixed priority cutoff, overriding document calibration and the base cutoff. |
 | `mergeThresholdMode` | `'fixed'` for text and HTML, `'document'` for Markdown | Use a fixed priority cutoff or calibrate once per document from its original eligible neighbors. |
