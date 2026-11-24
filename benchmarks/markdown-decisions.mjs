@@ -98,13 +98,15 @@ export function contrast(samples, tasks, terms) {
 
 export function summarizeOverlap(report) {
     const splits = Object.values(report.splits);
+    const controls = (report.study === 'embedding-context' ? ['core256', 'live512', 'guard512'] : ['core256', 'live320'])
+        .filter(name => report.policies[name]);
     for (const result of [...splits, report]) {
         const samples = result === report ? splits : result;
         const comparisons = result.comparisons = {};
         for (const [label, tasks] of [['documents', ['cuad', 'qasper', 'finqa', 'hotpotqa']], ['meetings', ['qmsum']]]) {
             const outcomes = comparisons[label] = {};
             for (const name of Object.keys(report.policies)) {
-                for (const control of ['core256', 'live320']) {
+                for (const control of controls) {
                     if (name !== control) outcomes[name + '/' + control] = contrast(samples, tasks, [[name, 1], [control, -1]]);
                 }
             }

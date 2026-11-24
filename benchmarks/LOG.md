@@ -1,5 +1,38 @@
 # Chunking improvements and benchmark results
 
+## 2026-11-24 · Neighbor context for embeddings
+
+Keep neighbor expansion experimental. On 199 separate document questions, embedding the original 256-token cores recovered complete evidence for 62.53%, compared with 60.01% at a guarded 384-token window and 59.19% at 512. The 512-token difference against the original cores was −3.35 points (paired 95% interval −6.76 to −0.25). It used 75.9% more cold embedding tokens. On 59 queries from eight separate meetings, both guarded windows retrieved 24.94% of annotated tokens, compared with 23.61% for the cores (+1.33 points, −0.39 to +2.85). The two guarded sizes had identical per-query meeting recall at 512 delivered tokens. [Confirmation results and source fingerprints](results/2026-11-24-embedding-confirmation.json)
+
+Returning the original core improved document retrieval by 2.01 percentage points over returning the whole 512-token window with the identical guarded index (paired 95% interval +0.05 to +4.11). Meeting recall differed by −0.04 points (−1.25 to +1.28). All embedding-only settings returned exactly the same text and source ranges for all 8,065 cores. Scores below cover 347 document questions and 115 meeting queries at 512 delivered tokens. [Configurations, per-query outcomes, window sizes and costs](results/2026-11-24-embedding-context.json)
+
+| Embedding input | Returned text | Complete document evidence | Meeting token recall | Expanded cores | Cold embedding tokens |
+|---|---|---:|---:|---:|---:|
+| Original 256-token cores | Core | 62.68% | 30.80% | 0 | 928,577 |
+| Up to 320, neighbor cutoff 0.50 | Core | 62.68% | 30.93% | 1,205 | 1,317,461 |
+| Up to 320, also require 0.90 core similarity | Core | 62.68% | 30.92% | 840 | 1,270,841 |
+| Up to 384, neighbor cutoff 0.50 | Core | 62.84% | 30.98% | 1,350 | 1,435,121 |
+| Up to 384, also require 0.90 core similarity | Core | 64.03% | 30.93% | 934 | 1,376,721 |
+| Up to 512, neighbor cutoff 0.50 | Core | 61.57% | 30.98% | 1,395 | 1,580,755 |
+| Up to 512, also require 0.80 core similarity | Core | 62.28% | 30.98% | 1,300 | 1,551,430 |
+| Up to 512, also require 0.90 core similarity | Core | 63.08% | 30.93% | 965 | 1,483,751 |
+| Up to 512, at most 64 added tokens per side | Core | 62.68% | 30.67% | 824 | 1,108,595 |
+| Same 512-token index with the 0.90 floor | Whole window | 61.07% | 30.96% | 965 | 1,483,751 |
+
+At the 512-token ceiling the 0.90 floor rejected 824 of 2,398 preferred proposals. Of the 171 proposals tried on the opposite side, 89 passed. This yielded 1,663 accepted whole-neighbor additions. Only 121 of 8,065 final embeddings (1.50%) used more than 384 tokens. A failed trial leaves the last accepted window and its cached embedding available. The check compares each prospective indexing input, including a configured prefix, to the frozen core rendered the same way. The delivered body and evidence offsets always come from the original core in the embedding-only runs.
+
+Compared with the original core index, the 512-token guarded window gained 0.40 document points (−0.98 to +1.77) and used 59.8% more cold embedding tokens. The 384-token guarded window gained 1.35 points (+0.17 to +2.50) and used 48.3% more. It added one complete contract result and three paper results. Both sizes had the same meeting recall on every query at this delivery budget. At 256 delivered tokens the 384-token guarded index scored 40.16% on documents against 42.16% for the original cores. At 1,024 delivered tokens it scored 74.95% against 75.10%.
+
+On the confirmation sample, the original, 384- and 512-token configurations used 485,466, 757,825 and 853,789 cold embedding tokens respectively. Of 4,074 guarded windows at the 512 ceiling, 107 actually used more than 384 tokens. Widening from 384 to 512 lost three complete contract results and tied the other three document datasets. These two sizes showed the same ordering on both document samples.
+
+The sizing experiment fetched 129,902 new provider tokens over the existing cache. A network-disabled replay reproduced all 100 returned and indexed layouts, 360 retrieval results, cold embedding costs and proposal counts. The published sizing file is that replay. The separate confirmation fetched 360,114 new provider tokens. Cold costs in the table count every input a fresh index build would embed. All 95 tests passed.
+
+### Embedding context protocol
+
+Freeze the public 256-token Markdown cores and keep their text and source ranges as the retrieval payload. Embed the accepted neighboring window. Compare 320-, 384- and 512-token ceilings using the same 0.50 neighbor cutoff, with and without a 0.90 floor on similarity between the prospective embedding and the original core embedding. At 512 also test a 0.80 floor, a 64-token allowance per side, and delivering the expanded passage with the same 0.90-guarded index. Check hashes of both returned bodies and indexed strings. Count preferred proposals, rejections and trials of the opposite side. Use the previous two samples, the same query vectors and literal delivery budgets of 256, 512 and 1,024 tokens. The primary outcomes are complete document evidence and meeting evidence recall at 512 delivered tokens.
+
+The first comparison favored the 384-token guarded window on documents. Freeze the two guarded ceilings and the 256-token control for a separate comparison on the existing confirmation document sample and the next eight meetings in the same hash order. These sources are disjoint from the sizing experiment. Use the same thresholds, scoring and budgets.
+
 ## 2026-11-23 · Batched overlap after Markdown merging
 
 Checking the proposed **whole passage** against its frozen core helped control semantic drift. At a 320-token final ceiling, a 0.90 cosine floor recovered 1.76 percentage points of complete document evidence over the neighbor cutoff alone (paired 95% interval +0.17 to +3.93). Against the original 256-token cores its difference was −1.22 points (−2.94 to +0.40), with 36.9% more cold embedding tokens. Meeting recall changed by +0.24 points (−1.76 to +1.84). Keep the non-overlapping cores as the public default. [Raw configurations, source fingerprints, per-query results and paired comparisons](results/2026-11-23-batched-overlap.json)

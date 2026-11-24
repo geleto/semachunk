@@ -1,8 +1,7 @@
-import assert from 'node:assert/strict';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import { chunkText } from '../src/index.js';
 import { createBatchEmbedder } from '../src/embeddings.js';
-import { markdownResult, parseMarkdown } from '../src/markdown.js';
+import { markdownResult, markdownText, parseMarkdown } from '../src/markdown.js';
 import { fitsMarkdownJoin } from '../src/markdown-merge.js';
 import { splitSpans, tokenBudget } from '../src/token-limit.js';
 import { packSentences } from './chunking.mjs';
@@ -45,11 +44,8 @@ export function documentRule(doc, policy, countTokens) {
 
 // Only the indexing input changes across context arms. Drop the outermost
 // heading first, then the title. An existing caller prefix is always required.
-function contextualize(chunk, doc, policy, counts, countTokens, required) {
-    const base = chunk.embeddingText ?? chunk.text;
-    assert.ok(base.startsWith(required));
-    const body = base.slice(required.length);
-    const path = policy.context === 'headings' ? [...(chunk.headingPath ?? [])] : [];
+function contextualize(body, headingPath, doc, policy, counts, countTokens, required) {
+    const path = policy.context === 'headings' ? [...(headingPath ?? [])] : [];
     let title = doc.title;
     if (title && path[0] === title) path.shift();
     if (title || path.length) {
@@ -68,20 +64,25 @@ function contextualize(chunk, doc, policy, counts, countTokens, required) {
     while (title || path.length) {
         const index = required + [title, ...path].filter(Boolean).join(' > ') + ': ' + body;
         if (countTokens(index) <= policy.contextCap) {
-            counts[shortened ? 'shortened' : 'retained']++;
+            if (counts) counts[shortened ? 'shortened' : 'retained']++;
             return index;
         }
         if (path.length) path.shift();
         else title = '';
         shortened = true;
     }
-    counts[available ? 'omitted' : 'alreadyPresentOrUnavailable']++;
-    return base;
+    if (counts) counts[available ? 'omitted' : 'alreadyPresentOrUnavailable']++;
+    return required + body;
 }
 
 export async function indexDocument(doc, policy, costs, initial, context, encoder) {
     const { countTokens } = encoder;
     const required = doc.chunkPrefix?.trim() ? doc.chunkPrefix + ': ' : '';
+    function render(body, headingPath, counts) {
+        return policy.context ? contextualize(body, headingPath, doc, policy, counts, countTokens, required) : required + body;
+    }
+    const indexText = unit => render(markdownText(doc.source, unit), unit.headingPath);
+    const returnCore = policy.growth?.returnCore;
     const maxChunkSize = policy.chars ?? Infinity, maxChunkTokens = policy.tokens ?? Infinity;
     const fits = tokenBudget(maxChunkTokens, countTokens, required);
     const nativeSplitter = policy.method === 'recursive' || policy.method === 'recursive-markdown';
@@ -132,19 +133,22 @@ export async function indexDocument(doc, policy, costs, initial, context, encode
         if (policy.growth) {
             const stats = context.growth ??= { grewPerRound: [], duplicateSpans: 0, cosines: [],
                 oneAddition: { count: 0, below08: 0 }, multipleAdditions: { count: 0, below08: 0 } };
-            expanded = await growMarkdown(doc.source, input, cores, embed, { ...policy.growth, fits, maxChunkSize, countTokens }, stats);
+            expanded = await growMarkdown(doc.source, input, cores, embed, { ...policy.growth, fits, maxChunkSize, countTokens, indexText }, stats);
         }
-        chunks = (expanded ?? cores).map(u => markdownResult(doc.source, u));
+        const returned = returnCore ? cores : expanded ?? cores;
+        chunks = returned.map(unit => markdownResult(doc.source, unit));
     }
-    policy.checkCores?.(doc, expanded ? cores.map(u => markdownResult(doc.source, u)) : chunks);
-    if (required) for (const chunk of chunks) chunk.embeddingText = required + chunk.text;
-    if (policy.context) {
-        for (const c of chunks) c.embeddingText = contextualize(c, doc, policy, context, countTokens, required);
+    policy.checkCores?.(doc, expanded && !returnCore ? cores.map(u => markdownResult(doc.source, u)) : chunks);
+    if (required || policy.context || returnCore) {
+        for (const [i, chunk] of chunks.entries()) {
+            const body = returnCore && expanded[i] !== cores[i] ? markdownText(doc.source, expanded[i]) : chunk.text;
+            chunk.embeddingText = render(body, chunk.headingPath, context);
+        }
     }
     const inputs = chunks.map(c => c.embeddingText ?? c.text);
     costs.indexTexts += chunks.length;
     costs.indexTokens += inputs.reduce((n, s) => n + countTokens(s), 0);
     if (!publicAPI) await embed(inputs);
-    if (expanded) await measureGrowth(doc.source, cores, expanded, encoder.embed, context.growth);
+    if (expanded) await measureGrowth(indexText, cores, expanded, embed, context.growth);
     return chunks;
 }

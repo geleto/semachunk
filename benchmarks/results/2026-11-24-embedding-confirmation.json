@@ -1,0 +1,3255 @@
+{
+  "model": "text-embedding-3-small",
+  "dimension": 1536,
+  "encodingName": "cl100k_base",
+  "study": "embedding-context",
+  "policies": {
+    "core256": {
+      "method": "public-markdown",
+      "tokens": 256
+    },
+    "guard384": {
+      "method": "fixed",
+      "adaptive": true,
+      "tokens": 384,
+      "coreTokens": 256,
+      "growth": {
+        "cutoff": 0.5,
+        "returnCore": true,
+        "coreFloor": 0.9
+      }
+    },
+    "guard512": {
+      "method": "fixed",
+      "adaptive": true,
+      "tokens": 512,
+      "coreTokens": 256,
+      "growth": {
+        "cutoff": 0.5,
+        "returnCore": true,
+        "coreFloor": 0.9
+      }
+    }
+  },
+  "budgets": [
+    256,
+    512,
+    1024
+  ],
+  "node": "v24.14.1",
+  "metric": "literal-context-v1",
+  "startedUTC": "2026-11-24T06:43:04.877Z",
+  "splits": {
+    "confirmation": {
+      "samples": {
+        "cuad": {
+          "documents": [
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "PRECIGEN,INC_01_22_2020-EX-99.1-JOINT FILING AGREEMENT",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement"
+          ],
+          "questions": [
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Document Name",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Parties",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Agreement Date",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Effective Date",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Expiration Date",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Governing Law",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Exclusivity",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Anti-Assignment",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Revenue/Profit Sharing",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Minimum Commitment",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Volume Restriction",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Ip Ownership Assignment",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Joint Ip Ownership",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__License Grant",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Affiliate License-Licensee",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Post-Termination Services",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Audit Rights",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Uncapped Liability",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Cap On Liability",
+            "PRECIGEN,INC_01_22_2020-EX-99.1-JOINT FILING AGREEMENT__Document Name",
+            "PRECIGEN,INC_01_22_2020-EX-99.1-JOINT FILING AGREEMENT__Parties",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT__Document Name",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT__Parties",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT__Agreement Date",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT__Effective Date",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT__Governing Law",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT__Non-Compete",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT__Anti-Assignment",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT__Ip Ownership Assignment",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT__License Grant",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT__Insurance",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT__Covenant Not To Sue",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT__Document Name",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT__Parties",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT__Agreement Date",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT__Effective Date",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT__Expiration Date",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT__Governing Law",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT__Non-Compete",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT__Anti-Assignment",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT__Revenue/Profit Sharing",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT__Minimum Commitment",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT__License Grant",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT__Audit Rights",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT__Insurance",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Document Name",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Parties",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Agreement Date",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Effective Date",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Expiration Date",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Renewal Term",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Governing Law",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Non-Compete",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Exclusivity",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Competitive Restriction Exception",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Rofr/Rofo/Rofn",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Change Of Control",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Anti-Assignment",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Revenue/Profit Sharing",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Minimum Commitment",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Volume Restriction",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Ip Ownership Assignment",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__License Grant",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Post-Termination Services",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Audit Rights",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Cap On Liability",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Insurance",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement__Covenant Not To Sue",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Document Name",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Parties",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Agreement Date",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Effective Date",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Expiration Date",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Renewal Term",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Notice Period To Terminate Renewal",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Governing Law",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Non-Compete",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Exclusivity",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Competitive Restriction Exception",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Termination For Convenience",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Rofr/Rofo/Rofn",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Anti-Assignment",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Revenue/Profit Sharing",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__License Grant",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Non-Transferable License",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Affiliate License-Licensee",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Post-Termination Services",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Audit Rights",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Uncapped Liability",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Cap On Liability",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement__Insurance"
+          ],
+          "exclusions": {
+            "noAnnotatedClause": 155
+          },
+          "sourceSHA256": "8d5ee06395eb9e7c9e5ad3c5387c0923d41597e495532bcbfb46ca558e7d64c3",
+          "annotationsAndPoolsSHA256": "6755589e35e0422865c631d7ffc87edb108e97b6831943017038a2f4006bb337",
+          "groups": [
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT",
+            "PRECIGEN,INC_01_22_2020-EX-99.1-JOINT FILING AGREEMENT",
+            "PRECIGEN,INC_01_22_2020-EX-99.1-JOINT FILING AGREEMENT",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT",
+            "HERTZGLOBALHOLDINGS,INC_07_07_2016-EX-10.4-INTELLECTUAL PROPERTY AGREEMENT",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT",
+            "VALENCETECHNOLOGYINC_02_14_2003-EX-10-JOINT VENTURE CONTRACT",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "MusclepharmCorp_20170208_10-KA_EX-10.38_9893581_EX-10.38_Co-Branding Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement",
+            "SigaTechnologiesInc_20190603_8-K_EX-10.1_11695818_EX-10.1_Promotion Agreement"
+          ],
+          "encoder": {
+            "apiRequests": 25,
+            "apiInputs": 409,
+            "apiInputTokens": 136509,
+            "diskTexts": 1981,
+            "memoryTexts": 7312,
+            "replayMs": 461.0734999999913
+          }
+        },
+        "qasper": {
+          "documents": [
+            "1901.05415",
+            "1712.00733",
+            "1810.02268",
+            "1909.04242",
+            "2002.00175",
+            "1908.10461",
+            "1911.03090",
+            "1902.10246",
+            "1804.09692",
+            "1908.09355",
+            "1911.01940",
+            "1909.01860"
+          ],
+          "questions": [
+            "78f8dad0f1acf024f69b3218b2d204b8019bb0d2",
+            "73a5783cad4ed468a8dbb31b5de2c618ce351ad1",
+            "74acaa205a5998af4ad7edbed66837a6f2b5c58b",
+            "cfcf94b81589e7da215b4f743a3f8de92a6dda7a",
+            "d147117ef24217c43252d917d45dff6e66ff807c",
+            "1a2b69dfa81dfeadd67b133229476086f2cc74a8",
+            "ae2142ee9e093ce485025168f4bcb3da4602739d",
+            "ebe1084a06abdabefffc66f029eeb0b69f114fd9",
+            "cfdd583d01abaca923f5c466bb20e1d4b8c749ff",
+            "554d798e4ce58fd30820200c474d7e796dc8ba89",
+            "ecaa10a2d9927fa6ab6a954488f12aa6b42ddc1a",
+            "8b49423b7d1fa834128aa5038aa16c6ef3fdfa32",
+            "23252644c04a043f630a855b563666dd57179d98",
+            "2f75b0498cf6a1fc35f1fb1cac44fc2fbd3d7878",
+            "0d3193d17c0a4edc8fa9854f279c2a1b878e8b29",
+            "b424ad7f9214076b963a0077d7345d7bb5a7a205",
+            "0dfe43985dea45d93ae2504cccca15ae1e207ccf",
+            "8276671a4d4d1fbc097cd4a4b7f5e7fadd7b9833",
+            "79885526713cc16eb734c88ff1169ae802cad589",
+            "b2dc0c813da92cf13d86528bd32c12286ec9b9cd",
+            "6911e8724dfdb178fa81bf58019947b71ef8fbe7",
+            "b012df09fa2a3d6b581032d68991768cf4bc9d7b",
+            "62edffd051d056cf60e17deafcc55a8c9af398cb",
+            "7c398615141ca416a32c9f72dbb785d3a6986a0f",
+            "441be93e2830cc0fc65afad6959db92754c9f5a8",
+            "d622564b250cffbb9ebbe6636326b15ec3c622d9",
+            "4367617c0b8c9f33051016e8d4fbb44831c54d0f",
+            "2c60628d54f2492e0cbf0fb8bacd8e54117f0c18",
+            "389ff1927ba9fc8bac50959fc09f30c2143cc14e",
+            "b968bd264995cd03d7aaad1baba1838c585ec909",
+            "afcd1806b931a97c0679f873a71b825e668f2b75",
+            "01c8c3836467a4399cc37e86244b5bdc5dda2401",
+            "ebb4db9c24aa36db9954dd65ea079a798df80558",
+            "7a212a34e9dbb0ba52c40471842b2e0e3e14f276",
+            "26e32f24fe0c31ef25de78935daa479534b9dd58",
+            "6167618e0c53964f3a706758bdf5e807bc5d7760",
+            "08202b800a946b8283c2684e23b51c0ec1e8b2ac",
+            "00aea97f69290b496ed11eb45a201ad28d741460"
+          ],
+          "exclusions": {
+            "ambiguousOrNontextAnnotation": 9,
+            "noCompleteTextReference": 9
+          },
+          "sourceSHA256": "420c77b0078e053f204c1b874b37b68a82c44323dc9597fb7b3d0b6d23107440",
+          "annotationsAndPoolsSHA256": "fb0d48773e934d3e3ece9df366ddd77119e4538f0b8a3259ce68a5b9a90b8256",
+          "groups": [
+            "1901.05415",
+            "1901.05415",
+            "1712.00733",
+            "1712.00733",
+            "1712.00733",
+            "1712.00733",
+            "1810.02268",
+            "1810.02268",
+            "1810.02268",
+            "1810.02268",
+            "1909.04242",
+            "1909.04242",
+            "2002.00175",
+            "2002.00175",
+            "2002.00175",
+            "2002.00175",
+            "2002.00175",
+            "2002.00175",
+            "2002.00175",
+            "1908.10461",
+            "1908.10461",
+            "1908.10461",
+            "1908.10461",
+            "1911.03090",
+            "1911.03090",
+            "1902.10246",
+            "1902.10246",
+            "1902.10246",
+            "1804.09692",
+            "1804.09692",
+            "1804.09692",
+            "1804.09692",
+            "1908.09355",
+            "1908.09355",
+            "1911.01940",
+            "1909.01860",
+            "1909.01860",
+            "1909.01860"
+          ],
+          "encoder": {
+            "apiRequests": 13,
+            "apiInputs": 305,
+            "apiInputTokens": 102382,
+            "diskTexts": 1180,
+            "memoryTexts": 4136,
+            "replayMs": 185.97470000000612
+          }
+        },
+        "finqa": {
+          "documents": [
+            "ETR/2004/page_213.pdf",
+            "DVN/2014/page_85.pdf",
+            "ETR/2002/page_86.pdf",
+            "STT/2008/page_83.pdf",
+            "IP/2007/page_31.pdf",
+            "ALXN/2007/page_104.pdf",
+            "CME/2017/page_97.pdf",
+            "INTC/2013/page_33.pdf",
+            "APD/2018/page_59.pdf",
+            "GPN/2009/page_70.pdf",
+            "PPG/2013/page_40.pdf",
+            "ETFC/2013/page_26.pdf",
+            "ETR/2013/page_118.pdf",
+            "STT/2009/page_73.pdf",
+            "BLK/2017/page_122.pdf",
+            "AAPL/2005/page_83.pdf",
+            "IPG/2009/page_85.pdf",
+            "TSCO/2018/page_34.pdf",
+            "AMT/2008/page_32.pdf",
+            "TROW/2010/page_22.pdf",
+            "PNC/2011/page_87.pdf",
+            "PNC/2011/page_78.pdf",
+            "APD/2016/page_57.pdf",
+            "ANSS/2013/page_55.pdf",
+            "ADI/2011/page_81.pdf"
+          ],
+          "questions": [
+            "ETR/2004/page_213.pdf-2",
+            "DVN/2014/page_85.pdf-1",
+            "ETR/2002/page_86.pdf-3",
+            "STT/2008/page_83.pdf-2",
+            "IP/2007/page_31.pdf-1",
+            "ALXN/2007/page_104.pdf-2",
+            "CME/2017/page_97.pdf-4",
+            "INTC/2013/page_33.pdf-2",
+            "ALXN/2007/page_104.pdf-1",
+            "APD/2018/page_59.pdf-1",
+            "GPN/2009/page_70.pdf-3",
+            "GPN/2009/page_70.pdf-4",
+            "PPG/2013/page_40.pdf-2",
+            "ETFC/2013/page_26.pdf-1",
+            "ETR/2002/page_86.pdf-1",
+            "ETR/2013/page_118.pdf-4",
+            "STT/2009/page_73.pdf-2",
+            "GPN/2009/page_70.pdf-1",
+            "BLK/2017/page_122.pdf-2",
+            "PPG/2013/page_40.pdf-1",
+            "AAPL/2005/page_83.pdf-1",
+            "IPG/2009/page_85.pdf-1",
+            "ETR/2004/page_213.pdf-1",
+            "TSCO/2018/page_34.pdf-1",
+            "DVN/2014/page_85.pdf-2",
+            "AAPL/2005/page_83.pdf-2",
+            "ETR/2013/page_118.pdf-1",
+            "AMT/2008/page_32.pdf-4",
+            "TROW/2010/page_22.pdf-1",
+            "PNC/2011/page_87.pdf-3",
+            "PNC/2011/page_78.pdf-2",
+            "STT/2009/page_73.pdf-3",
+            "APD/2016/page_57.pdf-1",
+            "STT/2008/page_83.pdf-1",
+            "IP/2007/page_31.pdf-2",
+            "ANSS/2013/page_55.pdf-2",
+            "ANSS/2013/page_55.pdf-3",
+            "ADI/2011/page_81.pdf-3"
+          ],
+          "exclusions": {},
+          "sourceSHA256": "9801bb7839d2e96ba9310c15de3900777235dc88aba22af65fbc23f5107658a3",
+          "annotationsAndPoolsSHA256": "9a83f50d414f2472d033188066ff1df45bed450c7b7084d9cea04e4606bd734d",
+          "groups": [
+            "ETR/2004",
+            "DVN/2014",
+            "ETR/2002",
+            "STT/2008",
+            "IP/2007",
+            "ALXN/2007",
+            "CME/2017",
+            "INTC/2013",
+            "ALXN/2007",
+            "APD/2018",
+            "GPN/2009",
+            "GPN/2009",
+            "PPG/2013",
+            "ETFC/2013",
+            "ETR/2002",
+            "ETR/2013",
+            "STT/2009",
+            "GPN/2009",
+            "BLK/2017",
+            "PPG/2013",
+            "AAPL/2005",
+            "IPG/2009",
+            "ETR/2004",
+            "TSCO/2018",
+            "DVN/2014",
+            "AAPL/2005",
+            "ETR/2013",
+            "AMT/2008",
+            "TROW/2010",
+            "PNC/2011",
+            "PNC/2011",
+            "STT/2009",
+            "APD/2016",
+            "STT/2008",
+            "IP/2007",
+            "ANSS/2013",
+            "ANSS/2013",
+            "ADI/2011"
+          ],
+          "encoder": {
+            "apiRequests": 11,
+            "apiInputs": 136,
+            "apiInputTokens": 32309,
+            "diskTexts": 790,
+            "memoryTexts": 2496,
+            "replayMs": 119.77250000002095
+          }
+        },
+        "hotpotqa": {
+          "documents": [
+            "Bayshore Shopping Centre",
+            "OC Transpo Route 95",
+            "OC Transpo Route 11",
+            "OC Transpo Route 97",
+            "Bayshore station",
+            "Nepean Sportsplex",
+            "Mackenzie King station",
+            "Clarence-Rockland Transpo",
+            "OC Transpo Route 4",
+            "OC Transpo Route 61",
+            "Splash! (UK series 1)",
+            "Lois Toulson",
+            "Jack Laugher",
+            "Elizabeth Ferris",
+            "Daniel Goodfellow",
+            "Monique Gladding",
+            "Valerie Lloyd-Chandos",
+            "Chris Mears (diver)",
+            "James Denny (diver)",
+            "Tom Daley",
+            "Manhattan Romance",
+            "Inherent Vice (film)",
+            "Lisa Brennan-Jobs",
+            "Alien: Covenant",
+            "Chrisann Brennan",
+            "Logan Lucky",
+            "The Current War",
+            "Katherine Waterston",
+            "Fantastic Beasts and Where to Find Them (film)",
+            "The Bite in the Apple",
+            "Ayatollah (record producer)",
+            "Germania Musical Society",
+            "Katherine Oliver",
+            "The (M)orons",
+            "Northern State (band)",
+            "Wu-Tang Clan videography",
+            "Ricanstruction",
+            "Opera Noire of New York",
+            "Cappadonna",
+            "Wu-Tang Clan anthology",
+            "Liberty Tree District",
+            "Soho (Tampa)",
+            "Liberty Square (Magic Kingdom)",
+            "Combat Zone, Boston",
+            "John Street (Toronto)",
+            "Maple-Union Corners",
+            "Liberty Tree",
+            "West Walnut Street Historic District",
+            "Club Quarter",
+            "Water Street, Milwaukee",
+            "Merlin Olsen",
+            "1995 Pro Bowl",
+            "DeSean Jackson",
+            "2014 Trinidad and Tobago Pro Bowl",
+            "Trinidad and Tobago Pro Bowl",
+            "Los Angeles Memorial Coliseum",
+            "1958 Pro Bowl",
+            "2013 Trinidad and Tobago Pro Bowl",
+            "2012 Trinidad and Tobago Charity Shield",
+            "2017 Pro Bowl",
+            "Christian Pulisic",
+            "Frode Eike Hansen",
+            "Espen Hoff",
+            "Martin Ødegaard",
+            "Bjørn Helge Riise",
+            "Christian Eriksen",
+            "Luke James (footballer)",
+            "Anders Konradsen",
+            "Zymer Bytyqi",
+            "Markus Henriksen",
+            "Sarah Solemani",
+            "Frances de la Tour",
+            "Michelle Terry",
+            "Eileen Atkins",
+            "Alex Jennings",
+            "Jessica Swale",
+            "Juliet Aubrey",
+            "Sons and Lovers (1981 TV serial)",
+            "Paul Baker (actor)",
+            "Michael Gambon",
+            "Miami Northwestern Senior High School",
+            "Yala National Park",
+            "Australian Alps National Parks and Reserves",
+            "List of U.S. National Parks by elevation",
+            "High Sierra Camps",
+            "National parks of Scotland",
+            "Homestead, Florida",
+            "Australian Alps Walking Track",
+            "Yuraygir National Park",
+            "South Dade High School",
+            "Final Fantasy XII",
+            "Torture Killer",
+            "Rahul Ranade",
+            "Descendants of Erdrick",
+            "Masaharu Iwata",
+            "Allister Brimble",
+            "Hitoshi Sakimoto",
+            "Kaushal Inamdar",
+            "Chamras Saewataporn",
+            "City of the Fallen",
+            "Marvin Hamlisch",
+            "2003 Marriott Hotel bombing",
+            "Robert Lopez",
+            "The Human Centipede 2 (Full Sequence)",
+            "Ronald Reagan judicial appointment controversies",
+            "Castelldefels train accident",
+            "People's jury",
+            "Arthur Milton",
+            "Duodecet",
+            "Ted Kooshian",
+            "Billy Dean",
+            "Song to Say Goodbye",
+            "Don't Say Goodbye (Paulina Rubio song)",
+            "She Even Woke Me Up to Say Goodbye",
+            "We'll Never Have to Say Goodbye Again",
+            "Never Say Goodbye (Bon Jovi song)",
+            "Lari White",
+            "I Will Not Say Goodbye",
+            "Phil Stacey",
+            "It's So Hard to Say Goodbye to Yesterday",
+            "National symbols of Belarus",
+            "National symbols of Serbia",
+            "National symbols of Colombia",
+            "National symbols of Argentina",
+            "National symbols of Bangladesh",
+            "National symbols of Peru",
+            "National symbols of the Philippines",
+            "National symbols of Sri Lanka",
+            "Preševo Valley",
+            "National symbols of Albania",
+            "Etheridge Knight",
+            "Tommie Smith",
+            "Rainbow Coalition (Fred Hampton)",
+            "Maulana Karenga",
+            "African-American bookstores",
+            "Black Arts Movement",
+            "Hakim Jamal",
+            "Black Power: The Politics of Liberation",
+            "Black Power movement",
+            "Black Power Revolution",
+            "Rehman Khan",
+            "BIG Memsaab",
+            "India's Magic Star",
+            "Paalkhi",
+            "Meethi Choori No 1",
+            "Tina &amp; Lolo",
+            "Grand Masti",
+            "Karishma Tanna",
+            "I Am Sorry Mathe Banni Preethsona",
+            "Sunny Leone",
+            "2008 Scottish League Cup Final",
+            "Charlie Nicholas",
+            "2011 Scottish League Cup Final",
+            "1985 Scottish League Cup Final",
+            "1967 Scottish League Cup Final",
+            "2006 Scottish League Cup Final",
+            "2009 Scottish League Cup Final",
+            "Gerry Mays",
+            "1982 Scottish League Cup Final",
+            "1955 Scottish League Cup Final",
+            "Iveta Benešová",
+            "Julian Knowle",
+            "2012 US Open – Men's Doubles",
+            "1983 Bristol Open – Doubles",
+            "1983 Wimbledon Championships – Men's Doubles",
+            "Tom Gullikson",
+            "Pam Teeguarden",
+            "2010 Pilot Pen Tennis – Men's Doubles",
+            "Jürgen Melzer",
+            "Gerald Melzer",
+            "Silene latifolia",
+            "Silene tomentosa",
+            "Silene conoidea",
+            "Silene",
+            "Silene stenophylla",
+            "Silene menziesii",
+            "Silene suksdorfii",
+            "Ferocactus",
+            "Silene antirrhina",
+            "Sex determination in Silene",
+            "Black Creek (Genesee River)",
+            "Crystal Lake (Gilmanton, New Hampshire)",
+            "Flagami",
+            "Oatka Creek",
+            "Broad Street Bridge (Rochester, New York)",
+            "Spring creek",
+            "Genesee River",
+            "Riverton, New York",
+            "Tamiami Canal",
+            "Genesee Valley Park",
+            "Yakutian Laika",
+            "Planet Laika",
+            "Russo-European Laika",
+            "West Siberian Laika",
+            "Andalusian Hound",
+            "East Siberian Laika",
+            "Laika",
+            "Bo (dog)",
+            "Breed standard (dogs)",
+            "Portuguese Podengo",
+            "Bruce Rowland",
+            "The Man from Snowy River (soundtrack)",
+            "Dangal (film)",
+            "Return to Snowy River",
+            "Barry Way",
+            "The Man from Snowy River (poem)",
+            "The Man from Snowy River and Other Verses",
+            "The Man from Snowy River II",
+            "The Man from Snowy River (TV series)",
+            "The Man from Snowy River (1982 film)",
+            "Jamie Brown (composer)",
+            "Cuban Overture",
+            "Hershey Felder",
+            "Oscar Peterson Plays the George Gershwin Songbook",
+            "Armida (Weir)",
+            "Judith Weir",
+            "A Night at the Chinese Opera",
+            "Blond Eckbert",
+            "George Gershwin",
+            "Oscar Peterson Plays George Gershwin",
+            "The Washington Papers",
+            "Virginia Tech Foundation",
+            "University of Virginia",
+            "University of Washington",
+            "Edwin Alderman",
+            "Henry C. Groseclose",
+            "John Lee Buchanan",
+            "David C. Hardesty Jr.",
+            "Jefferson Memorial",
+            "Michael Garrison (politician)",
+            "Lesser Matters",
+            "Dancing with the Stars (Greece season 3)",
+            "Shelflife Records",
+            "Letting Up Despite Great Faults",
+            "Blekingska Nation, Lund",
+            "The Sundays",
+            "The Sneetches (band)",
+            "The Radio Dept.",
+            "The Radio Dept. discography",
+            "Dancing with the Stars (Greece season 1)",
+            "Kurt Voss",
+            "Lady Tubbs",
+            "Midnight Alibi",
+            "Hertzberg Clock (San Antonio)",
+            "The Flapper",
+            "The Beloved Rogue",
+            "The Personality Kid",
+            "General Crack",
+            "Contraband (1925 film)",
+            "Alan Crosland",
+            "How Green Was My Valley (TV drama serial)",
+            "United States Ambassador to Mongolia",
+            "How Green Was My Valley",
+            "Iain Pears",
+            "Rich Brooks",
+            "Richard Llewellyn Williams",
+            "The Dream of Scipio (novel)",
+            "Stone's Fall",
+            "An Instance of the Fingerpost",
+            "Richard Llewellyn",
+            "The Black Stallion",
+            "Robert Dalva",
+            "El Mokhtar",
+            "The Young Black Stallion",
+            "Dylan Kussman",
+            "Matt Williams (TV producer)",
+            "Wild Hearts Can't Be Broken",
+            "The Black Stallion Returns",
+            "The Black Stallion (film)",
+            "Black Stallion (truck)",
+            "Dirty Three",
+            "Konstantin Vakulovsky",
+            "Idaho (band)",
+            "Fireflight",
+            "Schvendes",
+            "Dirty Three (album)",
+            "Harris, Forbes &amp; Co.",
+            "Anderson Henderson White",
+            "Cinder (album)",
+            "Jim White (drummer)",
+            "Pico Bonpland",
+            "Logging in the Sierra Nevada",
+            "Sierra Nevada del Cocuy",
+            "Pico Humboldt",
+            "Sierra Nevada National Park (Spain)",
+            "Kings Canyon National Park",
+            "Baker Ranger Station",
+            "Sequoia National Park",
+            "Sierra Nevada National Park (Venezuela)",
+            "Timanfaya National Park",
+            "Methyl-α-D-galactose",
+            "Eleutherococcus senticosus",
+            "Isofraxidin-7-glucoside",
+            "Hamilton Paul Traub",
+            "Chengiopanax sciadophylloides",
+            "Amaryllis",
+            "Eleutherococcus",
+            "Eleutheroside",
+            "Amaryllis (given name)",
+            "Amaryllis (Shinedown album)",
+            "Chaplin (2006 musical)",
+            "Bruce Bilson",
+            "Charlie: The Life and Art of Charles Chaplin",
+            "Cantinflas",
+            "Charlie Chaplin",
+            "Cachupoy",
+            "Modern Times (film)",
+            "A Countess from Hong Kong",
+            "Hannah Chaplin",
+            "Charlie Chaplin (singer)",
+            "Morrissey",
+            "Lovelyville",
+            "Where's Officer Tuba",
+            "The Funeral Pudding",
+            "The Strapping Fieldhands",
+            "Admonishing the Bishops",
+            "Thinking Fellers Union Local 282",
+            "Strangers from the Universe",
+            "I Hope It Lands",
+            "Mother of All Saints"
+          ],
+          "questions": [
+            "5a7f8d755542992097ad2f9d",
+            "5a78f8e555429970f5fffe01",
+            "5ade15f35542997545bbbe47",
+            "5ab6c94c554299710c8d1f5e",
+            "5a7647b85542992d0ec0608a",
+            "5ae0575755429945ae95931f",
+            "5ae7f0c75542994a481bbe44",
+            "5a8747915542994775f607bb",
+            "5abea05f5542991f661061b6",
+            "5ab7c6995542993667794005",
+            "5a7b1e22554299042af8f6e4",
+            "5ae554ce55429960a22e02b7",
+            "5a775bab5542994aec3b72a8",
+            "5ae5e8dc554299546bf82fbe",
+            "5adea95055429939a52fe931",
+            "5abe48675542991f66106119",
+            "5ae0fe8855429945ae959495",
+            "5a8e068b5542995085b37384",
+            "5ac4efa85542991943173a04",
+            "5ab7f0995542995dae37e9fb",
+            "5a8787915542996e4f30882e",
+            "5adcceda5542990d50227d31",
+            "5abc3d505542993a06baf8a7",
+            "5adf50c05542992d7e9f931e",
+            "5adf82945542993344016ca4",
+            "5a77863555429949eeb29ec6",
+            "5a7a43f25542996a35c1716c",
+            "5a88bb4a554299206df2b353",
+            "5a7577145542996c70cfaf03",
+            "5ac3ac1855429939154138ab",
+            "5a859a755542992a431d1b6d",
+            "5ab2f88755429976abd1bbe0"
+          ],
+          "exclusions": {},
+          "sourceSHA256": "b3297f86b6a2ca45db7770c7dd7282c58fdee3e2828cc78ff8eca54132b0804d",
+          "annotationsAndPoolsSHA256": "31887b5d706cedc3746aa578ee536c857992341e481992c944697e16361ee8e1",
+          "groups": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "encoder": {
+            "apiRequests": 5,
+            "apiInputs": 38,
+            "apiInputTokens": 8415,
+            "diskTexts": 519,
+            "memoryTexts": 2218,
+            "replayMs": 80.14670000002661
+          }
+        },
+        "qmsum": {
+          "documents": [
+            "qmsum-test/24",
+            "qmsum-test/33",
+            "qmsum-test/15",
+            "qmsum-test/3",
+            "qmsum-test/11",
+            "qmsum-test/6",
+            "qmsum-test/12",
+            "qmsum-test/1"
+          ],
+          "questions": [
+            "qmsum-test/1/0",
+            "qmsum-test/1/1",
+            "qmsum-test/1/2",
+            "qmsum-test/1/3",
+            "qmsum-test/1/4",
+            "qmsum-test/1/5",
+            "qmsum-test/3/0",
+            "qmsum-test/3/1",
+            "qmsum-test/3/2",
+            "qmsum-test/3/3",
+            "qmsum-test/3/4",
+            "qmsum-test/3/5",
+            "qmsum-test/6/0",
+            "qmsum-test/6/1",
+            "qmsum-test/6/2",
+            "qmsum-test/6/3",
+            "qmsum-test/6/4",
+            "qmsum-test/6/5",
+            "qmsum-test/6/6",
+            "qmsum-test/6/7",
+            "qmsum-test/6/8",
+            "qmsum-test/11/0",
+            "qmsum-test/11/1",
+            "qmsum-test/11/2",
+            "qmsum-test/11/3",
+            "qmsum-test/11/4",
+            "qmsum-test/11/5",
+            "qmsum-test/12/0",
+            "qmsum-test/12/1",
+            "qmsum-test/12/2",
+            "qmsum-test/12/3",
+            "qmsum-test/12/4",
+            "qmsum-test/12/5",
+            "qmsum-test/15/0",
+            "qmsum-test/15/1",
+            "qmsum-test/15/2",
+            "qmsum-test/15/3",
+            "qmsum-test/15/4",
+            "qmsum-test/15/5",
+            "qmsum-test/24/0",
+            "qmsum-test/24/1",
+            "qmsum-test/24/2",
+            "qmsum-test/24/3",
+            "qmsum-test/24/4",
+            "qmsum-test/24/5",
+            "qmsum-test/24/6",
+            "qmsum-test/24/7",
+            "qmsum-test/24/8",
+            "qmsum-test/33/0",
+            "qmsum-test/33/1",
+            "qmsum-test/33/2",
+            "qmsum-test/33/3",
+            "qmsum-test/33/4",
+            "qmsum-test/33/5",
+            "qmsum-test/33/6",
+            "qmsum-test/33/7",
+            "qmsum-test/33/8",
+            "qmsum-test/33/9",
+            "qmsum-test/33/10"
+          ],
+          "sourceSHA256": "883e2e369fb21164cd73774a43588799a32a51cf717364696bed5dc3082d2fd6",
+          "annotationsAndPoolsSHA256": "43eeb1b7f114604656790235ae69500300ae216c4b9bf3ca896dc392941051f2",
+          "groups": [
+            "qmsum-test/1",
+            "qmsum-test/1",
+            "qmsum-test/1",
+            "qmsum-test/1",
+            "qmsum-test/1",
+            "qmsum-test/1",
+            "qmsum-test/3",
+            "qmsum-test/3",
+            "qmsum-test/3",
+            "qmsum-test/3",
+            "qmsum-test/3",
+            "qmsum-test/3",
+            "qmsum-test/6",
+            "qmsum-test/6",
+            "qmsum-test/6",
+            "qmsum-test/6",
+            "qmsum-test/6",
+            "qmsum-test/6",
+            "qmsum-test/6",
+            "qmsum-test/6",
+            "qmsum-test/6",
+            "qmsum-test/11",
+            "qmsum-test/11",
+            "qmsum-test/11",
+            "qmsum-test/11",
+            "qmsum-test/11",
+            "qmsum-test/11",
+            "qmsum-test/12",
+            "qmsum-test/12",
+            "qmsum-test/12",
+            "qmsum-test/12",
+            "qmsum-test/12",
+            "qmsum-test/12",
+            "qmsum-test/15",
+            "qmsum-test/15",
+            "qmsum-test/15",
+            "qmsum-test/15",
+            "qmsum-test/15",
+            "qmsum-test/15",
+            "qmsum-test/24",
+            "qmsum-test/24",
+            "qmsum-test/24",
+            "qmsum-test/24",
+            "qmsum-test/24",
+            "qmsum-test/24",
+            "qmsum-test/24",
+            "qmsum-test/24",
+            "qmsum-test/24",
+            "qmsum-test/33",
+            "qmsum-test/33",
+            "qmsum-test/33",
+            "qmsum-test/33",
+            "qmsum-test/33",
+            "qmsum-test/33",
+            "qmsum-test/33",
+            "qmsum-test/33",
+            "qmsum-test/33",
+            "qmsum-test/33",
+            "qmsum-test/33"
+          ],
+          "encoder": {
+            "apiRequests": 17,
+            "apiInputs": 514,
+            "apiInputTokens": 80499,
+            "diskTexts": 5148,
+            "memoryTexts": 16218,
+            "replayMs": 465.33079999998154
+          }
+        }
+      },
+      "runs": {
+        "core256": {
+          "cuad": {
+            "questions": 91,
+            "bodyHash": "481fc43ea1a8c610c18bc083a06660eaa8165a92aa9785c6c484cf02491d095a",
+            "chunkTokens": {
+              "count": 1088,
+              "min": 1,
+              "p10": 4,
+              "median": 50,
+              "p90": 205,
+              "max": 256
+            },
+            "indexHash": "eed373e3c7bfa7f376d2af3d045f19ba9b77da04bca28862045cc7e0fb1da2bb",
+            "indexChunkTokens": {
+              "count": 1088,
+              "min": 1,
+              "p10": 4,
+              "median": 50,
+              "p90": 205,
+              "max": 256,
+              "above": {
+                "256": 0,
+                "320": 0,
+                "384": 0
+              }
+            },
+            "calls": 15,
+            "texts": 1929,
+            "singletons": 0,
+            "embeddedTokens": 128712,
+            "indexTexts": 1088,
+            "indexTokens": 85685,
+            "overTarget": 0,
+            "overEmbeddingLimit": 0,
+            "retrieval": {
+              "document/dense": {
+                "256": {
+                  "complete": 23,
+                  "recall": 0.3238076222567374,
+                  "precision": 0.14191277472527475,
+                  "deliveredTokens": 255.9890109890106
+                },
+                "512": {
+                  "complete": 32,
+                  "recall": 0.44965553796240565,
+                  "precision": 0.10574114350156018,
+                  "deliveredTokens": 507.8681318681311,
+                  "repeatedSource": 0
+                },
+                "1024": {
+                  "complete": 41,
+                  "recall": 0.560348233255868,
+                  "precision": 0.06803080696309864,
+                  "deliveredTokens": 1008.615384615383
+                }
+              }
+            },
+            "complete512": {
+              "document/dense": "0000110100011001010111010101000100001101000010000101010010000000000000001111100100000100111"
+            },
+            "examples": {
+              "document": {
+                "id": "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Document Name",
+                "first": [
+                  {
+                    "start": 64237,
+                    "end": 65568,
+                    "outputStart": 0
+                  }
+                ],
+                "doc": 0,
+                "deliveredSHA256": "4cca6ec7b1ea72109cd47232963e704061eaedac1700596196497772ff8f34e3",
+                "recall": 0,
+                "precision": 0,
+                "complete": 0,
+                "repeatedSource": 0
+              }
+            },
+            "milliseconds": 4919.7816,
+            "peakRSSKiB": 552580,
+            "encoder": {
+              "apiRequests": 0,
+              "apiInputs": 0,
+              "apiInputTokens": 0,
+              "diskTexts": 1924,
+              "memoryTexts": 1059,
+              "replayMs": 328.8452000000034
+            }
+          },
+          "qasper": {
+            "questions": 38,
+            "bodyHash": "83f20634cc6bfa468d009bd5bd671e3eb768520e8e88f7c8ae219e5c0011c102",
+            "chunkTokens": {
+              "count": 545,
+              "min": 3,
+              "p10": 17,
+              "median": 110,
+              "p90": 224,
+              "max": 255
+            },
+            "indexHash": "9792d3de1c81a37fbf0e2819f617983e701f6fff9ae8d814329df0cd021cba64",
+            "indexChunkTokens": {
+              "count": 545,
+              "min": 3,
+              "p10": 17,
+              "median": 110,
+              "p90": 224,
+              "max": 255,
+              "above": {
+                "256": 0,
+                "320": 0,
+                "384": 0
+              }
+            },
+            "calls": 24,
+            "texts": 1111,
+            "singletons": 0,
+            "embeddedTokens": 96910,
+            "indexTexts": 545,
+            "indexTokens": 62872,
+            "overTarget": 0,
+            "overEmbeddingLimit": 0,
+            "retrieval": {
+              "document/dense": {
+                "256": {
+                  "complete": 18,
+                  "recall": 0.5093421922816618,
+                  "precision": 0.22676809210526316,
+                  "deliveredTokens": 255.9999999999998
+                },
+                "512": {
+                  "complete": 26,
+                  "recall": 0.7195310201442467,
+                  "precision": 0.17665501644736845,
+                  "deliveredTokens": 511.9999999999996,
+                  "repeatedSource": 0
+                },
+                "1024": {
+                  "complete": 30,
+                  "recall": 0.851995261495909,
+                  "precision": 0.10724198190789475,
+                  "deliveredTokens": 1023.9999999999992
+                }
+              }
+            },
+            "complete512": {
+              "document/dense": "10110011011110101110001111111011110101"
+            },
+            "examples": {
+              "document": {
+                "id": "78f8dad0f1acf024f69b3218b2d204b8019bb0d2",
+                "first": [
+                  {
+                    "start": 23598,
+                    "end": 24564,
+                    "outputStart": 0
+                  }
+                ],
+                "doc": 0,
+                "deliveredSHA256": "6610eb8ed7c183e12d6b06a5f997d5c54b5c556d840c9521d86b75cd949c414c",
+                "recall": 1,
+                "precision": 0.224609375,
+                "complete": 1,
+                "repeatedSource": 0
+              }
+            },
+            "milliseconds": 3292.3354000000036,
+            "peakRSSKiB": 828748,
+            "encoder": {
+              "apiRequests": 0,
+              "apiInputs": 0,
+              "apiInputTokens": 0,
+              "diskTexts": 1111,
+              "memoryTexts": 561,
+              "replayMs": 151.78160000000207
+            }
+          },
+          "finqa": {
+            "questions": 38,
+            "bodyHash": "9bce11d6bf80b70cb7a9773054529101eb7b7a67de1c19aa583da71dba7c393a",
+            "chunkTokens": {
+              "count": 256,
+              "min": 1,
+              "p10": 7,
+              "median": 68,
+              "p90": 194,
+              "max": 255
+            },
+            "indexHash": "9e7a852fee6a2567ce08061b900b814bf3429d50ed19958fa9e10959c8ce9b6a",
+            "indexChunkTokens": {
+              "count": 256,
+              "min": 1,
+              "p10": 7,
+              "median": 68,
+              "p90": 194,
+              "max": 255,
+              "above": {
+                "256": 0,
+                "320": 0,
+                "384": 0
+              }
+            },
+            "calls": 50,
+            "texts": 752,
+            "singletons": 0,
+            "embeddedTokens": 38492,
+            "indexTexts": 256,
+            "indexTokens": 21920,
+            "overTarget": 0,
+            "overEmbeddingLimit": 0,
+            "retrieval": {
+              "document/dense": {
+                "256": {
+                  "complete": 15,
+                  "recall": 0.7412110647842372,
+                  "precision": 0.21484375000000006,
+                  "deliveredTokens": 255.9999999999998
+                },
+                "512": {
+                  "complete": 26,
+                  "recall": 0.88032110374307,
+                  "precision": 0.13620929254781644,
+                  "deliveredTokens": 503.13157894736804,
+                  "repeatedSource": 0.005388501143747551
+                },
+                "1024": {
+                  "complete": 35,
+                  "recall": 0.9681464935548413,
+                  "precision": 0.10047344699509556,
+                  "deliveredTokens": 798.5789473684207
+                }
+              }
+            },
+            "complete512": {
+              "document/dense": "11010110111111100101011110110110010111"
+            },
+            "examples": {
+              "document": {
+                "id": "ETR/2004/page_213.pdf-2",
+                "first": [
+                  {
+                    "start": 1941,
+                    "end": 2439,
+                    "outputStart": 0
+                  }
+                ],
+                "doc": 0,
+                "deliveredSHA256": "0891be513ea00c0f2df8c39a9810d713cb8dde51407be23fa107c6ee7b8d81de",
+                "recall": 1,
+                "precision": 0.189453125,
+                "complete": 1,
+                "repeatedSource": 0
+              }
+            },
+            "milliseconds": 1615.8846000000049,
+            "peakRSSKiB": 863120,
+            "encoder": {
+              "apiRequests": 0,
+              "apiInputs": 0,
+              "apiInputTokens": 0,
+              "diskTexts": 744,
+              "memoryTexts": 290,
+              "replayMs": 89.5425000000032
+            }
+          },
+          "hotpotqa": {
+            "questions": 32,
+            "bodyHash": "9b3910c3f0b61959868a65a4591123f780845396b788832d03333c9f716b3472",
+            "chunkTokens": {
+              "count": 372,
+              "min": 3,
+              "p10": 37,
+              "median": 95,
+              "p90": 181,
+              "max": 254
+            },
+            "indexHash": "7b1b01a5194a3d41fa7d1d3ec4e21e483c950792f4613400eb98f9db9090da21",
+            "indexChunkTokens": {
+              "count": 372,
+              "min": 3,
+              "p10": 37,
+              "median": 95,
+              "p90": 181,
+              "max": 254,
+              "above": {
+                "256": 0,
+                "320": 0,
+                "384": 0
+              }
+            },
+            "calls": 332,
+            "texts": 484,
+            "singletons": 310,
+            "embeddedTokens": 42860,
+            "indexTexts": 372,
+            "indexTokens": 39037,
+            "overTarget": 0,
+            "overEmbeddingLimit": 0,
+            "retrieval": {
+              "shortlist/dense": {
+                "256": {
+                  "complete": 19,
+                  "recall": 0.8155764459675326,
+                  "precision": 0.240234375,
+                  "deliveredTokens": 256
+                },
+                "512": {
+                  "complete": 25,
+                  "recall": 0.9035146861102841,
+                  "precision": 0.13507080078125,
+                  "deliveredTokens": 512,
+                  "repeatedSource": 0
+                },
+                "1024": {
+                  "complete": 31,
+                  "recall": 0.9820478723404256,
+                  "precision": 0.07816866953606293,
+                  "deliveredTokens": 975.5
+                }
+              },
+              "pooled/dense": {
+                "256": {
+                  "complete": 19,
+                  "recall": 0.8155764459675326,
+                  "precision": 0.240234375,
+                  "deliveredTokens": 256
+                },
+                "512": {
+                  "complete": 25,
+                  "recall": 0.9035146861102841,
+                  "precision": 0.13507080078125,
+                  "deliveredTokens": 512,
+                  "repeatedSource": 0
+                },
+                "1024": {
+                  "complete": 31,
+                  "recall": 0.9820478723404256,
+                  "precision": 0.073822021484375,
+                  "deliveredTokens": 1024
+                }
+              }
+            },
+            "complete512": {
+              "shortlist/dense": "01111101101010101111111111110111",
+              "pooled/dense": "01111101101010101111111111110111"
+            },
+            "examples": {
+              "shortlist": {
+                "id": "5a7f8d755542992097ad2f9d",
+                "first": [
+                  {
+                    "start": 0,
+                    "end": 360,
+                    "outputStart": 0
+                  }
+                ],
+                "doc": 3,
+                "deliveredSHA256": "12b716367205336177206e6945160ead40ea3bd038d33067ce26469f7f257c13",
+                "recall": 0.41509433962264153,
+                "precision": 0.04296875,
+                "complete": 0,
+                "repeatedSource": 0
+              },
+              "pooled": {
+                "id": "5a7f8d755542992097ad2f9d",
+                "first": [
+                  {
+                    "start": 0,
+                    "end": 360,
+                    "outputStart": 0
+                  }
+                ],
+                "doc": 3,
+                "deliveredSHA256": "12b716367205336177206e6945160ead40ea3bd038d33067ce26469f7f257c13",
+                "recall": 0.41509433962264153,
+                "precision": 0.04296875,
+                "complete": 0,
+                "repeatedSource": 0
+              }
+            },
+            "milliseconds": 2778.7880999999907,
+            "peakRSSKiB": 1102188,
+            "encoder": {
+              "apiRequests": 0,
+              "apiInputs": 0,
+              "apiInputTokens": 0,
+              "diskTexts": 484,
+              "memoryTexts": 403,
+              "replayMs": 60.273600000029546
+            }
+          },
+          "qmsum": {
+            "questions": 59,
+            "bodyHash": "ad7e032ca1ec35f4f1af94cfc67860428b21013edf2f47b27b87d69f9b0d18d1",
+            "chunkTokens": {
+              "count": 1813,
+              "min": 2,
+              "p10": 5,
+              "median": 29,
+              "p90": 146,
+              "max": 255
+            },
+            "indexHash": "7a8fa7dbbb622c0ec147f7f59a63c959d8160f00e2a9e3672dc9aa1424a65a8c",
+            "indexChunkTokens": {
+              "count": 1813,
+              "min": 2,
+              "p10": 5,
+              "median": 29,
+              "p90": 146,
+              "max": 255,
+              "above": {
+                "256": 0,
+                "320": 0,
+                "384": 0
+              }
+            },
+            "calls": 29,
+            "texts": 5277,
+            "singletons": 0,
+            "embeddedTokens": 178492,
+            "indexTexts": 1813,
+            "indexTokens": 96993,
+            "overTarget": 0,
+            "overEmbeddingLimit": 0,
+            "recall512": {
+              "document/dense": [
+                0.06584243818286371,
+                0.4297082228116711,
+                0.30634920634920637,
+                0.21869382863990414,
+                0.17317939609236235,
+                0.009009009009009009,
+                0,
+                0.19352869352869354,
+                0.12538699690402477,
+                0.15542168674698795,
+                0.2403846153846154,
+                0.42245989304812837,
+                0.08717624763108023,
+                0.0162748643761302,
+                0.5606694560669456,
+                0.08206185567010309,
+                0.3795871559633027,
+                0.8486486486486486,
+                0.17618586640851888,
+                0,
+                0.15085158150851583,
+                0.14419827262485918,
+                0.5342465753424658,
+                0,
+                0,
+                0.2595959595959596,
+                0.5690376569037657,
+                0.0724755700325733,
+                0.15492957746478872,
+                0.3884297520661157,
+                0.10224538893344026,
+                0.35737704918032787,
+                0.22153209109730848,
+                0.091015854374633,
+                0.21568627450980393,
+                0.41040462427745666,
+                0,
+                0.1814780168381665,
+                0.17405063291139242,
+                0.06357349988846754,
+                0,
+                0.03996524761077324,
+                0.07859078590785908,
+                0.7556179775280899,
+                0.7916666666666666,
+                0.22180451127819548,
+                0.4479495268138801,
+                0,
+                0.16842105263157894,
+                0.4793713163064833,
+                0.55470737913486,
+                0.1305173232083531,
+                0.3455019556714472,
+                0,
+                0.5921985815602837,
+                0.36046511627906974,
+                0.06208824116590138,
+                0.00361794500723589,
+                0.31840796019900497
+              ]
+            },
+            "retrieval": {
+              "document/dense": {
+                "256": {
+                  "complete": 0,
+                  "recall": 0.1519186197034501,
+                  "precision": 0.3777145127118644,
+                  "deliveredTokens": 255.99999999999972
+                },
+                "512": {
+                  "complete": 0,
+                  "recall": 0.2361455601013884,
+                  "precision": 0.3080816450172478,
+                  "deliveredTokens": 511.9830508474571,
+                  "repeatedSource": 0
+                },
+                "1024": {
+                  "complete": 0,
+                  "recall": 0.34646904636002285,
+                  "precision": 0.25604144597457623,
+                  "deliveredTokens": 1023.9999999999989
+                }
+              }
+            },
+            "complete512": {
+              "document/dense": "00000000000000000000000000000000000000000000000000000000000"
+            },
+            "examples": {
+              "document": {
+                "id": "qmsum-test/1/0",
+                "first": [
+                  {
+                    "start": 3524,
+                    "end": 3574,
+                    "outputStart": 0
+                  }
+                ],
+                "doc": 7,
+                "deliveredSHA256": "490c80ba481ada581a0ef844103e244d9ba5d9b3d5287ee243680cad3a6b028d",
+                "recall": 0.06584243818286371,
+                "precision": 0.455078125,
+                "complete": 0,
+                "repeatedSource": 0
+              }
+            },
+            "milliseconds": 4788.3416,
+            "peakRSSKiB": 1137752,
+            "encoder": {
+              "apiRequests": 0,
+              "apiInputs": 0,
+              "apiInputTokens": 0,
+              "diskTexts": 5089,
+              "memoryTexts": 1845,
+              "replayMs": 451.5011000000086
+            }
+          }
+        },
+        "guard384": {
+          "cuad": {
+            "questions": 91,
+            "bodyHash": "481fc43ea1a8c610c18bc083a06660eaa8165a92aa9785c6c484cf02491d095a",
+            "chunkTokens": {
+              "count": 1088,
+              "min": 1,
+              "p10": 4,
+              "median": 50,
+              "p90": 205,
+              "max": 256
+            },
+            "indexHash": "4bb68d94d08b6b4a6ed092bddb630bf0955187880f7c58e1d60df0ff6731d48f",
+            "indexChunkTokens": {
+              "count": 1088,
+              "min": 1,
+              "p10": 4,
+              "median": 50,
+              "p90": 260,
+              "max": 384,
+              "above": {
+                "256": 113,
+                "320": 74,
+                "384": 0
+              }
+            },
+            "calls": 41,
+            "texts": 2234,
+            "singletons": 6,
+            "embeddedTokens": 213990,
+            "indexTexts": 1088,
+            "indexTokens": 102407,
+            "overTarget": 0,
+            "overEmbeddingLimit": 0,
+            "growth": {
+              "grewPerRound": [
+                140,
+                61,
+                30,
+                10,
+                5,
+                2,
+                0
+              ],
+              "duplicateSpans": 4,
+              "cosines": {
+                "count": 140,
+                "min": 0.9003692558020204,
+                "p10": 0.9093653091364402,
+                "median": 0.938216756161514,
+                "p90": 0.9778262416104189,
+                "max": 0.9907117025604174
+              },
+              "oneAddition": {
+                "count": 79,
+                "below08": 0
+              },
+              "multipleAdditions": {
+                "count": 61,
+                "below08": 0
+              },
+              "guard": {
+                "preferred": {
+                  "tried": 320,
+                  "rejected": 76
+                },
+                "fallback": {
+                  "tried": 11,
+                  "rejected": 7
+                }
+              }
+            },
+            "eligibleCosines": {
+              "count": 1159,
+              "min": 0.05259172264934538,
+              "p10": 0.19433651879612332,
+              "median": 0.3802420729655801,
+              "p90": 0.7226318460622401,
+              "max": 0.9554825310595932
+            },
+            "retrieval": {
+              "document/dense": {
+                "256": {
+                  "complete": 23,
+                  "recall": 0.32333059618356175,
+                  "precision": 0.140625,
+                  "deliveredTokens": 255.9999999999996
+                },
+                "512": {
+                  "complete": 30,
+                  "recall": 0.41113412824867224,
+                  "precision": 0.09455896630375799,
+                  "deliveredTokens": 507.8681318681311,
+                  "repeatedSource": 0
+                },
+                "1024": {
+                  "complete": 37,
+                  "recall": 0.5159951370125622,
+                  "precision": 0.06514404528727447,
+                  "deliveredTokens": 1008.615384615383
+                }
+              }
+            },
+            "complete512": {
+              "document/dense": "0000110100011001010111010101000100011101000010000101010010000000000000001111000000000000111"
+            },
+            "examples": {
+              "document": {
+                "id": "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Document Name",
+                "first": [
+                  {
+                    "start": 64237,
+                    "end": 65568,
+                    "outputStart": 0
+                  }
+                ],
+                "doc": 0,
+                "deliveredSHA256": "4cca6ec7b1ea72109cd47232963e704061eaedac1700596196497772ff8f34e3",
+                "recall": 0,
+                "precision": 0,
+                "complete": 0,
+                "repeatedSource": 0
+              }
+            },
+            "milliseconds": 6048.5092,
+            "peakRSSKiB": 607956,
+            "encoder": {
+              "apiRequests": 11,
+              "apiInputs": 281,
+              "apiInputTokens": 79679,
+              "diskTexts": 24,
+              "memoryTexts": 2984,
+              "replayMs": 106.36959999999453
+            }
+          },
+          "qasper": {
+            "questions": 38,
+            "bodyHash": "83f20634cc6bfa468d009bd5bd671e3eb768520e8e88f7c8ae219e5c0011c102",
+            "chunkTokens": {
+              "count": 545,
+              "min": 3,
+              "p10": 17,
+              "median": 110,
+              "p90": 224,
+              "max": 255
+            },
+            "indexHash": "99963f2524a31704593e261bce0b4c06d9d6ecc7d4cdf6540cd30661324fb9df",
+            "indexChunkTokens": {
+              "count": 545,
+              "min": 3,
+              "p10": 17,
+              "median": 120,
+              "p90": 320,
+              "max": 384,
+              "above": {
+                "256": 117,
+                "320": 53,
+                "384": 0
+              }
+            },
+            "calls": 75,
+            "texts": 1361,
+            "singletons": 10,
+            "embeddedTokens": 167854,
+            "indexTexts": 545,
+            "indexTokens": 79367,
+            "overTarget": 0,
+            "overEmbeddingLimit": 0,
+            "growth": {
+              "grewPerRound": [
+                134,
+                32,
+                8,
+                1
+              ],
+              "duplicateSpans": 5,
+              "cosines": {
+                "count": 134,
+                "min": 0.9007428280381393,
+                "p10": 0.9053885415595967,
+                "median": 0.9343870267588482,
+                "p90": 0.9709703631614973,
+                "max": 0.985899455558321
+              },
+              "oneAddition": {
+                "count": 102,
+                "below08": 0
+              },
+              "multipleAdditions": {
+                "count": 32,
+                "below08": 0
+              },
+              "guard": {
+                "preferred": {
+                  "tried": 277,
+                  "rejected": 116
+                },
+                "fallback": {
+                  "tried": 25,
+                  "rejected": 11
+                }
+              }
+            },
+            "eligibleCosines": {
+              "count": 699,
+              "min": 0.07259846660722026,
+              "p10": 0.26800064488694614,
+              "median": 0.45538420777698985,
+              "p90": 0.6641411860304454,
+              "max": 0.965726761567438
+            },
+            "retrieval": {
+              "document/dense": {
+                "256": {
+                  "complete": 19,
+                  "recall": 0.5440565211398009,
+                  "precision": 0.24136513157894737,
+                  "deliveredTokens": 255.9999999999998
+                },
+                "512": {
+                  "complete": 25,
+                  "recall": 0.6840287736744137,
+                  "precision": 0.17038445723684212,
+                  "deliveredTokens": 511.9999999999996,
+                  "repeatedSource": 0
+                },
+                "1024": {
+                  "complete": 30,
+                  "recall": 0.8453985306510566,
+                  "precision": 0.10911800986842105,
+                  "deliveredTokens": 1023.9999999999992
+                }
+              }
+            },
+            "complete512": {
+              "document/dense": "10010011011111101110001111111011110100"
+            },
+            "examples": {
+              "document": {
+                "id": "78f8dad0f1acf024f69b3218b2d204b8019bb0d2",
+                "first": [
+                  {
+                    "start": 23598,
+                    "end": 24564,
+                    "outputStart": 0
+                  }
+                ],
+                "doc": 0,
+                "deliveredSHA256": "6610eb8ed7c183e12d6b06a5f997d5c54b5c556d840c9521d86b75cd949c414c",
+                "recall": 1,
+                "precision": 0.224609375,
+                "complete": 1,
+                "repeatedSource": 0
+              }
+            },
+            "milliseconds": 3615.9168999999965,
+            "peakRSSKiB": 863120,
+            "encoder": {
+              "apiRequests": 6,
+              "apiInputs": 219,
+              "apiInputTokens": 64751,
+              "diskTexts": 31,
+              "memoryTexts": 1667,
+              "replayMs": 28.991500000003725
+            }
+          },
+          "finqa": {
+            "questions": 38,
+            "bodyHash": "9bce11d6bf80b70cb7a9773054529101eb7b7a67de1c19aa583da71dba7c393a",
+            "chunkTokens": {
+              "count": 256,
+              "min": 1,
+              "p10": 7,
+              "median": 68,
+              "p90": 194,
+              "max": 255
+            },
+            "indexHash": "4baf13bd2b4f98d2a87268af8300019494db904a6c8feca7c44a82200167c968",
+            "indexChunkTokens": {
+              "count": 256,
+              "min": 1,
+              "p10": 7,
+              "median": 72,
+              "p90": 255,
+              "max": 371,
+              "above": {
+                "256": 25,
+                "320": 6,
+                "384": 0
+              }
+            },
+            "calls": 146,
+            "texts": 888,
+            "singletons": 49,
+            "embeddedTokens": 68517,
+            "indexTexts": 256,
+            "indexTokens": 25886,
+            "overTarget": 0,
+            "overEmbeddingLimit": 0,
+            "growth": {
+              "grewPerRound": [
+                43,
+                26,
+                18,
+                11,
+                6,
+                1
+              ],
+              "duplicateSpans": 0,
+              "cosines": {
+                "count": 43,
+                "min": 0.9001780086004955,
+                "p10": 0.9091914667257163,
+                "median": 0.9334959088754863,
+                "p90": 0.9853430943192111,
+                "max": 0.9963556249743093
+              },
+              "oneAddition": {
+                "count": 17,
+                "below08": 0
+              },
+              "multipleAdditions": {
+                "count": 26,
+                "below08": 0
+              },
+              "guard": {
+                "preferred": {
+                  "tried": 130,
+                  "rejected": 28
+                },
+                "fallback": {
+                  "tried": 6,
+                  "rejected": 3
+                }
+              }
+            },
+            "eligibleCosines": {
+              "count": 534,
+              "min": 0.06316619538893617,
+              "p10": 0.27568342619844244,
+              "median": 0.485115884969239,
+              "p90": 0.6635743896163397,
+              "max": 0.8630634308487328
+            },
+            "retrieval": {
+              "document/dense": {
+                "256": {
+                  "complete": 15,
+                  "recall": 0.7306847489947635,
+                  "precision": 0.20908717105263164,
+                  "deliveredTokens": 255.9999999999998
+                },
+                "512": {
+                  "complete": 24,
+                  "recall": 0.8698826364407938,
+                  "precision": 0.13477014781097435,
+                  "deliveredTokens": 503.13157894736804,
+                  "repeatedSource": 0.005388501143747551
+                },
+                "1024": {
+                  "complete": 35,
+                  "recall": 0.9681464935548413,
+                  "precision": 0.10047344699509556,
+                  "deliveredTokens": 798.5789473684207
+                }
+              }
+            },
+            "complete512": {
+              "document/dense": "01010110111110100101011110110110010111"
+            },
+            "examples": {
+              "document": {
+                "id": "ETR/2004/page_213.pdf-2",
+                "first": [
+                  {
+                    "start": 1941,
+                    "end": 2439,
+                    "outputStart": 0
+                  }
+                ],
+                "doc": 0,
+                "deliveredSHA256": "1c9f06ac34baf7e845841ac247d589167b5ee55f8dba768cf0db052003c45990",
+                "recall": 0.7938144329896907,
+                "precision": 0.150390625,
+                "complete": 0,
+                "repeatedSource": 0
+              }
+            },
+            "milliseconds": 2436.1726000000053,
+            "peakRSSKiB": 863120,
+            "encoder": {
+              "apiRequests": 7,
+              "apiInputs": 127,
+              "apiInputTokens": 28302,
+              "diskTexts": 9,
+              "memoryTexts": 1035,
+              "replayMs": 22.801200000008976
+            }
+          },
+          "hotpotqa": {
+            "questions": 32,
+            "bodyHash": "9b3910c3f0b61959868a65a4591123f780845396b788832d03333c9f716b3472",
+            "chunkTokens": {
+              "count": 372,
+              "min": 3,
+              "p10": 37,
+              "median": 95,
+              "p90": 181,
+              "max": 254
+            },
+            "indexHash": "8713d1901440c4c9771473658831d44cb9107aa3756e6258d402f64d5047cb74",
+            "indexChunkTokens": {
+              "count": 372,
+              "min": 3,
+              "p10": 37,
+              "median": 97,
+              "p90": 185,
+              "max": 378,
+              "above": {
+                "256": 5,
+                "320": 3,
+                "384": 0
+              }
+            },
+            "calls": 355,
+            "texts": 525,
+            "singletons": 319,
+            "embeddedTokens": 51690,
+            "indexTexts": 372,
+            "indexTokens": 40404,
+            "overTarget": 0,
+            "overEmbeddingLimit": 0,
+            "growth": {
+              "grewPerRound": [
+                13,
+                9,
+                6,
+                3,
+                3,
+                0
+              ],
+              "duplicateSpans": 0,
+              "cosines": {
+                "count": 13,
+                "min": 0.9029341176023135,
+                "p10": 0.9036286745467591,
+                "median": 0.9359283870139616,
+                "p90": 0.9785271836466395,
+                "max": 0.9786975734623503
+              },
+              "oneAddition": {
+                "count": 4,
+                "below08": 0
+              },
+              "multipleAdditions": {
+                "count": 9,
+                "below08": 0
+              },
+              "guard": {
+                "preferred": {
+                  "tried": 41,
+                  "rejected": 8
+                },
+                "fallback": {
+                  "tried": 3,
+                  "rejected": 2
+                }
+              }
+            },
+            "eligibleCosines": {
+              "count": 130,
+              "min": 0.12289490432685324,
+              "p10": 0.19730417001167366,
+              "median": 0.4359997208167672,
+              "p90": 0.6440320709850752,
+              "max": 0.7574725662838334
+            },
+            "retrieval": {
+              "shortlist/dense": {
+                "256": {
+                  "complete": 19,
+                  "recall": 0.8155764459675326,
+                  "precision": 0.240234375,
+                  "deliveredTokens": 256
+                },
+                "512": {
+                  "complete": 25,
+                  "recall": 0.9035146861102841,
+                  "precision": 0.13507080078125,
+                  "deliveredTokens": 512,
+                  "repeatedSource": 0
+                },
+                "1024": {
+                  "complete": 31,
+                  "recall": 0.9820478723404256,
+                  "precision": 0.07816866953606293,
+                  "deliveredTokens": 975.5
+                }
+              },
+              "pooled/dense": {
+                "256": {
+                  "complete": 19,
+                  "recall": 0.8155764459675326,
+                  "precision": 0.240234375,
+                  "deliveredTokens": 256
+                },
+                "512": {
+                  "complete": 25,
+                  "recall": 0.9035146861102841,
+                  "precision": 0.13507080078125,
+                  "deliveredTokens": 512,
+                  "repeatedSource": 0
+                },
+                "1024": {
+                  "complete": 31,
+                  "recall": 0.9820478723404256,
+                  "precision": 0.073822021484375,
+                  "deliveredTokens": 1024
+                }
+              }
+            },
+            "complete512": {
+              "shortlist/dense": "01111101101010101111111111110111",
+              "pooled/dense": "01111101101010101111111111110111"
+            },
+            "examples": {
+              "shortlist": {
+                "id": "5a7f8d755542992097ad2f9d",
+                "first": [
+                  {
+                    "start": 0,
+                    "end": 360,
+                    "outputStart": 0
+                  }
+                ],
+                "doc": 3,
+                "deliveredSHA256": "12b716367205336177206e6945160ead40ea3bd038d33067ce26469f7f257c13",
+                "recall": 0.41509433962264153,
+                "precision": 0.04296875,
+                "complete": 0,
+                "repeatedSource": 0
+              },
+              "pooled": {
+                "id": "5a7f8d755542992097ad2f9d",
+                "first": [
+                  {
+                    "start": 0,
+                    "end": 360,
+                    "outputStart": 0
+                  }
+                ],
+                "doc": 3,
+                "deliveredSHA256": "12b716367205336177206e6945160ead40ea3bd038d33067ce26469f7f257c13",
+                "recall": 0.41509433962264153,
+                "precision": 0.04296875,
+                "complete": 0,
+                "repeatedSource": 0
+              }
+            },
+            "milliseconds": 2504.1189999999915,
+            "peakRSSKiB": 1115708,
+            "encoder": {
+              "apiRequests": 5,
+              "apiInputs": 38,
+              "apiInputTokens": 8415,
+              "diskTexts": 3,
+              "memoryTexts": 887,
+              "replayMs": 14.35930000001099
+            }
+          },
+          "qmsum": {
+            "questions": 59,
+            "bodyHash": "ad7e032ca1ec35f4f1af94cfc67860428b21013edf2f47b27b87d69f9b0d18d1",
+            "chunkTokens": {
+              "count": 1813,
+              "min": 2,
+              "p10": 5,
+              "median": 29,
+              "p90": 146,
+              "max": 255
+            },
+            "indexHash": "1830aca2f6a8ce95c46b5f9e6b30105aee5646dc216d8f84b0c7451bcbbf7feb",
+            "indexChunkTokens": {
+              "count": 1813,
+              "min": 2,
+              "p10": 5,
+              "median": 30,
+              "p90": 161,
+              "max": 364,
+              "above": {
+                "256": 29,
+                "320": 7,
+                "384": 0
+              }
+            },
+            "calls": 87,
+            "texts": 5783,
+            "singletons": 25,
+            "embeddedTokens": 255774,
+            "indexTexts": 1813,
+            "indexTokens": 106001,
+            "overTarget": 0,
+            "overEmbeddingLimit": 0,
+            "recall512": {
+              "document/dense": [
+                0.06584243818286371,
+                0.4297082228116711,
+                0.18095238095238095,
+                0.21869382863990414,
+                0.20603907637655416,
+                0.009009009009009009,
+                0,
+                0.19352869352869354,
+                0.12538699690402477,
+                0.21084337349397592,
+                0.2403846153846154,
+                0.42245989304812837,
+                0.08717624763108023,
+                0,
+                0.5606694560669456,
+                0.0511340206185567,
+                0.3795871559633027,
+                0.8486486486486486,
+                0.17618586640851888,
+                0,
+                0.2871046228710462,
+                0.14419827262485918,
+                0.5342465753424658,
+                0,
+                0,
+                0.3292929292929293,
+                0.5690376569037657,
+                0.0724755700325733,
+                0,
+                0.3884297520661157,
+                0.07898957497995189,
+                0.35737704918032787,
+                0.22153209109730848,
+                0.08631826189078097,
+                0.21568627450980393,
+                0.7745664739884393,
+                0,
+                0.15528531337698784,
+                0.17405063291139242,
+                0.061119785857684586,
+                0,
+                0.03996524761077324,
+                0.1996386630532972,
+                0.7556179775280899,
+                0.7916666666666666,
+                0.22180451127819548,
+                0.4479495268138801,
+                0,
+                0.16842105263157894,
+                0.4793713163064833,
+                0.55470737913486,
+                0.09539629805410536,
+                0.42242503259452413,
+                0.04043545878693624,
+                0.5531914893617021,
+                0.7046511627906977,
+                0.06208824116590138,
+                0.00361794500723589,
+                0.31840796019900497
+              ]
+            },
+            "growth": {
+              "grewPerRound": [
+                209,
+                81,
+                42,
+                24,
+                6,
+                1,
+                1,
+                1,
+                1,
+                1,
+                0
+              ],
+              "duplicateSpans": 0,
+              "cosines": {
+                "count": 209,
+                "min": 0.9008433387364293,
+                "p10": 0.9056734191004161,
+                "median": 0.941881894319659,
+                "p90": 0.9847835447913641,
+                "max": 0.9963296166590743
+              },
+              "oneAddition": {
+                "count": 128,
+                "below08": 0
+              },
+              "multipleAdditions": {
+                "count": 81,
+                "below08": 0
+              },
+              "guard": {
+                "preferred": {
+                  "tried": 488,
+                  "rejected": 135
+                },
+                "fallback": {
+                  "tried": 19,
+                  "rejected": 5
+                }
+              }
+            },
+            "eligibleCosines": {
+              "count": 5000,
+              "min": 0.06716068341394067,
+              "p10": 0.22752303136161123,
+              "median": 0.37810157756776175,
+              "p90": 0.5981593798326489,
+              "max": 1
+            },
+            "retrieval": {
+              "document/dense": {
+                "256": {
+                  "complete": 0,
+                  "recall": 0.16278952185401344,
+                  "precision": 0.3989671610169492,
+                  "deliveredTokens": 255.99999999999972
+                },
+                "512": {
+                  "complete": 0,
+                  "recall": 0.249412147281004,
+                  "precision": 0.3172845051867394,
+                  "deliveredTokens": 511.9830508474571,
+                  "repeatedSource": 0
+                },
+                "1024": {
+                  "complete": 0,
+                  "recall": 0.3345656533448291,
+                  "precision": 0.259743248375292,
+                  "deliveredTokens": 1023.9830508474565
+                }
+              }
+            },
+            "complete512": {
+              "document/dense": "00000000000000000000000000000000000000000000000000000000000"
+            },
+            "examples": {
+              "document": {
+                "id": "qmsum-test/1/0",
+                "first": [
+                  {
+                    "start": 3524,
+                    "end": 3574,
+                    "outputStart": 0
+                  }
+                ],
+                "doc": 7,
+                "deliveredSHA256": "490c80ba481ada581a0ef844103e244d9ba5d9b3d5287ee243680cad3a6b028d",
+                "recall": 0.06584243818286371,
+                "precision": 0.455078125,
+                "complete": 0,
+                "repeatedSource": 0
+              }
+            },
+            "milliseconds": 5275.582200000004,
+            "peakRSSKiB": 1173260,
+            "encoder": {
+              "apiRequests": 12,
+              "apiInputs": 506,
+              "apiInputTokens": 77282,
+              "diskTexts": 0,
+              "memoryTexts": 6934,
+              "replayMs": 4.552700000000186
+            }
+          }
+        },
+        "guard512": {
+          "cuad": {
+            "questions": 91,
+            "bodyHash": "481fc43ea1a8c610c18bc083a06660eaa8165a92aa9785c6c484cf02491d095a",
+            "chunkTokens": {
+              "count": 1088,
+              "min": 1,
+              "p10": 4,
+              "median": 50,
+              "p90": 205,
+              "max": 256
+            },
+            "indexHash": "0871505f105190b9b1deba3cb9790ef4570151fc8c064c9f36e3d311de0ed8dc",
+            "indexChunkTokens": {
+              "count": 1088,
+              "min": 1,
+              "p10": 4,
+              "median": 50,
+              "p90": 298,
+              "max": 512,
+              "above": {
+                "256": 129,
+                "320": 96,
+                "384": 62
+              }
+            },
+            "calls": 51,
+            "texts": 2350,
+            "singletons": 10,
+            "embeddedTokens": 267506,
+            "indexTexts": 1088,
+            "indexTokens": 110467,
+            "overTarget": 0,
+            "overEmbeddingLimit": 0,
+            "growth": {
+              "grewPerRound": [
+                154,
+                84,
+                41,
+                20,
+                14,
+                8,
+                3,
+                1,
+                0
+              ],
+              "duplicateSpans": 8,
+              "cosines": {
+                "count": 154,
+                "min": 0.9007153118559797,
+                "p10": 0.9066716936420935,
+                "median": 0.9303609650423883,
+                "p90": 0.9725116323264675,
+                "max": 0.988100070815887
+              },
+              "oneAddition": {
+                "count": 70,
+                "below08": 0
+              },
+              "multipleAdditions": {
+                "count": 84,
+                "below08": 0
+              },
+              "guard": {
+                "preferred": {
+                  "tried": 427,
+                  "rejected": 118
+                },
+                "fallback": {
+                  "tried": 35,
+                  "rejected": 19
+                }
+              }
+            },
+            "eligibleCosines": {
+              "count": 1159,
+              "min": 0.05259172264934538,
+              "p10": 0.19433651879612332,
+              "median": 0.3802420729655801,
+              "p90": 0.7226318460622401,
+              "max": 0.9554825310595932
+            },
+            "retrieval": {
+              "document/dense": {
+                "256": {
+                  "complete": 23,
+                  "recall": 0.3148533591348961,
+                  "precision": 0.13483001373626372,
+                  "deliveredTokens": 255.9999999999996
+                },
+                "512": {
+                  "complete": 27,
+                  "recall": 0.37228925219449394,
+                  "precision": 0.0899873660290327,
+                  "deliveredTokens": 507.8681318681311,
+                  "repeatedSource": 0
+                },
+                "1024": {
+                  "complete": 33,
+                  "recall": 0.4732600942775194,
+                  "precision": 0.06443576918837336,
+                  "deliveredTokens": 1008.6043956043941
+                }
+              }
+            },
+            "complete512": {
+              "document/dense": "0000110100010001010110000101000100011101000010000101010010000000000000001111000000000000111"
+            },
+            "examples": {
+              "document": {
+                "id": "SEASPINEHOLDINGSCORP_10_10_2018-EX-10.1-SUPPLY AGREEMENT__Document Name",
+                "first": [
+                  {
+                    "start": 64237,
+                    "end": 65568,
+                    "outputStart": 0
+                  }
+                ],
+                "doc": 0,
+                "deliveredSHA256": "4cca6ec7b1ea72109cd47232963e704061eaedac1700596196497772ff8f34e3",
+                "recall": 0,
+                "precision": 0,
+                "complete": 0,
+                "repeatedSource": 0
+              }
+            },
+            "milliseconds": 5095.330699999999,
+            "peakRSSKiB": 625204,
+            "encoder": {
+              "apiRequests": 14,
+              "apiInputs": 128,
+              "apiInputTokens": 56830,
+              "diskTexts": 4,
+              "memoryTexts": 3269,
+              "replayMs": 17.680799999994633
+            }
+          },
+          "qasper": {
+            "questions": 38,
+            "bodyHash": "83f20634cc6bfa468d009bd5bd671e3eb768520e8e88f7c8ae219e5c0011c102",
+            "chunkTokens": {
+              "count": 545,
+              "min": 3,
+              "p10": 17,
+              "median": 110,
+              "p90": 224,
+              "max": 255
+            },
+            "indexHash": "7e78a8558fb9a8220005bb44e61173a0d01a7f1c4b7ac5f1535862036071e31f",
+            "indexChunkTokens": {
+              "count": 545,
+              "min": 3,
+              "p10": 17,
+              "median": 120,
+              "p90": 353,
+              "max": 509,
+              "above": {
+                "256": 129,
+                "320": 74,
+                "384": 38
+              }
+            },
+            "calls": 84,
+            "texts": 1440,
+            "singletons": 13,
+            "embeddedTokens": 203078,
+            "indexTexts": 545,
+            "indexTokens": 84542,
+            "overTarget": 0,
+            "overEmbeddingLimit": 0,
+            "growth": {
+              "grewPerRound": [
+                146,
+                49,
+                15,
+                3,
+                0
+              ],
+              "duplicateSpans": 7,
+              "cosines": {
+                "count": 146,
+                "min": 0.9007177241192073,
+                "p10": 0.904539934433446,
+                "median": 0.9281247037653607,
+                "p90": 0.9685268658516514,
+                "max": 0.985899455558321
+              },
+              "oneAddition": {
+                "count": 97,
+                "below08": 0
+              },
+              "multipleAdditions": {
+                "count": 49,
+                "below08": 0
+              },
+              "guard": {
+                "preferred": {
+                  "tried": 364,
+                  "rejected": 171
+                },
+                "fallback": {
+                  "tried": 43,
+                  "rejected": 23
+                }
+              }
+            },
+            "eligibleCosines": {
+              "count": 699,
+              "min": 0.07259846660722026,
+              "p10": 0.26800064488694614,
+              "median": 0.45538420777698985,
+              "p90": 0.6641411860304454,
+              "max": 0.965726761567438
+            },
+            "retrieval": {
+              "document/dense": {
+                "256": {
+                  "complete": 17,
+                  "recall": 0.5172431840335946,
+                  "precision": 0.23283305921052633,
+                  "deliveredTokens": 255.9999999999998
+                },
+                "512": {
+                  "complete": 25,
+                  "recall": 0.6835227560179093,
+                  "precision": 0.16966488486842107,
+                  "deliveredTokens": 511.9999999999996,
+                  "repeatedSource": 0
+                },
+                "1024": {
+                  "complete": 30,
+                  "recall": 0.8453985306510566,
+                  "precision": 0.10911800986842105,
+                  "deliveredTokens": 1023.9999999999992
+                }
+              }
+            },
+            "complete512": {
+              "document/dense": "10010011011111101110001111111011110100"
+            },
+            "examples": {
+              "document": {
+                "id": "78f8dad0f1acf024f69b3218b2d204b8019bb0d2",
+                "first": [
+                  {
+                    "start": 23598,
+                    "end": 24564,
+                    "outputStart": 0
+                  }
+                ],
+                "doc": 0,
+                "deliveredSHA256": "6610eb8ed7c183e12d6b06a5f997d5c54b5c556d840c9521d86b75cd949c414c",
+                "recall": 1,
+                "precision": 0.224609375,
+                "complete": 1,
+                "repeatedSource": 0
+              }
+            },
+            "milliseconds": 2593.952799999999,
+            "peakRSSKiB": 863120,
+            "encoder": {
+              "apiRequests": 7,
+              "apiInputs": 86,
+              "apiInputTokens": 37631,
+              "diskTexts": 0,
+              "memoryTexts": 1908,
+              "replayMs": 1.3911000000007334
+            }
+          },
+          "finqa": {
+            "questions": 38,
+            "bodyHash": "9bce11d6bf80b70cb7a9773054529101eb7b7a67de1c19aa583da71dba7c393a",
+            "chunkTokens": {
+              "count": 256,
+              "min": 1,
+              "p10": 7,
+              "median": 68,
+              "p90": 194,
+              "max": 255
+            },
+            "indexHash": "33c6b135c115177fc99d3c1cf5a51f91202eaedbda5b2d2d1af2945c4d4538f0",
+            "indexChunkTokens": {
+              "count": 256,
+              "min": 1,
+              "p10": 7,
+              "median": 72,
+              "p90": 255,
+              "max": 485,
+              "above": {
+                "256": 25,
+                "320": 7,
+                "384": 3
+              }
+            },
+            "calls": 155,
+            "texts": 897,
+            "singletons": 58,
+            "embeddedTokens": 72524,
+            "indexTexts": 256,
+            "indexTokens": 26268,
+            "overTarget": 0,
+            "overEmbeddingLimit": 0,
+            "growth": {
+              "grewPerRound": [
+                43,
+                26,
+                18,
+                11,
+                6,
+                3,
+                3,
+                2,
+                1,
+                0
+              ],
+              "duplicateSpans": 0,
+              "cosines": {
+                "count": 43,
+                "min": 0.9001780086004955,
+                "p10": 0.9058355543108217,
+                "median": 0.925743301057331,
+                "p90": 0.9853430943192111,
+                "max": 0.9963556249743093
+              },
+              "oneAddition": {
+                "count": 17,
+                "below08": 0
+              },
+              "multipleAdditions": {
+                "count": 26,
+                "below08": 0
+              },
+              "guard": {
+                "preferred": {
+                  "tried": 139,
+                  "rejected": 29
+                },
+                "fallback": {
+                  "tried": 6,
+                  "rejected": 3
+                }
+              }
+            },
+            "eligibleCosines": {
+              "count": 534,
+              "min": 0.06316619538893617,
+              "p10": 0.27568342619844244,
+              "median": 0.485115884969239,
+              "p90": 0.6635743896163397,
+              "max": 0.8630634308487328
+            },
+            "retrieval": {
+              "document/dense": {
+                "256": {
+                  "complete": 15,
+                  "recall": 0.7306847489947635,
+                  "precision": 0.20908717105263164,
+                  "deliveredTokens": 255.9999999999998
+                },
+                "512": {
+                  "complete": 24,
+                  "recall": 0.8698826364407938,
+                  "precision": 0.13477014781097435,
+                  "deliveredTokens": 503.13157894736804,
+                  "repeatedSource": 0.005388501143747551
+                },
+                "1024": {
+                  "complete": 35,
+                  "recall": 0.9681464935548413,
+                  "precision": 0.10047344699509556,
+                  "deliveredTokens": 798.5789473684207
+                }
+              }
+            },
+            "complete512": {
+              "document/dense": "01010110111110100101011110110110010111"
+            },
+            "examples": {
+              "document": {
+                "id": "ETR/2004/page_213.pdf-2",
+                "first": [
+                  {
+                    "start": 1941,
+                    "end": 2439,
+                    "outputStart": 0
+                  }
+                ],
+                "doc": 0,
+                "deliveredSHA256": "1c9f06ac34baf7e845841ac247d589167b5ee55f8dba768cf0db052003c45990",
+                "recall": 0.7938144329896907,
+                "precision": 0.150390625,
+                "complete": 0,
+                "repeatedSource": 0
+              }
+            },
+            "milliseconds": 1158.6174000000028,
+            "peakRSSKiB": 863120,
+            "encoder": {
+              "apiRequests": 4,
+              "apiInputs": 9,
+              "apiInputTokens": 4007,
+              "diskTexts": 0,
+              "memoryTexts": 1171,
+              "replayMs": 1.2925000000104774
+            }
+          },
+          "hotpotqa": {
+            "questions": 32,
+            "bodyHash": "9b3910c3f0b61959868a65a4591123f780845396b788832d03333c9f716b3472",
+            "chunkTokens": {
+              "count": 372,
+              "min": 3,
+              "p10": 37,
+              "median": 95,
+              "p90": 181,
+              "max": 254
+            },
+            "indexHash": "8713d1901440c4c9771473658831d44cb9107aa3756e6258d402f64d5047cb74",
+            "indexChunkTokens": {
+              "count": 372,
+              "min": 3,
+              "p10": 37,
+              "median": 97,
+              "p90": 185,
+              "max": 378,
+              "above": {
+                "256": 5,
+                "320": 3,
+                "384": 0
+              }
+            },
+            "calls": 355,
+            "texts": 525,
+            "singletons": 319,
+            "embeddedTokens": 51690,
+            "indexTexts": 372,
+            "indexTokens": 40404,
+            "overTarget": 0,
+            "overEmbeddingLimit": 0,
+            "growth": {
+              "grewPerRound": [
+                13,
+                9,
+                6,
+                3,
+                3,
+                0
+              ],
+              "duplicateSpans": 0,
+              "cosines": {
+                "count": 13,
+                "min": 0.9029341176023135,
+                "p10": 0.9036286745467591,
+                "median": 0.9359283870139616,
+                "p90": 0.9785271836466395,
+                "max": 0.9786975734623503
+              },
+              "oneAddition": {
+                "count": 4,
+                "below08": 0
+              },
+              "multipleAdditions": {
+                "count": 9,
+                "below08": 0
+              },
+              "guard": {
+                "preferred": {
+                  "tried": 41,
+                  "rejected": 8
+                },
+                "fallback": {
+                  "tried": 3,
+                  "rejected": 2
+                }
+              }
+            },
+            "eligibleCosines": {
+              "count": 130,
+              "min": 0.12289490432685324,
+              "p10": 0.19730417001167366,
+              "median": 0.4359997208167672,
+              "p90": 0.6440320709850752,
+              "max": 0.7574725662838334
+            },
+            "retrieval": {
+              "shortlist/dense": {
+                "256": {
+                  "complete": 19,
+                  "recall": 0.8155764459675326,
+                  "precision": 0.240234375,
+                  "deliveredTokens": 256
+                },
+                "512": {
+                  "complete": 25,
+                  "recall": 0.9035146861102841,
+                  "precision": 0.13507080078125,
+                  "deliveredTokens": 512,
+                  "repeatedSource": 0
+                },
+                "1024": {
+                  "complete": 31,
+                  "recall": 0.9820478723404256,
+                  "precision": 0.07816866953606293,
+                  "deliveredTokens": 975.5
+                }
+              },
+              "pooled/dense": {
+                "256": {
+                  "complete": 19,
+                  "recall": 0.8155764459675326,
+                  "precision": 0.240234375,
+                  "deliveredTokens": 256
+                },
+                "512": {
+                  "complete": 25,
+                  "recall": 0.9035146861102841,
+                  "precision": 0.13507080078125,
+                  "deliveredTokens": 512,
+                  "repeatedSource": 0
+                },
+                "1024": {
+                  "complete": 31,
+                  "recall": 0.9820478723404256,
+                  "precision": 0.073822021484375,
+                  "deliveredTokens": 1024
+                }
+              }
+            },
+            "complete512": {
+              "shortlist/dense": "01111101101010101111111111110111",
+              "pooled/dense": "01111101101010101111111111110111"
+            },
+            "examples": {
+              "shortlist": {
+                "id": "5a7f8d755542992097ad2f9d",
+                "first": [
+                  {
+                    "start": 0,
+                    "end": 360,
+                    "outputStart": 0
+                  }
+                ],
+                "doc": 3,
+                "deliveredSHA256": "12b716367205336177206e6945160ead40ea3bd038d33067ce26469f7f257c13",
+                "recall": 0.41509433962264153,
+                "precision": 0.04296875,
+                "complete": 0,
+                "repeatedSource": 0
+              },
+              "pooled": {
+                "id": "5a7f8d755542992097ad2f9d",
+                "first": [
+                  {
+                    "start": 0,
+                    "end": 360,
+                    "outputStart": 0
+                  }
+                ],
+                "doc": 3,
+                "deliveredSHA256": "12b716367205336177206e6945160ead40ea3bd038d33067ce26469f7f257c13",
+                "recall": 0.41509433962264153,
+                "precision": 0.04296875,
+                "complete": 0,
+                "repeatedSource": 0
+              }
+            },
+            "milliseconds": 913.4714999999997,
+            "peakRSSKiB": 1115708,
+            "encoder": {
+              "apiRequests": 0,
+              "apiInputs": 0,
+              "apiInputTokens": 0,
+              "diskTexts": 0,
+              "memoryTexts": 928,
+              "replayMs": 0.37909999999101274
+            }
+          },
+          "qmsum": {
+            "questions": 59,
+            "bodyHash": "ad7e032ca1ec35f4f1af94cfc67860428b21013edf2f47b27b87d69f9b0d18d1",
+            "chunkTokens": {
+              "count": 1813,
+              "min": 2,
+              "p10": 5,
+              "median": 29,
+              "p90": 146,
+              "max": 255
+            },
+            "indexHash": "de7c2c3d860381d5af6acb3a60220171cf5649090412b90bc5712dcd36b1ed79",
+            "indexChunkTokens": {
+              "count": 1813,
+              "min": 2,
+              "p10": 5,
+              "median": 30,
+              "p90": 161,
+              "max": 417,
+              "above": {
+                "256": 29,
+                "320": 8,
+                "384": 4
+              }
+            },
+            "calls": 89,
+            "texts": 5791,
+            "singletons": 27,
+            "embeddedTokens": 258991,
+            "indexTexts": 1813,
+            "indexTokens": 106262,
+            "overTarget": 0,
+            "overEmbeddingLimit": 0,
+            "recall512": {
+              "document/dense": [
+                0.06584243818286371,
+                0.4297082228116711,
+                0.18095238095238095,
+                0.21869382863990414,
+                0.20603907637655416,
+                0.009009009009009009,
+                0,
+                0.19352869352869354,
+                0.12538699690402477,
+                0.21084337349397592,
+                0.2403846153846154,
+                0.42245989304812837,
+                0.08717624763108023,
+                0,
+                0.5606694560669456,
+                0.0511340206185567,
+                0.3795871559633027,
+                0.8486486486486486,
+                0.17618586640851888,
+                0,
+                0.2871046228710462,
+                0.14419827262485918,
+                0.5342465753424658,
+                0,
+                0,
+                0.3292929292929293,
+                0.5690376569037657,
+                0.0724755700325733,
+                0,
+                0.3884297520661157,
+                0.07898957497995189,
+                0.35737704918032787,
+                0.22153209109730848,
+                0.08631826189078097,
+                0.21568627450980393,
+                0.7745664739884393,
+                0,
+                0.15528531337698784,
+                0.17405063291139242,
+                0.061119785857684586,
+                0,
+                0.03996524761077324,
+                0.1996386630532972,
+                0.7556179775280899,
+                0.7916666666666666,
+                0.22180451127819548,
+                0.4479495268138801,
+                0,
+                0.16842105263157894,
+                0.4793713163064833,
+                0.55470737913486,
+                0.09539629805410536,
+                0.42242503259452413,
+                0.04043545878693624,
+                0.5531914893617021,
+                0.7046511627906977,
+                0.06208824116590138,
+                0.00361794500723589,
+                0.31840796019900497
+              ]
+            },
+            "growth": {
+              "grewPerRound": [
+                209,
+                82,
+                43,
+                24,
+                8,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                0
+              ],
+              "duplicateSpans": 1,
+              "cosines": {
+                "count": 209,
+                "min": 0.9008433387364293,
+                "p10": 0.9056734191004161,
+                "median": 0.9417934443650681,
+                "p90": 0.9847835447913641,
+                "max": 0.9963296166590743
+              },
+              "oneAddition": {
+                "count": 127,
+                "below08": 0
+              },
+              "multipleAdditions": {
+                "count": 82,
+                "below08": 0
+              },
+              "guard": {
+                "preferred": {
+                  "tried": 496,
+                  "rejected": 138
+                },
+                "fallback": {
+                  "tried": 20,
+                  "rejected": 6
+                }
+              }
+            },
+            "eligibleCosines": {
+              "count": 5000,
+              "min": 0.06716068341394067,
+              "p10": 0.22752303136161123,
+              "median": 0.37810157756776175,
+              "p90": 0.5981593798326489,
+              "max": 1
+            },
+            "retrieval": {
+              "document/dense": {
+                "256": {
+                  "complete": 0,
+                  "recall": 0.16278952185401344,
+                  "precision": 0.3989671610169492,
+                  "deliveredTokens": 255.99999999999972
+                },
+                "512": {
+                  "complete": 0,
+                  "recall": 0.249412147281004,
+                  "precision": 0.3172845051867394,
+                  "deliveredTokens": 511.9830508474571,
+                  "repeatedSource": 0
+                },
+                "1024": {
+                  "complete": 0,
+                  "recall": 0.3322054071564607,
+                  "precision": 0.25776243978536045,
+                  "deliveredTokens": 1023.9661016949141
+                }
+              }
+            },
+            "complete512": {
+              "document/dense": "00000000000000000000000000000000000000000000000000000000000"
+            },
+            "examples": {
+              "document": {
+                "id": "qmsum-test/1/0",
+                "first": [
+                  {
+                    "start": 3524,
+                    "end": 3574,
+                    "outputStart": 0
+                  }
+                ],
+                "doc": 7,
+                "deliveredSHA256": "490c80ba481ada581a0ef844103e244d9ba5d9b3d5287ee243680cad3a6b028d",
+                "recall": 0.06584243818286371,
+                "precision": 0.455078125,
+                "complete": 0,
+                "repeatedSource": 0
+              }
+            },
+            "milliseconds": 1825.590200000006,
+            "peakRSSKiB": 1190024,
+            "encoder": {
+              "apiRequests": 5,
+              "apiInputs": 8,
+              "apiInputTokens": 3217,
+              "diskTexts": 0,
+              "memoryTexts": 7439,
+              "replayMs": 3.3722999999736203
+            }
+          }
+        }
+      },
+      "comparisons": {
+        "documents": {
+          "core256/guard512": {
+            "deltaPoints": 3.347310584152689,
+            "ci95": [
+              0.24591869242121828,
+              6.764269829503336
+            ]
+          },
+          "guard384/core256": {
+            "deltaPoints": -2.523134759976865,
+            "ci95": [
+              -5.883699633699633,
+              0.500801282051282
+            ]
+          },
+          "guard384/guard512": {
+            "deltaPoints": 0.8241758241758242,
+            "ci95": [
+              0,
+              2.4390243902439024
+            ]
+          },
+          "guard512/core256": {
+            "deltaPoints": -3.347310584152689,
+            "ci95": [
+              -6.764269829503336,
+              -0.24591869242121828
+            ]
+          }
+        },
+        "meetings": {
+          "core256/guard512": {
+            "deltaPoints": -1.3266587179615588,
+            "ci95": [
+              -2.85329597307398,
+              0.3907459305043943
+            ]
+          },
+          "guard384/core256": {
+            "deltaPoints": 1.3266587179615588,
+            "ci95": [
+              -0.3907459305043943,
+              2.85329597307398
+            ]
+          },
+          "guard384/guard512": {
+            "deltaPoints": 0,
+            "ci95": [
+              0,
+              0
+            ]
+          },
+          "guard512/core256": {
+            "deltaPoints": 1.3266587179615588,
+            "ci95": [
+              -0.3907459305043943,
+              2.85329597307398
+            ]
+          }
+        }
+      }
+    }
+  },
+  "comparisons": {
+    "documents": {
+      "core256/guard512": {
+        "deltaPoints": 3.347310584152689,
+        "ci95": [
+          0.24591869242121828,
+          6.764269829503336
+        ]
+      },
+      "guard384/core256": {
+        "deltaPoints": -2.523134759976865,
+        "ci95": [
+          -5.883699633699633,
+          0.500801282051282
+        ]
+      },
+      "guard384/guard512": {
+        "deltaPoints": 0.8241758241758242,
+        "ci95": [
+          0,
+          2.4390243902439024
+        ]
+      },
+      "guard512/core256": {
+        "deltaPoints": -3.347310584152689,
+        "ci95": [
+          -6.764269829503336,
+          -0.24591869242121828
+        ]
+      }
+    },
+    "meetings": {
+      "core256/guard512": {
+        "deltaPoints": -1.3266587179615588,
+        "ci95": [
+          -2.85329597307398,
+          0.3907459305043943
+        ]
+      },
+      "guard384/core256": {
+        "deltaPoints": 1.3266587179615588,
+        "ci95": [
+          -0.3907459305043943,
+          2.85329597307398
+        ]
+      },
+      "guard384/guard512": {
+        "deltaPoints": 0,
+        "ci95": [
+          0,
+          0
+        ]
+      },
+      "guard512/core256": {
+        "deltaPoints": 1.3266587179615588,
+        "ci95": [
+          -0.3907459305043943,
+          2.85329597307398
+        ]
+      }
+    }
+  }
+}

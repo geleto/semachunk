@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { tokenBudget } from '../src/token-limit.js';
-import { repeatedSourceFraction } from './delivered-context.mjs';
+import { deliver, repeatedSourceFraction } from './delivered-context.mjs';
 import { contrast } from './markdown-decisions.mjs';
+import { indexDocument } from './markdown-index.mjs';
 import { growMarkdown } from './markdown-overlap.mjs';
 
 function fixture(words) {
@@ -28,7 +29,7 @@ async function grow({ source, originals }, ranges, vectors = {}, options = {}) {
         assert.equal(span.start, originals[span.first].start);
         assert.equal(span.end, originals[span.last].end);
     }
-    return { ranges: spans.map(s => [s.first, s.last]), batches, rounds: stats.grewPerRound };
+    return { ranges: spans.map(s => [s.first, s.last]), batches, rounds: stats.grewPerRound, guard: stats.guard };
 }
 
 test('both outer cores can take the same original unit in a single batch', async () => {
@@ -74,8 +75,37 @@ test('each whole proposed body must clear the floor against the same starting co
     assert.deepEqual((await grow(data, [[0, 0]], vectors)).ranges, [[0, 3]]);
     const guarded = await grow(data, [[0, 0]], vectors, { coreFloor: 0.8 });
     assert.deepEqual(guarded.ranges, [[0, 1]]);
+    assert.deepEqual(guarded.guard, { preferred: { tried: 2, rejected: 1 }, fallback: { tried: 0, rejected: 0 } });
     assert.equal(guarded.batches.flat().filter(text => text === 'C X').length, 1);
     assert.ok(!guarded.batches.flat().includes('C X Y Z'));
+});
+
+for (const title of ['', 'Study']) test('the drift check uses the indexed window and evidence uses the core, with ' +
+    (title ? 'a prefix and title' : 'a prefix'), async () => {
+    const doc = { source: 'Alpha.\n\nBeta.\n\nGamma.', chunkPrefix: 'Doc', title, parsed: new Map() };
+    const prefix = title ? 'Doc: Study: ' : 'Doc: ';
+    const bad = prefix + 'Alpha.\n\nBeta.', good = prefix + 'Beta.\n\nGamma.', batches = [];
+    const encoder = {
+        countTokens: text => text.length,
+        offsets: text => Array.from(text, (_, i) => [i, i + 1, i + 1]),
+        embed(texts) {
+            batches.push(texts);
+            // Only the actual prefixed proposal has drifted.
+            return texts.map(text => text === bad ? [0, 1] : [1, 0]);
+        },
+    };
+    const context = { retained: 0 };
+    const chunks = await indexDocument(doc, { method: 'fixed', coreTokens: 11, tokens: 20, ...(title && { context: 'title', contextCap: 30 }),
+        growth: { cutoff: 0.5, coreFloor: 0.9, returnCore: true } }, {}, [], context, encoder);
+    assert.deepEqual(chunks.map(c => [c.text, c.embeddingText]), [['Alpha.', prefix + 'Alpha.'], ['Beta.', good], ['Gamma.', good]]);
+    assert.deepEqual(chunks.map(c => c.sourceRanges), [[{ start: 0, end: 6, outputStart: 0 }],
+        [{ start: 8, end: 13, outputStart: 0 }], [{ start: 15, end: 21, outputStart: 0 }]]);
+    assert.deepEqual(context.growth.guard, { preferred: { tried: 3, rejected: 2 }, fallback: { tried: 1, rejected: 0 } });
+    assert.deepEqual(batches, [[prefix + 'Beta.', prefix + 'Alpha.', prefix + 'Gamma.'], [bad, good]]);
+    assert.equal(context.retained, title ? 3 : 0);
+    const delivered = deliver([{ ...chunks[1], doc: 0 }], 20, encoder);
+    assert.equal(delivered.text, 'Beta.');
+    assert.deepEqual(delivered.projected.flat(), Array.from({ length: 5 }, (_, i) => [0, 8 + i, 9 + i]));
 });
 
 test('proposed-body embeddings are shared across a round while identical passages keep their source indices', async () => {

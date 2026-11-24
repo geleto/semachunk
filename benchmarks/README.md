@@ -127,6 +127,10 @@ All arms search the same sources. QASPER uses the paper's heading hierarchy. Fin
 
 Run `node --max-old-space-size=6144 benchmarks/overlap-study.mjs overlap.json` with a new output path. This uses the cached encoder and the same literal context scorer as the retrieval studies. The runner verifies the 256-token starting cores against the public API before every overlap run. It measures neighbor cutoffs, final body ceilings, per-side limits and similarity between the original core and the proposed body. The raw results include growth by round, embedding work and the fraction of delivered source characters repeated at 512 tokens. [Overlap results](results/2026-11-23-batched-overlap.json)
 
+Run `node --max-old-space-size=6144 benchmarks/overlap-study.mjs embedding-context.json embedding-context` to return the original cores and use their neighbors only in the embeddings. The runner checks the body text and source ranges against the public cores, compares indexing windows up to 512 tokens and records how often the frozen-core similarity check rejects a proposal. A matched control delivers the entire accepted window using the same index. [Embedding context results](results/2026-11-24-embedding-context.json)
+
+Append `confirmation` and choose a new output path to compare the guarded 384- and 512-token windows with the original cores on the separate document and meeting sample. [Confirmation results](results/2026-11-24-embedding-confirmation.json)
+
 ## Run the large-document benchmark
 
 Run `node benchmarks/markdown-performance.mjs` for the public Markdown entry point. An optional output path saves a new JSON report. A second argument sets the character target, for example `node benchmarks/markdown-performance.mjs performance.json 1024`. Each workload runs in its own process with one warmup and three timed iterations. The inputs include repeated and unique paragraphs, fenced code and tables in either one long section or 2,048 short sections.

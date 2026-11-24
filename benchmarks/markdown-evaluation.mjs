@@ -14,6 +14,13 @@ function distribution(values) {
         p90: v[Math.floor(v.length * 0.9)], max: v.at(-1) };
 }
 
+function indexedWindows(byDoc, countTokens) {
+    const texts = byDoc.map(rows => rows.map(c => c.embeddingText ?? c.text));
+    const lengths = texts.flat().map(countTokens);
+    const above = Object.fromEntries([256, 320, 384].map(cap => [cap, lengths.filter(n => n > cap).length]));
+    return { indexHash: sha256(JSON.stringify(texts)), indexChunkTokens: { ...distribution(lengths), above } };
+}
+
 export async function prepareDataset(dataset, encoder, plainParts = false) {
     const { docs, questions } = dataset;
     for (const doc of docs) {
@@ -105,10 +112,12 @@ export async function evaluate(task, { docs, questions }, policy, encoder, mode)
         }
     }
     if (policy.growth) context.growth.cosines = distribution(context.growth.cosines);
+    const bodyCap = policy.growth?.returnCore ? (policy.coreTokens ?? policy.tokens) : policy.tokens;
     return { questions: questions.length, bodyHash, chunkTokens: distribution(byDoc.flat().map(c => countTokens(c.text))),
+        ...(mode === 'overlap' && indexedWindows(byDoc, countTokens)),
         ...costs, ...(ruleStudy && { semanticDocuments }),
-        ...((baselines || denseOnly) && { overTarget: byDoc.flat().filter(c => policy.tokens ? countTokens(c.text) > policy.tokens : c.text.length > policy.chars).length }),
-        ...(denseOnly && { overEmbeddingLimit: byDoc.flat().filter(c => countTokens(c.text) > 8191).length }),
+        ...((baselines || denseOnly) && { overTarget: byDoc.flat().filter(c => bodyCap ? countTokens(c.text) > bodyCap : c.text.length > policy.chars).length }),
+        ...(denseOnly && { overEmbeddingLimit: byDoc.flat().filter(c => countTokens(c.embeddingText ?? c.text) > 8191).length }),
         ...(denseOnly && task === 'qmsum' && { recall512 }),
         ...(policy.growth && { growth: context.growth }), ...(policy.context && { context }), ...(initial.length && { eligibleCosines: distribution(initial) }),
         retrieval, complete512, examples, milliseconds: performance.now() - start, peakRSSKiB: process.resourceUsage().maxRSS,
