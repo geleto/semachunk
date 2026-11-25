@@ -104,7 +104,7 @@ function splitSentences(text, locale, excludeNonLetterSentences) {
 export async function parseText(text, { inputFormat, locale, excludeNonLetterSentences, strategy, maxChunkSize, fits }) {
     locale = sentenceLocale(locale);
     if (inputFormat === 'html') text = await htmlToText(text);
-    else if (inputFormat !== 'text') throw new TypeError("inputFormat must be 'text', 'html' or 'markdown'.");
+    else if (inputFormat !== 'text') throw new TypeError("inputFormat must be 'text', 'html', 'markdown' or 'json'.");
 
     if (strategy !== 'blocks') return splitSentences(text, locale, excludeNonLetterSentences);
     const paragraphs = text.replace(/\r\n?|\u2028/g, '\n').split(/\n[^\S\n]*\n|\u2029/u);

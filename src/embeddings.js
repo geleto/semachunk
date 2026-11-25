@@ -1,16 +1,15 @@
 // One cache per chunkText call, shared by sentence, merge and output batches.
 export function createBatchEmbedder(embedBatchCallback, maxEmbeddingBatchSize = Infinity, maxCachedEmbeddings = Infinity) {
-    if (typeof embedBatchCallback !== 'function') {
-        throw new TypeError('embedBatchCallback must be a function');
-    }
     if (maxEmbeddingBatchSize !== Infinity && !(Number.isSafeInteger(maxEmbeddingBatchSize) && maxEmbeddingBatchSize > 0)) {
         throw new RangeError('maxEmbeddingBatchSize must be a positive integer or Infinity.');
     }
-
-    const cache = new Map();
     if (maxCachedEmbeddings !== Infinity && !(Number.isSafeInteger(maxCachedEmbeddings) && maxCachedEmbeddings >= 0)) {
         throw new RangeError('maxCachedEmbeddings must be a nonnegative safe integer or Infinity.');
     }
+    if (embedBatchCallback == null) return;
+    if (typeof embedBatchCallback !== 'function') throw new TypeError('embedBatchCallback must be a function');
+
+    const cache = new Map();
     let dimension;
 
     return async function embedBatch(texts, finalTexts) {

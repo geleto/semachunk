@@ -18,7 +18,7 @@ export class TokenLimitError extends RangeError {
 
 // Bisect near whitespace and coalesce fitting neighbors. The normalized plain
 // text path consumes a separating space. Markdown assigns it to a source span.
-export function splitSpans(source, start, end, fits, keepWhitespace = true, protectedSpans = []) {
+export function splitSpans(source, start, end, fits, keepWhitespace = true, protectedSpans = [], indivisible = false) {
     const spans = [];
     function visit(a, b) {
         if (fits(a, b)) {
@@ -42,6 +42,9 @@ export function splitSpans(source, start, end, fits, keepWhitespace = true, prot
         }
         for (const [from, to] of protectedSpans) {
             if (from >= cut) break;
+            if (indivisible && from === a && to === b) {
+                throw new RangeError('maxChunkTokens cannot fit an indivisible escape with the configured tokenizer and prefix.');
+            }
             if (cut < to && (from > a || to < b)) {
                 cut = from > a && (to >= b || cut - from <= to - cut) ? from : to;
                 break;

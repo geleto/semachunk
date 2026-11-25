@@ -15,6 +15,28 @@ function recordingEmbedder(vectorFor = text => [text.length, 1]) {
 const pair = 'First topic. Second topic.';
 const sentences = ['First topic.', 'Second topic.'];
 
+test('auto packs without a callback and can still use semantic scoring when final vectors are disabled', async () => {
+    assert.deepEqual(await chunkText(pair), [{ text: pair }]);
+    for (const [inputFormat, source] of [
+        ['text', pair], ['html', '<p>First topic.</p><p>Second topic.</p>'], ['markdown', sentences.join('\n\n')]
+    ]) {
+        const options = { inputFormat, maxChunkSize: 2048, combineChunksSimilarityThreshold: 0.9 };
+        const packed = await chunkText(source, assert.fail, { ...options, chunkingStrategy: 'pack', returnEmbedding: false });
+        assert.equal(packed.length, 1);
+        assert.deepEqual(await chunkText(source, options), packed);
+        assert.deepEqual(await chunkText(source, undefined, options), packed);
+        const { embed } = recordingEmbedder(s => s === sentences[0] ? [1, 0] : [0, 1]);
+        assert.deepEqual((await chunkText(source, embed, { ...options, returnEmbedding: false })).map(c => c.text), sentences);
+    }
+    assert.deepEqual(await chunkText(pair, null, { combineChunks: false }), sentences.map(text => ({ text })));
+});
+
+test('explicit semantic scoring and output vectors require an embedding callback', async () => {
+    await assert.rejects(chunkText(pair, { chunkingStrategy: 'semantic', returnEmbedding: false }), /embedding callback/i);
+    await assert.rejects(chunkText(pair, undefined, { returnEmbedding: true }), /embedding callback/i);
+    await assert.rejects(chunkText(pair, 42), /embedBatchCallback must be a function/);
+});
+
 test('omitted size options use the documented target for every format and strategy', async () => {
     const body = ['Autumn', 'Winter', 'Spring'].map(s => s + ' ' + 'again '.repeat(46) + 'ends.').join(' ');
     const embed = async texts => texts.map(() => [1]);

@@ -5,16 +5,19 @@ import { packSentences } from './packing.js';
 import { DEFAULT_CONFIG } from '../config.js';
 import { sentenceTokenLimit, tokenBudget } from './token-limit.js';
 
-function resolveStrategy(strategy, inputFormat, combineChunks, maxChunkSize, maxChunkTokens, chunkOverlap) {
+function resolveStrategy(strategy, inputFormat, combineChunks, maxChunkSize, maxChunkTokens, chunkOverlap, embedBatch) {
 	if (!['auto', 'blocks', 'pack', 'semantic'].includes(strategy)) {
 		throw new TypeError("chunkingStrategy must be 'auto', 'blocks', 'pack' or 'semantic'.");
 	}
 	if (!Number.isSafeInteger(chunkOverlap) || chunkOverlap < 0) {
 		throw new RangeError('chunkOverlap must be a nonnegative safe integer.');
 	}
-	if (strategy === 'auto') {
+	if (inputFormat === 'json') {
+		if (strategy !== 'auto' && strategy !== 'blocks') throw new TypeError("JSON input requires the 'blocks' or 'auto' strategy.");
+		strategy = 'blocks';
+	} else if (strategy === 'auto') {
 		if (!combineChunks) strategy = inputFormat === 'markdown' ? 'blocks' : 'sentences';
-		else if (chunkOverlap || (inputFormat === 'markdown' &&
+		else if (!embedBatch || chunkOverlap || (inputFormat === 'markdown' &&
 			(maxChunkSize <= DEFAULT_CONFIG.MARKDOWN_MAX_CHUNK_SIZE || maxChunkTokens < 256))) strategy = 'pack';
 		else strategy = 'semantic';
 	}
@@ -25,18 +28,23 @@ function resolveStrategy(strategy, inputFormat, combineChunks, maxChunkSize, max
 /**
  * Chunk text by structure, size or embedding similarity.
  * @param {string} text - Input text to chunk
- * @param {Function} embedBatchCallback - async (texts[]) => embeddings[][]
- * @param {Object} options - Chunking options
- * @returns {Array} chunks - [{ text, embedding }, ...]
+ * @param {Function|Object} [embedBatchCallback] - Batch embedding callback or chunking options
+ * @param {Object} [options] - Chunking options when using the callback position
+ * @returns {Promise<Array>} Chunks with text, optional embeddings and format metadata
  */
-export async function chunkText(text, embedBatchCallback, options = {}) {
+export async function chunkText(text, embedBatchCallback, options) {
+	if (options === undefined && typeof embedBatchCallback === 'object' && !Array.isArray(embedBatchCallback)) {
+		options = embedBatchCallback;
+		embedBatchCallback = undefined;
+	}
 	const {
 		logging = DEFAULT_CONFIG.LOGGING,
 		inputFormat = DEFAULT_CONFIG.INPUT_FORMAT,
 		chunkingStrategy = DEFAULT_CONFIG.CHUNKING_STRATEGY,
 		chunkOverlap = DEFAULT_CONFIG.CHUNK_OVERLAP,
 		locale = DEFAULT_CONFIG.LOCALE,
-		maxChunkSize = inputFormat === 'markdown' ? DEFAULT_CONFIG.MARKDOWN_MAX_CHUNK_SIZE : DEFAULT_CONFIG.MAX_CHUNK_SIZE,
+		maxChunkSize = inputFormat === 'json' ? DEFAULT_CONFIG.JSON_MAX_CHUNK_SIZE
+			: inputFormat === 'markdown' ? DEFAULT_CONFIG.MARKDOWN_MAX_CHUNK_SIZE : DEFAULT_CONFIG.MAX_CHUNK_SIZE,
 		maxChunkTokens = DEFAULT_CONFIG.MAX_CHUNK_TOKENS,
 		countTokens,
 		maxEmbeddingBatchSize = DEFAULT_CONFIG.MAX_EMBEDDING_BATCH_SIZE,
@@ -50,7 +58,7 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
 		combineChunksSimilarityThreshold = similarityThreshold,
 		maxPasses = DEFAULT_CONFIG.MAX_PASSES,
 		maxUncappedPasses = DEFAULT_CONFIG.MAX_UNCAPPED_PASSES,
-		returnEmbedding = DEFAULT_CONFIG.RETURN_EMBEDDING,
+		returnEmbedding = embedBatchCallback != null && DEFAULT_CONFIG.RETURN_EMBEDDING,
 		chunkPrefix = DEFAULT_CONFIG.CHUNK_PREFIX,
 		excludeChunkPrefixInResults = DEFAULT_CONFIG.EXCLUDE_CHUNK_PREFIX_IN_RESULTS,
 		maxMergesPerPass = DEFAULT_CONFIG.MAX_MERGES_PER_PASS,
@@ -82,8 +90,11 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
 	if (!Number.isFinite(candidateMergesPercentageCap) || candidateMergesPercentageCap < 0 || candidateMergesPercentageCap > 100) {
 		throw new RangeError('candidateMergesPercentageCap (legacy candiateMergesPercentageCap) must be between 0 and 100.');
 	}
-	const strategy = resolveStrategy(chunkingStrategy, inputFormat, combineChunks, maxChunkSize, maxChunkTokens, chunkOverlap);
 	const embedBatch = createBatchEmbedder(embedBatchCallback, maxEmbeddingBatchSize, maxCachedEmbeddings);
+	const strategy = resolveStrategy(chunkingStrategy, inputFormat, combineChunks, maxChunkSize, maxChunkTokens, chunkOverlap, embedBatch);
+	if (!embedBatch && (strategy === 'semantic' || returnEmbedding)) {
+		throw new TypeError("An embedding callback is required for 'semantic' or returnEmbedding: true.");
+	}
 	if (logging) await _printVersion();
 	const prefix = chunkPrefix?.trim() ? chunkPrefix + ': ' : '';
 	const fits = tokenBudget(maxChunkTokens, countTokens, prefix);
@@ -96,7 +107,16 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
 		calibrate: mergeThresholdMode === 'document' && options?.combineChunksSimilarityThreshold === undefined
 	};
 	let output;
-	if (inputFormat === 'markdown') {
+	if (inputFormat === 'json') {
+		if (excludeNonLetterSentences) throw new TypeError('JSON input does not support sentence filtering.');
+		const { chunkJson } = await import('./json.js').catch(error => {
+			if (error.code === 'ERR_MODULE_NOT_FOUND' && error.message.includes("package 'jsonc-parser'")) {
+				throw new Error('JSON input requires jsonc-parser. Run npm install --include=optional.', { cause: error });
+			}
+			throw error;
+		});
+		output = chunkJson(text, maxChunkSize, fits);
+	} else if (inputFormat === 'markdown') {
 		const { chunkMarkdown } = await import('./markdown-merge.js').catch(error => {
 			if (error.code === 'ERR_MODULE_NOT_FOUND' && /package '(?:mdast-util|micromark-extension)-/.test(error.message)) {
 				throw new Error('Markdown input requires the optional Markdown parsers. Run npm install --include=optional.', { cause: error });
@@ -129,7 +149,7 @@ export async function chunkText(text, embedBatchCallback, options = {}) {
 		if (prefix && !excludeChunkPrefixInResults) {
 			chunk.text = text;
 			for (const range of chunk.sourceRanges ?? []) range.outputStart += prefix.length;
-		} else if (prefix && inputFormat === 'markdown') chunk.embeddingText = text;
+		} else if (prefix && chunk.sourceRanges) chunk.embeddingText = text;
 		return text;
 	});
 	if (returnEmbedding) {

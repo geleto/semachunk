@@ -19,7 +19,8 @@
     "config.js"
   ],
   "scripts": {
-    "test": "node --test",
+    "test": "npm run test:types && node --test",
+    "test:types": "tsc --noEmit --strict --exactOptionalPropertyTypes --target es2022 --module nodenext tests/types/chunk-text.ts",
     "benchmark": "node benchmarks/run.mjs quality",
     "benchmark:rag": "node benchmarks/run.mjs rag",
     "benchmark:merge": "node benchmarks/merge-performance.mjs",
@@ -46,9 +47,11 @@
   },
   "devDependencies": {
     "openai": "7.62.0",
-    "tiktoken": "1.0.22"
+    "tiktoken": "1.0.22",
+    "typescript": "5.9.3"
   },
   "optionalDependencies": {
+    "jsonc-parser": "^3.3.1",
     "mdast-util-from-markdown": "^2.1.0",
     "mdast-util-frontmatter": "^2.0.1",
     "mdast-util-gfm": "^3.1.0",

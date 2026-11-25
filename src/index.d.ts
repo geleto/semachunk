@@ -2,15 +2,15 @@ export type ChunkingStrategy = 'auto' | 'blocks' | 'pack' | 'semantic';
 
 export interface ChunkingOptions {
 	logging?: boolean;
-	/** Extract HTML text, chunk Markdown sections, or split literal text (the default). */
-	inputFormat?: 'text' | 'html' | 'markdown';
-	/** Select natural blocks, greedy packing, or similarity merging. Defaults to 'auto'. */
+	/** Split literal text (default), extracted HTML text, Markdown sections or JSON records. */
+	inputFormat?: 'text' | 'html' | 'markdown' | 'json';
+	/** Select natural blocks, greedy packing, or similarity merging. By default 'auto' packs when no embedding callback is supplied. */
 	chunkingStrategy?: ChunkingStrategy;
 	/** Maximum trailing text to repeat in packed chunks, in tokens with a finite maxChunkTokens or UTF-16 units otherwise. Defaults to 0. */
 	chunkOverlap?: number;
 	/** BCP 47 language tag for sentence segmentation. Defaults to 'en'. */
 	locale?: string;
-	/** Soft per-chunk target in UTF-16 units, including join separators. Defaults to 1024 in Markdown and 500 in text and HTML. Use Infinity for token-only sizing. */
+	/** Soft per-chunk target in UTF-16 units. Defaults to 1024 in Markdown and JSON, and 500 in text and HTML. Use Infinity for token-only sizing. */
 	maxChunkSize?: number;
 	/** Hard token ceiling per chunk and embedding input, including any prefix. Defaults to Infinity. A finite cap also requires countTokens. */
 	maxChunkTokens?: number;
@@ -41,6 +41,7 @@ export interface ChunkingOptions {
 	candiateMergesPercentageCap?: number;
 	/** Per-pass soft minimum before the absolute limit. Nonnegative safe integer or Infinity. */
 	uncappedCandidateMerges?: number;
+	/** Include output vectors. Defaults to true with an embedding callback and false without one. */
 	returnEmbedding?: boolean;
 	chunkPrefix?: string;
 	excludeChunkPrefixInResults?: boolean;
@@ -53,39 +54,44 @@ export interface Chunk<Vector extends Embedding = number[]> {
 	embedding?: Vector;
 }
 
-export interface MarkdownChunk<Vector extends Embedding = number[]> extends Chunk<Vector> {
-	/** UTF-16 offset of the section heading. The preamble has a null sectionId. */
-	sectionId: number | null;
-	headingPath: string[];
+export interface RangedChunk<Vector extends Embedding = number[]> extends Chunk<Vector> {
 	/** Half-open input offsets and the corresponding offset in the returned text. */
 	sourceRanges: { start: number; end: number; outputStart: number }[];
 	/** Exact indexing string when it differs from the displayed text. */
 	embeddingText?: string;
 }
 
+export interface MarkdownChunk<Vector extends Embedding = number[]> extends RangedChunk<Vector> {
+	/** UTF-16 offset of the section heading. The preamble has a null sectionId. */
+	sectionId: number | null;
+	headingPath: string[];
+}
+
+export interface JsonChunk<Vector extends Embedding = number[]> extends RangedChunk<Vector> {
+	/** RFC 6901 pointer to the body in the original document. The root is the empty string. */
+	jsonPointer: string;
+}
+
+/** Return one finite numeric vector per text, in order and with a consistent dimension. */
 export type EmbedBatchCallback<Vector extends Embedding = number[]> = (texts: string[]) => Promise<Vector[]>;
 
-/**
- * Chunk text by structure, size or embedding similarity.
- * @param text - Input text to chunk
- * @param embedBatchCallback - Returns one finite numeric vector per input text, in order and with a consistent dimension
- * @param options - Chunking options
- * @returns Array of chunks with text and optional embedding
- */
+type ChunkArguments<Vector extends Embedding, Options extends unknown[]> =
+	Options | [embedBatchCallback: EmbedBatchCallback<Vector> | null | undefined, ...Options];
+type ChunkFor<Format, Vector extends Embedding> = Format extends 'markdown' ? MarkdownChunk<Vector>
+	: Format extends 'json' ? JsonChunk<Vector> : Chunk<Vector>;
+
+/** Omit the embedding callback to return text chunks and format metadata. */
 export function chunkText<Vector extends Embedding = number[]>(
-	text: string,
-	embedBatchCallback: EmbedBatchCallback<Vector>,
-	options: ChunkingOptions & { inputFormat: 'markdown' }
-): Promise<MarkdownChunk<Vector>[]>;
-export function chunkText<Vector extends Embedding = number[]>(
-	text: string,
-	embedBatchCallback: EmbedBatchCallback<Vector>,
-	options?: ChunkingOptions & { inputFormat?: 'text' | 'html' }
+	text: string, ...args: ChunkArguments<Vector, [options?: (ChunkingOptions & { inputFormat?: 'text' | 'html' }) | undefined]>
 ): Promise<Chunk<Vector>[]>;
 export function chunkText<Vector extends Embedding = number[]>(
-	text: string,
-	embedBatchCallback: EmbedBatchCallback<Vector>,
-	options?: ChunkingOptions
-): Promise<(Chunk<Vector> | MarkdownChunk<Vector>)[]>;
+	text: string, ...args: ChunkArguments<Vector, [options: ChunkingOptions & { inputFormat: 'markdown' }]>
+): Promise<MarkdownChunk<Vector>[]>;
+export function chunkText<Vector extends Embedding = number[]>(
+	text: string, ...args: ChunkArguments<Vector, [options: ChunkingOptions & { inputFormat: 'json' }]>
+): Promise<JsonChunk<Vector>[]>;
+export function chunkText<Vector extends Embedding = number[], Options extends ChunkingOptions | undefined = ChunkingOptions | undefined>(
+	text: string, ...args: ChunkArguments<Vector, [options?: Options]>
+): Promise<ChunkFor<Options extends ChunkingOptions ? Options['inputFormat'] : undefined, Vector>[]>;
 
 export function _printVersion(): Promise<void>;
