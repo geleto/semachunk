@@ -1,21 +1,12 @@
 import { dimension } from './encoder.mjs';
-import { createJoinCheck, sentenceTokenLimit, tokenBudget } from '../src/token-limit.js';
-
-export function packSentences(parts, maxChunkSize, maxChunkTokens = Infinity, countTokens, prefix = '') {
-    const limit = sentenceTokenLimit(parts, tokenBudget(maxChunkTokens, countTokens, prefix));
-    const canJoin = createJoinCheck(maxChunkSize, limit);
-    const output = [];
-    for (const part of parts) {
-        const i = output.length - 1;
-        if (i >= 0 && canJoin(output[i], part)) output[i] += ' ' + part;
-        else output.push(part);
-    }
-    return limit?.oversized.size ? output.flatMap(text => limit.oversized.get(text) ?? [text]) : output;
-}
+import { tokenBudget } from '../src/token-limit.js';
+import { packSentences } from '../src/packing.js';
 
 export function qualityPlans() {
-    const plans = { sentences: { combineChunks: false } };
+    const plans = { auto: {}, sentences: { combineChunks: false } };
     for (const size of [250, 500, 1000]) {
+        plans['blocks-' + size] = { chunkingStrategy: 'blocks', maxChunkSize: size };
+        plans['semantic-' + size] = { chunkingStrategy: 'semantic', maxChunkSize: size };
         plans['pack-' + size] = { pack: true, maxChunkSize: size };
         for (const cutoff of [0.3, 0.4, 0.5, 0.6, 0.7]) {
             plans['merge-' + size + '-' + cutoff] = { maxChunkSize: size, similarityThreshold: cutoff };
@@ -73,7 +64,7 @@ export async function measure(chunkText, doc, plan, vocab, matrix, countTokens) 
     }
     let output;
     if (plan.pack) {
-        output = packSentences(doc.parts, plan.maxChunkSize, plan.maxChunkTokens, countTokens);
+        output = packSentences(doc.parts, plan.maxChunkSize, tokenBudget(plan.maxChunkTokens ?? Infinity, countTokens, ''));
         if (output.length) embed([...new Set(output)]);
     } else {
         const { flatInput, ...options } = plan;

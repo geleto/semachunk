@@ -1,8 +1,11 @@
 export const DEFAULT_CONFIG = {
     LOGGING: false,
     INPUT_FORMAT: 'text',
+    CHUNKING_STRATEGY: 'auto',
+    CHUNK_OVERLAP: 0,
     LOCALE: 'en',
     MAX_CHUNK_SIZE: 500,
+    MARKDOWN_MAX_CHUNK_SIZE: 1024,
     MAX_CHUNK_TOKENS: Infinity,
     MAX_EMBEDDING_BATCH_SIZE: Infinity,
     MAX_CACHED_EMBEDDINGS: Infinity,

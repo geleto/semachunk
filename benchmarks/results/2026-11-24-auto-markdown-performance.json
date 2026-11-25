@@ -1,0 +1,53 @@
+{
+  "node": "v24.14.1",
+  "platform": "win32",
+  "maxChunkSize": "public default",
+  "maxEmbeddingBatchSize": 256,
+  "warmups": 1,
+  "results": {
+    "long section": {
+      "sections": 1,
+      "sourceUnits": 114887,
+      "chunks": 1025,
+      "chunkTokens": {
+        "min": 10,
+        "median": 16,
+        "max": 35
+      },
+      "milliseconds": [
+        262.096,
+        376.1587000000002,
+        233.3551
+      ],
+      "medianMs": 262.096,
+      "peakRSSKiB": 314340,
+      "calls": 3,
+      "singletonCalls": 0,
+      "embeddedTexts": 515,
+      "embeddedTokens": 17199,
+      "boundariesSHA256": "9cd19dd43347943a4d81fe0eefb254e00786d274b6f0ce293d782dde5b6b6e3b"
+    },
+    "short sections": {
+      "sections": 2048,
+      "sourceUnits": 149139,
+      "chunks": 2560,
+      "chunkTokens": {
+        "min": 10,
+        "median": 13,
+        "max": 16
+      },
+      "milliseconds": [
+        360.73260000000005,
+        292.61259999999993,
+        397.62310000000025
+      ],
+      "medianMs": 360.73260000000005,
+      "peakRSSKiB": 408988,
+      "calls": 7,
+      "singletonCalls": 0,
+      "embeddedTexts": 1539,
+      "embeddedTokens": 20804,
+      "boundariesSHA256": "9780793441959adaa752c5c4b187a2c44e62ae719602e7d60169b27539f434ff"
+    }
+  }
+}

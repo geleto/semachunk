@@ -1,0 +1,35 @@
+Date : 2026-11-25 10:07:46
+Directory : c:\Projects\semachunk\src
+Total : 10 files,  1019 codes, 86 comments, 91 blanks, all 1196 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JavaScript |          9 |        964 |         57 |         83 |      1,104 |
+| TypeScript |          1 |         55 |         29 |          8 |         92 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------+------------+------------+------------+------------+------------+
+| path                                        | files      | code       | comment    | blank      | total      |
++---------------------------------------------+------------+------------+------------+------------+------------+
+| .                                           |         10 |      1,019 |         86 |         91 |      1,196 |
++---------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                    | language   | code       | comment    | blank      | total      |
++---------------------------------------------+------------+------------+------------+------------+------------+
+| c:\Projects\semachunk\src\embeddings.js     | JavaScript |         68 |          7 |          6 |         81 |
+| c:\Projects\semachunk\src\index.d.ts        | TypeScript |         55 |         29 |          8 |         92 |
+| c:\Projects\semachunk\src\index.js          | JavaScript |        141 |          7 |          6 |        154 |
+| c:\Projects\semachunk\src\markdown-merge.js | JavaScript |         91 |          3 |          7 |        101 |
+| c:\Projects\semachunk\src\markdown.js       | JavaScript |        264 |          8 |         17 |        289 |
+| c:\Projects\semachunk\src\merge.js          | JavaScript |        157 |         17 |         22 |        196 |
+| c:\Projects\semachunk\src\packing.js        | JavaScript |         25 |          2 |          3 |         30 |
+| c:\Projects\semachunk\src\sentences.js      | JavaScript |        102 |          6 |         10 |        118 |
+| c:\Projects\semachunk\src\similarity.js     | JavaScript |         43 |          5 |          7 |         55 |
+| c:\Projects\semachunk\src\token-limit.js    | JavaScript |         73 |          2 |          5 |         80 |
+| Total                                       |            |      1,019 |         86 |         91 |      1,196 |
++---------------------------------------------+------------+------------+------------+------------+------------+

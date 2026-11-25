@@ -1,0 +1,28 @@
+{
+  "startedUTC": "2026-11-24T17:45:55.412Z",
+  "node": "v24.14.1",
+  "sentences": 4096,
+  "dimensions": 1536,
+  "results": [
+    {
+      "maxCachedEmbeddings": "Infinity",
+      "chunks": 512,
+      "boundariesSHA256": "71501c845141bfeeaa16e3fae8ad57c93698aa577b91047105e5e087f766d500",
+      "providerCalls": 16,
+      "providerTexts": 7680,
+      "singletonCalls": 0,
+      "peakAtProviderEntryBytes": 47142912,
+      "lastProviderEntryBytes": 47142912
+    },
+    {
+      "maxCachedEmbeddings": 256,
+      "chunks": 512,
+      "boundariesSHA256": "71501c845141bfeeaa16e3fae8ad57c93698aa577b91047105e5e087f766d500",
+      "providerCalls": 17,
+      "providerTexts": 7936,
+      "singletonCalls": 0,
+      "peakAtProviderEntryBytes": 19021824,
+      "lastProviderEntryBytes": 1572864
+    }
+  ]
+}

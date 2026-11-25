@@ -1,12 +1,18 @@
+export type ChunkingStrategy = 'auto' | 'blocks' | 'pack' | 'semantic';
+
 export interface ChunkingOptions {
 	logging?: boolean;
 	/** Extract HTML text, chunk Markdown sections, or split literal text (the default). */
 	inputFormat?: 'text' | 'html' | 'markdown';
+	/** Select natural blocks, greedy packing, or similarity merging. Defaults to 'auto'. */
+	chunkingStrategy?: ChunkingStrategy;
+	/** Maximum trailing text to repeat in packed chunks, in tokens with a finite maxChunkTokens or UTF-16 units otherwise. Defaults to 0. */
+	chunkOverlap?: number;
 	/** BCP 47 language tag for sentence segmentation. Defaults to 'en'. */
 	locale?: string;
-	/** Maximum UTF-16 code units per join, including its separator. Nonnegative safe integer or Infinity. */
+	/** Soft per-chunk target in UTF-16 units, including join separators. Defaults to 1024 in Markdown and 500 in text and HTML. Use Infinity for token-only sizing. */
 	maxChunkSize?: number;
-	/** Maximum tokens in raw and prefixed texts. A finite positive integer enables the tokenizer fallback. */
+	/** Hard token ceiling per chunk and embedding input, including any prefix. Defaults to Infinity. A finite cap also requires countTokens. */
 	maxChunkTokens?: number;
 	/** Synchronous token count using the embedding model's tokenizer, including its special tokens. */
 	countTokens?: (text: string) => number;
@@ -17,6 +23,7 @@ export interface ChunkingOptions {
 	/** Base cosine cutoff. Defaults to 0.05 for fixed text/HTML merging and 0.5 for document calibration or Markdown. */
 	similarityThreshold?: number;
 	excludeNonLetterSentences?: boolean;
+	/** In 'auto', false returns initial Markdown units or individual text/HTML sentences. Explicit strategies take precedence. */
 	combineChunks?: boolean;
 	/** Sets a fixed priority merge cutoff, overriding similarityThreshold and document calibration. */
 	combineChunksSimilarityThreshold?: number;
@@ -59,7 +66,7 @@ export interface MarkdownChunk<Vector extends Embedding = number[]> extends Chun
 export type EmbedBatchCallback<Vector extends Embedding = number[]> = (texts: string[]) => Promise<Vector[]>;
 
 /**
- * Chunk text semantically using batch embeddings
+ * Chunk text by structure, size or embedding similarity.
  * @param text - Input text to chunk
  * @param embedBatchCallback - Returns one finite numeric vector per input text, in order and with a consistent dimension
  * @param options - Chunking options

@@ -2,16 +2,91 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { openTokenizer } from './encoder.mjs';
 import { alignPlain, deliver, evidenceScore, goldReference } from './delivered-context.mjs';
-import { packSentences } from './chunking.mjs';
+import { packSentences } from '../src/packing.js';
 import { combineMarkdown } from './markdown-merging.mjs';
 import { boundaryFractions, indexDocument } from './markdown-index.mjs';
 import { scoreAtBudget } from './markdown-rules.mjs';
-import { paired, summarizeSemantic } from './markdown-decisions.mjs';
+import { contrast, paired, summarizeSemantic } from './markdown-decisions.mjs';
+import { evaluate, prepareDataset } from './markdown-evaluation.mjs';
 import { parseMarkdown } from '../src/markdown.js';
 import { mergeOriginalBoundaries } from '../src/markdown-merge.js';
 import { locateChunks, reciprocalRankFusion, summarizeRetrieval } from './retrieval-baselines.mjs';
 import { bm25Ranker, wordCounts } from './rag.mjs';
 import { flattenCorpus } from './semantic-corpora.mjs';
+
+test('cached retrieval distinguishes indexing text on identical displayed passages', async () => {
+    const query = { id: 'q', text: 'Beta?', pool: [0], references: [[[0, 8, 13]]] };
+    const dataset = { docs: [{ title: 'Study', source: 'Alpha.\n\nBeta.' }], questions: [query] };
+    const encoder = { stats: {}, countTokens: text => text.length, offsets: text => Array.from(text, (_, i) => [i, i + 1, i + 1]),
+        embed: texts => texts.map(text => ['Study: Alpha.', 'Beta.', 'Beta?'].includes(text) ? [1, 0] : [0, 1]) };
+    await prepareDataset(dataset, encoder);
+    const run = options => evaluate('cuad', dataset, { method: 'pack', chars: 6, ...options }, encoder, 'rules');
+    const plain = await run({}), options = { context: 'title', contextCap: 40 };
+    const titled = await run(options), repeated = await run(options);
+    assert.equal(query.scores.size, 2);
+    assert.equal(titled.bodyHash, plain.bodyHash);
+    assert.notDeepEqual(titled.examples.document.first, plain.examples.document.first);
+    assert.deepEqual(repeated.retrieval, titled.retrieval);
+    assert.equal(repeated.embeddedTokens, titled.embeddedTokens);
+});
+
+test('pooled comparisons keep independent search pools with the same local index distinct', () => {
+    const row = bit => ({ hotpotqa: { complete512: { 'pooled/dense': bit } } });
+    const sample = bit => ({ samples: { hotpotqa: { groups: [0] } }, runs: { scored: row(bit), packed: row('0') } });
+    assert.deepEqual(contrast([sample('1'), sample('0')], ['hotpotqa'], [['scored', 1], ['packed', -1]]),
+        { deltaPoints: 50, ci95: [0, 100] });
+});
+
+test('top-k retrieval delivers whole ranked chunks and charges their separators', async () => {
+    const parts = ['One', 'Two', 'Tri', 'Four', 'Gold'], source = parts.join('\n\n');
+    const dataset = { docs: [{ source }], questions: [{ id: 'q', text: 'Which?', pool: [0],
+        references: [[[0, source.indexOf('Gold'), source.length]]] }] };
+    const encoder = { stats: {}, countTokens: s => s.length, offsets: s => Array.from(s, (_, i) => [i, i + 1, i + 1]),
+        embed: texts => texts.map(() => [1]) };
+    await prepareDataset(dataset, encoder);
+    const result = await evaluate('cuad', dataset, { method: 'pack', chars: 4 }, encoder, 'baselines');
+    const { top3, top5 } = result.retrieval['document/dense'];
+    assert.equal(top3.complete, 0);
+    assert.equal(top3.deliveredTokens, parts.slice(0, 3).join('\n\n').length);
+    assert.equal(top5.complete, 1);
+    assert.equal(top5.deliveredTokens, source.length);
+    const options = { deliveries: [['clipped', 5, 17], ['whole', 4, Infinity], ['all', 5, source.length]] };
+    const measured = await evaluate('cuad', dataset, { method: 'pack', chars: 4 }, encoder, 'semantic', options);
+    assert.deepEqual(measured.hits['document/dense'], { clipped: '0', whole: '0', all: '1' });
+    assert.equal(measured.retrieval['document/dense'].clipped.deliveredTokens, 17);
+    const changed = await evaluate('cuad', dataset, { method: 'pack', chars: 4 }, encoder, 'semantic',
+        { deliveries: [['clipped', 5, source.length]] });
+    assert.deepEqual(changed.hits['document/dense'], { clipped: '1' });
+});
+
+test('a soft packing target preserves fitting paragraphs while a hard cap splits them', async () => {
+    const source = 'Alpha. Beta.\n\nX\n\nY', doc = { source, parsed: new Map() };
+    const encoder = { countTokens: s => s.length, embed: async texts => texts.map(() => [1]) };
+    async function texts(policy) {
+        const costs = { calls: 0, texts: 0, singletons: 0, indexTexts: 0, indexTokens: 0, embeddedTokens: 0 };
+        return (await indexDocument(doc, policy, costs, [], {}, encoder)).map(c => c.text);
+    }
+    assert.deepEqual(await texts({ method: 'pack', tokens: 20, packTarget: 7 }), ['Alpha. Beta.', 'X\n\nY']);
+    assert.deepEqual(await texts({ method: 'public-markdown', tokens: 7 }), ['Alpha. ', 'Beta.', 'X\n\nY']);
+    assert.deepEqual(await texts({ method: 'plain-priority', chunkingStrategy: 'blocks', tokens: 20 }), ['Alpha. Beta.', 'X', 'Y']);
+    assert.deepEqual(await texts({ method: 'plain-priority', chunkingStrategy: 'blocks', tokens: 7 }), ['Alpha.', 'Beta.', 'X', 'Y']);
+});
+
+test('a document rule reranks the pool using each document’s selected layout', async () => {
+    const docs = [{ source: 'Noise\n\nOther' }, { source: 'Gold\n\nPale' }];
+    const dataset = { docs, questions: [{ id: 'q', text: 'Which?', pool: [0, 1], pooled: [0, 1], references: [[[1, 0, 4]]] }] };
+    const encoder = { stats: {}, countTokens: s => s.length, offsets: s => Array.from(s, (_, i) => [i, i + 1, i + 1]),
+        embed: texts => texts.map(s => ['Which?', 'Noise'].includes(s) ? [1, 0] : s === 'Gold' ? [0.8, 0.6] : [0, 1]) };
+    await prepareDataset(dataset, encoder);
+    const units = { method: 'public-markdown', tokens: 20, combineChunks: false }, pack = { method: 'pack', tokens: 20 };
+    async function hit(select) {
+        const row = await evaluate('hotpotqa', dataset, pack, encoder, 'semantic', { deliveries: [['one', 1, 20]], select });
+        return row.hits['pooled/dense'].one;
+    }
+    assert.equal(await hit(() => units), '0');
+    assert.equal(await hit(() => pack), '0');
+    assert.equal(await hit(doc => doc === docs[0] ? pack : units), '1');
+});
 
 test('flattened evidence preserves the annotated occurrence across headings, CRLF and Unicode', () => {
     const source = '# Repeated\r\n\r\n## Section 🙂\r\nRepeated  words\tend.';
@@ -88,10 +163,10 @@ test('the paired formatting effect uses complete document hits and continuous me
 
 test('sentence packing budgets an oversized first sentence and the serialized join', () => {
     const parts = ['abcdefghij', 'abc', 'def'];
-    const packed = packSentences(parts, Infinity, 4, s => s.length);
+    const packed = packSentences(parts, Infinity, s => s.length <= 4);
     assert.equal(packed.join(''), parts.join(''));
     assert.ok(packed.every(s => s.length <= 4));
-    assert.deepEqual(packSentences(['a', 'b', 'c'], Infinity, 2, s => s === 'a b' ? 3 : s.split(' ').length), ['a', 'b c']);
+    assert.deepEqual(packSentences(['a', 'b', 'c'], Infinity, s => s !== 'a b' && s.split(' ').length <= 2), ['a', 'b c']);
 });
 
 test('literal context charges its separators and generated text, maps normalization, and credits repetitions once', t => {
@@ -148,12 +223,13 @@ test('both priority experiments batch eligible endpoints across sections and mer
 
 test('original-boundary scoring can discover a newly token-eligible gap without scoring a merged body', async () => {
     const source = 'A\n\nB\n\nC', units = parseMarkdown(source, { maxChunkSize: Infinity });
-    const batches = [], calibration = { scores: [] };
+    const batches = [], scores = [];
+    const vectors = { A: [0.55, Math.sqrt(1 - 0.55 ** 2)], B: [1, 0], C: [0.6, 0.8] };
     const result = await combineMarkdown(source, units, texts => {
         batches.push(texts);
-        return texts.map(() => [1]);
-    }, { method: 'fixed', maxChunkSize: Infinity, fits: s => s !== 'A\n\nB', adaptive: true }, calibration);
-    assert.deepEqual(calibration, { scores: [1], cutoff: 0.5 });
+        return texts.map(text => vectors[text]);
+    }, { method: 'fixed', maxChunkSize: Infinity, fits: s => s !== 'A\n\nB', adaptive: true }, scores);
+    assert.deepEqual(scores, [0.6]);
     assert.deepEqual(batches, [['B', 'C'], ['A']]);
     assert.equal(result.length, 1);
     assert.equal(source.slice(result[0].start, result[0].end), source);

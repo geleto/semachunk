@@ -1,4 +1,5 @@
 import { splitBySentence } from 'string-segmenter';
+import { packSentences } from './packing.js';
 
 const blockElements = new Set(
     'address article aside blockquote caption dd details dialog div dl dt fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 header hgroup hr li main menu nav ol p pre section summary table tbody td th tr ul'.split(' ')
@@ -65,28 +66,52 @@ function* textBlocks(text) {
     if (lines.length) yield lines.join(' ');
 }
 
-export async function parseSentences(text, { inputFormat, locale = 'en', excludeNonLetterSentences }) {
+export function sentenceLocale(locale = 'en') {
     if (typeof locale !== 'string') throw new TypeError('locale must be a language tag string.');
-    // Preserve the default fast path. Reject invalid tags even for empty input.
-    if (locale !== 'en') [locale] = Intl.getCanonicalLocales(locale);
-    if (inputFormat === 'html') {
-        text = await htmlToText(text);
-    } else if (inputFormat !== 'text') {
-        throw new TypeError("inputFormat must be 'text', 'html' or 'markdown'.");
-    }
+    return locale === 'en' ? locale : Intl.getCanonicalLocales(locale)[0];
+}
 
+export function* sentenceEnds(text, locale) {
+    // The segmenter uppercases the character after a period and whitespace.
+    // Keep its offsets valid when uppercasing expands a character (e.g. ß).
+    const marked = text.replace(/(?<=\.\s+)[^\x00-\x7f]/gu, c => c.toLocaleUpperCase().slice(0, c.length));
+    let end = 0;
+    for (const { index, segment } of splitBySentence(marked, locale)) {
+        end = index + segment.length;
+        yield end;
+    }
+    // A trailing abbreviation with whitespace may still be pending.
+    if (end < text.length) yield text.length;
+}
+
+function splitSentences(text, locale, excludeNonLetterSentences) {
     const sentences = [];
     const multiline = /[\r\n\u2028\u2029]/.test(text);
     for (const block of multiline ? textBlocks(text) : [text.trim()]) {
         const normalized = block.replace(/\s+/g, ' ');
-        // Mask a numbered list marker's period and preserve source offsets when
-        // the segmenter uppercases a character that expands (e.g. ß to SS).
+        // Keep a numbered list marker with its item.
         const marked = multiline ? normalized.replace(/^(\d{1,3})\.(?= )/, '$1)') : normalized;
-        const boundaryText = marked.replace(/(?<=\. )[^\x00-\x7f]/gu, char => char.toUpperCase().slice(0, char.length));
-        for (const { index, segment } of splitBySentence(boundaryText, locale)) {
-            const sentence = normalized.slice(index, index + segment.length).trim();
+        let start = 0;
+        for (const end of sentenceEnds(marked, locale)) {
+            const sentence = normalized.slice(start, end).trim();
+            start = end;
             if (!excludeNonLetterSentences || /\p{L}/u.test(sentence)) sentences.push(sentence);
         }
     }
     return sentences;
+}
+
+export async function parseText(text, { inputFormat, locale, excludeNonLetterSentences, strategy, maxChunkSize, fits }) {
+    locale = sentenceLocale(locale);
+    if (inputFormat === 'html') text = await htmlToText(text);
+    else if (inputFormat !== 'text') throw new TypeError("inputFormat must be 'text', 'html' or 'markdown'.");
+
+    if (strategy !== 'blocks') return splitSentences(text, locale, excludeNonLetterSentences);
+    const paragraphs = text.replace(/\r\n?|\u2028/g, '\n').split(/\n[^\S\n]*\n|\u2029/u);
+    return paragraphs.flatMap(paragraph => {
+        const body = paragraph.replace(/\s+/gu, ' ').trim();
+        if (!body) return [];
+        if (!excludeNonLetterSentences && body.length <= maxChunkSize && (!fits || fits(body))) return [body];
+        return packSentences(splitSentences(paragraph, locale, excludeNonLetterSentences), maxChunkSize, fits);
+    });
 }

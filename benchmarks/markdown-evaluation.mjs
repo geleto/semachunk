@@ -1,7 +1,6 @@
-import { chunkText } from '../src/index.js';
-import { denseRanker, split as splitPlain, vocabulary } from './chunking.mjs';
+import { denseRanker, vocabulary } from './chunking.mjs';
 import { sha256 } from './corpora.mjs';
-import { deliver, evidenceScore, goldReference, repeatedSourceFraction } from './delivered-context.mjs';
+import { deliver, evidenceScore, goldReference } from './delivered-context.mjs';
 import { documentRule, indexDocument } from './markdown-index.mjs';
 import { bm25Ranker, budgets, wordCounts } from './rag.mjs';
 import { dimension } from './encoder.mjs';
@@ -14,38 +13,30 @@ function distribution(values) {
         p90: v[Math.floor(v.length * 0.9)], max: v.at(-1) };
 }
 
-function indexedWindows(byDoc, countTokens) {
-    const texts = byDoc.map(rows => rows.map(c => c.embeddingText ?? c.text));
-    const lengths = texts.flat().map(countTokens);
-    const above = Object.fromEntries([256, 320, 384].map(cap => [cap, lengths.filter(n => n > cap).length]));
-    return { indexHash: sha256(JSON.stringify(texts)), indexChunkTokens: { ...distribution(lengths), above } };
-}
-
-export async function prepareDataset(dataset, encoder, plainParts = false) {
+export async function prepareDataset(dataset, encoder) {
     const { docs, questions } = dataset;
     for (const doc of docs) {
         doc.offsets = encoder.offsets(doc.source);
         doc.ends = doc.offsets.map(o => o[1]);
-        if (plainParts) doc.parts = await splitPlain(chunkText, doc.source);
         doc.parsed = new Map();
     }
     for (const q of questions) q.gold = q.references.map(ref => goldReference(ref, docs));
     await encoder.embed(questions.map(q => q.text));
 }
 
-export async function evaluate(task, { docs, questions }, policy, encoder, mode) {
+export async function evaluate(task, { docs, questions }, policy, encoder, mode, { deliveries, select } = {}) {
     const { countTokens } = encoder;
-    const ruleStudy = mode === 'rules', baselines = mode === 'baselines', denseOnly = mode === 'semantic' || mode === 'overlap';
-    const reuseScores = ruleStudy || mode === 'overlap';
+    const ruleStudy = mode === 'rules', baselines = mode === 'baselines', denseOnly = mode === 'semantic';
+    const reuse = ruleStudy || Boolean(deliveries), deliveryKey = JSON.stringify([mode, deliveries]);
     const start = performance.now(), paid = { ...encoder.stats };
     const costs = { calls: 0, texts: 0, singletons: 0, embeddedTokens: 0, indexTexts: 0, indexTokens: 0 };
     const initial = [], context = { retained: 0, shortened: 0, omitted: 0, alreadyPresentOrUnavailable: 0 };
     let semanticDocuments = 0;
     const byDoc = await Promise.all(docs.map(async (doc, d) => {
-        const selected = documentRule(doc, policy, countTokens);
+        const selected = select ? select(doc) : documentRule(doc, policy, countTokens);
         if (selected.method === 'fixed') semanticDocuments++;
         const key = JSON.stringify(selected, Object.keys(selected).sort());
-        if (ruleStudy) doc.layouts ??= new Map();
+        if (reuse) doc.layouts ??= new Map();
         let layout = doc.layouts?.get(key);
         if (!layout) {
             const work = Object.fromEntries(Object.keys(costs).map(k => [k, 0])), scores = [];
@@ -58,24 +49,24 @@ export async function evaluate(task, { docs, questions }, policy, encoder, mode)
         return layout.rows;
     }));
     const bodyHash = sha256(JSON.stringify(byDoc.map(rows => rows.map(c => [c.text, c.sourceRanges]))));
-    const layouts = reuseScores && byDoc.map(rows => sha256(JSON.stringify(rows.map(c => [c.text, c.sourceRanges, c.embeddingText ?? c.text]))));
+    const layouts = reuse && byDoc.map(rows => sha256(JSON.stringify(rows.map(c => [c.text, c.sourceRanges, c.embeddingText ?? c.text]))));
     const vocab = vocabulary();
     for (const c of byDoc.flat()) c.index = vocab.intern(c.embeddingText ?? c.text);
     for (const q of questions) vocab.intern(q.text);
     const vectors = await encoder.embed(vocab.texts), matrix = new Float32Array(vectors.length * dimension);
     vectors.forEach((v, i) => matrix.set(v, i * dimension));
     const dense = denseRanker(matrix), pools = new Map(), retrieval = {}, complete512 = {}, recall512 = {}, examples = {};
-    const all = docs.map((_, d) => d);
+    const all = docs.map((_, d) => d), hits = {}, recalls = {};
     for (const [i, q] of questions.entries()) {
         for (const [name, pool] of task === 'hotpotqa' ? [['shortlist', q.pool], ['pooled', q.pooled ?? all]] : [['document', q.pool]]) {
             const key = name + pool.join(',');
             if (!pools.has(key)) {
                 const passages = pool.flatMap(d => byDoc[d]);
                 pools.set(key, { passages, indices: passages.map(p => p.index), bm25: !denseOnly && bm25Ranker(passages.map(p => wordCounts(p.text))),
-                    layout: reuseScores && mode + '/' + sha256(pool.map(d => d + '/' + layouts[d]).join(',')) });
+                    layout: reuse && deliveryKey + sha256(pool.map(d => d + '/' + layouts[d]).join(',')) });
             }
             const { passages, indices, bm25, layout } = pools.get(key);
-            const cache = reuseScores ? (q.scores ??= new Map()) : null;
+            const cache = reuse ? (q.scores ??= new Map()) : null;
             let measured = cache?.get(layout);
             if (!measured) {
                 measured = [];
@@ -85,13 +76,18 @@ export async function evaluate(task, { docs, questions }, policy, encoder, mode)
                 if (baselines) rankings.push(['hybrid', reciprocalRankFusion(semantic, bm25(terms, true))]);
                 for (const [ranker, order] of rankings) {
                     const ranked = order.map(j => passages[j]);
-                    for (const budget of budgets) {
-                        const { projected, text, ranges } = deliver(ranked, budget, encoder);
+                    function measure(budget, passages, tokenLimit) {
+                        const { projected, text } = deliver(passages, tokenLimit, encoder);
                         const metrics = evidenceScore(projected, q.gold);
-                        if (mode === 'overlap' && budget === 512) metrics.repeatedSource = repeatedSourceFraction(ranges);
                         const trace = i === 0 && budget === 512 && ranker === 'dense' && { id: q.id, first: ranked[0].sourceRanges,
                             doc: ranked[0].doc, deliveredSHA256: sha256(text), ...metrics };
                         measured.push({ ranker, budget, metrics, spent: projected.length, trace });
+                    }
+                    if (deliveries) {
+                        for (const [name, k, limit] of deliveries) measure(name, k < Infinity ? ranked.slice(0, k) : ranked, limit);
+                    } else {
+                        for (const budget of budgets) measure(budget, ranked, budget);
+                        if (baselines) for (const k of [3, 5]) measure('top' + k, ranked.slice(0, k), Infinity);
                     }
                 }
                 cache?.set(layout, measured);
@@ -102,8 +98,12 @@ export async function evaluate(task, { docs, questions }, policy, encoder, mode)
                 const total = scores[budget] ??= { complete: 0, recall: 0, precision: 0, deliveredTokens: 0 };
                 total.complete += metrics.complete;
                 for (const k of ['recall', 'precision']) total[k] += metrics[k] / questions.length;
-                if (metrics.repeatedSource !== undefined) total.repeatedSource = (total.repeatedSource ?? 0) + metrics.repeatedSource / questions.length;
                 total.deliveredTokens += spent / questions.length;
+                if (deliveries) {
+                    const outcomes = hits[arm] ??= {};
+                    outcomes[budget] = (outcomes[budget] ?? '') + metrics.complete;
+                    if (task === 'qmsum') ((recalls[arm] ??= {})[budget] ??= []).push(metrics.recall);
+                }
                 if (budget === 512 && (ranker === 'dense' || baselines)) {
                     complete512[arm] = (complete512[arm] ?? '') + metrics.complete;
                     if (denseOnly && task === 'qmsum') (recall512[arm] ??= []).push(metrics.recall);
@@ -112,16 +112,13 @@ export async function evaluate(task, { docs, questions }, policy, encoder, mode)
             }
         }
     }
-    if (policy.growth) context.growth.cosines = distribution(context.growth.cosines);
-    if (context.growth?.mergeCutoffs) context.growth.mergeCutoffs = distribution(context.growth.mergeCutoffs);
-    const bodyCap = policy.growth?.returnCore ? (policy.coreTokens ?? policy.tokens) : policy.tokens;
     return { questions: questions.length, bodyHash, chunkTokens: distribution(byDoc.flat().map(c => countTokens(c.text))),
-        ...(mode === 'overlap' && indexedWindows(byDoc, countTokens)),
         ...costs, ...(ruleStudy && { semanticDocuments }),
-        ...((baselines || denseOnly) && { overTarget: byDoc.flat().filter(c => bodyCap ? countTokens(c.text) > bodyCap : c.text.length > policy.chars).length }),
+        ...((baselines || denseOnly) && { overTarget: byDoc.flat().filter(c => policy.tokens ? countTokens(c.text) > policy.tokens : c.text.length > policy.chars).length }),
         ...(denseOnly && { overEmbeddingLimit: byDoc.flat().filter(c => countTokens(c.embeddingText ?? c.text) > 8191).length }),
         ...(denseOnly && task === 'qmsum' && { recall512 }),
-        ...(policy.growth && { growth: context.growth }), ...(policy.context && { context }), ...(initial.length && { eligibleCosines: distribution(initial) }),
-        retrieval, complete512, examples, milliseconds: performance.now() - start, peakRSSKiB: process.resourceUsage().maxRSS,
+        ...(policy.context && { context }), ...(initial.length && { eligibleCosines: distribution(initial) }),
+        retrieval, complete512, examples, ...(deliveries && { hits }), ...(deliveries && task === 'qmsum' && { recalls }),
+        milliseconds: performance.now() - start, peakRSSKiB: process.resourceUsage().maxRSS,
         encoder: Object.fromEntries(Object.entries(encoder.stats).map(([k, n]) => [k, n - paid[k]])) };
 }

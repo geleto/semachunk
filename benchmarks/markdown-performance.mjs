@@ -7,7 +7,7 @@ import { openTokenizer } from './encoder.mjs';
 
 const workloads = ['long section', 'short sections'];
 const count = 2048;
-const maxChunkSize = Number(process.argv[3] ?? 500);
+const maxChunkSize = process.argv[3] === undefined ? undefined : Number(process.argv[3]);
 if (workloads.includes(process.argv[2])) {
     const many = process.argv[2] === workloads[1];
     const source = Array.from({ length: count }, (_, i) => [
@@ -40,8 +40,8 @@ if (workloads.includes(process.argv[2])) {
     tokenizer.close();
 } else {
     const results = Object.fromEntries(workloads.map(name => [name, JSON.parse(execFileSync(process.execPath,
-        [fileURLToPath(import.meta.url), name, String(maxChunkSize)], { encoding: 'utf8' }))]));
-    const report = JSON.stringify({ node: process.version, platform: process.platform, maxChunkSize,
+        [fileURLToPath(import.meta.url), name, ...process.argv.slice(3)], { encoding: 'utf8' }))]));
+    const report = JSON.stringify({ node: process.version, platform: process.platform, maxChunkSize: maxChunkSize ?? 'public default',
         maxEmbeddingBatchSize: 256, warmups: 1, results }, null, 2) + '\n';
     if (process.argv[2]) await writeFile(process.argv[2], report, { flag: 'wx' });
     console.log(report);

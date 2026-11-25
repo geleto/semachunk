@@ -4,6 +4,7 @@ import { frontmatterFromMarkdown } from 'mdast-util-frontmatter';
 import { gfm } from 'micromark-extension-gfm';
 import { frontmatter } from 'micromark-extension-frontmatter';
 import { splitSpans, TokenLimitError } from './token-limit.js';
+import { sentenceEnds, sentenceLocale } from './sentences.js';
 
 export const markdownGrammar = {
     extensions: [gfm(), frontmatter(['yaml'])],
@@ -13,6 +14,8 @@ const containers = new Set(['list', 'listItem', 'blockquote', 'footnoteDefinitio
 const inlineAtoms = new Set(['inlineCode', 'link', 'linkReference', 'image', 'imageReference', 'footnoteReference']);
 
 function omitted(node) {
+    if (node.type === 'paragraph') return node.children.every(c => c.type === 'text' && !/\S/u.test(c.value));
+    if (node.type === 'html') return !node.value.replace(/<!--[\s\S]*?(?:-->|$)/g, '').trim();
     return node.type === 'definition' || (node.type === 'footnoteDefinition' && !node.children.length);
 }
 
@@ -50,14 +53,13 @@ export function markdownResult(source, unit) {
     return { text: markdownText(source, unit), sectionId: unit.sectionId, headingPath: [...unit.headingPath], sourceRanges };
 }
 
-export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en', excludeNonLetterSentences, sentenceUnits }) {
-    if (typeof locale !== 'string') throw new TypeError('locale must be a language tag string.');
+export function parseMarkdown(source, { maxChunkSize = 500, fits, locale, excludeNonLetterSentences }) {
+    locale = sentenceLocale(locale);
     const root = fromMarkdown(source, markdownGrammar);
     // micromark consumes a leading BOM before assigning positions.
     const bom = Number(source.startsWith('\uFEFF'));
     const offset = p => bom + p.offset;
     const lineStart = node => offset(node.position.start) + 1 - node.position.start.column;
-    const segmenter = new Intl.Segmenter(locale, { granularity: 'sentence' });
     const within = text => !fits || fits(text);
     const wholeFits = (a, b) => b - a <= maxChunkSize && within(source.slice(a, b));
 
@@ -69,9 +71,6 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
     function leaf(start, end, kind, prefix = '', protectedSpans = [], continuationStart = start) {
         function make(a, b) {
             const unit = raw(a, b, kind);
-            // A hard cap can split a sentence. It remains a core unit, but
-            // cannot supply a whole sentence of neighboring context.
-            if (kind === 'prose' && (a !== start || b !== end)) unit.overlapBarrier = true;
             if (prefix && a !== continuationStart && !/[\r\n]/.test(source[a - 1])) unit.parts = [prefix, [a, b]];
             return unit;
         }
@@ -107,8 +106,8 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
         collect(node);
         const spans = [];
         let start = a, atom = 0;
-        for (const { segment, index } of segmenter.segment(source.slice(a, b).replace(/[\r\n]/g, ' '))) {
-            const end = a + index + segment.length;
+        for (const boundary of sentenceEnds(source.slice(a, b).replace(/[\r\n]/g, ' '), locale)) {
+            const end = a + boundary;
             while (atom < atoms.length && atoms[atom][1] <= end) atom++;
             if (atom < atoms.length && atoms[atom][0] < end) continue;
             spans.push([start, end]);
@@ -209,16 +208,17 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
         try {
             for (const match of source.slice(bodyStart, bodyEnd).matchAll(/[^\r\n]*(?:\r\n|[\r\n]|$)/g)) {
                 if (!match[0]) continue;
-                const next = line + match[0].length;
-                if (group < line && !check(group, next)) {
-                    units.push(fragment(group, line));
-                    group = line;
+                const startOfLine = line;
+                line += match[0].length;
+                if (check(group, line)) continue;
+                // Keep pending blank lines with the following code when splitting it.
+                if (group < startOfLine && /\S/u.test(source.slice(group, startOfLine))) {
+                    units.push(fragment(group, startOfLine));
+                    group = startOfLine;
+                    if (check(group, line)) continue;
                 }
-                if (group === line && !check(line, next)) {
-                    for (const [a, b] of splitSpans(source, line, next, check)) units.push(fragment(a, b));
-                    group = next;
-                }
-                line = next;
+                for (const [a, b] of splitSpans(source, group, line, check)) units.push(fragment(a, b));
+                group = line;
             }
             if (group < bodyEnd) units.push(fragment(group, bodyEnd));
             return units;
@@ -232,8 +232,7 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
     function* blocks(node, start, end) {
         if (omitted(node)) { run++; return; }
         const kind = protectedBlocks.has(node) ? (containers.has(node.type) ? 'container' : node.type) : 'prose';
-        if (!descend.has(node) && !(sentenceUnits && node.type === 'paragraph') &&
-            (node.type === 'code' ? within(source.slice(start, end)) : wholeFits(start, end))) {
+        if (!descend.has(node) && (node.type === 'code' ? within(source.slice(start, end)) : wholeFits(start, end))) {
             yield raw(start, end, kind);
         } else if (containers.has(node.type)) {
             const children = node.children;
@@ -270,9 +269,6 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale = 'en',
         if (['yaml', 'definition', 'thematicBreak'].includes(node.type)) { pending = []; run++; continue; }
         inspect(node);
         for (const unit of blocks(node, start, end)) {
-            // Ordinary packing also accepts fitting containers. Context
-            // expansion may borrow only top-level paragraph text.
-            if (node.type !== 'paragraph' && unit.kind === 'prose') unit.overlapBarrier = true;
             let first = unit.start, adjacent = unit.start;
             for (let i = pending.length - 1; i >= 0; i--) {
                 const h = pending[i];

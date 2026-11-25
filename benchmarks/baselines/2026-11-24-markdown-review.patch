@@ -1,0 +1,391 @@
+diff --git a/benchmarks/markdown-evaluation.mjs b/benchmarks/markdown-evaluation.mjs
+index 74d48fe..f5447a2 100644
+--- a/benchmarks/markdown-evaluation.mjs
++++ b/benchmarks/markdown-evaluation.mjs
+@@ -84,9 +84,14 @@ export async function evaluate(task, { docs, questions }, policy, encoder, mode)
+                 if (!denseOnly) rankings.push(['bm25', bm25(terms)]);
+                 if (baselines) rankings.push(['hybrid', reciprocalRankFusion(semantic, bm25(terms, true))]);
+                 for (const [ranker, order] of rankings) {
+-                    const ranked = order.map(j => passages[j]);
+-                    for (const budget of budgets) {
+-                        const { projected, text, ranges } = deliver(ranked, budget, encoder);
++                    let ranked = order.map(j => passages[j]);
++                    if (policy.parents) ranked = [...new Set(ranked.map(c => {
++                        c.parent.doc = c.doc;
++                        return c.parent;
++                    }))];
++                    for (const budget of [...budgets, 'top3', 'top5']) {
++                        const k = typeof budget === 'string' ? Number(budget.slice(3)) : 0;
++                        const { projected, text, ranges } = deliver(k ? ranked.slice(0, k) : ranked, k ? Infinity : budget, encoder);
+                         const metrics = evidenceScore(projected, q.gold);
+                         if (mode === 'overlap' && budget === 512) metrics.repeatedSource = repeatedSourceFraction(ranges);
+                         const trace = i === 0 && budget === 512 && ranker === 'dense' && { id: q.id, first: ranked[0].sourceRanges,
+diff --git a/benchmarks/markdown-index.mjs b/benchmarks/markdown-index.mjs
+index 6417343..1109852 100644
+--- a/benchmarks/markdown-index.mjs
++++ b/benchmarks/markdown-index.mjs
+@@ -2,7 +2,8 @@ import { fromMarkdown } from 'mdast-util-from-markdown';
+ import { chunkText } from '../src/index.js';
+ import { createBatchEmbedder } from '../src/embeddings.js';
+ import { markdownResult, markdownText, parseMarkdown } from '../src/markdown.js';
+-import { fitsMarkdownJoin } from '../src/markdown-merge.js';
++import { fitsMarkdownJoin, packMarkdown } from '../src/markdown-merge.js';
++import { pathToFileURL } from 'node:url';
+ import { splitSpans, tokenBudget } from '../src/token-limit.js';
+ import { packSentences } from './chunking.mjs';
+ import { alignPlain, tokenWindows } from './delivered-context.mjs';
+@@ -12,9 +13,13 @@ import { auditBoundaries, meetingTurnStarts } from './overlap-boundaries.mjs';
+ import { referenceChunks } from './retrieval-baselines.mjs';
+ import { modelInputTokens } from './encoder.mjs';
+ 
++const reviewParser = process.env.REVIEW_MARKDOWN_PARSER
++    ? (await import(pathToFileURL(process.env.REVIEW_MARKDOWN_PARSER))).parseMarkdown : parseMarkdown;
++const publicChunker = process.env.REVIEW_MARKDOWN_PARSER
++    ? (await import(new URL('./index.js', pathToFileURL(process.env.REVIEW_MARKDOWN_PARSER)))).chunkText : chunkText;
+ function parsed(doc, size, tokens, fits, sentences) {
+     const key = [size, tokens, Boolean(sentences)].join('/');
+-    if (!doc.parsed.has(key)) doc.parsed.set(key, parseMarkdown(doc.source, { maxChunkSize: size, fits, sentenceUnits: sentences }));
++    if (!doc.parsed.has(key)) doc.parsed.set(key, reviewParser(doc.source, { maxChunkSize: size, fits, sentenceUnits: sentences }));
+     return doc.parsed.get(key);
+ }
+ 
+@@ -105,7 +110,7 @@ export async function indexDocument(doc, policy, costs, initial, context, encode
+     let chunks, cores, expanded;
+     if (publicAPI) {
+         const markdown = policy.method === 'public-markdown';
+-        const output = await chunkText(doc.source, record, { inputFormat: markdown ? 'markdown' : 'text', maxChunkSize,
++        const output = await publicChunker(doc.source, record, { inputFormat: markdown ? 'markdown' : 'text', maxChunkSize, combineChunks: !policy.unmerged,
+             maxChunkTokens, countTokens, maxEmbeddingBatchSize: 256, chunkPrefix: doc.chunkPrefix, excludeChunkPrefixInResults: true });
+         chunks = markdown ? output.map(({ embedding, ...chunk }) => chunk) : alignPlain(doc.source, output.map(c => c.text));
+     } else if (nativeSplitter) {
+@@ -131,7 +136,7 @@ export async function indexDocument(doc, policy, costs, initial, context, encode
+         const coreFits = coreTokens === maxChunkTokens ? fits : tokenBudget(coreTokens, countTokens, required);
+         const input = parsed(doc, maxChunkSize, coreTokens, coreFits, policy.sentences);
+         const calibration = { scores: initial };
+-        cores = await combineMarkdown(doc.source, input, embed, { ...policy, maxChunkSize, fits: coreFits }, calibration);
++        cores = await combineMarkdown(doc.source, input, embed, { ...policy, maxChunkSize, fits: coreFits, countTokens }, calibration);
+         if (policy.growth) {
+             const stats = context.growth ??= { grewPerRound: [], duplicateSpans: 0, cosines: [],
+                 oneAddition: { count: 0, below08: 0 }, multipleAdditions: { count: 0, below08: 0 } };
+@@ -146,6 +151,18 @@ export async function indexDocument(doc, policy, costs, initial, context, encode
+         }
+         const returned = returnCore ? cores : expanded ?? cores;
+         chunks = returned.map(unit => markdownResult(doc.source, unit));
++        if (policy.parents) {
++            const parents = packMarkdown(doc.source, input, maxChunkSize, fits);
++            let i = 0;
++            for (const parent of parents) {
++                const display = markdownResult(doc.source, parent);
++                while (i < input.length && input[i].start < parent.end) {
++                    if (input[i].end > parent.end) throw new Error('Child crosses parent boundary');
++                    chunks[i++].parent = display;
++                }
++            }
++            if (i !== chunks.length) throw new Error('Unassigned child');
++        }
+     }
+     policy.checkCores?.(doc, expanded && !returnCore ? cores.map(u => markdownResult(doc.source, u)) : chunks);
+     if (required || policy.context || returnCore) {
+diff --git a/benchmarks/markdown-merging.mjs b/benchmarks/markdown-merging.mjs
+index 3f8c1f5..3249d3d 100644
+--- a/benchmarks/markdown-merging.mjs
++++ b/benchmarks/markdown-merging.mjs
+@@ -2,6 +2,7 @@ import { markdownText } from '../src/markdown.js';
+ import { fitsMarkdownJoin, mergePass, packMarkdown } from '../src/markdown-merge.js';
+ import { directionCosine, documentMergeThreshold, SimilarityStatistics, vectorDirection } from '../src/similarity.js';
+ import { DEFAULT_CONFIG as defaults } from '../config.js';
++import { sha256 } from './corpora.mjs';
+ 
+ // All experiments share the production section, source-gap and budget check.
+ // The comparison uses a stable sorted list of live boundaries each pass.
+@@ -10,7 +11,7 @@ export async function combineMarkdown(source, units, embed, options, calibration
+         maxMergesPerPass = defaults.MAX_MERGES_PER_PASS, candidateMergesPercentageCap = defaults.MAX_MERGES_PER_PASS_PERCENTAGE,
+         uncappedCandidateMerges = defaults.UNCAPPED_CANDIDATE_MERGES } = options;
+     calibration.cutoff = options.cutoff ?? 0.5;
+-    if (method === 'pack' && !leadIn) return packMarkdown(source, units, maxChunkSize, fits);
++    if (method === 'pack' && !leadIn && !options.maxUnits) return packMarkdown(source, units, maxChunkSize, fits);
+     let live = units.map((u, i) => ({ ...u, first: i, last: i }));
+     function eligible(a, b) {
+         const lead = leadIn && a.first === a.last && b.first === b.last && (b.kind === 'code' || b.kind === 'table');
+@@ -21,12 +22,19 @@ export async function combineMarkdown(source, units, embed, options, calibration
+         const packed = [];
+         for (const unit of live) {
+             const last = packed.at(-1);
+-            if (last && eligible(last, unit)) packed[packed.length - 1] = join(last, unit);
++            if (last && unit.last - last.first < (options.maxUnits ?? Infinity) && eligible(last, unit)) packed[packed.length - 1] = join(last, unit);
+             else packed.push(unit);
+         }
+         return packed;
+     }
+     const directions = new WeakMap(), scores = new Map();
++    if (options.randomCut) {
++        let state = parseInt(sha256(source).slice(0, 8), 16) ^ 1;
++        for (let i = 0; i + 1 < units.length; i++) {
++            state = (Math.imul(1664525, state) + 1013904223) >>> 0;
++            scores.set(i, state / 2 ** 32);
++        }
++    }
+     let threshold = calibration.cutoff, initialMean = threshold, uncapped = 0;
+     for (let pass = 0; pass < maxPasses && uncapped < maxUncappedPasses && maxMergesPerPass > 0; pass++) {
+         const edges = [], missing = new Set();
+@@ -67,10 +75,48 @@ export async function combineMarkdown(source, units, embed, options, calibration
+                 initialMean = stats.boundaryCount >= 2 ? stats.average : threshold;
+             }
+         } else if (options.schedule === 'tighten') threshold = initialMean;
++        if (!pass && options.shuffle) {
++            let seed = parseInt(sha256(source).slice(0, 8), 16) ^ options.shuffle;
++            const shuffled = edges.map(e => e.score);
++            for (let i = shuffled.length - 1; i > 0; i--) {
++                seed = (Math.imul(1664525, seed) + 1013904223) >>> 0;
++                const j = Math.floor(seed / 2 ** 32 * (i + 1));
++                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
++            }
++            edges.forEach((e, i) => scores.set(e.key, e.score = shuffled[i]));
++        }
++        if (!pass && options.sweep) {
++            const ends = [...live];
++            for (const { i, score } of edges.sort((a, b) => b.score - a.score)) {
++                if (score < threshold) break;
++                const a = ends[i], b = ends[i + 1];
++                if (eligible(a, b)) ends[a.first] = ends[b.last] = join(a, b);
++            }
++            const output = [];
++            for (let i = 0; i < ends.length; i = ends[i].last + 1) output.push(ends[i]);
++            return output;
++        }
+         const merged = mergePass(live, edges, threshold, { maxMergesPerPass, candidateMergesPercentageCap, uncappedCandidateMerges });
+         if (!merged) break;
+         live = merged.next;
+         if (!merged.capped) uncapped++;
+     }
++    if (options.absorb) {
++        for (;;) {
++            const tiny = live.map(u => options.countTokens(markdownText(source, u)) < options.absorb);
++            const edges = [];
++            for (let i = 0; i + 1 < live.length; i++) {
++                const left = live[i], right = live[i + 1];
++                if ((tiny[i] || tiny[i + 1]) && eligible(left, right)) {
++                    const score = scores.get(left.last);
++                    if (score === undefined) throw new Error('Missing original boundary for absorption');
++                    edges.push({ i, score });
++                }
++            }
++            const merged = mergePass(live, edges, -Infinity, { maxMergesPerPass: Infinity, candidateMergesPercentageCap: 100, uncappedCandidateMerges: Infinity });
++            if (!merged) break;
++            live = merged.next;
++        }
++    }
+     return live;
+ }
+diff --git a/benchmarks/review-controls.mjs b/benchmarks/review-controls.mjs
+new file mode 100644
+index 0000000..1d608dd
+--- /dev/null
++++ b/benchmarks/review-controls.mjs
+@@ -0,0 +1,69 @@
++import assert from 'node:assert/strict';
++import { existsSync, readFileSync, writeFileSync } from 'node:fs';
++import { manifest, markdownCorpora } from './markdown-corpora.mjs';
++import { evaluate, prepareDataset } from './markdown-evaluation.mjs';
++import { model, encodingName, openReplay } from './encoder.mjs';
++import { sha256 } from './corpora.mjs';
++import { macro, paired } from './markdown-decisions.mjs';
++
++const read = p => JSON.parse(readFileSync(p, 'utf8'));
++const split = process.argv[4] ?? 'replication';
++const data = await markdownCorpora(split), samples = manifest(data);
++assert.deepEqual(samples, read('benchmarks/results/2026-11-23-markdown-samples.json')[split]);
++const archived = read('benchmarks/results/2026-11-23-markdown-rule-replication.json');
++const file = process.argv[2];
++const suite = process.argv[3] ?? 'original';
++assert.ok(['original', 'extra', 'updated', 'public'].includes(suite));
++const report = existsSync(file) ? read(file) : { revision: '7b3d07a', model, encodingName,
++    suite, split, samplesSHA256: sha256(JSON.stringify(samples)), policies: {}, comparisons: {} };
++assert.equal(Boolean(process.env.REVIEW_MARKDOWN_PARSER), ['updated', 'public'].includes(suite));
++assert.equal(report.samplesSHA256, sha256(JSON.stringify(samples)));
++if (report.suite) assert.equal(report.suite, suite);
++const encoder = await openReplay();
++for (const [task, dataset] of Object.entries(data)) {
++    await prepareDataset(dataset, encoder);
++    if (task === 'hotpotqa') for (const q of dataset.questions) q.group = q.pooled?.[0] ?? 0;
++}
++const save = () => writeFileSync(file, JSON.stringify(report, null, 2) + '\n');
++for (const tokens of [256, 512]) {
++    const base = { method: 'fixed', adaptive: true, tokens };
++    let arms = { frozen: base, pack: { method: 'pack', tokens }, pack3: { method: 'pack', tokens, maxUnits: 3 } };
++    if (suite === 'original') {
++        arms.sweep = { ...base, sweep: true };
++        arms.absorb = { ...base, absorb: 16 };
++        for (const seed of [1, 2, 3]) arms['shuffle' + seed] = { ...base, shuffle: seed };
++    }
++    if (suite === 'updated') arms.absorb = { ...base, absorb: 16 };
++    if (suite === 'public') arms = { frozen: { method: 'public-markdown', tokens },
++        children: { method: 'public-markdown', tokens, unmerged: true } };
++    if (suite === 'extra') {
++        arms = { random30: { method: 'fixed', tokens, randomCut: true, cutoff: 0.3 } };
++        if (tokens === 256) {
++            arms.children = { method: 'pack', maxUnits: 1, tokens };
++            arms.parents = { ...arms.children, parents: true };
++        }
++    }
++    for (const [arm, policy] of Object.entries(arms)) {
++        const name = arm + '/t' + tokens;
++        const row = report.policies[name] ??= { policy, tasks: {} };
++        for (const [task, dataset] of Object.entries(data)) {
++            if (row.tasks[task]) continue;
++            const result = await evaluate(task, dataset, policy, encoder, 'semantic');
++            if (suite === 'original' && (arm === 'frozen' || arm === 'pack')) {
++                const expected = archived.policies[name].tasks[task];
++                assert.equal(result.bodyHash, expected.bodyHash, name + ' ' + task);
++                assert.deepEqual(result.complete512, expected.complete512, name + ' ' + task);
++            }
++            const { bodyHash, questions, calls, embeddedTokens, indexTexts, indexTokens, chunkTokens, retrieval, complete512 } = result;
++            row.tasks[task] = { bodyHash, questions, calls, embeddedTokens, indexTexts, indexTokens, chunkTokens, retrieval, complete512 };
++            save();
++            console.log(name, task, encoder.stats.apiRequests, 'cumulative paid requests');
++        }
++        row.macroComplete512 = macro(row);
++        const ref = (suite === 'extra' ? archived : report).policies['frozen/t' + tokens];
++        const { deltaPer100, ci95 } = paired(row, ref, data);
++        report.comparisons[name] = { deltaPer100, ci95 };
++        save();
++    }
++}
++encoder.close();
+diff --git a/benchmarks/review-summary.mjs b/benchmarks/review-summary.mjs
+new file mode 100644
+index 0000000..98d0647
+--- /dev/null
++++ b/benchmarks/review-summary.mjs
+@@ -0,0 +1,72 @@
++import assert from 'node:assert/strict';
++import { readFileSync, writeFileSync } from 'node:fs';
++import { basename, dirname, join } from 'node:path';
++import { sha256 } from './corpora.mjs';
++import { groupInterval } from './markdown-decisions.mjs';
++import { markdownCorpora } from './markdown-corpora.mjs';
++
++const read = name => JSON.parse(readFileSync(name + '.json', 'utf8'));
++const historic = read('review-results'), extra = read('review-extra'), updated = read('review-updated');
++const independent = ['confirmation', 'rules-test'];
++const direct = Object.fromEntries([...independent, 'replication'].map(k => [k, read('public-' + k)]));
++const datasets = {};
++for (const split of Object.keys(direct)) datasets[split] = await markdownCorpora(split);
++const arm = t => (t === 'hotpotqa' ? 'pooled' : 'document') + '/dense';
++for (const counts of [256, 512]) {
++    const key = 'frozen/t' + counts;
++    for (const t of Object.keys(datasets.replication)) {
++        const a = updated.policies[key].tasks[t], b = direct.replication.policies[key].tasks[t];
++        for (const field of ['bodyHash', 'calls', 'embeddedTokens', 'retrieval', 'complete512']) assert.deepEqual(a[field], b[field]);
++    }
++}
++// Combine repeated seeds within each question. Independently resample
++// contracts, papers, reports and whole multi-hop pools within each task.
++function contrast(sets, testKeys, controlKey) {
++    const groups = [], taskMeans = [];
++    for (const task of Object.keys(datasets.replication)) {
++        const taskGroups = [];
++        let sum = 0, count = 0;
++        for (const [split, report] of sets) {
++            const grouped = new Map(), queries = datasets[split][task].questions;
++            const hits = k => report.policies[k].tasks[task].complete512[arm(task)];
++            const control = hits(controlKey), tests = testKeys.map(hits);
++            for (const [i, q] of queries.entries()) {
++                const diff = tests.reduce((s, run) => s + Number(run[i]), 0) / tests.length - Number(control[i]);
++                const group = task === 'hotpotqa' ? q.pooled?.[0] ?? 0 : q.group;
++                const entry = grouped.get(group) ?? [0, 0];
++                entry[0] += diff; entry[1]++;
++                sum += diff; count++;
++                grouped.set(group, entry);
++            }
++            taskGroups.push(...grouped.values());
++        }
++        groups.push(taskGroups);
++        taskMeans.push(sum / count);
++    }
++    return { deltaPoints: 100 * taskMeans.reduce((a, b) => a + b) / taskMeans.length, ci95: groupInterval(groups) };
++}
++function compactReport(policies) {
++    return Object.fromEntries(Object.entries(policies).map(([name, row]) => [name, { policy: row.policy,
++        macroComplete512: row.macroComplete512, tasks: Object.fromEntries(Object.entries(row.tasks).map(([task, result]) => {
++            const { retrieval, complete512, ...costs } = result;
++            return [task, { ...costs, retrieval: retrieval[arm(task)], complete512: complete512[arm(task)] }];
++        })) }]));
++}
++const estimates = {};
++for (const tokens of [256, 512]) {
++    const size = '/t' + tokens, scored = 'frozen' + size;
++    estimates['shuffled mean' + size] = contrast([['replication', historic]], [1, 2, 3].map(i => 'shuffle' + i + size), scored);
++    estimates['unmerged confirmation' + size] = contrast(independent.map(k => [k, direct[k]]), ['children' + size], scored);
++}
++estimates['parent vs child/t256'] = contrast([['replication', extra]], ['parents/t256'], 'children/t256');
++const source = process.env.REVIEW_MARKDOWN_PARSER;
++const hashes = Object.fromEntries([source, join(dirname(source), 'sentences.js')].map(p =>
++    [basename(p), sha256(readFileSync(p, 'utf8').replaceAll('\r\n', '\n'))]));
++const report = { revision: historic.revision, updatedSourceSHA256: hashes, model: historic.model, encoding: historic.encodingName,
++    metric: 'Dense complete evidence; equal task weights, pooled HotpotQA. Units are UTF-16 source offsets. Meeting outcomes use token recall.',
++    samplesSHA256: Object.fromEntries(Object.entries(direct).map(([k, r]) => [k, r.samplesSHA256])), estimates,
++    historical: { policies: compactReport({ ...historic.policies, ...extra.policies }), comparisons: { ...historic.comparisons, ...extra.comparisons } },
++    updated: { policies: compactReport({ ...updated.policies, ...direct.replication.policies }), comparisons: { ...updated.comparisons, ...direct.replication.comparisons } },
++    independent: Object.fromEntries(independent.map(k => [k, { policies: compactReport(direct[k].policies), comparisons: direct[k].comparisons }])),
++    meetings: read('review-turns') };
++writeFileSync(process.argv[2], JSON.stringify(report, null, 2) + '\n', { flag: 'wx' });
+diff --git a/benchmarks/review-turns.mjs b/benchmarks/review-turns.mjs
+new file mode 100644
+index 0000000..c25bbf4
+--- /dev/null
++++ b/benchmarks/review-turns.mjs
+@@ -0,0 +1,53 @@
++import assert from 'node:assert/strict';
++import { writeFileSync } from 'node:fs';
++import { openReplay } from './encoder.mjs';
++import { groupInterval } from './markdown-decisions.mjs';
++import { evaluate, prepareDataset } from './markdown-evaluation.mjs';
++import { meetings } from './semantic-corpora.mjs';
++
++// QMSum supplies true turn boundaries. Change only their Markdown representation
++// and check that every remapped annotation still quotes exactly the same words.
++function paragraphTurns(dataset) {
++    const offsets = [];
++    const docs = dataset.docs.map(({ id, source }) => {
++        const map = new Uint32Array(source.length + 1);
++        let extra = 0;
++        for (let i = 0; i < source.length; i++) {
++            if (source[i] === '\n') extra++;
++            map[i + 1] = i + 1 + extra;
++        }
++        offsets.push(map);
++        return { id, source: source.replaceAll('\n', '\n\n') };
++    });
++    const questions = dataset.questions.map(q => ({ ...q, references: q.references.map(ref => ref.map(([d, a, b]) => {
++        const start = offsets[d][a], end = offsets[d][b];
++        assert.equal(docs[d].source.slice(start, end), dataset.docs[d].source.slice(a, b));
++        return [d, start, end];
++    })) }));
++    return { docs, questions };
++}
++
++const output = {}, encoder = await openReplay();
++for (const split of ['test', 'val']) {
++    const original = await meetings(split), turns = paragraphTurns(original);
++    const cohort = output[split] = { documents: original.docs.length, ids: original.questions.map(q => q.id), arms: {} };
++    for (const [arm, dataset] of [['lines', original], ['paragraphs', turns]]) {
++        await prepareDataset(dataset, encoder);
++        const row = await evaluate('qmsum', dataset, { method: 'fixed', adaptive: true, tokens: 256 }, encoder, 'semantic');
++        const { bodyHash, chunkTokens, embeddedTokens } = row;
++        cohort.arms[arm] = { bodyHash, chunkTokens, embeddedTokens, recall: row.recall512['document/dense'],
++            retrieval: row.retrieval['document/dense'] };
++        console.log(split, arm, cohort.arms[arm].retrieval[512].recall);
++    }
++    const diffs = new Map();
++    for (const [i, q] of original.questions.entries()) {
++        const pair = diffs.get(q.group) ?? [0, 0];
++        pair[0] += cohort.arms.paragraphs.recall[i] - cohort.arms.lines.recall[i];
++        pair[1]++;
++        diffs.set(q.group, pair);
++    }
++    cohort.deltaPoints = 100 * (cohort.arms.paragraphs.retrieval[512].recall - cohort.arms.lines.retrieval[512].recall);
++    cohort.ci95 = groupInterval([[...diffs.values()]]);
++    writeFileSync(process.argv[2], JSON.stringify(output, null, 2) + '\n');
++}
++encoder.close();

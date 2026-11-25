@@ -1,33 +1,31 @@
 import { markdownResult, markdownText, parseMarkdown } from './markdown.js';
 import { mergeLimit } from './merge.js';
+import { packedRanges } from './packing.js';
 import { directionCosine, documentMergeThreshold, SimilarityStatistics, vectorDirection } from './similarity.js';
 
 export async function chunkMarkdown(source, embed, options) {
-    const { maxChunkSize, maxChunkTokens, fits, combineChunks } = options;
+    const { strategy, maxChunkSize, fits, fitsOverlap } = options;
     let units = parseMarkdown(source, options);
-    if (combineChunks) {
-        // Both limits must leave room for scoring to pay off (benchmarks/LOG.md).
-        units = maxChunkSize >= 1024 && maxChunkTokens >= 256
-            ? await mergeOriginalBoundaries(source, units, embed, options)
-            : packMarkdown(source, units, maxChunkSize, fits);
-    }
+    if (strategy === 'pack') units = packMarkdown(source, units, maxChunkSize, fits, fitsOverlap);
+    else if (strategy === 'semantic') units = await mergeOriginalBoundaries(source, units, embed, options);
     return units.map(unit => markdownResult(source, unit));
 }
 
-export function fitsMarkdownJoin(source, left, right, maxChunkSize, fits) {
+export function fitsMarkdownJoin(source, left, right, maxChunkSize, fits, start = left.start) {
     return !left.parts && !right.parts && left.sectionId === right.sectionId && left.run === right.run &&
-        right.end - left.start <= maxChunkSize &&
-        !/\S/u.test(source.slice(left.end, right.start)) && (!fits || fits(source.slice(left.start, right.end)));
+        right.end - start <= maxChunkSize &&
+        !/\S/u.test(source.slice(left.end, right.start)) && (!fits || fits(source.slice(start, right.end)));
 }
 
-export function packMarkdown(source, units, maxChunkSize, fits) {
-    const packed = [];
-    for (const unit of units) {
-        const last = packed.at(-1);
-        if (last?.kind === 'prose' && unit.kind === 'prose' && fitsMarkdownJoin(source, last, unit, maxChunkSize, fits)) last.end = unit.end;
-        else packed.push({ ...unit });
+export function packMarkdown(source, units, maxChunkSize, fits, fitsOverlap) {
+    function canAppend(first, next) {
+        const left = units[next - 1], right = units[next];
+        return left.kind === 'prose' && right.kind === 'prose' &&
+            fitsMarkdownJoin(source, left, right, maxChunkSize, fits, units[first].start);
     }
-    return packed;
+    const ranges = packedRanges(units.length, canAppend,
+        fitsOverlap && ((first, last) => fitsOverlap(source.slice(units[first].start, units[last].end))));
+    return Array.from(ranges, ([first, last]) => ({ ...units[first], end: units[last].end }));
 }
 
 // Live edges are in source order, so a stable sort breaks cosine ties by

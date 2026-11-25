@@ -15,6 +15,98 @@ function recordingEmbedder(vectorFor = text => [text.length, 1]) {
 const pair = 'First topic. Second topic.';
 const sentences = ['First topic.', 'Second topic.'];
 
+test('omitted size options use the documented target for every format and strategy', async () => {
+    const body = ['Autumn', 'Winter', 'Spring'].map(s => s + ' ' + 'again '.repeat(46) + 'ends.').join(' ');
+    const embed = async texts => texts.map(() => [1]);
+    for (const inputFormat of ['text', 'html', 'markdown']) {
+        const source = inputFormat === 'html' ? '<p>' + body + '</p>' : body;
+        for (const chunkingStrategy of ['auto', 'blocks', 'pack', 'semantic']) {
+            const run = size => chunkText(source, embed, { inputFormat, chunkingStrategy, returnEmbedding: false, ...size });
+            const smaller = await run({ maxChunkSize: 500 });
+            const larger = await run({ maxChunkSize: 1024 });
+            assert.equal(smaller.length, 3);
+            assert.equal(larger.length, 1);
+            const expected = inputFormat === 'markdown' ? larger : smaller;
+            assert.deepEqual(await run(), expected, inputFormat + '/' + chunkingStrategy);
+            assert.deepEqual(await run({ maxChunkTokens: 256, countTokens: s => s.trim().split(/\s+/u).length }), expected);
+            if (chunkingStrategy === 'auto') assert.deepEqual(await run({ chunkingStrategy: undefined }), expected);
+        }
+    }
+});
+
+test('a token cap supplements the default character target and can be used on its own', async () => {
+    const text = [1, 2, 3].map(i => 'Sentence ' + i + ' ' + 'a'.repeat(250) + '.').join(' ');
+    const pack = sizes => chunkText(text, assert.fail, { chunkingStrategy: 'pack', returnEmbedding: false,
+        maxChunkTokens: 9, countTokens: s => s.split(' ').length, ...sizes });
+    assert.equal((await pack()).length, 3);
+    assert.deepEqual(await pack({ maxChunkSize: Infinity }), [{ text }]);
+    assert.equal((await pack({ maxChunkSize: Infinity, maxChunkTokens: 6 })).length, 2);
+});
+
+test('explicit strategies select paragraphs, packing or similarity with either legacy combine setting', async () => {
+    const source = 'One. Two.\n\nRed. Sun.';
+    for (const [inputFormat, text] of [['text', source], ['html', '<p>One. <b>Two.</b></p><p>Red.<br>Sun.</p>']]) {
+        const run = (strategy, embed, extra) => chunkText(text, embed, { inputFormat, maxChunkSize: 14,
+            combineChunks: false, returnEmbedding: false, chunkingStrategy: strategy, ...extra }).then(rows => rows.map(c => c.text));
+        assert.deepEqual(await run('auto', assert.fail), ['One.', 'Two.', 'Red.', 'Sun.']);
+        assert.deepEqual(await run('blocks', assert.fail), ['One. Two.', 'Red. Sun.']);
+        assert.deepEqual(await run('blocks', assert.fail, { maxChunkSize: 5 }), ['One.', 'Two.', 'Red.', 'Sun.']);
+        assert.deepEqual(await run('pack', assert.fail), ['One. Two. Red.', 'Sun.']);
+        const { embed, batches } = recordingEmbedder(s => /One|Two/.test(s) ? [1, 0] : [0, 1]);
+        assert.deepEqual(await run('semantic', embed, { similarityThreshold: 0.9 }), ['One. Two.', 'Red. Sun.']);
+        assert.ok(batches.length);
+    }
+    const filtered = await chunkText('42.\n\nDr. Smith signed. Fees apply.', assert.fail, {
+        chunkingStrategy: 'blocks', excludeNonLetterSentences: true, returnEmbedding: false
+    });
+    assert.deepEqual(filtered, [{ text: 'Dr. Smith signed. Fees apply.' }]);
+});
+
+test('packing repeats only fitting whole sentences and always advances', async () => {
+    const text = 'One. Two. Red. Sun. End.';
+    const pack = (chunkOverlap, extra) => chunkText(text, assert.fail, { maxChunkSize: 14, chunkingStrategy: 'pack',
+        returnEmbedding: false, chunkOverlap, ...extra }).then(rows => rows.map(c => c.text));
+    assert.deepEqual(await pack(3), ['One. Two. Red.', 'Sun. End.']);
+    assert.deepEqual(await pack(4), ['One. Two. Red.', 'Red. Sun. End.']);
+    assert.deepEqual(await pack(4, { chunkingStrategy: 'auto' }), await pack(4));
+    assert.deepEqual(await pack(99), ['One. Two. Red.', 'Two. Red. Sun.', 'Red. Sun. End.']);
+    assert.deepEqual(await pack(99, { maxChunkSize: 0 }), ['One.', 'Two.', 'Red.', 'Sun.', 'End.']);
+    assert.deepEqual(await pack(99, { maxChunkSize: Infinity }), [text]);
+    assert.deepEqual(await chunkText('', assert.fail, { chunkingStrategy: 'pack', chunkOverlap: 12 }), []);
+});
+
+test('token overlap counts the actual suffix and the prefix still fits every final embedding', async () => {
+    const text = 'One. Two. Red. Sun. End.';
+    const countTokens = s => s === 'Two. Red.' ? 3 : s.split(' ').length;
+    const { embed, batches } = recordingEmbedder(s => [s.length]);
+    const rows = await chunkText(text, embed, {
+        chunkingStrategy: 'pack', maxChunkSize: Infinity, maxChunkTokens: 4, countTokens, chunkOverlap: 2,
+        chunkPrefix: 'P', excludeChunkPrefixInResults: true, maxEmbeddingBatchSize: 2
+    });
+    const bodies = ['One. Two. Red.', 'Red. Sun. End.'];
+    assert.deepEqual(rows.map(c => c.text), bodies);
+    assert.deepEqual(batches, [bodies.map(s => 'P: ' + s)]);
+    assert.ok(batches.flat().every(s => countTokens(s) <= 4));
+    for (const strategy of ['blocks', 'pack']) {
+        const chunks = await chunkText('東京🌍星海雪霞', assert.fail, { chunkingStrategy: strategy, maxChunkTokens: 3,
+            countTokens: s => [...s].length, chunkOverlap: strategy === 'pack' ? 1 : 0, returnEmbedding: false });
+        assert.equal(chunks.map(c => c.text).join(''), '東京🌍星海雪霞');
+        assert.ok(chunks.every(c => c.text.isWellFormed() && [...c.text].length <= 3));
+    }
+});
+
+test('invalid strategies and unusable overlap settings fail before embedding', async () => {
+    for (const value of ['recursive', '', null]) {
+        await assert.rejects(chunkText('', assert.fail, { chunkingStrategy: value }), /chunkingStrategy/);
+    }
+    for (const value of [-1, 0.5, Infinity, NaN, '4']) {
+        await assert.rejects(chunkText('', assert.fail, { chunkingStrategy: 'pack', chunkOverlap: value }), /chunkOverlap/);
+    }
+    for (const options of [{ chunkingStrategy: 'blocks' }, { chunkingStrategy: 'semantic' }, { combineChunks: false }]) {
+        await assert.rejects(chunkText('', assert.fail, { ...options, chunkOverlap: 1 }), /chunkOverlap/);
+    }
+});
+
 test('a finite cache retains only the most recent entries between scoring batches', async () => {
     const { embed, batches } = recordingEmbedder(s => Float32Array.of(s.length));
     const cached = createBatchEmbedder(embed, 2, 1);
@@ -154,7 +246,7 @@ test('ordinary text and HTML merges default to an inclusive 0.05 cutoff', async 
 });
 
 test('document fallback and Markdown scoring use a 0.5 base', async () => {
-    const markdown = sentences.join('\n\n'), large = { inputFormat: 'markdown', maxChunkSize: 1024 };
+    const markdown = sentences.join('\n\n'), large = { inputFormat: 'markdown', chunkingStrategy: 'semantic' };
     for (const [text, options] of [[pair, { mergeThresholdMode: 'document' }],
         [markdown, large], [markdown, { ...large, mergeThresholdMode: 'fixed' }]]) {
         assert.equal((await chunkText(text, embedPairAt(0.49), options)).length, 2);

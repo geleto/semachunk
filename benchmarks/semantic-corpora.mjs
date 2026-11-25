@@ -2,14 +2,12 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { asset, compact } from './corpora.mjs';
 
-const meetingChecksums = { test: '6bcd428211260ad2efae3af76cbaf6a7f5ae4bb5e1e59c45a4b8e89539cb9208',
-    val: 'fc7444e241bdbe6997c01720d07f1a58b7357284acb73f909766e5a4700db49f' };
-
 export async function meetings(split = 'test') {
-    if (!Object.hasOwn(meetingChecksums, split)) throw new Error('Unknown meeting split');
-    const file = await asset({ name: 'qmsum-' + split + '.jsonl',
-        url: 'https://raw.githubusercontent.com/Yale-LILY/QMSum/83d7768c1f2b4dfeb091385d3dc7e239b8e5bb7e/data/ALL/jsonl/' + split + '.jsonl',
-        checksum: meetingChecksums[split] });
+    const checksum = { test: '6bcd428211260ad2efae3af76cbaf6a7f5ae4bb5e1e59c45a4b8e89539cb9208',
+        val: 'fc7444e241bdbe6997c01720d07f1a58b7357284acb73f909766e5a4700db49f' }[split];
+    if (!checksum) throw new Error('Unknown QMSum split');
+    const file = await asset({ name: 'qmsum-' + split + '.jsonl', checksum,
+        url: 'https://raw.githubusercontent.com/Yale-LILY/QMSum/83d7768c1f2b4dfeb091385d3dc7e239b8e5bb7e/data/ALL/jsonl/' + split + '.jsonl' });
     const docs = [], questions = [];
     for (const line of (await readFile(file, 'utf8')).trim().split('\n')) {
         const meeting = JSON.parse(line), d = docs.length, id = 'qmsum-' + split + '/' + d;

@@ -13,7 +13,8 @@ function shuffled(items, key) {
 function partition(items, key, size, historical = []) {
     const exclude = new Set(historical.map(key));
     const order = shuffled(items.filter(item => !exclude.has(key(item))), key);
-    return [...Array.from({ length: 4 }, (_, i) => order.slice(i * size, (i + 1) * size)), order.slice(4 * size, 8 * size)];
+    const cuts = [0, 1, 2, 3, 4, 8, 10, 12, 14];
+    return cuts.slice(1).map((end, i) => order.slice(cuts[i] * size, end * size));
 }
 
 function corpus() {
@@ -94,6 +95,10 @@ function papers(rows) {
 }
 
 const reportId = row => row.filename.split('/').slice(0, -1).join('/');
+function mixedEvidence(row) {
+    const ids = Object.keys(row.qa.gold_inds);
+    return ids.some(k => k.startsWith('table_')) && ids.some(k => k.startsWith('text_'));
+}
 function finances(rows) {
     const data = corpus(), pages = new Map();
     for (const row of rows) {
@@ -149,20 +154,28 @@ function multiHop(rows) {
 }
 
 export async function markdownCorpora(split) {
-    const i = ['calibration', 'final', 'confirmation', 'rules-test', 'replication'].indexOf(split);
+    const i = ['calibration', 'final', 'confirmation', 'rules-test', 'replication', 'modes-a', 'modes-b', 'auto-test'].indexOf(split);
     if (i < 0) throw new Error('Unknown Markdown study split');
     const { data: cuad } = await readJSON('cuad');
     const qasper = Object.entries(await tarJSON(await asset(assets.qasper), 'qasper-test-v0.3.json'));
-    function mixedEvidence(row) {
-        const ids = Object.keys(row.qa.gold_inds);
-        return ids.some(k => k.startsWith('table_')) && ids.some(k => k.startsWith('text_'));
-    }
-    const development = (await readJSON('finqa')).filter(mixedEvidence);
+    const developmentFile = await readJSON('finqa'), development = developmentFile.filter(mixedEvidence);
     const developmentReports = new Set(development.map(reportId));
-    const reports = new Set(partition([...developmentReports], r => r, 24)[i]);
-    const finance = i === 4 ? (await readJSON('finqaTest')).filter(r => mixedEvidence(r) && !developmentReports.has(reportId(r))) :
-        development.filter(r => reports.has(reportId(r)));
-    const hotpot = await readJSON('hotpotqa'), selected = [[], [], [], [], []], seen = new Set();
+    let finance;
+    if (i < 4) {
+        const reports = new Set(partition([...developmentReports], r => r, 24)[i]);
+        finance = development.filter(r => reports.has(reportId(r)));
+    } else {
+        const test = await readJSON('finqaTest');
+        if (i === 4) finance = test.filter(r => mixedEvidence(r) && !developmentReports.has(reportId(r)));
+        else {
+            const used = new Set([...developmentFile, ...test].map(reportId));
+            const rows = (await readJSON('finqaTrain')).filter(r => mixedEvidence(r) && !used.has(reportId(r)));
+            const groups = shuffled([...new Set(rows.map(reportId))], id => id);
+            const reports = new Set(groups.slice((i - 5) * 24, (i - 4) * 24));
+            finance = rows.filter(r => reports.has(reportId(r)));
+        }
+    }
+    const hotpot = await readJSON('hotpotqa'), selected = Array.from({ length: Math.max(2, i + 1) }, () => []), seen = new Set();
     for (const kind of ['bridge', 'comparison']) {
         const rows = hotpot.filter(r => r.type === kind);
         for (const row of evenly(rows, 32)) for (const [title] of row.context) seen.add(title);
@@ -180,7 +193,7 @@ export async function markdownCorpora(split) {
     }
     for (const kind of ['bridge', 'comparison']) pick(kind, 32).forEach((row, n) => selected[n % 2].push(row));
     for (let extra = 2; extra <= i; extra++) {
-        const count = extra === 4 ? 64 : 16;
+        const count = extra === 4 ? 64 : extra > 4 ? 32 : 16;
         const bridge = pick('bridge', count), comparison = pick('comparison', count);
         for (let n = 0; n < count; n += 16) selected[extra].push(...bridge.slice(n, n + 16), ...comparison.slice(n, n + 16));
     }
@@ -189,6 +202,33 @@ export async function markdownCorpora(split) {
         qasper: papers(partition(qasper, ([id]) => id, 12, evenly(qasper, 16))[i]),
         finqa: finances(finance),
         hotpotqa: multiHop(selected[i]),
+    };
+}
+
+export async function unusedMarkdownCorpora(used) {
+    const { data: cuad } = await readJSON('cuad');
+    const qasper = Object.entries(await tarJSON(await asset(assets.qasper), 'qasper-test-v0.3.json'));
+    const reports = new Set([...used.finqa].map(path => reportId({ filename: path })));
+    const finance = (await readJSON('finqaTrain')).filter(row => mixedEvidence(row) && !reports.has(reportId(row)));
+    const selected = new Set(shuffled([...new Set(finance.map(reportId))], id => id).slice(0, 24));
+    const hotpot = shuffled(await readJSON('hotpotqa'), r => r._id), multi = [];
+    const titles = new Set(used.hotpotqa);
+    for (const kind of ['bridge', 'comparison']) {
+        const picked = [];
+        for (const row of hotpot) {
+            if (row.type !== kind || row.context.some(([title]) => titles.has(title))) continue;
+            picked.push(row);
+            row.context.forEach(([title]) => titles.add(title));
+            if (picked.length === 32) break;
+        }
+        if (picked.length !== 32) throw new Error('Insufficient unused multi-hop sources');
+        multi.push(picked);
+    }
+    return {
+        cuad: contracts(shuffled(cuad.filter(r => !used.cuad.has(r.title)), r => r.title).slice(0, 12)),
+        qasper: papers(shuffled(qasper.filter(([id]) => !used.qasper.has(id)), ([id]) => id).slice(0, 24)),
+        finqa: finances(finance.filter(row => selected.has(reportId(row)))),
+        hotpotqa: multiHop(multi[0].flatMap((row, i) => [row, multi[1][i]])),
     };
 }
 

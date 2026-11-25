@@ -4,7 +4,8 @@ import { chunkText } from '../src/index.js';
 import { denseRanker, indexedChunks } from './chunking.mjs';
 import { alignDocument, answerSpan, compact, joinParts } from './corpora.mjs';
 import { retrieval, segmentation, windowDiff } from './quality.mjs';
-import { bm25Ranker, evidenceAtBudget, prepare, scoreMethod, tokenSpan, wordCounts } from './rag.mjs';
+import { bm25Ranker, evaluateRag, evidenceAtBudget, prepare, scoreMethod, tokenSpan, wordCounts } from './rag.mjs';
+import { dimension } from './encoder.mjs';
 
 const passage = (doc, start, end, index = 0) => ({ doc, start, end, index });
 const wordOffsets = text => Array.from(text.matchAll(/\S+/gu), m => [m.index, m.index + m[0].length]);
@@ -45,6 +46,18 @@ test('structured, flat and token-limited plans use the same annotated source coo
     });
     for (const value of ['Terms', '- Second item', text]) assert.ok(data.vocab.texts.includes(value));
     assert.deepEqual(data.gold, [[new Set([5, 6])]]);
+});
+
+test('RAG scores intact paragraphs against the same source when sentence splitting inserts a space', async () => {
+    const raw = 'Title.\n\nAlpha!Beta. Gamma.', text = compact(raw), start = text.indexOf('Beta');
+    const sample = { docs: [{ title: 'sample', text, raw }], questions: [
+        { id: 'q', text: 'Beta?', pool: [0], references: [[[0, start, start + 4]]] }
+    ] };
+    const encoder = { countTokens: s => wordOffsets(s).length, offsets: wordOffsets,
+        vectors: texts => ({ matrix: new Float32Array(texts.length * dimension).fill(1) }) };
+    const report = await evaluateRag('cuad', chunkText, encoder, { blocks: { chunkingStrategy: 'blocks', maxChunkSize: 500 } }, { sample });
+    assert.equal(report.scores.blocks.chunks, 2);
+    assert.equal(report.scores.blocks.retrieval.dense[256].complete, 1);
 });
 
 test('multi-document evidence must occur in the delivered prefix of each source', () => {

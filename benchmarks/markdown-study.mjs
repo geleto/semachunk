@@ -38,7 +38,7 @@ async function run(name, policy, subset = tasks) {
 }
 
 async function main() {
-    for (const dataset of Object.values(data)) await prepareDataset(dataset, encoder, baselines || experiment === 'size' || experiment === 'final');
+    for (const dataset of Object.values(data)) await prepareDataset(dataset, encoder);
     if (baselines) return compareRetrieval(report, data, run);
     if (ruleStudy) return studyRules({ report, prior, data, run, validation: experiment !== 'rules' });
     const tokens = prior.tokens;
@@ -67,7 +67,6 @@ async function main() {
             await run(name + '-lead', { ...report.policies[name].policy, leadIn: true });
         }
         selectCombination(report, data);
-        await run('sentence-units', { ...report.winner, sentences: true }, ['qasper']);
         return;
     }
     assert.ok(prior.winner && prior.shortlist, 'Previous report is missing the calibration shortlist');

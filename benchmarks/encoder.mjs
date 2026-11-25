@@ -7,7 +7,8 @@ import OpenAI from 'openai';
 import { get_encoding } from 'tiktoken';
 import { cache, sha256 } from './corpora.mjs';
 
-export const model = 'text-embedding-3-small';
+export const model = process.env.SEMACHUNK_BENCHMARK_MODEL ?? 'text-embedding-3-small';
+if (!['text-embedding-3-small', 'text-embedding-3-large'].includes(model)) throw new Error('Unsupported benchmark embedding model.');
 export const dimension = 1536;
 export const encodingName = 'cl100k_base';
 export const modelInputTokens = 8192;

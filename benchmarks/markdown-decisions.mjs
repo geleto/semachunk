@@ -4,7 +4,7 @@ export function macro(row, ranker = 'dense') {
     return tasks.reduce((sum, t) => sum + row.tasks[t].retrieval[primary(t, ranker)][512].complete / row.tasks[t].questions, 0) / tasks.length;
 }
 
-export function groupInterval(groups) {
+export function groupInterval(groups, confidence = 0.95) {
     let seed = 20261123;
     const random = () => (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 2 ** 32;
     const draws = [];
@@ -21,7 +21,8 @@ export function groupInterval(groups) {
         draws.push(100 * sum / groups.length);
     }
     draws.sort((a, b) => a - b);
-    return [draws[50], draws[1949]];
+    const tail = Math.round(draws.length * (1 - confidence) / 2);
+    return [draws[tail], draws[draws.length - 1 - tail]];
 }
 
 // Resample whole contracts, papers, reports or independent question pools,
@@ -94,77 +95,6 @@ export function contrast(samples, tasks, terms) {
         means.push(sum / count);
     }
     return { deltaPoints: 100 * means.reduce((s, v) => s + v) / means.length, ci95: groupInterval(groups) };
-}
-
-export function summarizeExpansion(result) {
-    const outcomes = {};
-    for (const [group, tasks] of [['documents', ['cuad', 'qasper', 'finqa', 'hotpotqa']], ['meetings', ['qmsum']]]) {
-        if (!result.samples[tasks[0]]) continue;
-        const rows = outcomes[group] = {};
-        for (const [name, run] of Object.entries(result.runs)) {
-            let percent = 0, embeddedTokens = 0, expandedCores = 0;
-            for (const task of tasks) {
-                const row = run[task], score = row.retrieval[primary(task, 'dense')][512];
-                percent += 100 * (task === 'qmsum' ? score.recall : score.complete / row.questions) / tasks.length;
-                embeddedTokens += row.embeddedTokens;
-                expandedCores += row.growth?.cosines.count ?? 0;
-            }
-            rows[name] = { percent, embeddedTokens, expandedCores, ...contrast(result, tasks, [[name, 1], ['core256', -1]]),
-                vsReference: contrast(result, tasks, [[name, 1], ['384/0.5/0.9', -1]]) };
-        }
-    }
-    return outcomes;
-}
-
-// Calibrate among expansion settings. Keep core-only as an independent control.
-export function selectExpansion(rows, policies) {
-    const names = Object.keys(rows).filter(name => name !== 'core256');
-    const best = Math.max(...names.map(name => rows[name].percent));
-    function extraLimit(name) {
-        const { sideTokens, sideUnits, limitToCore } = policies[name].growth;
-        return Number(Boolean(sideTokens || sideUnits || limitToCore));
-    }
-    return names.filter(name => rows[name].percent >= best - 0.5)
-        .sort((a, b) => extraLimit(a) - extraLimit(b) || rows[a].embeddedTokens - rows[b].embeddedTokens ||
-            rows[b].percent - rows[a].percent)[0];
-}
-
-export function summarizeOverlap(report) {
-    const splits = Object.values(report.splits);
-    if (report.study === 'side-locks') {
-        report.comparisons = {};
-        for (const [label, tasks] of [['documents', ['cuad', 'qasper', 'finqa', 'hotpotqa']], ['meetings', ['qmsum']]]) {
-            const outcomes = report.comparisons[label] = {};
-            for (const name of ['frozenLock', 'frozenReopen', 'liveLock', 'liveReopen']) {
-                const gain = prefix => [[prefix + name, 1], [prefix + 'core256', -1]];
-                for (const prefix of ['', 'flat/']) outcomes[prefix + name + ' vs core'] = contrast(splits, tasks, gain(prefix));
-                outcomes[name + ' change after flattening'] = contrast(splits, tasks, [...gain('flat/'), [name, -1], ['core256', 1]]);
-            }
-            for (const prefix of ['', 'flat/']) {
-                for (const [a, b] of [['frozenReopen', 'frozenLock'], ['liveReopen', 'liveLock'], ['frozenLock', 'liveLock']]) {
-                    outcomes[prefix + a + ' vs ' + b] = contrast(splits, tasks, [[prefix + a, 1], [prefix + b, -1]]);
-                }
-            }
-            if (label === 'meetings') for (const control of ['core256', 'frozenLock']) {
-                outcomes['frozenLockTurns vs ' + control] = contrast(splits, tasks, [['frozenLockTurns', 1], [control, -1]]);
-            }
-        }
-        return;
-    }
-    const controls = (report.study === 'embedding-context' ? ['core256', 'live512', 'guard512'] : ['core256', 'live320'])
-        .filter(name => report.policies[name]);
-    for (const result of [...splits, report]) {
-        const samples = result === report ? splits : result;
-        const comparisons = result.comparisons = {};
-        for (const [label, tasks] of [['documents', ['cuad', 'qasper', 'finqa', 'hotpotqa']], ['meetings', ['qmsum']]]) {
-            const outcomes = comparisons[label] = {};
-            for (const name of Object.keys(report.policies)) {
-                for (const control of controls) {
-                    if (name !== control) outcomes[name + '/' + control] = contrast(samples, tasks, [[name, 1], [control, -1]]);
-                }
-            }
-        }
-    }
 }
 
 export function summarizeSemantic(report) {

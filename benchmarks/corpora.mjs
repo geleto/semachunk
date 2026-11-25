@@ -45,6 +45,11 @@ export const assets = {
         url: 'https://raw.githubusercontent.com/czyssrs/FinQA/0f16e2867befa6840783e58be38c9efb9229d742/dataset/test.json',
         checksum: '831dbfb2e785dbc227f895ce3f24046433467aec67b09db2bd6ac7692a8a30dc',
     },
+    finqaTrain: {
+        name: 'finqa-train.json',
+        url: 'https://raw.githubusercontent.com/czyssrs/FinQA/0f16e2867befa6840783e58be38c9efb9229d742/dataset/train.json',
+        checksum: '49f237eb9779b569473b26b08048867d04635a7cc39ad6a7a5664c55bb428db6',
+    },
 };
 
 export function sha256(bytes) {

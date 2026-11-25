@@ -27,6 +27,48 @@ function original(source, output) {
     return output.flatMap(c => c.sourceRanges.map(r => source.slice(r.start, r.end))).join('');
 }
 
+test('explicit Markdown strategies select their algorithm on either side of the automatic size cutoff', async () => {
+    const source = 'Alpha\n\nBeta\n\nOther';
+    const asText = rows => rows.map(c => c.text);
+    for (const maxChunkSize of [100, 2048]) {
+        assert.deepEqual(asText(await chunks(source, { chunkingStrategy: 'blocks', maxChunkSize })), ['Alpha', 'Beta', 'Other']);
+        assert.deepEqual(asText(await chunks(source, { chunkingStrategy: 'pack', maxChunkSize })), [source]);
+        const batches = [];
+        const embed = texts => { batches.push(texts); return texts.map(s => s === 'Other' ? [0, 1] : [1, 0]); };
+        const rows = await chunkText(source, embed, { ...options, chunkingStrategy: 'semantic', maxChunkSize,
+            combineChunks: false, combineChunksSimilarityThreshold: 0.9 });
+        assert.deepEqual(asText(rows), ['Alpha\n\nBeta', 'Other']);
+        assert.deepEqual(batches, [['Alpha', 'Beta', 'Other']]);
+    }
+});
+
+test('packed overlap repeats literal source ranges and stops at each Markdown barrier', async () => {
+    const table = '| H |\n|---|\n| V |', code = '~~~\ncode\n~~~';
+    const source = ['A', 'B', 'C', 'D', 'E', '---', 'F', 'G', table, 'H', 'I', code, 'J', '# S\nK', 'L', '[ref]: /url', 'M'].join('\n\n');
+    const rows = await chunks(source, { chunkingStrategy: 'pack', maxChunkSize: 7, chunkOverlap: 1 });
+    assert.deepEqual(rows.map(c => c.text), ['A\n\nB\n\nC', 'C\n\nD\n\nE', 'F\n\nG', table, 'H\n\nI', code, 'J', '# S\nK', 'L', 'M']);
+    assert.deepEqual(rows.slice(0, 2).map(c => c.sourceRanges),
+        [[{ start: 0, end: 7, outputStart: 0 }], [{ start: 6, end: 13, outputStart: 0 }]]);
+    assert.deepEqual(rows.at(-1).headingPath, ['S']);
+    assert.equal(rows.at(-1).sectionId, source.indexOf('# S'));
+});
+
+test('Markdown counts CRLF in the overlap, batches only final bodies and keeps repeated occurrences distinct', async () => {
+    const source = ['aa', 'bb', 'aa', 'cc', 'dd'].join('\r\n\r\n');
+    const batches = [], countTokens = text => text.match(/\S+/g)?.length ?? 0;
+    const embed = texts => { batches.push([...texts]); return texts.map(t => [countTokens(t)]); };
+    const rows = await chunkText(source, embed, { inputFormat: 'markdown', chunkingStrategy: 'pack', maxChunkSize: Infinity,
+        chunkOverlap: 2, countTokens, maxChunkTokens: 4, chunkPrefix: 'P', maxEmbeddingBatchSize: 2 });
+    const expected = [['aa', 'bb', 'aa'], ['bb', 'aa', 'cc'], ['aa', 'cc', 'dd']].map(a => 'P: ' + a.join('\r\n\r\n'));
+    assert.deepEqual(rows.map(c => c.text), expected);
+    assert.deepEqual(batches, [expected.slice(0, 2), expected.slice(2)]);
+    assert.deepEqual(rows.map(c => c.sourceRanges[0].start), [0, 6, 12]);
+    for (const { text, sourceRanges: [r] } of rows) assert.equal(text.slice(r.outputStart), source.slice(r.start, r.end));
+    const chars = await chunks(source, { chunkingStrategy: 'pack', chunkOverlap: 7, maxChunkSize: 14 });
+    assert.deepEqual(chars.map(c => c.sourceRanges[0].start), [0, 12]);
+    assert.deepEqual((await chunks(source, { chunkOverlap: 1, maxChunkSize: Infinity, maxChunkTokens: 256, countTokens })).map(c => c.text), [source]);
+});
+
 test('section occurrences, active heading text and omitted blocks use original UTF-16 positions', async () => {
     const source = '\uFEFF---\r\ninvalid: [:\r\n---\r\nPre 🌍.\r\n\r\n# Root\r\n## Old\r\n## [New][p]\r\n\r\nBody [policy][p] and [^f].\r\n' +
         '\r\n[p]: /private\r\n\r\nBody two.\r\n\r\n---\r\n\r\nNext.\r\n\r\nMore *here*\r\n===\r\n\r\n[^f]: A footnote.\r\n\r\n# Tail';
@@ -63,7 +105,8 @@ test('Markdown uses both capacity limits to choose packing or original-boundary 
     const source = units.join('\n\n');
     const greedy = [units.slice(0, 4).join('\n\n'), units.slice(4).join('\n\n')];
     const scored = ['A\n\nB', 'C\n\nD', '# Next\nA\n\nB', 'C\n\nD'];
-    for (const [maxChunkSize, maxChunkTokens] of [[500, 256], [1023, Infinity], [1024, 128], [Infinity, 255]]) {
+    assert.deepEqual((await chunks(source)).map(c => c.text), greedy);
+    for (const [maxChunkSize, maxChunkTokens] of [[500, 256], [1024, Infinity], [1024, 256], [1024, 128], [Infinity, 255]]) {
         const rows = await chunks(source, { maxChunkSize, maxChunkTokens, countTokens: length });
         assert.deepEqual(rows.map(c => c.text), greedy);
     }
@@ -74,12 +117,17 @@ test('Markdown uses both capacity limits to choose packing or original-boundary 
         return /[AB]$/.test(t) ? [1, 0] : [0, 1];
     }
     const embed = texts => { calls.push(texts); return texts.map(vector); };
-    const large = { ...options, maxChunkSize: 1024, maxChunkTokens: 256, countTokens: length };
+    const large = { ...options, maxChunkSize: 1025, maxChunkTokens: 256, countTokens: length };
     for (const limits of [large, { ...large, maxChunkSize: Infinity }, { ...large, maxChunkTokens: Infinity }]) {
         const rows = await chunkText(source, embed, limits);
         assert.deepEqual(rows.map(c => c.text), scored);
         assert.deepEqual(calls.splice(0), [['A', 'B', 'C', 'D', '# Next\nA']]);
     }
+    const fallback = { ...large, similarityThreshold: 2 };
+    const score = texts => texts.map(vector);
+    assert.deepEqual((await chunkText(source, score, fallback)).map(c => c.text), scored);
+    assert.deepEqual((await chunkText('A\n\nB', score, fallback)).map(c => c.text), ['A', 'B']);
+    assert.deepEqual((await chunkText('A\n\nB', score, { ...fallback, combineChunksSimilarityThreshold: 0 })).map(c => c.text), ['A\n\nB']);
     for (const skip of [{ maxPasses: 0 }, { combineChunks: false }, { combineChunksSimilarityThreshold: 2 }]) {
         assert.deepEqual((await chunkText(source, assert.fail, { ...large, ...skip })).map(c => c.text), units);
     }
@@ -133,11 +181,34 @@ test('literal autolinks with parser-generated children keep their original sourc
     assert.ok(rows.some(c => c.text.includes('www.example.com/person.asp%3Fx')));
 });
 
-test('filtered whitespace-only Markdown paragraphs break both packing and pending heading attachment', async () => {
-    const source = '# A\n\n\u00a0\n\nFirst.\n\n\u00a0\n\nSecond.';
-    const rows = await chunks(source, { excludeNonLetterSentences: true });
-    assert.deepEqual(rows.map(c => c.text), ['First.', 'Second.']);
-    assert.ok(rows.every(c => c.headingPath[0] === 'A'));
+test('Markdown sentence boundaries honor the locale and preserve literal UTF-16 slices', async () => {
+    for (const [locale, expected] of [
+        ['en', ['Dr. Smith signed. \t', 'ßeta.\r\n', 'See [Fig. One](url) and `x. Y` with Mr. Jones. ', 'Final Inc.  ']],
+        ['es', ['Hable con la Sra. García. ', 'Vuelva luego.']],
+        ['zh', ['他说。', '她答。']],
+    ]) {
+        const source = expected.join('');
+        const rows = await chunks(source, { locale, maxChunkSize: 1, combineChunks: false });
+        assert.deepEqual(rows.map(c => c.text), expected);
+        assert.equal(original(source, rows), source);
+    }
+});
+
+test('blank paragraphs and standalone comments are barriers, including inside containers', async () => {
+    const source = '# A\n\n\u00a0\n\nFirst.\n\n<!-- lint\r\non -->\n\n12\n\n&nbsp;\n\nSecond.';
+    for (const extra of [{}, { maxChunkSize: Infinity }]) {
+        const rows = await chunks(source, extra);
+        assert.deepEqual(rows.map(c => c.text), ['First.', '12', 'Second.']);
+        assert.ok(rows.every(c => c.headingPath[0] === 'A'));
+    }
+    const list = '- before\n- <!-- first --> <!-- second -->\n- &#160;\n- after';
+    assert.deepEqual((await chunks(list)).map(c => c.text), ['- before\n', '- after']);
+    const quote = '> before\n>\n> <!-- hidden\n> more -->\n>\n> after';
+    assert.deepEqual((await chunks(quote)).map(c => c.text), ['> before\n>\n', '> after']);
+    for (const literal of ['`<!-- example -->`', '~~~html\n<!-- example -->\n~~~', 'a <!-- inline --> b',
+        '<!-- comment --> visible text', '<div>visible</div>']) {
+        assert.deepEqual((await chunks(literal)).map(c => c.text), [literal]);
+    }
 });
 
 test('split tables repeat the literal header and delimiter, oversized rows retain values without a misleading header', async () => {
@@ -168,6 +239,11 @@ test('fenced and indented continuations retain source, line endings and containe
     assert.equal(original(s, raw), s);
     const indented = '    abcdefghijklmnop\r\n    歲🌍月\r\n    last';
     assert.equal(original(indented, await chunks(indented, { maxChunkTokens: 14, countTokens: length })), indented);
+    const line = '    ' + 'alpha '.repeat(8) + 'omega';
+    const spaced = line + '\r\n'.repeat(4) + line;
+    const fragments = await chunks(spaced, { maxChunkTokens: 23, countTokens: length });
+    assert.equal(original(spaced, fragments), spaced);
+    assert.ok(fragments.every(c => c.text.trim()));
 });
 
 test('prefix visibility, batching and vector ownership preserve identical occurrences at different offsets', async () => {

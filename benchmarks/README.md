@@ -35,7 +35,7 @@ Exact boundary precision, recall and F1 pool counts across articles in each spli
 ### Settings, costs and repeatability
 
 - The priority-merge grid crosses maximum sizes of 250, 500 and 1,000 UTF-16 code units with cosine cutoffs of 0.3, 0.4, 0.5, 0.6, 0.7 and a per-document cutoff. Each task selects its own setting on calibration, maximizing answer hits or exact boundary F1. Ties favor fewer indexed chunks, then the first setting in the listed grid order. Held-out results are reported for every setting.
-- Controls include one sentence per chunk and greedy sentence packing at all three sizes.
+- The suite also measures the public default, individual sentences, and explicit block, packing and semantic layouts at all three sizes.
 - All methods use `text-embedding-3-small` at its full 1,536 dimensions. The runner precomputes the union of contiguous chunks up to the largest candidate size, individual long sentences and queries. It sends up to 256 inputs per request, checks the 8,192-token input limit and the 300,000-token request limit, and preserves the provider's row indices. [OpenAI embeddings](https://developers.openai.com/api/docs/guides/embeddings) · [API limits](https://developers.openai.com/api/reference/resources/embeddings/methods/create)
 - The runner imports the checkout's `chunkText` directly. Costs count its actual provider calls, input texts and single-item calls, including final indexing. Greedy packing makes one indexing call per document. Offline precomputation and query encoding are excluded from these counts.
 - Each report records the embedding model, tokenizer, dimensions, sample IDs and hashes of the ordered inputs and vector bytes. Per-dataset `precomputation` records successful live requests, inputs, API-reported input tokens and batches read from cache. Compare vector hashes when reproducing a run. Older reports record their original model and token budgets.
@@ -60,7 +60,7 @@ Use `--methods priority-default merge-500-0.5 merge-500-document` to compare the
 | HotpotQA, distractors | A question's ten supplied Wikipedia passages, with the title at the start of each passage. We take 32 bridge and 32 comparison questions at evenly spaced indices within their validation categories. | Every annotated supporting sentence from both source articles. [HotpotQA dataset and evaluation](https://hotpotqa.github.io/) |
 | HotpotQA, pooled search | All distinct passages from those same 64 cases in one index. Each question searches the entire index with the same ranking rules and evidence labels. | The same supporting sentences. This is a local pooled-corpus experiment. The official full-wiki task searches a much larger collection. |
 
-The suite evaluates the public default and fixed controls with two rankers. It compares single sentences, greedy packing to 500 UTF-16 units, priority merging at 250/0.5 and 500/0.3, 0.5 and 0.7, and 128-token windows with a 32-token overlap. Window edges move to complete Unicode characters if necessary. Four additional size-500 configurations measure a flattened-input control, the document-relative cutoff, a strict 256-token chunk budget, and a ceiling of two priority passes.
+The suite evaluates the public default and fixed controls with two rankers. It compares individual sentences, blocks, greedy packing and semantic merging at 500 UTF-16 units, priority merging at 250/0.5 and 500/0.3, 0.5 and 0.7, and 128-token windows with a 32-token overlap. Window edges move to complete Unicode characters if necessary. Four additional size-500 configurations measure a flattened-input control, the document-relative cutoff, a strict 256-token chunk budget, and a ceiling of two priority passes.
 
 CUAD passes the original contract whitespace to the chunker. QASPER supplies headings, paragraphs and captions as blocks. HotpotQA separates article titles from passage bodies. The flat control receives the same words and labels with whitespace normalized. All methods share the vectors for identical strings. One `cl100k_base` tokenizer supplies the synchronous chunk budget and source offsets. The dense ranker uses OpenAI cosine similarity. BM25 uses lowercased Unicode word counts and document frequencies over the query's pool, with `k1=1.2` and `b=0.75`. Both break ties by source order.
 
@@ -130,7 +130,7 @@ The six primary settings are 500, 1,024 and 2,048 characters and 128, 256 and 51
 
 In a six-setting comparison, a question counts as a win if the rule recovered its complete evidence at more settings than the control. The paired difference and interval use the magnitude of each question's change.
 
-The external comparison runs the public API, reference recursive splitters, sentence packing and overlapping token windows on the same 676 questions. It reports dense, BM25 and hybrid retrieval. Install the pinned reference implementation in the ignored benchmark cache and pass a new output path.
+The external comparison runs the public API, reference recursive splitters, sentence packing and overlapping token windows on the same 676 questions. It reports dense, BM25 and hybrid retrieval. Alongside the fixed token budgets, `top3` and `top5` measure evidence in whole ranked chunks and record their actual token cost, including separators. Install the pinned reference implementation in the ignored benchmark cache and pass a new output path.
 
 ```sh
 npm install --prefix benchmarks/.cache/reference --no-save --package-lock=false --ignore-scripts @langchain/textsplitters@1.0.2 @langchain/core@1.5.0
@@ -149,19 +149,62 @@ On macOS and Linux use the environment's `bin/python` in both commands. Python 3
 
 All arms search the same sources. QASPER uses the paper's heading hierarchy. FinQA includes pre-table prose, the table and post-table prose with offsets keyed by the annotation IDs. A financial hit requires every annotated row and prose span. The primary score averages the four dataset complete-evidence rates at 512 delivered tokens with pooled HotpotQA. The diagnostic shortlist searches each question's supplied articles. Each report also records scores at 256 and 1,024 delivered tokens, per-question outcomes at 512 tokens and paired group bootstrap intervals. [Frozen sample IDs](results/2026-11-23-markdown-samples.json)
 
+### Replay the Markdown review
+
+Apply the study patch in a disposable checkout of `7b3d07a`. Install dependencies and use the same embedding cache as the Markdown study. The first three commands use the historical parser. The remaining commands take the absolute path of the updated parser in a second checkout. The results include source checksums, individual question outcomes, paired intervals and delivered token counts. Revision `7b3d07a` also retains the original QASPER sentence-unit experiment. [Study patch](baselines/2026-11-24-markdown-review.patch) · [Recorded results](results/2026-11-24-markdown-review.json)
+
+```powershell
+node benchmarks/review-controls.mjs review-results.json
+node benchmarks/review-controls.mjs review-extra.json extra
+node benchmarks/review-turns.mjs review-turns.json
+$env:REVIEW_MARKDOWN_PARSER = (Resolve-Path ../updated/src/markdown.js).Path
+node benchmarks/review-controls.mjs review-updated.json updated
+foreach ($split in 'confirmation', 'rules-test', 'replication') {
+    node benchmarks/review-controls.mjs "public-$split.json" public $split
+}
+node benchmarks/review-summary.mjs markdown-review.json
+```
+
+### Compare chunking modes and retrieval limits
+
+Use the same vector cache and pinned recursive reference as the Markdown baseline. Run each command with a new result path.
+
+```sh
+node --max-old-space-size=6144 benchmarks/mode-study.mjs chunking-modes.json
+node --max-old-space-size=4096 benchmarks/paragraph-study.mjs paragraph-modes.json
+node --max-old-space-size=4096 benchmarks/strategy-sizes.mjs strategy-sizes.json
+```
+
+The first command exercises the public Markdown strategies and zero-overlap recursion. It compares packing with zero overlap and with a whole-unit overlap target of 25% of the body-token limit. It also tests rules that know the retriever's hit and token limits. Development replays the 676 review questions. Two additional samples use new contracts, papers, financial reports and multi-hop article pools. Mixed document policies rerank each pool as a single index. The report retains per-query hits, delivered tokens, cold indexing work and paired source-group intervals. [Markdown results](results/2026-11-24-chunking-modes.json) · [FinQA source revision](https://github.com/czyssrs/FinQA/tree/0f16e2867befa6840783e58be38c9efb9229d742)
+
+The second command compares blank-line paragraphs, individual sentences, greedy packing, semantic merging and recursion on plain contracts and meeting transcripts. The first two commands run the native recursive reference and repeat it with a hard token cap on any oversized output. [Plain-text results](results/2026-11-24-paragraph-modes.json) · [Findings and mode recommendation](LOG.md#results-and-recommended-modes)
+
+The third command compares 500 and 1,024 UTF-16 code units **per chunk**, with no hard token cap and zero overlap. It holds the hit count and total token budget **per query** fixed within each comparison. It reuses the two Markdown samples and evaluates plain contracts and meeting transcripts separately. The report includes per-question outcomes, cold indexing work and paired source-group intervals. [Size results and default decisions](LOG.md#2026-11-24--character-targets-for-the-public-strategies)
+
+### Audit automatic strategy and size selection
+
+Run the development, confirmation and historical comparisons from the repository root. Use fresh output filenames. The first command freezes one fixed strategy and size per format. The second searches new source groups at all twelve combinations and tests four source-only rules. It scores the original SQuAD and WikiSection objectives separately. The third replays the five earlier Markdown samples, the confirmation sample, original and flattened sources, and the published recursive and semantic controls at their measured token budgets.
+
+```sh
+node --max-old-space-size=4096 benchmarks/auto-study.mjs development auto-dev.json
+node --max-old-space-size=4096 benchmarks/auto-study.mjs confirmation auto-confirm.json auto-dev.json
+node --max-old-space-size=3072 benchmarks/auto-history.mjs auto-history.json auto-dev.json
+```
+
+For the model-transfer check, use the same development file with the larger encoder. The following PowerShell commands can run in a separate shell. Both encoders use 1,536 dimensions. Cache entries are keyed by model, dimension and exact input. Each study compares the public default of the checkout under test. Explicit `pack/500` (Markdown) and `semantic/500` (text) reproduce the former defaults. [Results and release decision](LOG.md#2026-11-24--auditing-automatic-strategy-and-size-selection)
+
+```powershell
+$env:SEMACHUNK_BENCHMARK_MODEL = 'text-embedding-3-large'
+node --max-old-space-size=3072 benchmarks/auto-study.mjs transfer auto-transfer.json auto-dev.json
+```
+
+Run `node benchmarks/auto-history.mjs auto-limits.json auto-dev.json limits` with either encoder to compare the same Markdown character target with and without an additional hard token cap and replay the older structural mode rule. With the default encoder, `node benchmarks/auto-history.mjs auto-unused.json auto-dev.json unused` compares the public Markdown default with packing at 500 and 2,048 characters after excluding the source IDs from the archived studies and both audit splits. The transfer report identifies the confirmation sources. JSON delivery limits of `null` mean unlimited hits or tokens.
+
+Run `node benchmarks/dialogue-size.mjs dialogue.json` with either encoder for the independent transcript check. It joins scenes within each episode, verifies all answer offsets from the pinned FriendsQA release and retrieves within that episode. The primary profile is five hits sharing 512 delivered tokens. [Source and annotations](https://github.com/emorynlp/FriendsQA)
+
 ### Compare overlap after Markdown merging
 
-Run `node --max-old-space-size=6144 benchmarks/overlap-study.mjs overlap.json` with a new output path. This uses the cached encoder and the same literal context scorer as the retrieval studies. The runner verifies the 256-token starting cores against the public API before every overlap run. It measures neighbor cutoffs, final body ceilings, per-side limits and similarity between the original core and the proposed body. The raw results include growth by round, embedding work and the fraction of delivered source characters repeated at 512 tokens. [Overlap results](results/2026-11-23-batched-overlap.json)
-
-Run `node --max-old-space-size=6144 benchmarks/overlap-study.mjs embedding-context.json embedding-context` to return the original cores and use their neighbors only in the embeddings. The runner checks the body text and source ranges against the public cores, compares indexing windows up to 512 tokens and records how often the frozen-core similarity check rejects a proposal. A matched control delivers the entire accepted window using the same index. [Embedding context results](results/2026-11-24-embedding-context.json)
-
-Append `confirmation` and choose a new output path to compare the guarded 384- and 512-token windows with the original cores on the separate document and meeting sample. [Confirmation results](results/2026-11-24-embedding-confirmation.json)
-
-Run `node --max-old-space-size=6144 benchmarks/overlap-study.mjs side-locks.json side-locks` to compare the frozen core and current window as neighbor-scoring references, with either permanent locks or reopening after opposite-side growth. It tests both source formats and one additional meeting condition with speaker-turn starts enforced. Every expansion is checked against source paragraph runs and sentence endpoints. The earlier archived passage and embedding-context results used same-round fallback. Check out `0e78990` and `5261906` respectively to reproduce those runs. [Side-lock and boundary results](results/2026-11-24-overlap-side-locks.json)
-
-Run `node --max-old-space-size=6144 benchmarks/overlap-study.mjs settings.json expansion-settings` with a new output path to tune the expansion size, neighbor cutoff and final-window floor. The 53 expansion settings share 256-token Markdown cores, fixed core scoring and permanent side locks. Meetings also enforce speaker-turn boundaries. The runner chooses document and meeting settings on calibration, then measures them and matched controls on source-disjoint replication data. Reports include both cosine cutoffs, paired differences at 512 delivered tokens, raw scores at all three budgets and cold embedding work. [Expansion settings and results](results/2026-11-24-expansion-settings.json)
-
-Pass the settings report as a final argument to check the selected meeting settings on a separate collection of transcripts, for example `node --max-old-space-size=6144 benchmarks/overlap-study.mjs meeting-settings.json expansion-settings settings.json`. [Independent meeting results](results/2026-11-24-expansion-meetings.json)
+The context-expansion study is archived. Its runner and commands are in revision `0bc7e8f` under `benchmarks/README.md`. For the original same-round fallback runs, use `0e78990` for overlapping passages and `5261906` for expanded embedding inputs. [Document results](results/2026-11-24-expansion-settings.json) and [independent meeting results](results/2026-11-24-expansion-meetings.json)
 
 ## Run the large-document benchmark
 

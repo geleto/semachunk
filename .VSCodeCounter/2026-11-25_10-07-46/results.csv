@@ -1,0 +1,12 @@
+"filename", "language", "JavaScript", "TypeScript", "comment", "blank", "total"
+"c:\Projects\semachunk\src\embeddings.js", "JavaScript", 68, 0, 7, 6, 81
+"c:\Projects\semachunk\src\index.d.ts", "TypeScript", 0, 55, 29, 8, 92
+"c:\Projects\semachunk\src\index.js", "JavaScript", 141, 0, 7, 6, 154
+"c:\Projects\semachunk\src\markdown-merge.js", "JavaScript", 91, 0, 3, 7, 101
+"c:\Projects\semachunk\src\markdown.js", "JavaScript", 264, 0, 8, 17, 289
+"c:\Projects\semachunk\src\merge.js", "JavaScript", 157, 0, 17, 22, 196
+"c:\Projects\semachunk\src\packing.js", "JavaScript", 25, 0, 2, 3, 30
+"c:\Projects\semachunk\src\sentences.js", "JavaScript", 102, 0, 6, 10, 118
+"c:\Projects\semachunk\src\similarity.js", "JavaScript", 43, 0, 5, 7, 55
+"c:\Projects\semachunk\src\token-limit.js", "JavaScript", 73, 0, 2, 5, 80
+"Total", "-", 964, 55, 86, 91, 1196

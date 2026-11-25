@@ -69,7 +69,7 @@ async function measure(task, view, dataset) {
         for (const [name, options] of Object.entries(methods)) {
             const row = await evaluate(task, dataset, { ...options, tokens: report.target }, encoder, 'semantic');
             const arm = (task === 'hotpotqa' ? 'pooled/' : 'document/') + 'dense';
-            const reference = { markdown: 'shipped', recursive: 'recursive-overlap', 'recursive-zero': 'recursive' }[name];
+            const reference = { recursive: 'recursive-overlap', 'recursive-zero': 'recursive' }[name];
             if (task !== 'qmsum' && view === 'original' && reference) {
                 const old = previous.policies[reference + '/t256'].tasks[task];
                 for (const key of ['bodyHash', 'calls', 'embeddedTokens', 'indexTexts', 'indexTokens', 'chunkTokens']) assert.deepEqual(row[key], old[key]);

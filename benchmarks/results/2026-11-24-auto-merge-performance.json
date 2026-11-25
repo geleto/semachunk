@@ -1,0 +1,133 @@
+{
+  "startedUTC": "2026-11-24T17:45:52.579Z",
+  "node": "v24.14.1",
+  "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+  "platform": "win32",
+  "trials": 7,
+  "implementationSHA256": {
+    "current": "cb78ba0ca700435b461098787b56aaafd222d16029509058d6db93de39287961"
+  },
+  "results": [
+    {
+      "sentences": 2048,
+      "topicLength": 8,
+      "cap": 500,
+      "scores": {
+        "current": {
+          "chunks": 256,
+          "providerCalls": 12,
+          "providerTexts": 3840,
+          "singletonCalls": 0,
+          "boundariesSHA256": "9c719e921e6d01aa27339765ddad2e7e34497b3dca17dd2184e2d49a21464c56",
+          "samplesMs": [
+            14.85,
+            15.16,
+            12.44,
+            9.86,
+            9.47,
+            5.99,
+            6.14
+          ],
+          "medianMs": 9.86
+        }
+      }
+    },
+    {
+      "sentences": 16384,
+      "topicLength": 8,
+      "cap": 500,
+      "scores": {
+        "current": {
+          "chunks": 2048,
+          "providerCalls": 37,
+          "providerTexts": 30720,
+          "singletonCalls": 0,
+          "boundariesSHA256": "2288af1cbf6774fbd4a4257558ef19e75f49d3e1201440bba3130eef58595cb8",
+          "samplesMs": [
+            76.49,
+            62.86,
+            93.4,
+            96.04,
+            69.26,
+            62.13,
+            66.31
+          ],
+          "medianMs": 69.26
+        }
+      }
+    },
+    {
+      "sentences": 16384,
+      "topicLength": 8,
+      "cap": 12,
+      "scores": {
+        "current": {
+          "chunks": 2048,
+          "providerCalls": 1196,
+          "providerTexts": 30720,
+          "singletonCalls": 0,
+          "boundariesSHA256": "2288af1cbf6774fbd4a4257558ef19e75f49d3e1201440bba3130eef58595cb8",
+          "samplesMs": [
+            67.36,
+            68.28,
+            58.89,
+            93.44,
+            83.13,
+            99.07,
+            87.73
+          ],
+          "medianMs": 83.13
+        }
+      }
+    },
+    {
+      "sentences": 16384,
+      "topicLength": 1,
+      "cap": 500,
+      "scores": {
+        "current": {
+          "chunks": 16384,
+          "providerCalls": 1,
+          "providerTexts": 16384,
+          "singletonCalls": 0,
+          "boundariesSHA256": "fc478c05dd49f46b879597e9129248e3cf46d35351d6618e009fe9df19572c48",
+          "samplesMs": [
+            43.69,
+            47.03,
+            44.42,
+            53.61,
+            44.85,
+            60.24,
+            41.45
+          ],
+          "medianMs": 44.85
+        }
+      }
+    },
+    {
+      "sentences": 4096,
+      "topicLength": 8,
+      "cap": 500,
+      "dimensions": 384,
+      "scores": {
+        "current": {
+          "chunks": 512,
+          "providerCalls": 16,
+          "providerTexts": 7680,
+          "singletonCalls": 0,
+          "boundariesSHA256": "312cb44fb3271733a929fa190d5353a6bbb1953782b6d8f1b315b0b68a614db2",
+          "samplesMs": [
+            53.94,
+            43.28,
+            46.53,
+            53.93,
+            119.73,
+            196.34,
+            137.83
+          ],
+          "medianMs": 53.94
+        }
+      }
+    }
+  ]
+}

@@ -1,5 +1,8 @@
 import { alignDocument, compact, cuad, hotpotqa, lowerBound, qasper } from './corpora.mjs';
-import { costs, denseRanker, indexedChunks, internCandidates, measure, packSentences, qualityPlans, split, vocabulary } from './chunking.mjs';
+import { costs, denseRanker, internCandidates, measure, qualityPlans, split, vocabulary } from './chunking.mjs';
+import { alignPlain } from './delivered-context.mjs';
+import { packSentences } from '../src/packing.js';
+import { tokenBudget } from '../src/token-limit.js';
 import { modelInputTokens } from './encoder.mjs';
 
 export const budgets = [256, 512, 1024];
@@ -9,7 +12,7 @@ export const windowPlan = { tokens: 128, overlap: 32 };
 
 export function ragPlans() {
     const grid = qualityPlans();
-    const selected = ['sentences', 'pack-500', 'merge-250-0.5', 'merge-500-0.3', 'merge-500-0.5', 'merge-500-0.7'];
+    const selected = ['sentences', 'blocks-500', 'pack-500', 'semantic-500', 'merge-250-0.5', 'merge-500-0.3', 'merge-500-0.5', 'merge-500-0.7'];
     const base = grid['merge-500-0.5'];
     return { 'priority-default': {}, ...Object.fromEntries(selected.map(name => [name, grid[name]])),
         'flat-merge-500-0.5': { ...base, flatInput: true }, 'merge-500-document': grid['merge-500-document'],
@@ -33,8 +36,11 @@ export async function prepare(docs, questions, chunkText, encoder, plans) {
         aligned.push(doc);
         internCandidates(parts, 500, vocab);
         for (const plan of Object.values(plans)) {
+            if (plan.chunkingStrategy === 'blocks') {
+                (await split(chunkText, raw, plan)).forEach(vocab.intern);
+            }
             if (plan.pack && plan.maxChunkTokens) {
-                packSentences(parts, plan.maxChunkSize, plan.maxChunkTokens, encoder.countTokens).forEach(vocab.intern);
+                packSentences(parts, plan.maxChunkSize, tokenBudget(plan.maxChunkTokens, encoder.countTokens, '')).forEach(vocab.intern);
             }
         }
         if (needFlat) {
@@ -237,14 +243,17 @@ export async function evaluateRag(task, chunkText, encoder, plans, { sample, pai
         } else {
             rows = [];
             for (const doc of docs) rows.push(await measure(chunkText, doc, plan, vocab, matrix, encoder.countTokens));
-            for (const { doc, start, index } of indexedChunks(docs, rows, vocab.texts)) {
-                // Charge a standalone separator token to the following chunk.
-                // A token containing letters from both chunks would make the
-                // source-token budget ambiguous and must be reported.
-                const source = sources[doc], charEnd = start + vocab.texts[index].length;
-                const a = byDoc[doc].at(-1)?.end ?? 0, b = lowerBound(source.starts, charEnd);
-                if (a && source.ends[a - 1] > start) throw new Error('A source token crosses a chunk boundary in ' + docs[doc].title);
-                if (a < b) byDoc[doc].push({ doc, start: a, end: b, index });
+            for (const [doc, original] of docs.entries()) {
+                const ids = rows[doc].ids, source = sources[doc];
+                const chunks = alignPlain(original.flat, ids.map(i => vocab.texts[i]));
+                for (const [i, { sourceRanges }] of chunks.entries()) {
+                    // Count the same source tokens even when a layout inserts a space at a sentence break.
+                    const start = original.translate(sourceRanges[0].start);
+                    const end = original.translate(sourceRanges.at(-1).end - 1) + 1;
+                    const a = byDoc[doc].at(-1)?.end ?? 0, b = lowerBound(source.starts, end);
+                    if (a && source.ends[a - 1] > start) throw new Error('A source token crosses a chunk boundary in ' + original.title);
+                    if (a < b) byDoc[doc].push({ doc, start: a, end: b, index: ids[i] });
+                }
             }
             byDoc.forEach((group, d) => {
                 if (group[0]?.start !== 0 || group.at(-1)?.end !== sources[d].starts.length ||
