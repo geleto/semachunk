@@ -43,7 +43,7 @@ export function internCandidates(parts, maxSize, vocab) {
 export async function split(chunkText, text, options) {
     const unexpected = () => { throw new Error('Splitting requested embeddings'); };
     const chunks = await chunkText(text, unexpected, { combineChunks: false, returnEmbedding: false, ...options });
-    return chunks.map(chunk => chunk.text);
+    return chunks.filter(chunk => !chunk.tokenLimitExceeded).map(chunk => chunk.text);
 }
 
 export async function measure(chunkText, doc, plan, vocab, matrix, countTokens) {
@@ -62,28 +62,38 @@ export async function measure(chunkText, doc, plan, vocab, matrix, countTokens) 
             return matrix.subarray(start, start + dimension);
         });
     }
-    let output;
+    let chunks;
     if (plan.pack) {
-        output = packSentences(doc.parts, plan.maxChunkSize, tokenBudget(plan.maxChunkTokens ?? Infinity, countTokens, ''));
-        if (output.length) embed([...new Set(output)]);
+        const fits = tokenBudget(plan.maxChunkTokens ?? Infinity, countTokens, '');
+        chunks = packSentences(doc.parts, plan.maxChunkSize, fits).map(text => ({ text, tokenLimitExceeded: fits && !fits(text) }));
     } else {
         const { flatInput, ...options } = plan;
         if (options.maxChunkTokens) options.countTokens = countTokens;
-        output = (await chunkText(flatInput ? doc.flat : doc.raw, embed, { ...options, returnEmbedding: true })).map(c => c.text);
+        chunks = await chunkText(flatInput ? doc.flat : doc.raw, embed, { ...options, returnEmbedding: true });
     }
-    return { ids: output.map(vocab.id), calls, inputs, singletons, providerTokens };
+    const indexed = chunks.filter(c => !c.tokenLimitExceeded).map(c => c.text);
+    if (plan.pack && indexed.length) embed([...new Set(indexed)]);
+    const ids = indexed.map(vocab.id);
+    // Keep rejected text for source alignment. It has no vector ID.
+    const pieces = chunks.length === ids.length ? undefined :
+        chunks.map(c => c.tokenLimitExceeded ? { text: c.text } : { text: c.text, index: vocab.id(c.text) });
+    return { ids, ...(pieces && { pieces }), calls, inputs, singletons, providerTokens };
+}
+
+export function sourcePieces(row, texts) {
+    return row.pieces ?? row.ids.map(index => ({ index, text: texts[index] }));
 }
 
 export function indexedChunks(docs, rows, texts) {
     const chunks = [];
     docs.forEach((doc, d) => {
         let cursor = 0;
-        for (const index of rows[d].ids) {
-            const text = texts[index];
+        const pieces = sourcePieces(rows[d], texts);
+        for (const [i, { text, index }] of pieces.entries()) {
             if (!doc.text.startsWith(text, cursor)) throw new Error('Chunk disagrees with ' + doc.title + ' at ' + cursor);
-            chunks.push({ doc: d, start: cursor, index });
+            if (index !== undefined) chunks.push({ doc: d, start: cursor, index });
             cursor += text.length;
-            if (doc.text[cursor] === ' ') cursor++;
+            if (doc.text[cursor] === ' ' && !pieces[i + 1]?.text.startsWith(' ')) cursor++;
         }
         if (cursor !== doc.text.length) throw new Error('Incomplete chunk coverage in ' + doc.title);
     });

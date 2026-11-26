@@ -20,12 +20,14 @@ const gold = queries.map(([record, , ...answers]) => {
 const encoder = openEncoder();
 try {
     const layouts = {};
+    const whole = await chunkText(source, { inputFormat: 'json', maxChunkSize: Infinity });
     for (const [name, cap] of [['intact'], ['chars973', 973], ['chars1024', 1024], ['chars1075', 1075],
         ['tokens243', 243], ['tokens256', 256], ['tokens269', 269]]) {
-        // Only article strings exceed the soft target in this fixture. The length
-        // counter exercises the same source-preserving cuts as a string-only fallback.
-        layouts[name] = await chunkText(source, { inputFormat: 'json', maxChunkTokens: cap,
-            countTokens: name.startsWith('chars') ? s => s.length : encoder.countTokens });
+        // Reproduce the original pilot on these flat records, including its intact-string control.
+        const countTokens = name.startsWith('chars') ? s => s.length : encoder.countTokens;
+        const leaves = await chunkText(source, { inputFormat: 'json', maxChunkSize: 0, maxChunkTokens: cap, countTokens });
+        layouts[name] = whole.flatMap(r => r.text.length <= 1024 && (!cap || countTokens(r.text) <= cap) ? [r] :
+            leaves.filter(c => !c.tokenLimitExceeded && c.jsonPointer.startsWith(r.jsonPointer + '/')));
     }
     assert.deepEqual(layouts.intact.filter(c => c.text.length > 973).map(c => c.jsonPointer), ['/0/body', '/1/body', '/2/body']);
     const texts = [...new Set([...queries.map(q => q[1]), ...Object.values(layouts).flat().map(c => c.text)])];

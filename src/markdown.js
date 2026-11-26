@@ -3,7 +3,7 @@ import { gfmFromMarkdown } from 'mdast-util-gfm';
 import { frontmatterFromMarkdown } from 'mdast-util-frontmatter';
 import { gfm } from 'micromark-extension-gfm';
 import { frontmatter } from 'micromark-extension-frontmatter';
-import { splitSpans, TokenLimitError } from './token-limit.js';
+import { splitSpans } from './token-limit.js';
 import { sentenceEnds, sentenceLocale } from './sentences.js';
 
 export const markdownGrammar = {
@@ -76,12 +76,9 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale, exclud
         }
         const check = (a, b) => within(markdownText(source, make(a, b)));
         if (check(start, end)) return [make(start, end)];
-        try {
-            return splitSpans(source, start, end, check, true, protectedSpans).map(([a, b]) => make(a, b));
-        } catch (error) {
-            if (!(error instanceof TokenLimitError) || !prefix) throw error;
-            return leaf(start, end, kind, '', protectedSpans);
-        }
+        const spans = splitSpans(source, start, end, check, { protectedSpans });
+        if (prefix && spans.some(([a, b]) => !check(a, b))) return leaf(start, end, kind, '', protectedSpans);
+        return spans.map(([a, b]) => make(a, b));
     }
 
     function sentences(node) {
@@ -205,27 +202,25 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale, exclud
         const units = [];
         const check = (a, b) => within(markdownText(source, fragment(a, b)));
         let group = bodyStart, line = bodyStart;
-        try {
-            for (const match of source.slice(bodyStart, bodyEnd).matchAll(/[^\r\n]*(?:\r\n|[\r\n]|$)/g)) {
-                if (!match[0]) continue;
-                const startOfLine = line;
-                line += match[0].length;
+        for (const match of source.slice(bodyStart, bodyEnd).matchAll(/[^\r\n]*(?:\r\n|[\r\n]|$)/g)) {
+            if (!match[0]) continue;
+            const startOfLine = line;
+            line += match[0].length;
+            if (check(group, line)) continue;
+            // Keep pending blank lines with the following code when splitting it.
+            if (group < startOfLine && /\S/u.test(source.slice(group, startOfLine))) {
+                units.push(fragment(group, startOfLine));
+                group = startOfLine;
                 if (check(group, line)) continue;
-                // Keep pending blank lines with the following code when splitting it.
-                if (group < startOfLine && /\S/u.test(source.slice(group, startOfLine))) {
-                    units.push(fragment(group, startOfLine));
-                    group = startOfLine;
-                    if (check(group, line)) continue;
-                }
-                for (const [a, b] of splitSpans(source, group, line, check)) units.push(fragment(a, b));
-                group = line;
             }
-            if (group < bodyEnd) units.push(fragment(group, bodyEnd));
-            return units;
-        } catch (error) {
-            if (!(error instanceof TokenLimitError)) throw error;
-            return leaf(start, end, 'fragment');
+            for (const [a, b] of splitSpans(source, group, line, check)) {
+                if (!check(a, b)) return leaf(start, end, 'fragment');
+                units.push(fragment(a, b));
+            }
+            group = line;
         }
+        if (group < bodyEnd) units.push(fragment(group, bodyEnd));
+        return units;
     }
 
     let run = 0;
@@ -281,6 +276,7 @@ export function parseMarkdown(source, { maxChunkSize = 500, fits, locale, exclud
                 unit.start = first;
             }
             pending = [];
+            if (fits && !fits(markdownText(source, unit))) unit.kind = 'fragment';
             units.push(Object.assign(unit, { headingPath, sectionId, run }));
         }
     }

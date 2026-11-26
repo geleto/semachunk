@@ -2,6 +2,26 @@
 
 The quality suite scores short-answer retrieval and editorial boundaries. The RAG suite searches complete contracts, research papers and collections of related and distracting passages. The Node performance suite measures batching and library time on large documents. Each run writes a new JSON file under `benchmarks/results/`. [Results and change log](LOG.md)
 
+## Compare JSON record layouts
+
+Node runs the JSON study’s scoring, nomination, report and tests. Preparing the pinned HotpotQA, WikiSQL and FinQA datasets requires Python 3. The release protocol requires `text-embedding-3-small` at 1,536 dimensions and five hits sharing 512 delivered tokens. Scoring rejects a conflicting `SEMACHUNK_BENCHMARK_MODEL` override. The first three scoring runs use development data. Freeze the candidate sequence and generic reference before scoring the independent confirmation questions.
+
+```sh
+node benchmarks/json-string-study.mjs --verify-runtime
+node benchmarks/json-record-study.mjs prepare
+node benchmarks/json-record-study.mjs score hotpot
+node benchmarks/json-record-study.mjs score wikisql
+node benchmarks/json-record-study.mjs score finqa
+node benchmarks/json-record-report.mjs nominate hotpot benchmarks/results/local-json-record-nominees.json
+node benchmarks/json-record-study.mjs score confirmation --freeze benchmarks/results/local-json-record-nominees.json
+node benchmarks/json-record-report.mjs report benchmarks/results/local-json-record-nominees.json hotpot wikisql finqa confirmation benchmarks/results/local-json-records
+node benchmarks/json-record-study.mjs verify hotpot --layout packed
+```
+
+`inventory hotpot --batches 1` in place of `score hotpot` counts inputs and tokens for 32 pools without calling the provider. Each completed batch can be resumed or replayed from the ignored benchmark cache. Use `--start` and `--batches` for disjoint batch ranges. If several complete runs exist, pass the printed score directory in place of its corpus name. The report includes logical indexing costs, provider usage recorded by completed batches, peak process memory and paired completion after clipping. In the compressed question file, each line contains the corpus, pool ID, question IDs with token counts and a map of renderings. Each rendering stores its subgroup and variants with their layout names, answer bits, costs and title-only outcomes.
+
+`verify` compares the public text, pointers and source ranges with the independent benchmark layout, using the same corpus and size settings without embeddings. Repeat it with `confirmation`, `wikisql` or `finqa`. The report’s `qualifiedLayout` is the last candidate to pass the statistical rules. The maintainer selected sibling packing after reviewing the cost of repetition. `pairedFileSHA256` identifies the gzip file produced by that run. Compare decompressed JSONL bytes when replaying with a different compressor. [Release decision](LOG.md#2026-11-26--choosing-the-json-record-layout)
+
 ## Run the quality suite
 
 Use Node 20.12 or newer. WikiSection and QASPER also use the system `tar` command on PATH to read their published archives. Set `OPENAI_API_KEY` in your environment or in the repository's Git-ignored `.env`. To read the key directly from another project, pass `--env-file path/to/.env` after npm's argument separator. The runner reads only `OPENAI_API_KEY` from that file. From the repository root run
@@ -66,7 +86,7 @@ CUAD passes the original contract whitespace to the chunker. QASPER supplies hea
 
 Each ranked context gets **256, 512 or 1,024 source tokens** from the document's `cl100k_base` encoding. A standalone separator token between adjacent chunks is charged to the following chunk. The last chunk is clipped to the remaining budget. Overlapping windows spend budget again for repeated tokens. A gold token earns credit once, at its actual position in its source document. Evidence split over multiple retrieved chunks counts toward the same answer.
 
-For a disjoint chunking policy, the scorer checks that every source token belongs to exactly one chunk. It reports an error if an implementation cuts through a token shared by two chunks. All sampled source documents passed this check.
+For a disjoint chunking policy, the scorer checks that every source token belongs to exactly one output chunk. It reports an error if a boundary cuts through a source token. All sampled source documents passed this check. A chunk that exceeds a hard token cap still occupies its source position. Only eligible chunks count toward index costs and retrieval scores. A pool with no eligible chunks delivers zero tokens and earns zero evidence credit.
 
 - **Evidence recall** is the fraction of annotated evidence tokens delivered, averaged over questions. **Context precision** is the number of distinct gold tokens delivered divided by all delivered tokens, also averaged over questions. With multiple answerers, the scorer chooses one answerer's reference by highest recall and breaks ties by precision.
 - **Complete** counts questions for which the context contains every token of a valid reference. **Budget feasible** counts questions where at least one reference could fit if every selected token were useful. Whole-paragraph requirements can make complete coverage difficult even when a reader could infer the answer from a shorter excerpt.

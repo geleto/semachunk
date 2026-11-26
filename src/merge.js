@@ -66,7 +66,7 @@ async function scoreChangedChunks(changed, pass, queue, embedBatch, options, cut
         else if (finalEmbeddingText) {
             const pieces = tokenLimit?.oversized.get(chunk.text);
             if (pieces) {
-                for (const part of pieces) finalTexts.push(finalEmbeddingText(part));
+                for (const part of pieces) if (tokenLimit.fits(part)) finalTexts.push(finalEmbeddingText(part));
             } else if (!tokenLimit || !(fitsLength(chunk) || fitsLength(chunk.prev))) {
                 // Character length only grows; a tokenizer can change its count at a join.
                 finalTexts.push(finalEmbeddingText(chunk.text));

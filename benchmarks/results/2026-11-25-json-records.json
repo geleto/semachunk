@@ -1,0 +1,2780 @@
+{
+  "qualifiedLayout": "packed-repeat",
+  "reference": "record",
+  "candidates": [
+    "children",
+    "packed",
+    "packed-repeat",
+    "packed-omit"
+  ],
+  "comparisons": [
+    {
+      "name": "packed",
+      "control": "children",
+      "full": {
+        "array": [
+          {
+            "n": 4084,
+            "delta": 1.0773751224289911,
+            "lo": 0.33969048017394726,
+            "hi": 1.8109158157472067,
+            "counts": [
+              23,
+              3994,
+              67
+            ]
+          },
+          {
+            "n": 4084,
+            "delta": 1.2732615083251715,
+            "lo": 0.5845449215875473,
+            "hi": 1.956283209610101,
+            "counts": [
+              15,
+              4002,
+              67
+            ]
+          }
+        ],
+        "last": [
+          {
+            "n": 4084,
+            "delta": 1.1508325171400589,
+            "lo": 0.4588671080356719,
+            "hi": 1.83777087474802,
+            "counts": [
+              17,
+              4003,
+              64
+            ]
+          },
+          {
+            "n": 4084,
+            "delta": 1.1753183153770812,
+            "lo": 0.5318839210372566,
+            "hi": 1.8127071851230736,
+            "counts": [
+              12,
+              4012,
+              60
+            ]
+          }
+        ],
+        "text": [
+          {
+            "n": 4084,
+            "delta": 0.024485798237022526,
+            "lo": -0.10693187589786894,
+            "hi": 0.15613916955438123,
+            "counts": [
+              0,
+              4083,
+              1
+            ]
+          },
+          {
+            "n": 4084,
+            "delta": 0.024485798237022526,
+            "lo": -0.10693187589786894,
+            "hi": 0.15613916955438123,
+            "counts": [
+              0,
+              4083,
+              1
+            ]
+          }
+        ]
+      },
+      "affected": [
+        {
+          "n": 151,
+          "delta": 6.953642384105961,
+          "lo": -1.531561256703766,
+          "hi": 14.96436029732183,
+          "counts": [
+            0,
+            8,
+            114,
+            29,
+            0
+          ]
+        },
+        {
+          "n": 151,
+          "delta": 9.602649006622517,
+          "lo": 2.6422931099032225,
+          "hi": 15.862375780977233,
+          "counts": [
+            0,
+            0,
+            122,
+            29,
+            0
+          ]
+        }
+      ],
+      "affectedViews": {
+        "array": [
+          {
+            "n": 151,
+            "delta": 13.907284768211921,
+            "lo": 1.5990230905472747,
+            "hi": 25.41966766312571,
+            "counts": [
+              8,
+              114,
+              29
+            ]
+          },
+          {
+            "n": 151,
+            "delta": 19.205298013245034,
+            "lo": 9.67210284027234,
+            "hi": 27.451328916644247,
+            "counts": [
+              0,
+              122,
+              29
+            ]
+          }
+        ],
+        "text": [
+          {
+            "n": 151,
+            "delta": 0.0,
+            "lo": -2.8603006349875337,
+            "hi": 2.8603006349875337,
+            "counts": [
+              0,
+              151,
+              0
+            ]
+          },
+          {
+            "n": 151,
+            "delta": 0.0,
+            "lo": -2.8603006349875337,
+            "hi": 2.8603006349875337,
+            "counts": [
+              0,
+              151,
+              0
+            ]
+          }
+        ]
+      },
+      "titleOnly": {},
+      "distractors": [
+        {
+          "n": 1614,
+          "delta": 0.7434944237918215,
+          "lo": -0.22985128640795274,
+          "hi": 1.7093927313497328,
+          "counts": [
+            0,
+            15,
+            1560,
+            39,
+            0
+          ]
+        },
+        {
+          "n": 1614,
+          "delta": 0.7434944237918215,
+          "lo": -0.22985128640795274,
+          "hi": 1.7093927313497328,
+          "counts": [
+            0,
+            15,
+            1560,
+            39,
+            0
+          ]
+        }
+      ],
+      "costDelta": {
+        "array": [
+          -15642,
+          -14663,
+          -13896
+        ],
+        "last": [
+          -15642,
+          -14616,
+          -13849
+        ],
+        "text": [
+          -20,
+          0,
+          0
+        ]
+      },
+      "costPercent": {
+        "array": [
+          -25.567178816606734,
+          -0.2831794351050186,
+          -0.2684412326969767
+        ],
+        "last": [
+          -25.567178816606734,
+          -0.28195303792052306,
+          -0.26723114075414794
+        ],
+        "text": [
+          -0.044290902648595976,
+          0.0,
+          0.0
+        ]
+      },
+      "guards": true,
+      "qualifies": true,
+      "quality": true,
+      "savings": true,
+      "savingsSubgroupFloor": false,
+      "baselineGuards": true,
+      "parentQualified": true
+    },
+    {
+      "name": "packed-repeat",
+      "control": "packed",
+      "full": {
+        "array": [
+          {
+            "n": 4084,
+            "delta": -0.22037218413320275,
+            "lo": -0.7162165632214611,
+            "hi": 0.2772804020593117,
+            "counts": [
+              23,
+              4047,
+              14
+            ]
+          },
+          {
+            "n": 4084,
+            "delta": 0.9059745347698335,
+            "lo": 0.2392138680921101,
+            "hi": 1.5685721194533038,
+            "counts": [
+              18,
+              4011,
+              55
+            ]
+          }
+        ],
+        "last": [
+          {
+            "n": 4084,
+            "delta": 0.0,
+            "lo": -0.10723987694672976,
+            "hi": 0.10723987694672976,
+            "counts": [
+              0,
+              4084,
+              0
+            ]
+          },
+          {
+            "n": 4084,
+            "delta": 0.0,
+            "lo": -0.10723987694672976,
+            "hi": 0.10723987694672976,
+            "counts": [
+              0,
+              4084,
+              0
+            ]
+          }
+        ],
+        "text": [
+          {
+            "n": 4084,
+            "delta": -0.2693437806072478,
+            "lo": -0.7220775761709545,
+            "hi": 0.18617105782988302,
+            "counts": [
+              21,
+              4053,
+              10
+            ]
+          },
+          {
+            "n": 4084,
+            "delta": 0.7590597453476984,
+            "lo": 0.1571955026383423,
+            "hi": 1.3566462960860837,
+            "counts": [
+              14,
+              4025,
+              45
+            ]
+          }
+        ]
+      },
+      "affected": [
+        {
+          "n": 151,
+          "delta": -3.9735099337748343,
+          "lo": -13.09778993695439,
+          "hi": 5.483121630660047,
+          "counts": [
+            7,
+            7,
+            131,
+            3,
+            3
+          ]
+        },
+        {
+          "n": 151,
+          "delta": 25.165562913907284,
+          "lo": 11.18807674629972,
+          "hi": 37.408264749968055,
+          "counts": [
+            2,
+            5,
+            97,
+            9,
+            38
+          ]
+        }
+      ],
+      "affectedViews": {
+        "array": [
+          {
+            "n": 151,
+            "delta": -3.9735099337748343,
+            "lo": -12.060025192534042,
+            "hi": 4.4126030365285995,
+            "counts": [
+              10,
+              137,
+              4
+            ]
+          },
+          {
+            "n": 151,
+            "delta": 26.490066225165563,
+            "lo": 13.483294483682473,
+            "hi": 38.000725246316605,
+            "counts": [
+              5,
+              101,
+              45
+            ]
+          }
+        ],
+        "text": [
+          {
+            "n": 151,
+            "delta": -3.9735099337748343,
+            "lo": -12.581353407136877,
+            "hi": 4.915868724689465,
+            "counts": [
+              11,
+              135,
+              5
+            ]
+          },
+          {
+            "n": 151,
+            "delta": 23.841059602649008,
+            "lo": 11.491608467271005,
+            "hi": 34.80431146840532,
+            "counts": [
+              4,
+              107,
+              40
+            ]
+          }
+        ]
+      },
+      "titleOnly": {},
+      "distractors": [
+        {
+          "n": 1614,
+          "delta": -0.24783147459727387,
+          "lo": -1.2017876502559894,
+          "hi": 0.7077060143449427,
+          "counts": [
+            2,
+            19,
+            1581,
+            9,
+            3
+          ]
+        },
+        {
+          "n": 1614,
+          "delta": -0.24783147459727387,
+          "lo": -1.2017876502559894,
+          "hi": 0.7077060143449427,
+          "counts": [
+            2,
+            19,
+            1581,
+            9,
+            3
+          ]
+        }
+      ],
+      "costDelta": {
+        "array": [
+          0,
+          41682,
+          42352
+        ],
+        "last": [
+          0,
+          0,
+          0
+        ],
+        "text": [
+          0,
+          38361,
+          39031
+        ]
+      },
+      "costPercent": {
+        "array": [
+          0.0,
+          0.8072703524821017,
+          0.8203529346135012
+        ],
+        "last": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "text": [
+          0.0,
+          0.7489657571863988,
+          0.7621466326303266
+        ]
+      },
+      "guards": true,
+      "qualifies": true,
+      "quality": true,
+      "savings": false,
+      "savingsSubgroupFloor": false,
+      "baselineGuards": true,
+      "parentQualified": true
+    },
+    {
+      "name": "packed-omit",
+      "control": "packed-repeat",
+      "full": {
+        "array": [
+          {
+            "n": 4084,
+            "delta": 0.14691478942213515,
+            "lo": -0.06128107530660534,
+            "hi": 0.3476172573935954,
+            "counts": [
+              0,
+              4078,
+              6
+            ]
+          },
+          {
+            "n": 4084,
+            "delta": 0.14691478942213515,
+            "lo": -0.06128107530660534,
+            "hi": 0.3476172573935954,
+            "counts": [
+              0,
+              4078,
+              6
+            ]
+          }
+        ],
+        "last": [
+          {
+            "n": 4084,
+            "delta": 0.0,
+            "lo": -0.10723987694672976,
+            "hi": 0.10723987694672976,
+            "counts": [
+              0,
+              4084,
+              0
+            ]
+          },
+          {
+            "n": 4084,
+            "delta": 0.0,
+            "lo": -0.10723987694672976,
+            "hi": 0.10723987694672976,
+            "counts": [
+              0,
+              4084,
+              0
+            ]
+          }
+        ],
+        "text": [
+          {
+            "n": 4084,
+            "delta": 0.1714005876591577,
+            "lo": -0.04755151943410516,
+            "hi": 0.3821879367201464,
+            "counts": [
+              0,
+              4077,
+              7
+            ]
+          },
+          {
+            "n": 4084,
+            "delta": 0.1714005876591577,
+            "lo": -0.04755151943410516,
+            "hi": 0.3821879367201464,
+            "counts": [
+              0,
+              4077,
+              7
+            ]
+          }
+        ]
+      },
+      "affected": [
+        {
+          "n": 151,
+          "delta": 3.3112582781456954,
+          "lo": -2.526167249755081,
+          "hi": 8.871758137151442,
+          "counts": [
+            0,
+            0,
+            145,
+            2,
+            4
+          ]
+        },
+        {
+          "n": 151,
+          "delta": 3.3112582781456954,
+          "lo": -2.526167249755081,
+          "hi": 8.871758137151442,
+          "counts": [
+            0,
+            0,
+            145,
+            2,
+            4
+          ]
+        }
+      ],
+      "affectedViews": {
+        "array": [
+          {
+            "n": 151,
+            "delta": 2.6490066225165565,
+            "lo": -2.2732926332291745,
+            "hi": 7.291371521313417,
+            "counts": [
+              0,
+              147,
+              4
+            ]
+          },
+          {
+            "n": 151,
+            "delta": 2.6490066225165565,
+            "lo": -2.2732926332291745,
+            "hi": 7.291371521313417,
+            "counts": [
+              0,
+              147,
+              4
+            ]
+          }
+        ],
+        "text": [
+          {
+            "n": 151,
+            "delta": 3.9735099337748343,
+            "lo": -1.6046832396529986,
+            "hi": 9.157633418386768,
+            "counts": [
+              0,
+              145,
+              6
+            ]
+          },
+          {
+            "n": 151,
+            "delta": 3.9735099337748343,
+            "lo": -1.6046832396529986,
+            "hi": 9.157633418386768,
+            "counts": [
+              0,
+              145,
+              6
+            ]
+          }
+        ]
+      },
+      "titleOnly": {
+        "array": {
+          "n": 1758,
+          "delta": 0.0,
+          "lo": -0.2489516385150492,
+          "hi": 0.2489516385150492,
+          "counts": [
+            0,
+            1758,
+            0
+          ]
+        },
+        "text": {
+          "n": 1637,
+          "delta": 0.0,
+          "lo": -0.267328455678284,
+          "hi": 0.267328455678284,
+          "counts": [
+            0,
+            1637,
+            0
+          ]
+        }
+      },
+      "distractors": [
+        {
+          "n": 1614,
+          "delta": 0.09293680297397769,
+          "lo": -0.31015821973560204,
+          "hi": 0.4999900814126046,
+          "counts": [
+            0,
+            0,
+            1612,
+            1,
+            1
+          ]
+        },
+        {
+          "n": 1614,
+          "delta": 0.09293680297397769,
+          "lo": -0.31015821973560204,
+          "hi": 0.4999900814126046,
+          "counts": [
+            0,
+            0,
+            1612,
+            1,
+            1
+          ]
+        }
+      ],
+      "costDelta": {
+        "array": [
+          -2711,
+          -22244,
+          -22244
+        ],
+        "last": [
+          0,
+          0,
+          0
+        ],
+        "text": [
+          -2465,
+          -20213,
+          -20213
+        ]
+      },
+      "costPercent": {
+        "array": [
+          -5.953269796653345,
+          -0.4273576524762306,
+          -0.4273576524762306
+        ],
+        "last": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "text": [
+          -5.461272598369373,
+          -0.39170780183185844,
+          -0.39170780183185844
+        ]
+      },
+      "guards": true,
+      "qualifies": false,
+      "quality": false,
+      "savings": true,
+      "savingsSubgroupFloor": false,
+      "baselineGuards": false,
+      "parentQualified": true
+    }
+  ],
+  "references": {
+    "children": {
+      "n": 4084,
+      "delta": 0.5876591576885406,
+      "lo": -0.2155558259780102,
+      "hi": 1.3872245714249398,
+      "counts": [
+        6,
+        35,
+        3959,
+        73,
+        11
+      ]
+    },
+    "packed": {
+      "n": 4084,
+      "delta": 0.03672869735553379,
+      "lo": -0.656380489146652,
+      "hi": 0.7294935593714548,
+      "counts": [
+        11,
+        21,
+        4018,
+        22,
+        12
+      ]
+    },
+    "packed-repeat": {
+      "n": 4084,
+      "delta": 0.28158667972575907,
+      "lo": -0.36226056333991385,
+      "hi": 0.9222084193024609,
+      "counts": [
+        6,
+        15,
+        4028,
+        20,
+        15
+      ]
+    },
+    "packed-omit": {
+      "n": 4084,
+      "delta": 0.12242899118511263,
+      "lo": -0.4702306098177399,
+      "hi": 0.7133997877487357,
+      "counts": [
+        6,
+        15,
+        4036,
+        17,
+        10
+      ]
+    }
+  },
+  "costColumns": [
+    "stored rows",
+    "row tokens",
+    "distinct input tokens per call",
+    "pooled inputs",
+    "over-limit fragments"
+  ],
+  "answerColumns": [
+    "ranked bits (ordinary=1, attributable or labelled=2)",
+    "unbudgeted indexing bits",
+    "delivered tokens"
+  ],
+  "metadata": {
+    "hotpot": {
+      "settings": {
+        "corpus": "hotpot",
+        "names": [
+          "children",
+          "packed",
+          "children-repeat",
+          "packed-repeat",
+          "packed-omit",
+          "children-omit",
+          "plain",
+          "record"
+        ],
+        "views": [
+          "array",
+          "last",
+          "text",
+          "indent",
+          "ascii",
+          "size500",
+          "cap256"
+        ],
+        "model": "text-embedding-3-small",
+        "dimension": 1536,
+        "topK": 5,
+        "budget": 512,
+        "batchSize": 32
+      },
+      "poolBatches": [
+        "6d99ade3e14877fec976688d9377214f73ecb4c84241f2ca6b546304865ffaca",
+        "fa8851aa79e7f8fdb2ff5d08da72b074bb1491a60e333287265043e0b0b74857",
+        "441d734ec4cb5883d7945b4c29c0ebb66f50bb0465df833368ac1f9807cfda2f",
+        "1fb59fe966084885ccafb04b4b724b07305abd4222fe9074f92992b21ddd3a69",
+        "5846fc42d317829fb449f577dcbaad99d9f0a9fb1b5c5514560c75e7f4c2008d",
+        "4d1f791d3157293adf34242b21a2118a69cc656350a23db2c4cf7540a865ba1c",
+        "9fb4e622819d3d01158a6d51b10b0f7ce9a2bd092370e52fc262819ba1c5271c",
+        "643c765559a0e9af66a6117733ab172cd70fda951a964d9370f83a89c77622fe",
+        "b34a006006d624a3aee75ab7e7bf854e362c57d7945fd7a6e600eb0205b0035c",
+        "588ce34001695a7d0b8583f21702830e9004c4b749d2fb22618698b3b163564a",
+        "3d6a8c6860f31d4d402be782454641492eeaaa0474ddec9432c722c2d806db16",
+        "c91297250863d0f4a1cbba0b10baa6fbc57a63d0c77fd8cd169e25cbbef1d284",
+        "249be7ee55fc01e2047273e7f56debd88b3b4bc57f0f0d3fabc552e2aea5e003",
+        "b77077a3c01b86cff379055fb4725709188bdec60d011489a8b0a82e5d1ae9ef",
+        "83dfdd550dd7983b2c2ad16f88dccc6d92c6765b24535b4748bd72e51be64ec7",
+        "ee1fd0a6e8217bbb4e1115459c0842a451650dc7f276e000cd0fed80f5e700a9",
+        "15cf1efa9d15a1391fd902be7a06c533bf9b92812733106d8b1d84d4bb22925a",
+        "7cbb4a0f78fc01831e8c4e18ec23683c91793e3732e7ef138c625ebf77aadcbf",
+        "d021af087e03db54916e5b9c849fde7e59f816ee9bf4eae9e865f55fed77edfc",
+        "0552b1caaf919206a5e16b36c255653224b21c26ed88641ce667b4c1e4b9d6b7",
+        "ab15cbcae6cc1defde04d3e1b6c95214e533faa739a379ac45bc9eb6ae89390b",
+        "69e11145efb3834675a297166226fca44a5270050bf1c9b3b30cf9c7b9d03af1",
+        "0424285ce3bc7a23d93c75904f870bbeab9a1a19fb793ecf86067fd6c21dbdf2",
+        "671ad6007435304528e263cc2c42c56ae11ca50184665f70ee8f423208c47866",
+        "719d42d8636cee11df356e158c27ba87a281c38bde17a4f7f079b1fdb24b47b4",
+        "267db15e27bfe0bc15912115c75ec6f37e8314c9e5ab7d98ef3abdce4349b4fc",
+        "ab83ab07c64f89eab927de09d928508f10f9fdd897327a647724911eb940836b",
+        "09851c9abd4a54ee74ae71662e0527f69bfc4bf54c8fb84ddaab965b1edf356e",
+        "63afd76c1848ed2e969fe5fcab7058b62b7793f52530e2bd9cfc0a027c4b30e3",
+        "841bd8ffd96145aa2a46c9fe7dfabfb3b272c88ef595e932fe42e0160fac14db",
+        "0f8ba5acf3052bebe650c60cf1d43b48be805615ef96851987ec22ba30275754",
+        "a88069cfa219ec2110ea72968b4855f1119d93d9af8db979c521fd9b052db1d4",
+        "9ad4420a65c92f3484b1a160a7d4684fe0a16dabe207f4ba55e0c075e6183a0b",
+        "c65ba24137d9c31fe2d5332c46967f30496945c6c80f16347d6ff9870dbf77d7",
+        "e80c1cad67cf66426d731a8c23622c6e87216e31b2a411057ad8c16a85ebafef",
+        "1f3c00ad7b68ac64c4cfd34822005c904f417cde00f35f75e97a5082e467e084",
+        "1594b3d97fbb54282f3226d70178043c1bd6bc1512bce79974ba3a4db8b9d02c",
+        "a315940f02955d0a162602c97f1386c27af3625bf4386838d44602a30126587e",
+        "5ff329418ef3ff90ce46e5b29b8276df441965b297643c1c32206f73d3dc8298",
+        "dc1deef7850c01d8e4b337a55db4a9e2b37b234141eb356a16b6d1be8df06f9f",
+        "b9f803daa90e157ba238fc22b453e3075afb0984c49765d2db5d1ee2f704ab15",
+        "9d905ba3c25851b144b6322deb6dfabc7abf64187d79695abb6f90da1f910ab6",
+        "bec6fade06494e939d5964589abf62bdfb5de8bae43a950488060ce1beb30e11",
+        "cf8a5f29e462a88ecaf9ee0008fdeb1709b311741565fcfed924af9a260b782b",
+        "072a01f6c996efc186951b0dad90f8cdf87e055db607e32c19dcff5a76c73553",
+        "f6f8151abbd35b220c279445f6fe480e69b857129e71d04edbacec9b4f9d83b5",
+        "f9f31a51e25720154d3a12dd48f937729cc28d110e2c0e78d2759de7545225bf",
+        "3adb65aebd015e5075aa00449305faca8ecfaf69240499fdd95a985b911e9afb",
+        "6219d73944fcbcc983269e0658631e1ae7d71ee87f742bce5f0e4e6afcab0ca4",
+        "118e7fd8f0132e910b7b036f03f3dcc7f762b82735b380dcd09736d6f9ccf960",
+        "03c3d1f50208b483a56f116a273dc8f2aebd8e0746e788db3e22d28521dddb20",
+        "743322f8739bc0fab1bacd48b8af4fc3d823145363d44ab1482484afd956c196",
+        "22d6f8ae2a45922237b4bcc82d5365e09d7e34cc412dbe1877a6d19d8df8cd64",
+        "796ffa235c9c68ef3e0256f54129aa8e28a9c47c4302b9c08d21eb4f07d2f751",
+        "63a04996c4860a0711162ef9490964fef5593cdb4507924ce33595ed98ac2a93",
+        "cc6f6201b3d4944f4ec1626b698c315c7d5c2d0eef25d5fd7e9be49b51bb7769",
+        "bacc553b3b0326221bca4e1d9c4c36bd4b1bf7e17c3251ad122bcb893a125a33",
+        "a8727d51ad5e4e1274f5466b80b4f8624f20c7ff7a02c0591e6ad80b96819046",
+        "ea4125a489a7412d1072514c6582f62519565c786690016bbdedb5eaa9c53dc8",
+        "04e99e8f0f63f5880e0dd92ac920de88a720f94be5c07267d323f710b7c53c0b",
+        "4a8b1c0b67dac5623102c18ebd3e9cdfcf362128f1791ba993959400ffb76f61",
+        "18aa4f0b78e4fa15dcc48df624986b08d10ac7e28e73779643e17037382eab20",
+        "7790ba7a8bc8abfe093e988334652fe686e9193754eecf418afb75d26b605ac2",
+        "d5eb210ffffc5a4b58b4a7ee97e0332fd5c38963cba3fd573587f68abd92893f",
+        "bd8403315335f6a4f044f40020ced65d5eae7cbe3cbdcaadef99c30fa20215b2",
+        "c78566bda5f539ce3da5fb04dbc37b06291e8e93cda49b2e53b7074e25407254",
+        "f78b74e7e78c316fbc6784566b1094bda66a7fbfe2d3fc4b471fe59931b08868",
+        "b03a9ba5f1a0d2f33451265fe3f3a8adacf97456aad2ac7047fd617cca934be8",
+        "d432552580ba7608640bf1b672bb7de9efc88a35e711810eda10b3733db1cdaf",
+        "e56c4f2acbd7bca38e93aca2f7339591948149f7433ccecf59f9bad7f32a69f1",
+        "9fa086a9732da26a8289d42cdd296a2e011b78dca8b4a1618f7f43991a81ee03",
+        "5877ded6b08cf30721a78d72fefd39ed6ff23269928463ec76b3e986075fec4c",
+        "7a94c7c5bd5f7348c92d74d1d78d76008f9a9c7f7d9722c9305fa07746072cf4",
+        "726f3130de40cb20af0ee2432f7ed214258f1a957c0e7ee610478b2e79c795c6",
+        "412f59b93c72ec81857a68433dbfc8de6eeab119c0d18122a2fc1bddf55a3aa8",
+        "40daae65c201931f9cacf68eb0af48855f4a5db661eff1e55569c77e09912167",
+        "c9699035994c9c72e71a8af987ad37b5644e29bc4cb33357c0b836a976feb6fb",
+        "477ab72a05767d9b69918e561dacae929694ca99d847fd90b226354d645d44c5",
+        "321ca254ac07023183c3dca5f45f3d21c85132ffe1bfee5103e9092be3cb24ee",
+        "eee113f5b39e026608702172d756e40a5fd601625cd6eb8f58af86d570fa7c61",
+        "e5e2b27e4bd3adf46e59f9049d701a2dbcf10fb94b210da4d004d9a14601952c",
+        "0c1de1aa84927ce5517be6691a4ef18619364f725edf9e958d4b6bdda77c1aad",
+        "b2fcd70b8d91f2cdf37b1caf61b01f476b3d406217a4bb0a10db2f1d364b3605",
+        "12406aac2ed62d5cb709b9777454addcf162b1ac3b7f3dbe1f060038f8acdc5b",
+        "277c8b0a440d6a5829a4c8eb08eadd8f8d683aac6ab3bcff31957d26b279a7f4",
+        "d24a1431238f0174d9c5c9238fc338bcaf8a3cf95e2e2fc773191527a14c8cbf",
+        "62c218a78a9eedda58f9d677320eb475b2da446c41601bf95781b2b188efa95c",
+        "5e57d4c7d7ab74255ff56626aa555031f0422bd38e0a6fde2f4654b80465bd3d",
+        "a5f7a9bbb6e89e14114a0706b9e6693e112243591d1ca30bdccbe34714c31288",
+        "3c538f98e9153e73530acc3cdda76f7d7b0f4bfcc5a8226e9f37b7f809eb1bfc",
+        "ced951626813af26797b2b1cace1525a71d2eab437f9b76cdef82dce18cef012",
+        "38021c831988ee9b8636a0397ad5f64d116262a03dd0f315d904757d447f8a80",
+        "f4fa270d400ef24e537927198b7cfa435ebb540f5043e47e6931f305f02b717f",
+        "5f4d47c79e578cc2c50464bd10f377c8e125701a63cedd8859520033b42b6375",
+        "4f66518dadfe5173ae9bd15dd756457977241ddd3630e519c4aa51e1b2359d50",
+        "ef9c5ee5c66a8313a6f52249afeedb6ecdb6ffd492111491299e05802e975161",
+        "6808341210e580a5947ad31583258705fa0d0430eaa2d57ac124ca18d6c78a19",
+        "0a201f9fde06057475e08a7aa096a1fa15f33137669e7c3b3675046601d2c8e5",
+        "535f28c75c3407d29a7122e8e3b1b1bb877581c28547fb7067b96f404522da38",
+        "91f067be64b1f217724a569a97e15dc5a475f165cc4d5dabef852cc3f9e54cb4",
+        "389ff9f6558e373fd42b0aba2be82f9b40f4c849fc6021f0120b9b2e8d3e6589",
+        "0a3a12aaace5bd0c58f93c4d3501429540ee7d0a0eb045f4611636906c7a7963",
+        "a7e92429fe9569bb421467f30c771aca9eca187267bdcda7a5d08874fd7acda5",
+        "1cba0b962664d41fe7dcbaa73f395ffaeea0fbd0b5356a5017cf63cba74ca130",
+        "6784e9485dded5d13d9ccb1deca7967b4dbde561f953da94911fb03b7cfd0fb8",
+        "5c0bb31bc6546880a8bff7208fbb222aadac97c2de08306c7c4a064ec9e7aad2",
+        "40b197bf6da2b6748d918563bff8868d3097afdaa5e9155077a1bf7a233b2fc3",
+        "8ccb35f3c475fddc54718ad706a77938b04126ff66101c59571cadb20eb86947",
+        "771a2274b2c285b883c1ceed5d788f93969844b11133aa222b330aee44a48de6",
+        "c1367f537fdccd3d34bbddb9e508c3bbf37771319e94a0ba6eb6c7994058529a",
+        "0236cd76896b194001041b3c31accfa3688832aab0c63db033aa06af3b4bdfc0",
+        "9e9ff4f436e396bcff13e90e8b3fb209889749a61884c600e3aebcb3edfdc5f1",
+        "5ef074ac29c27497a7a4433961ff2e8baa4cddfeaa15dd27af80f7278626bf60",
+        "dd172445c5501afe569ad698ed9818b487fcc19fdba39642fe6d0607f47bcd17",
+        "02ad10e45cfa6da495d20c14ba05e527e18fef0003d27ce12147f3911434a85b",
+        "65cc6511d202eb2fc822c6eca4f74d633c5f2a8ed1e44c059422c7b49b9ce87c",
+        "6e397713698b0b97b61167a97ad187ae7d61711d50d7aa0453567d10f3974514",
+        "8490484d86cfc05399abc06e3961ac053c24f6f4abd06e29526c7eb6f1690816",
+        "2279b187c34498d63735d5b991433d3ce9948b243abd5caa2f88cd29dbacde5d",
+        "efdac812c75cc7c8084199321ba48177913134a7d6b7841dcc3d7a2cdd8a20bf",
+        "94066924ab9cdf7795771eb82d3946f056d24b2a3f6a3fdae6e71b1712e7c69e",
+        "2f66b8e18264fc9888e50ce1172263ed1e4db6cb94efaf39eee0af26fbb26863",
+        "3a6cf08ac31356d4acd29677a10c1f0e64835968f9866a413734d75b21e7d606",
+        "fc2b1a4352f615a04002179340b95c69a4d3403a7052d823e62b027e4ac18e0a",
+        "efc279225a4c4820a6b65995ae324393630ede9943f0352e12f6722d32b22e7e",
+        "6f2cdadd4be67be72bdb1f5446e255bb7d5f3027ad568d25efae9e9e15a29434",
+        "21a9a2eb7d1fcd3b6fc427ac0c6d84351e7ebf836c7ef54105f465d088e84e49",
+        "7fd0184a94e3b57d9edfa18733ce39818aaa5eb10b890e7df3e239229987aee7",
+        "9458bc1c03a0881e7b21dffa98d8d1a26af899cf539cd3fdec774d301e7267e9",
+        "21452f0994058936323b72faef0336a22ab6166562419f9dea36b195086c2157",
+        "bac615bde5710e61566ea568596555e062bc9618ef901bb0e4edc0f53ad555f1",
+        "7ac53a7575582891bf6ead6e79c049707eba43a8cc23d61878cdb643b1b16ab4",
+        "3019e3f9dd200643a196954bf565cd4404198a306e5bc4433e972420ef015f4c",
+        "dee11bbafcde73cb0dc05e20aff0efdda41305b0d5b6424647dbb39685961972",
+        "88e55c54221edd7acb2cc4dab574da0407316fd9c0193dd577b61fad794b0614",
+        "945bf033bfde57772292e8099b6c8a3b3abd5b7142ec8f94f9d9a70751a8e274",
+        "5386430b8599f372dbac28d7719feec14aea86da1b71f9830fbc16f0f9ae8ca7",
+        "2ade2d3b24fe92fdc72f8d34c54c6adaf10e8c942452ebfaf59703697227ff71",
+        "1e900eccee966a664e68a1abd8b3439163c947b2e650af35284d0a4429424804",
+        "91c11359df1d833ef5b7f4a8076b727d902f043a187fcfaa49523a3728f7014d",
+        "0e5d33963fef75aa6420a2df471e11b100f669670c4fbd6aa373c0ceac94ec1b",
+        "a23f30233b9c3a0ec3d5b98b635680814fba846c80cac6a92e3aec60b8fd6099",
+        "6b32ea53e028fa2ba2fdc9b2af90cc095af10c1eb3335f62e4b6420f3c091409",
+        "c56b623b04b6e35fd89bb703fbdfb599b5383a52a726f269ce5ad063fe79b752",
+        "865bc0c41a01f1e6b8559dfae8bdfe3281fe408d22993092d4de66fd5668c533",
+        "ff427f84ab5664ace0b36c7390c9f0d8f8d76b21ec5a8407fbecbaa9b1644110",
+        "ae957e5e9e5389b8765f72b48de1a10e147834f44e2755556df4a43beed80424",
+        "17f77156bd13dbc9b4b6abc47a8aade0cf617fbf30a04049ccda0d3ca5a0ade9",
+        "16d8d401c2520c75bbb17066dfee05b0c3cbdfe6b3adc60c98310a5344622523",
+        "f82c4b09cc0d0465d0ed7a5f6489f5450d5ba77f0f0d1be2df84719bedb4af99",
+        "94ab72f1595022219e16aca76b4b0ba0b6fb38b879595fc4cc524cdc81b0da11",
+        "5b5baefb1477e5cc2e4fc138f32affe66e42c79ff2c62c65becf91b447c9f8be",
+        "42a6a289ec36e15117f10a67cf92038d98b58384638d01de57db73cc149c9bd7",
+        "34d457723788652e2e9f4119a2a4aa1ba6ae77c8760584f410a39e8a412a4d8f",
+        "2a8686ecc76a4b55fdc0df5ccdfe6ac029c65da0fd6547c5b71d52d88528ad31",
+        "3bc7caaacc2d583b6c8746dd39975aea1726fd036c8baee6d3ddf2151980a968",
+        "c01f3206c8ca9f456476036a7f9f20c41c0b44fc7be033af26ef599d233305cb",
+        "690729f81e016c9cc1b0e64b042ab2df67874b33b8f417ce7e0d86a4391ebbec",
+        "0bbf78b2deeb4ddffe89c0e4858a7b7496d1c1af39c925b0bef9315270ca1bd8",
+        "f96768e65700df8f19782d337316cc2c50e7b82c9033f2820a0117cefff0eb7e",
+        "82d05088fd3c578a64c37038c2ede0de402ba3dec4f7a62d9814a456f45ae48f",
+        "ad8a3824575b83ff83850ee7e51b98eaf64b5202b690643d531a2aecc3123a4f",
+        "4e16d50f0293d8bb2b3e47fc519a9c2f37c8aec280acd24efba7ef5a5033e04d",
+        "1fedc19d25b9947ae428f4429b5dfea6baaf0df536e581df33bb6b635aca0c76",
+        "b26e0152e5aa174ea95902610641a33f2868e5408f634896e761467a2ec01608",
+        "3788be7c4d639c0dec0b1b74427373e01200d96257d5694e8a2b5ed1c5034fb8",
+        "3f4e75693dccf95d8d93cd9668e0be8517de788d71eaf2e6fede415444180eee",
+        "a9c83ebe6aca58f1e08ed211f1fc3d4d2124d964d1b185c40d7abfaf1e9c37fc",
+        "86ddc101ac5dfe000aaba19ce7060d9ed9eba4d85ebf406d2969ee1cdbcaf2ad",
+        "bf4251335ee326da6624634b344390c95ee62dda1ba9a8a2e6b5182284233f3c",
+        "aacc97ad677b4179ce7d2a24ed54ff9a9c7ec0e7f67707552d9ac61e95435b63",
+        "7ede8318a3daff116598ed7720f73ab938ad003b8fe5aa75f075b7f7b8bb1379",
+        "11a2f1c34ea905dbf85d036041e741f90615fe1e2e51c6f68127a0da3c47ce21",
+        "62ee6c31358a5ce807c9f917920e4d6f0bc85d7a16ba19b2e6b156259775346c",
+        "108ad6afaf01b473b164fa0ad673a11245320585df576f92382a52f24cbd45c8",
+        "d54cfffc5f1a28124b9fbd958551c88430282b85989721c86bc326f8a5bfea39",
+        "95a9bead3a4864777677cc7ec7b28a0ed9316f88b3b212b9444dd17ee1edd035",
+        "20c14e2363322083e5906233d0a6db017e8b976c28cc5af7dbbb11ba8f4f20a0",
+        "3f422e8447649b4fb8b22ceefa6ce00464e5523a21d3d41822e3f31c987f2016",
+        "cd733ddd7a40080161e39db3dfd4ab2230084259ab5eb8a741c20af15058af98",
+        "69867bced1177b8c1d47ef82c4e35710471e40cb54f682142cccaf3929c95642",
+        "5cccc8f0de8d2cba0cdc7fff455ae4b33d02414087b643d44257c06831e49173",
+        "3fa8b66c4c449bf725e4c70d1fd3f188a2b24d4ab45687ffe0e96a0e264e90a6",
+        "e6888ce9c5541019822c4a9f6c655893b4ec1e3d03219433d70af788a4a71357",
+        "8dd18c1249db05a864f5b6575a9170310c064adeda59cf272cd7a8027ef0923b",
+        "0efdefa7c6bcd682c63ce7cf5103df4c1dd3eeccfb78899957a9778112c80e2e",
+        "6a5a4dee0f5c61312bead86672fb37b2646319b3f3a41ff7de1db00ddfac1834",
+        "03dc47a20641270776c3b394bb7b4b89e1f5054c3274bf1d4f44563b94493f05",
+        "bcadb91a4484b62488e41dd2714a5722549cf41bd45ff9cd0598aa7fd08c155c",
+        "8927e9d5326be65f17c231add73aeef89258f241239a11057d91581c1aec2de5",
+        "850469080767e92d5f63f553ae4fcc14046b46543a2d7781e04ba38d8897869b",
+        "9b51199c51c5280bf9ba99986a19dcf7b60d19dbd625ae0e99fcbc19820f493c",
+        "8d34f73bbc95813d315954de887b7c5fa55880cf6bac5c940a3a98c89ca08a03",
+        "c969ba81dfd8b258ae8c0e319679b39da39bcf1f27f443d82c28702e12af7fab",
+        "9f4bab2503ccb249658cae1c41459892cf0ac50e46eb3b5d7d7fe7b9188a9831",
+        "1370ee6c12dad61574d94dfd05bcb8339e006104fb58a87bc05de673c557cc7e",
+        "99e26b0478db94527c392723456758750ab42e36dad1010d4b301e0de3195377",
+        "8affe192ce0f9c0f49f2dfb8396c6f820173408d259f5f737e359490e135eab3",
+        "a94d8aebb8ff8a65c864ac7e587116313b3c3c612304ead8eae604779449c3af",
+        "40f4b4b0ab1bd41a3fe068c49be4e4ad842b80559455f7b15c823b3fb6502de4",
+        "d57f8b310822f6e70879635a0e1a45a2f334dd8b10702301635eafa3dea35df5",
+        "70efd7dd0bc32db0e098f2777ab09f8913f80373a6be3ddd3b1e9ec60708f371",
+        "d780c91d453820967fa1744a451a0d095dbf6d9af8f65ccb322d536f575c7b82",
+        "deac2f56b83158cd159eedde876685fa753175cb54bd3b3f7f287e52366b701d",
+        "8b9a32264edfb4d7fee58ef707d1b3d28c54e99704e5b2427a1fa9937a2a530b",
+        "3a4092ba1f144db2e117dcfacfb2eae6605d7f82798af05c12c77ce6348b9738",
+        "c556a958271be1bb94f43d75b0d8828577ca17cb05bdaecb256b1f1041cd3932",
+        "5cef690d1eae055ef1211e47bee6baa690b671d09cece15c1e1ecb8954605f13",
+        "25737d9853fe7792fd030cd0ea985b5bde5f5a89b820325971ba918bd3072c6d",
+        "8e944253f4e6fe86bf3148c218ae463d4733619d082d0ddbf2ccedc960575816",
+        "e17159e0a5b4fc78599f0c63ab447fa1e4a1756c98547ef25caa1c248d9d5751",
+        "d0000b322c22891afc294cb07491255e76a3722ab573a9f33e10228f657c5e31",
+        "b032708ccef94249a4d62f7ec903265fe682dad13cdb79d6bb6b6442b867610a",
+        "65a17bdeaada700c97cc9bca35294d8f6d7f07fd059d40b8814e08823f8fdead",
+        "f54bd82db501f13fdd82e450177dbdfe3f0853d88d33407235afad9907cda885",
+        "77d9dde2bcd1e66b6f045627a3a121fd9a2c5a6a6bbc1ff85c0ef9207af77266",
+        "ef5ec7a24730eb7efe7e4a63a2b9c9763eb8f16a24c4a175b8ae216f2450173c",
+        "24e944106addaaa1fd824b5a5499a859794abea432de3dd3a7fca2a3bff7c999",
+        "992b247d27ba5dd39d82372270da5d11267e0040460886071a3e387d3aca2fe6",
+        "e4e772f4b22479b2aa1b4ec9fb161f5dd8c9f247636b61ab529191f3872bb3bb",
+        "a857a04f1e84c2a6ecd53a1c026a0a82a1da1d417a8600b4404b77a3ded4e6fd",
+        "a945bd5ad7f01597465ea0b75ff45fb208f82195238d3618880671f528b6de8c",
+        "dd218d1705314deafc88d4b91bd935abfa4a5ed84bd1beb6779ee951e141d156",
+        "321a8af4a39d4936702f8d0d539ce1d81010800b6b6fd88d2058d243c0a8f966",
+        "2261d72182b8dba88240b26c48982834d26ed2f92303dfce891836a0afc907ae",
+        "ae02364bf1ad0aed7e02df3a5a30d03e7199349a913d429272c315e4d3d85335",
+        "a62d6ebe29ecfe27298812d7eef759b94d2b4b478424e3b250f14670bdf5d2d9",
+        "455589c3d261f820909f22481ebfe1a3c9490bf4a0e2101779cd6e4605265034",
+        "e844627df9b54a9afb4524e5adc91b563a5d56ea8a4ac0369cd3bb81bffd3798",
+        "d9ec289730d6e8901d2d176c711e0606146160b44850792c870c854a598405d8",
+        "7cac8cf1e8766d1ca202a962c8e76b7318eb7a785af651c11a275265a6c52bcf",
+        "d0bf2952530303104c5a819ebccc98ab554349e5860cf7fc5afe3a704136c5db"
+      ],
+      "provider": {
+        "apiRequests": 5214,
+        "apiInputs": 1306295,
+        "apiInputTokens": 154122773,
+        "diskTexts": 1528,
+        "memoryTexts": 0
+      },
+      "peakMiB": 448,
+      "scoreDirectory": "hotpot-a76a4d28c8e3ce62",
+      "orderedVectorSourceLayoutSHA256": "e20dd8a7bd119ce4f57a2f829d51aa15ff23a16c0f88b972e347e95a57977222"
+    },
+    "wikisql": {
+      "settings": {
+        "corpus": "wikisql",
+        "names": [
+          "children",
+          "packed",
+          "children-repeat",
+          "packed-repeat",
+          "packed-omit",
+          "children-omit",
+          "plain",
+          "record"
+        ],
+        "views": [
+          "table"
+        ],
+        "model": "text-embedding-3-small",
+        "dimension": 1536,
+        "topK": 5,
+        "budget": 512,
+        "batchSize": 32
+      },
+      "poolBatches": [
+        "ea0c25d8cfdf7ac54ea8f6858576e5f83eaa0b85f58043cb404ecef308113377",
+        "6b78a79b2b0201e40c5b224598abf88dafc6b18ef6c8d7502a79c44cd2012906",
+        "35a0bd3d69f2d4120fa9b1b5e1df0469e588f822fc8a91b03593efa36c07472c",
+        "6f6068daa23072023a19ace81202baa38a12554782de75515c8355457a6eaaa2",
+        "f4567305328afb3d2f206f54242a1e96ea213f1bdab481bead367f01e49cafa7",
+        "a057d3c0fc37dcd4422acf7aa6d7789f66d747b3a43908757a81416a4ab2afb3",
+        "5a67c27224c768fba8a0cd99b5ef72322e2338b109cb576a2b552f3b1ca068b5",
+        "d9bac9e14b56ad99dc0d307852605be5b71e0319fdd718ee6c361f4210ae6d86",
+        "9453e1898b73917428e404c6270e65c45d29377b47da5050ef9440f51b6250cf",
+        "52b7200f2b253d03da2ecaa32cc02d28d472e267d737961b19a2aa4e43abbbc4",
+        "d2f51ecddda785def550d7b600bccafabee5540d082be0a2d0fbc509fcce4440",
+        "b50c764e5227aec2bdf0aea0766b0ef8d0e068a7ae87fb1ae9eef24372be46ee",
+        "44fd6d85fcbc69c7d6143714e6fe83e3aa18f4f515b40f4984408ef871252d99",
+        "1a10667ae1ba3c52e5e11bf70ddf8cb0e2d9f24de28461d0e27aae5cbde5c1bb",
+        "7f57f86da06848f7f6d66dd2dc850a222869988f9017922293ae2668238f33bd",
+        "f042825aebf7514d0d80796f013c7ca9f75d8df05eaa97c69b64d98a91b09e4a",
+        "50403152c4d718705621ec354622482fdc093e1a65351f17c03e017fffdd09ff",
+        "0d078cfa11cc846d9f00e4ec148ced7ce18edbf8bc052d045c62a829db3add96",
+        "820f184fd05a11ad5f540da6b8a99b2034da270fe9d6a66dac01d050e702935f",
+        "62bf726a3448da685f39331348a1a9fe223be6052f83425bb9b3d6dc7b38ad35",
+        "24258224654a5f137ab164d6b11944cb40645b8b260cff2085102767bebbe3cd",
+        "496bb809d1109026d57d397bc2eeea0ba01840e41bc16f20d652ab266570b1b5",
+        "ce3441287bcc223595cf0d22b1f520046dc49b961363ca6ae7576df3280c1a8b",
+        "e79dad493085729789d35ca728a6ed927e533e5ba845cb22bfbd00ae9a26ec90",
+        "974d203172e0cb49004660e2e5f1fdc97a663f9f4114d2f1aeac3cba1db60356",
+        "af3487c0ababd6f39335144e87043926679fd94a9ec082c12c83d5099efa57da",
+        "a228bc1b625024f4d1c62df6b7ed769b4c8ed27b7d96413bd3d1c38ea4dd3d18",
+        "16af6092844aff6b929454c293fb399edb98befb0bfed8d59a5cc90b1d141cca",
+        "9af9469099c4863dc99cb6683782d260aed7f8c25f0671ba613598d8c51bcdbb",
+        "3423ba652c17449a56d0cc5af6107072ab133d1e830c886615b041f3122f0d0d",
+        "7e478077b3d1769d0242ca0deebd05714d6bd330219b4fcad42f86ffaa39c3ff",
+        "4673d8ebc372ffbd6277248ab45b9964151d4032a9090dc575e19859911db727",
+        "3d9a619f82dc63f157927ec6be6a71a9d3e91f9c7718b081fd83bb77f42e31fa",
+        "8da59431c2a16e6cada6c2e1e56609e614e0ba6449ca19545aedfc36e53bf6bc",
+        "ad5ca5022ed32b637cc4556cfa12038a696ee00388858b9059e35d152653ba99",
+        "fbdd319823222ab84c6a130a20445239d2518bcd234b9152799d7de4877f1ec3",
+        "8e01932b21877a1a06d60ad7b725910e907e492857a6076449bb3f9fde322972",
+        "9a870d6cefe20320366a8e0a406cd3e774818a5831f493680f20e7a1dbeccb46",
+        "d17c3daf9234400d32e7b277dc514aaa1eb41c321ce525284666b340c896eb57",
+        "d1d78a45b8bee6f651c7bb4f6b3dc6401683855d3e3ef2533d3e4afd98685aba",
+        "3d14ea6c7e2de8b585968e4d99cb598400645aa173d0a8e42d2d0222e31119f8",
+        "51a9da471f2bc26843389e21a51d00fb8d593db536bb7315d51bdf4ab5dc3f44",
+        "b38a22a78e07af4f6cb7a49415f1a18ecfa927e99bfccb485a260780a331d53e",
+        "6009ae3d71ff5e24c0aed4339245bcafd6235f753060a4d49e21ec37a4ab1a60",
+        "793bc37d2e02cda055c848f409fe80e8c1b74bc5e0a4c13c903e0d18b40a9b6e",
+        "612e9794157b836fe0fa669c95da80dd507717896e7a2f6ac4cee4d2dca773b0",
+        "5d9b435a4d77625d1dd54e66444357b8745535a99ed9e285d38af31b698b0282",
+        "4010e9e2d8f6720206fbe2217566347932f56b1e31c27227d42198893d2a8320",
+        "3558982fa4caa9e0fa0098b36eae5d259bdecc712ab8f1bfc85e40b0bd93f328",
+        "fd9b947ddb4e2afc4d41ec98b43fec9a547affbfeabd09023d67430f37616dcf",
+        "6fb138b6af53e7b14a4e0e9f65b040a6f556b8e5509d5535db00fffef88f2103",
+        "a4531b586a84ef2f7e6daeb78265441089727aa79beee81ba5079310875d3573",
+        "b009aed4042a751a9788acf36864b6e884fab162e8e04cdb4518074e09b2b431",
+        "65bccc411834405aa0599ebeae9de290c2ce734966087409703dbd4bbf525662",
+        "4480a982d56f3c5edff7ed3b7cfba53ec9b0d371f90b6588339820b9b0ee8c56",
+        "9c9b4b1bb4fab852661f8798ab9549e43e74933cc9153202f4f23776fb4ab4ec",
+        "3024aa9ab05cf725e3cfa707cd894bf9ae47ef611a2c187938d050b98e1d5dbc"
+      ],
+      "provider": {
+        "apiRequests": 181,
+        "apiInputs": 36815,
+        "apiInputTokens": 2873107,
+        "diskTexts": 0,
+        "memoryTexts": 0
+      },
+      "peakMiB": 328,
+      "scoreDirectory": "wikisql-19b04ee64a5b1357",
+      "orderedVectorSourceLayoutSHA256": "c6ef7c9f24e49dc1cbda4f81a8c534569f2ea7f8e7ba0c748d21efce14b24016"
+    },
+    "finqa": {
+      "settings": {
+        "corpus": "finqa",
+        "names": [
+          "children",
+          "packed",
+          "children-repeat",
+          "packed-repeat",
+          "packed-omit",
+          "children-omit",
+          "plain",
+          "record"
+        ],
+        "views": [
+          "table"
+        ],
+        "model": "text-embedding-3-small",
+        "dimension": 1536,
+        "topK": 5,
+        "budget": 512,
+        "batchSize": 32
+      },
+      "poolBatches": [
+        "4bc99bac80723cc390a0d5b586fc7263de6ec822641553adaf1f3921afa1272c",
+        "dea7b88e3ddb66efa2ec41177eca5b1a672a93a27e38b6dec28e1303e3546499",
+        "27ec46e907f417ecf3907889f5ffba690487d37abf6891cd176b664f586bbb3a",
+        "f2cbb457686220b1313862a1a7adf505e9a0ca8974ca340cbc899da60066ad90",
+        "882e049e4a4be0c4db03f010884cc966c90b72cb28ef7276bb37b873e676a170",
+        "db392741fe5c5defde4742703e7cd973d109d722c32f81eb02520d556b268837",
+        "bb2cec74abf33cef0ff270463fbcd1d292aa38dd7aa0a3cf0ca14cd756780345",
+        "9da165f5cb956c07c7f06e78406b74362c59aac98906f59d70651fcea01364fa",
+        "128ac65071fb9f1e96ef2efedd44becc7d9768f376b3e6f408ddaa819f407033",
+        "300fce8e082458e1873d35f103fcf9788d3d2727ccae5e9edb2c047e368db86c"
+      ],
+      "provider": {
+        "apiRequests": 44,
+        "apiInputs": 9893,
+        "apiInputTokens": 869292,
+        "diskTexts": 0,
+        "memoryTexts": 0
+      },
+      "peakMiB": 310,
+      "scoreDirectory": "finqa-3148144a746e65f2",
+      "orderedVectorSourceLayoutSHA256": "8512cc9d7f590df57b9f5dd12310a213dc374de97ba301ac5befbaa60007773c"
+    },
+    "confirmation": {
+      "settings": {
+        "corpus": "confirmation",
+        "names": [
+          "children",
+          "packed",
+          "packed-repeat",
+          "packed-omit",
+          "record"
+        ],
+        "views": [
+          "array",
+          "last",
+          "text"
+        ],
+        "model": "text-embedding-3-small",
+        "dimension": 1536,
+        "topK": 5,
+        "budget": 512,
+        "batchSize": 32
+      },
+      "poolBatches": [
+        "113d41862653d2a061c0088978f9ec3f5b123bd9c79e95b8214ab3e4df4133cc",
+        "e5e3e3f63b8166c431246fdbaffd4d09274c033ffa754f018b5aae3fc8f632ce",
+        "4f317b84519645d11036437a60ee325f4ccfde634364edcc892bc73e773c9c5e",
+        "02acddb16921ebea2a1b5dd14cf7443ad5c2aa54741166a21e825161e14c5afa",
+        "3a3edda368b2a1c007f0a32a354cbbb52fa8d3256b83f05bbdb62775ca1a0faa",
+        "fac639ece75e1541bcef4af20e22789a51f4253f865f939c164b0d629ba1f38b",
+        "be780fa445ceead4e73ca1474aad1a4967fccfa0dfc24ef566885ec16c3bf7be",
+        "e4cc007831097c1ac934cacbbd92864021fbdb1a80d0c14a2de7187ae3a0ee57",
+        "bc5cc7670ca3a97d37f36595f6709b7e411520bb204887c1e83578a022010999",
+        "80fabc1ab7bf5d9a786adb8fcbb19777d7c2e84fbc3a29c18b0cee76e011fbc2",
+        "71e6b8046092945f74fb0e396ed0d80479f3064b55cecae905258d38a305d646",
+        "17ffd1c523b3e23c02cd0e4985c0bcac10d0302fc7ff8bfa713cbab8437c3786",
+        "e5f5d0a70397ab19fbf1f56c3c265d35b9fbbe7cd80622130669c7edb369947a",
+        "5b7629d0b198d1ea5181400efaccc525eb43b02945e56c602e5796c5a9b1f278",
+        "15815274d18085b1479ff0562cf88adb070b5f85b5e7cfb38c0cfbddf64305b3",
+        "7a0225c006abf3fb6065e7a50aecd79b57193d107419f00ea5dc3ac1a4436a16",
+        "225d2164e7827b0a8f0b86febb1f619947bbd6f21737bf0750c6bbf99e16dc79",
+        "4ac9fbfdb267441598910706cddf343713784432cc2f3deae8207f5a85a123be",
+        "194a49687e7312aa5a647fb9a5430fd6aae6186f93573b9db58bdf307bb613cc",
+        "a2066ac01bfed31d9fcfd30dbe5145fa14723c3061f0691c2e75de51fb0a297c",
+        "634f57cbef186c55506c3f4b5d16c9e6ec187c4669927531f9792f7bc391dab1",
+        "9fbe057214a5bae198dbe7976552a6fdd194a5842d70a9e79a34e4cef1828488",
+        "103fd2b74108d8932c3fbfb7a76567f7c0452714912d47a58b81a4ebcbb29b6c",
+        "25e6ee96af2f90a04792922e228e8e107a3fb7986c4cc97eb3e232ddd18fa8b6",
+        "c7f2d6444178d326124be1e5e9db4cd1ed5fc3511b05d8209511be8cb4d72bc8",
+        "969f9efe153207fe6e2d5438b1a04c9742e36edb5805803a2b4b86fea8ec9002",
+        "fafa32221ba9185480f57f5562ac6dbfac1fc42de065d07f9dfda64a4185be95",
+        "b451b34f52896f180b18f97883d0987de97000e1b5d7cc14ee016b32069fbdc3",
+        "188b188dab279ccab180bfc6867f1f64a187054a86d56b619629f8a7027cab38",
+        "4a2430985b44a5e25870d1eda523732d2b3e8847d76950a11d3c78215063f2ef",
+        "3c851779f5c7b1d54d9dd86d8376078bcb6b6837fc461c72e26f3317c9006e68",
+        "c44427797989f3c0929b4abb47c220ef56b04323fbda407d7e5d699b19a55ec9",
+        "53ca22cf6b59df4ec0a60a108107982eff015b6fc31ad3b06cd08852f281db06",
+        "5c4ed83d05f0786372e0ad8fd4e670ae387b446b64b1d78a5ecc86bcd66a3acf",
+        "c5ea0f035a60b6147bccbd8e70ca9e9a4a2e48219091749f8a954145b4b8383f",
+        "d8bc718e47c3592420e6bbaad3e67638350889362cac8c36fb9d92c7fca3dab5",
+        "1cecf2580f6c5637f318b3584123f099b827896ae806f02b83c6b1aaca2b367e",
+        "3d8b5fe0119eba40784440e08ea2ed3ff432b93426fb87b9cbcb3e57462d8e69",
+        "6e586a35b9a5056d551acf9825ac2931d47e35397eaacb103426adf444cca14d",
+        "cf532f5e2de420bbe35c1540d1d40e58ff9824084e329d00311959d7cead2568",
+        "c3a090992c31534abb851492b0a9bbcaef3426cef67139abd592d5597442ecd0",
+        "e04b3b2ba13f4d946549634ec1b6a2199e9076df50c8c8eb72dfc5ca84b89731",
+        "2c26523c7b69a5c7ace64204c3242383d931690264b81e666ed14732efb069bb",
+        "c307346c4ef5df23154b526c8eb8a6cb502a61dd5e78db7872bcf6b62b62f3c6",
+        "965788b8b3d2c1958f70a0e38ac5624aa1a83a1d803b0b3a7d1f56e57cdbb921",
+        "b1facfbed6f9a239efe56ab20eb9df6f4f0774199a6b297f63386feef10fc9a4",
+        "2ac6a6761cc076d717e35c0a8c64e1fabd73685700a7b815e1a6f7aef4a17471",
+        "07ffafd796f00dd3a349f4943465b5fa6fe2a3f984833ba6b41075549fc3b1c4",
+        "22008fe27af3d2e228dc5f179876d061a267cda53dec04bd85039d64039ffa1e",
+        "4c422d147b93a4dffc8d3eb88eb8a1cec9b402cefcc868d82712fc5e7749b9a0",
+        "10a98abb521237638b919877c4bb4ebf06189c2bd24cb462d8926b191061a82a",
+        "b1a786e5974390605671e7d30896250e5cd5f44954f098a0b580b84d27c68fe2",
+        "08871d6852e3cd5ed0774a74e021c1af0e9a2c82ec70cf7780cba1bf2f93943a",
+        "9238ada34219cd41b0ebf70b00c793db501f947d8e253aedbcc0679c8db462ac",
+        "c27ac7e72ed1c6dcf318d48a658494e463ff393e496a87984a44f393cf31698c",
+        "9dc0d23107731994737502b8c358ecd65219cdd4f4956cef0f52472db809a2f4",
+        "eba08ed0421432f68f81b9c497c0170e4e60290cbb39fa7ee1d696384508b128",
+        "3825fdf0b3d6872d56b7dc7e466d5e8dfd5ddffb3fe74310891f1ddfd0c09619",
+        "7c014efaa7db197d8f8c6f510a1efeb084952cbc00c5af6f4a1db15a4a9167a8",
+        "6357123f4d2054f756bf2fdb5689c8468d3c0aa5b938978cfb2d6d35ae86fd55",
+        "046e1710df8429ff155142bb249945f863b8ade1e8241e8c08b77a5807901b17",
+        "3ac0964b210434dd76a56872741359b5d95e35d42f45f35ce049af4ee3e6ff31",
+        "40e24f4fe4514f1921e6504dc131984d2fb15d012bb9f9c62af958ce037946cf",
+        "c942e276535a931731ce9c0dd07e0d245dce89eff5fad41c1ce6bf5431fb0a29",
+        "cc177480f43d6043e488a9b0d786cd88e3d27bbffe922625719a70823b668047",
+        "e8d800a5fe8618da167b9adadd0211e4fb8d1332abd249196ab407834d355fef",
+        "2b052c1060a782fcaf9d8582aa999d6dc8d701a8528eeacac907e4e33b1bcd59",
+        "8ab0b0b8065001a88c19645361c1cb99bd3830f2b5aece7d3df9513049a14f9f",
+        "f84d0e1cac45e72cb956f74bf4a03ac1d0763bce0f62de7a0332e66145e01043",
+        "6daa8b86a4e371219221ad72880396d1725040a6a980a0138b0f0436cc04a8cd",
+        "54026f64fd4f77999fc51e1572ec6a4f57e7a94cffa3385fe317f9f9430f51a5",
+        "5da93d721208c48a2d27cd0d0f8aa5ac777bf949ec5471940a49d181a62972d7",
+        "9ac314f5642a1b5bd6de3fd620fdb09d1c3a8fe8a09f789f16eb2902641c4bfd",
+        "4c73463b2253637a3ad3c661e8ca5b66f319072aeccfcb04dbf23b3f824ba335",
+        "307657e6073cb5f1bf17131a049961eff273da8fb640835a796994af36959438",
+        "742e6bd146a4c0e0bfc2914bc521095f20516716af2b2bfeb562ce317a694c9a",
+        "1aaeb43c36a4ef46ba038c943780d00e51f02d0395eb62db628620eef66c8775",
+        "739243688348d13ea0d04eac9bfd763e7433f75ab04bac1fd818b25601675e7a",
+        "e53732f8da77b0efcb1353c984e89fb33aeb33af31c4ab54ce617c139b034673",
+        "e49a4c077fe4e2f27a02907ece3bd9bed81e8798ea16de7d1911faf838f43d18",
+        "8e81a42873ca01df2921a9af77d95b163a099b7323ebbf8f414c890b5840f669",
+        "e86901eba81cc12e54f54155c902c9f5fbe21dd908b153bb56aee8f830a59240",
+        "733a419861c4667d2402279d519605552a27c9337f1bcd3e9506b9660caf4548",
+        "e44db8fbf04174c36e2762f1860272da26ef27ff930a7b0c9f3784b8838b9b4b",
+        "5f531e36aa53418edca5dda99c1369ca35de5e3168126ce23236a6939b7da6ec",
+        "6cd2c5a9acdb101d34ad5d0d25d31e5784de107f511bbae5794ee4197e12b945",
+        "bfa6ec97d74d6349e2a184f468fddc972fc2e0bd287d52b77baf74e9b0d69432",
+        "1cf5a37603a3d26e504fe221df938533edd92315fb8142162d5519b3ee737f7c",
+        "f76104f3d8cce3afe6542ddc71812d63bc5c906a5399dde26e790c28f9c2f7b4",
+        "77e50581e2cb7f5edb5ed9900e26caf96453ad621bd185f4dfbb8d3c6bf8cc38",
+        "b8b8872b3415715ef9a9caded6d83d60f8c047cbcc0c57b0532b53a29448c6df",
+        "1e194a35ea3d8350651a92d6561bc71b6a50e236576217c449fc21c923895ab7",
+        "af9239bfb4653e463fb1728016db44593fb7a4b0c8ea242553c5bcd3bb8d6138",
+        "69cd4c487ae8b69b34b08b4d3f50ef488f937b6c08e4603e5a40fc86479f7877",
+        "9ff5c57a38e04962f9d4b71a7c30675efa41b134cc1f42352657273ac546ef27",
+        "0643235fde1fbd7702e2468be79d9cb52f3a3157afd71ff004989a800a86df7a",
+        "224df93fe0deeeb16645d08ff48b4614eaedda7f686ef21015f59b4c14352759",
+        "f8e782954c83ee77b9710aed917ee6e66102268744a8a7885da8c4b6017822ae",
+        "a52dc78830b7e8a7ba224183b626241338d83785842d4776b4a81842291809ac",
+        "5fd1c09115aaca4eca31507d62c9061f195453bef3956c452c22da001125f8e2",
+        "7e42e039058281393a73946419cfd9449af7fa2c8b067dae6b0a65e167395a73",
+        "de5b07e20e1268091d84b43e86e5dff050b48c87115f48e287b0f6c38fbdfe9c",
+        "89cd6e9db83dcac68c6cc167c7232a07886d3b25721e40e27ec2e0dbac3f34fe",
+        "d1e316298f8349cd4bc61724632d69d5b4aba0d1bc5403e64611635b53d4e47d",
+        "47e5501db7e3ce5931906776d5aa70b804f40ba1cea1d7b36c31bedcd013195b",
+        "6a8f1bff06ced301e2b6f535395a59573242ed91bdb2606d6925e1ca79d48fc6",
+        "9a12a1295df8d3cffe0858e97e374f2070e5674f94d42a15d04bca95193be4eb",
+        "90c943be75658074f83a9fa4f210216692d9d29c7d812efadfbc338d4cc33292",
+        "490c9214503ca4dbd8f3a92a7c5475f10ed538148cd3d292cbd47542daefdf67",
+        "73ff7a8a19c70f74f2a7efe2aa33edbca45d6b0613398c8a8b1612b665653e49",
+        "41e50ccb7f69e40219881cb3bb383ec0fb8a6954eab34ce6387f736b9b941bd2",
+        "ee3e6aef7175a89c796f5da86c1fb6d3daf623ec0d215c655eb9051c756ca32e",
+        "c9aa0a6d68a3ec7643d7051a8d382ae6c010c5ef666abfef3b6660094c390fbe",
+        "71f55c0e76bae1cdb63a3c5024625e484b7e763b92ed84a63432d0515e679d99",
+        "6ab8d96b703e0f0c114fc0f75164ee39a259eb1f11712ce3b0cdf60e36473974",
+        "79d44a051526a38ef36230ac61092d346d69e5acf2846b190e734d70dcdef79e",
+        "9efaea16fecf60d08b487f5f5aa974123b94907abbc8c9deeeac8fe9e61d41e7",
+        "b1043d3851c762eb48ae4ac286af3b58a9798b46bb251d6dfd729107b12411d2",
+        "0b5a0b7c4b5f3c13e422d2a39d00b7f6f6b32375844abe4e22f14fbdad2181be",
+        "e59f07f7cf587cb70220b9a826391c1e8cc768dcfb5070ee4fc5806c52116cec",
+        "b645c4e665f44df1a2584e56322924bfc939f91196d188e6fbaf2d1f06f58769",
+        "f190d40e84769c2c32445b6d3ac48a6de661ecee8188c4a10af19e2e75e1b9cf",
+        "80d128e07e49154bdf4753e921f8aaa36b96032611bc41f7abf1449e97a88bc8",
+        "4fb7ccc5b1236bbbe4c8303243335272e34f4d8336e44cdf977848641b1b052c",
+        "23485f392b0c72166a57a346545a2137002115b8a56fe409417c6f8d7447e1c8",
+        "012f3748552b4c68bd4f809559f632a057c81440524c25c9dd51d4327579e3ba",
+        "bd46b56ab05654cfff3d3b7a67cdab47a5b3be6bbaf29feac386ed48327228d0",
+        "663c828f083103c0db3a5f0637e2d4cff5672254cb9ed64725c80683abc72e3f"
+      ],
+      "provider": {
+        "apiRequests": 730,
+        "apiInputs": 168940,
+        "apiInputTokens": 19183080,
+        "diskTexts": 0,
+        "memoryTexts": 0
+      },
+      "peakMiB": 359,
+      "scoreDirectory": "confirmation-6ba1c4795dbed738",
+      "orderedVectorSourceLayoutSHA256": "1d37bed7e914c4017e5390756e20bb014038fe5f1b20fc06593aefed68d20743"
+    }
+  },
+  "totals": {
+    "hotpot": {
+      "array": {
+        "children": {
+          "cost": [
+            130662,
+            10328171,
+            10321526,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5027,
+          "attributable": 4911,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7120,
+          "deliveredTokens": 3391492,
+          "queryTokens": 151312
+        },
+        "packed": {
+          "cost": [
+            87108,
+            10287179,
+            10284442,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5107,
+          "attributable": 5015,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7230,
+          "deliveredTokens": 3628150,
+          "queryTokens": 151312
+        },
+        "children-repeat": {
+          "cost": [
+            130662,
+            10796367,
+            10796211,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 4992,
+          "attributable": 4992,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7404,
+          "deliveredTokens": 3418130,
+          "queryTokens": 151312
+        },
+        "packed-repeat": {
+          "cost": [
+            87108,
+            10397675,
+            10397675,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5088,
+          "attributable": 5088,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7404,
+          "deliveredTokens": 3633935,
+          "queryTokens": 151312
+        },
+        "packed-omit": {
+          "cost": [
+            80199,
+            10340609,
+            10340609,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5097,
+          "attributable": 5097,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7404,
+          "deliveredTokens": 3648194,
+          "queryTokens": 151312
+        },
+        "children-omit": {
+          "cost": [
+            123710,
+            10738946,
+            10738790,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5009,
+          "attributable": 5009,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7404,
+          "deliveredTokens": 3432120,
+          "queryTokens": 151312
+        },
+        "record": {
+          "cost": [
+            73690,
+            10309112,
+            10309112,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5111,
+          "attributable": 5111,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7404,
+          "deliveredTokens": 3653098,
+          "queryTokens": 151312
+        },
+        "plain": {
+          "cost": [
+            22119,
+            10263145,
+            10263065,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 1587,
+          "attributable": 1349,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 6084,
+          "deliveredTokens": 3781369,
+          "queryTokens": 151312
+        }
+      },
+      "last": {
+        "children": {
+          "cost": [
+            130662,
+            10339383,
+            10332738,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 4983,
+          "attributable": 4810,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7120,
+          "deliveredTokens": 3397574,
+          "queryTokens": 151312
+        },
+        "packed": {
+          "cost": [
+            87108,
+            10298477,
+            10295740,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5081,
+          "attributable": 4904,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7230,
+          "deliveredTokens": 3636351,
+          "queryTokens": 151312
+        },
+        "children-repeat": {
+          "cost": [
+            130662,
+            10339383,
+            10332738,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 4983,
+          "attributable": 4810,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7120,
+          "deliveredTokens": 3397574,
+          "queryTokens": 151312
+        },
+        "packed-repeat": {
+          "cost": [
+            87108,
+            10298477,
+            10295740,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5081,
+          "attributable": 4904,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7230,
+          "deliveredTokens": 3636351,
+          "queryTokens": 151312
+        },
+        "packed-omit": {
+          "cost": [
+            87108,
+            10298477,
+            10295740,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5081,
+          "attributable": 4904,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7230,
+          "deliveredTokens": 3636351,
+          "queryTokens": 151312
+        },
+        "children-omit": {
+          "cost": [
+            130662,
+            10339383,
+            10332738,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 4983,
+          "attributable": 4810,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7120,
+          "deliveredTokens": 3397574,
+          "queryTokens": 151312
+        },
+        "record": {
+          "cost": [
+            73690,
+            10321253,
+            10321253,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5074,
+          "attributable": 4978,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7404,
+          "deliveredTokens": 3661673,
+          "queryTokens": 151312
+        },
+        "plain": {
+          "cost": [
+            22209,
+            10270214,
+            10270130,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 1622,
+          "attributable": 1367,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 6147,
+          "deliveredTokens": 3781383,
+          "queryTokens": 151312
+        }
+      },
+      "text": {
+        "children": {
+          "cost": [
+            86149,
+            10214279,
+            10211642,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5179,
+          "attributable": 5094,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7244,
+          "deliveredTokens": 3622034,
+          "queryTokens": 151312
+        },
+        "packed": {
+          "cost": [
+            86100,
+            10214279,
+            10211642,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5180,
+          "attributable": 5095,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7245,
+          "deliveredTokens": 3622357,
+          "queryTokens": 151312
+        },
+        "children-repeat": {
+          "cost": [
+            86149,
+            10316880,
+            10316880,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5155,
+          "attributable": 5155,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7403,
+          "deliveredTokens": 3627644,
+          "queryTokens": 151312
+        },
+        "packed-repeat": {
+          "cost": [
+            86100,
+            10316490,
+            10316490,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5156,
+          "attributable": 5156,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7403,
+          "deliveredTokens": 3628041,
+          "queryTokens": 151312
+        },
+        "packed-omit": {
+          "cost": [
+            79754,
+            10264076,
+            10264076,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5163,
+          "attributable": 5163,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7403,
+          "deliveredTokens": 3640142,
+          "queryTokens": 151312
+        },
+        "children-omit": {
+          "cost": [
+            79754,
+            10264076,
+            10264076,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5162,
+          "attributable": 5162,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7403,
+          "deliveredTokens": 3640142,
+          "queryTokens": 151312
+        },
+        "record": {
+          "cost": [
+            73690,
+            10220305,
+            10220305,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5154,
+          "attributable": 5154,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7404,
+          "deliveredTokens": 3644747,
+          "queryTokens": 151312
+        },
+        "plain": {
+          "cost": [
+            51594,
+            10162383,
+            10161999,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 3802,
+          "attributable": 3014,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 5246,
+          "deliveredTokens": 3781176,
+          "queryTokens": 151312
+        }
+      },
+      "indent": {
+        "children": {
+          "cost": [
+            139779,
+            11408574,
+            11401254,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 4391,
+          "attributable": 4240,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7018,
+          "deliveredTokens": 3371756,
+          "queryTokens": 151312
+        },
+        "packed": {
+          "cost": [
+            89636,
+            11461069,
+            11458231,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 4520,
+          "attributable": 4401,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7165,
+          "deliveredTokens": 3723053,
+          "queryTokens": 151312
+        },
+        "children-repeat": {
+          "cost": [
+            139779,
+            12016927,
+            12016760,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 4297,
+          "attributable": 4297,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7404,
+          "deliveredTokens": 3401952,
+          "queryTokens": 151312
+        },
+        "packed-repeat": {
+          "cost": [
+            89636,
+            11607922,
+            11607922,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 4470,
+          "attributable": 4470,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7404,
+          "deliveredTokens": 3726912,
+          "queryTokens": 151312
+        },
+        "packed-omit": {
+          "cost": [
+            81173,
+            11529900,
+            11529900,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 4483,
+          "attributable": 4483,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7404,
+          "deliveredTokens": 3741006,
+          "queryTokens": 151312
+        },
+        "children-omit": {
+          "cost": [
+            131002,
+            11936032,
+            11935865,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 4314,
+          "attributable": 4314,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7404,
+          "deliveredTokens": 3420343,
+          "queryTokens": 151312
+        },
+        "record": {
+          "cost": [
+            73690,
+            11583998,
+            11583998,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 4556,
+          "attributable": 4556,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7404,
+          "deliveredTokens": 3744195,
+          "queryTokens": 151312
+        },
+        "plain": {
+          "cost": [
+            27409,
+            10993152,
+            10993072,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 1376,
+          "attributable": 1164,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 6077,
+          "deliveredTokens": 3782481,
+          "queryTokens": 151312
+        }
+      },
+      "ascii": {
+        "children": {
+          "cost": [
+            132234,
+            10587076,
+            10580373,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 4998,
+          "attributable": 4876,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7097,
+          "deliveredTokens": 3407037,
+          "queryTokens": 151312
+        },
+        "packed": {
+          "cost": [
+            87606,
+            10545124,
+            10542355,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5075,
+          "attributable": 4977,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7215,
+          "deliveredTokens": 3642263,
+          "queryTokens": 151312
+        },
+        "children-repeat": {
+          "cost": [
+            132234,
+            11076636,
+            11076472,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 4964,
+          "attributable": 4964,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7404,
+          "deliveredTokens": 3431656,
+          "queryTokens": 151312
+        },
+        "packed-repeat": {
+          "cost": [
+            87606,
+            10661844,
+            10661844,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5052,
+          "attributable": 5052,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7404,
+          "deliveredTokens": 3647119,
+          "queryTokens": 151312
+        },
+        "packed-omit": {
+          "cost": [
+            80441,
+            10601521,
+            10601521,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5060,
+          "attributable": 5060,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7404,
+          "deliveredTokens": 3661440,
+          "queryTokens": 151312
+        },
+        "children-omit": {
+          "cost": [
+            125021,
+            11015917,
+            11015753,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 4983,
+          "attributable": 4983,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7404,
+          "deliveredTokens": 3445789,
+          "queryTokens": 151312
+        },
+        "record": {
+          "cost": [
+            73690,
+            10567942,
+            10567942,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5077,
+          "attributable": 5077,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7404,
+          "deliveredTokens": 3665810,
+          "queryTokens": 151312
+        },
+        "plain": {
+          "cost": [
+            22036,
+            10526289,
+            10526209,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 1514,
+          "attributable": 1283,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 6096,
+          "deliveredTokens": 3781687,
+          "queryTokens": 151312
+        }
+      },
+      "size500": {
+        "children": {
+          "cost": [
+            290524,
+            10302098,
+            10279494,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 3662,
+          "attributable": 2524,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 3991,
+          "deliveredTokens": 1852117,
+          "queryTokens": 151312
+        },
+        "packed": {
+          "cost": [
+            165035,
+            10183825,
+            10175739,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 4589,
+          "attributable": 3234,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 4770,
+          "deliveredTokens": 2695227,
+          "queryTokens": 151312
+        },
+        "children-repeat": {
+          "cost": [
+            290524,
+            12063603,
+            12063224,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 3549,
+          "attributable": 3548,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7399,
+          "deliveredTokens": 2005110,
+          "queryTokens": 151312
+        },
+        "packed-repeat": {
+          "cost": [
+            165035,
+            10926163,
+            10926163,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 4637,
+          "attributable": 4636,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7399,
+          "deliveredTokens": 2844442,
+          "queryTokens": 151312
+        },
+        "packed-omit": {
+          "cost": [
+            123312,
+            10586595,
+            10586595,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 4945,
+          "attributable": 4944,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7399,
+          "deliveredTokens": 3171227,
+          "queryTokens": 151312
+        },
+        "children-omit": {
+          "cost": [
+            248607,
+            11722491,
+            11722112,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 3777,
+          "attributable": 3776,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7399,
+          "deliveredTokens": 2120493,
+          "queryTokens": 151312
+        },
+        "plain": {
+          "cost": [
+            25011,
+            10263914,
+            10263625,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 1574,
+          "attributable": 1308,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 5974,
+          "deliveredTokens": 3778739,
+          "queryTokens": 151312
+        },
+        "record": {
+          "cost": [
+            73690,
+            10309112,
+            10309112,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5111,
+          "attributable": 5111,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7404,
+          "deliveredTokens": 3653098,
+          "queryTokens": 151312
+        }
+      },
+      "cap256": {
+        "children": {
+          "cost": [
+            131536,
+            10328182,
+            10321537,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5022,
+          "attributable": 4901,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7109,
+          "deliveredTokens": 3387042,
+          "queryTokens": 151312
+        },
+        "packed": {
+          "cost": [
+            87421,
+            10286695,
+            10283958,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5107,
+          "attributable": 5012,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7223,
+          "deliveredTokens": 3627535,
+          "queryTokens": 151312
+        },
+        "children-repeat": {
+          "cost": [
+            131539,
+            10803255,
+            10803099,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 4987,
+          "attributable": 4987,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7402,
+          "deliveredTokens": 3413749,
+          "queryTokens": 151312
+        },
+        "packed-repeat": {
+          "cost": [
+            87464,
+            10399481,
+            10399481,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5088,
+          "attributable": 5088,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7402,
+          "deliveredTokens": 3634021,
+          "queryTokens": 151312
+        },
+        "packed-omit": {
+          "cost": [
+            80508,
+            10342033,
+            10342033,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5098,
+          "attributable": 5098,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7402,
+          "deliveredTokens": 3648304,
+          "queryTokens": 151312
+        },
+        "children-omit": {
+          "cost": [
+            124529,
+            10745350,
+            10745194,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5003,
+          "attributable": 5003,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7402,
+          "deliveredTokens": 3428173,
+          "queryTokens": 151312
+        },
+        "record": {
+          "cost": [
+            78762,
+            10312071,
+            10311177,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 5111,
+          "attributable": 5071,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 7306,
+          "deliveredTokens": 3650983,
+          "queryTokens": 151312
+        },
+        "plain": {
+          "cost": [
+            60692,
+            10270906,
+            10270826,
+            0,
+            0
+          ],
+          "n": 7404,
+          "ordinary": 3424,
+          "attributable": 2136,
+          "indexedOrdinary": 7404,
+          "indexedAttributable": 3405,
+          "deliveredTokens": 3781312,
+          "queryTokens": 151312
+        }
+      }
+    },
+    "wikisql": {
+      "table": {
+        "children": {
+          "cost": [
+            29283,
+            1413296,
+            1412966,
+            0,
+            0
+          ],
+          "n": 4807,
+          "ordinary": 4397,
+          "attributable": 4397,
+          "indexedOrdinary": 4807,
+          "indexedAttributable": 4807,
+          "deliveredTokens": 1185704,
+          "queryTokens": 71735
+        },
+        "packed": {
+          "cost": [
+            29283,
+            1413296,
+            1412966,
+            0,
+            0
+          ],
+          "n": 4807,
+          "ordinary": 4397,
+          "attributable": 4397,
+          "indexedOrdinary": 4807,
+          "indexedAttributable": 4807,
+          "deliveredTokens": 1185704,
+          "queryTokens": 71735
+        },
+        "children-repeat": {
+          "cost": [
+            29283,
+            1413296,
+            1412966,
+            0,
+            0
+          ],
+          "n": 4807,
+          "ordinary": 4397,
+          "attributable": 4397,
+          "indexedOrdinary": 4807,
+          "indexedAttributable": 4807,
+          "deliveredTokens": 1185704,
+          "queryTokens": 71735
+        },
+        "packed-repeat": {
+          "cost": [
+            29283,
+            1413296,
+            1412966,
+            0,
+            0
+          ],
+          "n": 4807,
+          "ordinary": 4397,
+          "attributable": 4397,
+          "indexedOrdinary": 4807,
+          "indexedAttributable": 4807,
+          "deliveredTokens": 1185704,
+          "queryTokens": 71735
+        },
+        "packed-omit": {
+          "cost": [
+            29283,
+            1413296,
+            1412966,
+            0,
+            0
+          ],
+          "n": 4807,
+          "ordinary": 4397,
+          "attributable": 4397,
+          "indexedOrdinary": 4807,
+          "indexedAttributable": 4807,
+          "deliveredTokens": 1185704,
+          "queryTokens": 71735
+        },
+        "children-omit": {
+          "cost": [
+            29283,
+            1413296,
+            1412966,
+            0,
+            0
+          ],
+          "n": 4807,
+          "ordinary": 4397,
+          "attributable": 4397,
+          "indexedOrdinary": 4807,
+          "indexedAttributable": 4807,
+          "deliveredTokens": 1185704,
+          "queryTokens": 71735
+        },
+        "record": {
+          "cost": [
+            29283,
+            1413296,
+            1412966,
+            0,
+            0
+          ],
+          "n": 4807,
+          "ordinary": 4397,
+          "attributable": 4397,
+          "indexedOrdinary": 4807,
+          "indexedAttributable": 4807,
+          "deliveredTokens": 1185704,
+          "queryTokens": 71735
+        },
+        "plain": {
+          "cost": [
+            2765,
+            1389602,
+            1389602,
+            5,
+            0
+          ],
+          "n": 4807,
+          "ordinary": 3926,
+          "attributable": 3926,
+          "indexedOrdinary": 4807,
+          "indexedAttributable": 4807,
+          "deliveredTokens": 2006628,
+          "queryTokens": 71735
+        }
+      }
+    },
+    "finqa": {
+      "table": {
+        "children": {
+          "cost": [
+            7360,
+            271486,
+            265909,
+            0,
+            0
+          ],
+          "n": 883,
+          "ordinary": 695,
+          "attributable": 689,
+          "indexedOrdinary": 883,
+          "indexedAttributable": 883,
+          "deliveredTokens": 263049,
+          "queryTokens": 18339
+        },
+        "packed": {
+          "cost": [
+            1709,
+            271683,
+            266740,
+            0,
+            0
+          ],
+          "n": 883,
+          "ordinary": 696,
+          "attributable": 696,
+          "indexedOrdinary": 883,
+          "indexedAttributable": 883,
+          "deliveredTokens": 442390,
+          "queryTokens": 18339
+        },
+        "packed-repeat": {
+          "cost": [
+            1709,
+            272316,
+            267373,
+            0,
+            0
+          ],
+          "n": 883,
+          "ordinary": 688,
+          "attributable": 688,
+          "indexedOrdinary": 883,
+          "indexedAttributable": 883,
+          "deliveredTokens": 442787,
+          "queryTokens": 18339
+        },
+        "packed-omit": {
+          "cost": [
+            1707,
+            272292,
+            267349,
+            0,
+            0
+          ],
+          "n": 883,
+          "ordinary": 688,
+          "attributable": 688,
+          "indexedOrdinary": 883,
+          "indexedAttributable": 883,
+          "deliveredTokens": 442787,
+          "queryTokens": 18339
+        },
+        "children-repeat": {
+          "cost": [
+            7360,
+            276153,
+            270498,
+            0,
+            0
+          ],
+          "n": 883,
+          "ordinary": 629,
+          "attributable": 624,
+          "indexedOrdinary": 883,
+          "indexedAttributable": 883,
+          "deliveredTokens": 262651,
+          "queryTokens": 18339
+        },
+        "children-omit": {
+          "cost": [
+            7065,
+            272375,
+            266720,
+            0,
+            0
+          ],
+          "n": 883,
+          "ordinary": 629,
+          "attributable": 624,
+          "indexedOrdinary": 883,
+          "indexedAttributable": 883,
+          "deliveredTokens": 262185,
+          "queryTokens": 18339
+        },
+        "plain": {
+          "cost": [
+            317,
+            273057,
+            273057,
+            0,
+            0
+          ],
+          "n": 883,
+          "ordinary": 243,
+          "attributable": 235,
+          "indexedOrdinary": 883,
+          "indexedAttributable": 883,
+          "deliveredTokens": 442589,
+          "queryTokens": 18339
+        },
+        "record": {
+          "cost": [
+            299,
+            273078,
+            273078,
+            0,
+            0
+          ],
+          "n": 883,
+          "ordinary": 228,
+          "attributable": 228,
+          "indexedOrdinary": 883,
+          "indexedAttributable": 883,
+          "deliveredTokens": 442589,
+          "queryTokens": 18339
+        }
+      }
+    },
+    "confirmation": {
+      "array": {
+        "children": {
+          "cost": [
+            61180,
+            5177989,
+            5176552,
+            0,
+            0
+          ],
+          "n": 4084,
+          "ordinary": 2792,
+          "attributable": 2738,
+          "indexedOrdinary": 4084,
+          "indexedAttributable": 3976,
+          "deliveredTokens": 1866322,
+          "queryTokens": 82658
+        },
+        "packed": {
+          "cost": [
+            45538,
+            5163326,
+            5162656,
+            0,
+            0
+          ],
+          "n": 4084,
+          "ordinary": 2836,
+          "attributable": 2790,
+          "indexedOrdinary": 4084,
+          "indexedAttributable": 4013,
+          "deliveredTokens": 1961511,
+          "queryTokens": 82658
+        },
+        "packed-repeat": {
+          "cost": [
+            45538,
+            5205008,
+            5205008,
+            0,
+            0
+          ],
+          "n": 4084,
+          "ordinary": 2827,
+          "attributable": 2827,
+          "indexedOrdinary": 4084,
+          "indexedAttributable": 4084,
+          "deliveredTokens": 1963184,
+          "queryTokens": 82658
+        },
+        "packed-omit": {
+          "cost": [
+            42827,
+            5182764,
+            5182764,
+            0,
+            0
+          ],
+          "n": 4084,
+          "ordinary": 2833,
+          "attributable": 2833,
+          "indexedOrdinary": 4084,
+          "indexedAttributable": 4084,
+          "deliveredTokens": 1972179,
+          "queryTokens": 82658
+        },
+        "record": {
+          "cost": [
+            40446,
+            5171970,
+            5171970,
+            0,
+            0
+          ],
+          "n": 4084,
+          "ordinary": 2847,
+          "attributable": 2847,
+          "indexedOrdinary": 4084,
+          "indexedAttributable": 4084,
+          "deliveredTokens": 1974258,
+          "queryTokens": 82658
+        }
+      },
+      "last": {
+        "children": {
+          "cost": [
+            61180,
+            5183842,
+            5182405,
+            0,
+            0
+          ],
+          "n": 4084,
+          "ordinary": 2772,
+          "attributable": 2690,
+          "indexedOrdinary": 4084,
+          "indexedAttributable": 3976,
+          "deliveredTokens": 1869977,
+          "queryTokens": 82658
+        },
+        "packed": {
+          "cost": [
+            45538,
+            5169226,
+            5168556,
+            0,
+            0
+          ],
+          "n": 4084,
+          "ordinary": 2819,
+          "attributable": 2738,
+          "indexedOrdinary": 4084,
+          "indexedAttributable": 4013,
+          "deliveredTokens": 1967326,
+          "queryTokens": 82658
+        },
+        "packed-repeat": {
+          "cost": [
+            45538,
+            5169226,
+            5168556,
+            0,
+            0
+          ],
+          "n": 4084,
+          "ordinary": 2819,
+          "attributable": 2738,
+          "indexedOrdinary": 4084,
+          "indexedAttributable": 4013,
+          "deliveredTokens": 1967326,
+          "queryTokens": 82658
+        },
+        "packed-omit": {
+          "cost": [
+            45538,
+            5169226,
+            5168556,
+            0,
+            0
+          ],
+          "n": 4084,
+          "ordinary": 2819,
+          "attributable": 2738,
+          "indexedOrdinary": 4084,
+          "indexedAttributable": 4013,
+          "deliveredTokens": 1967326,
+          "queryTokens": 82658
+        },
+        "record": {
+          "cost": [
+            40446,
+            5178162,
+            5178162,
+            0,
+            0
+          ],
+          "n": 4084,
+          "ordinary": 2817,
+          "attributable": 2782,
+          "indexedOrdinary": 4084,
+          "indexedAttributable": 4084,
+          "deliveredTokens": 1980466,
+          "queryTokens": 82658
+        }
+      },
+      "text": {
+        "children": {
+          "cost": [
+            45156,
+            5121863,
+            5121193,
+            0,
+            0
+          ],
+          "n": 4084,
+          "ordinary": 2864,
+          "attributable": 2822,
+          "indexedOrdinary": 4084,
+          "indexedAttributable": 4022,
+          "deliveredTokens": 1955664,
+          "queryTokens": 82658
+        },
+        "packed": {
+          "cost": [
+            45136,
+            5121863,
+            5121193,
+            0,
+            0
+          ],
+          "n": 4084,
+          "ordinary": 2865,
+          "attributable": 2823,
+          "indexedOrdinary": 4084,
+          "indexedAttributable": 4023,
+          "deliveredTokens": 1955783,
+          "queryTokens": 82658
+        },
+        "packed-repeat": {
+          "cost": [
+            45136,
+            5160224,
+            5160224,
+            0,
+            0
+          ],
+          "n": 4084,
+          "ordinary": 2854,
+          "attributable": 2854,
+          "indexedOrdinary": 4084,
+          "indexedAttributable": 4084,
+          "deliveredTokens": 1958073,
+          "queryTokens": 82658
+        },
+        "packed-omit": {
+          "cost": [
+            42671,
+            5140011,
+            5140011,
+            0,
+            0
+          ],
+          "n": 4084,
+          "ordinary": 2861,
+          "attributable": 2861,
+          "indexedOrdinary": 4084,
+          "indexedAttributable": 4084,
+          "deliveredTokens": 1965223,
+          "queryTokens": 82658
+        },
+        "record": {
+          "cost": [
+            40446,
+            5124334,
+            5124334,
+            0,
+            0
+          ],
+          "n": 4084,
+          "ordinary": 2857,
+          "attributable": 2857,
+          "indexedOrdinary": 4084,
+          "indexedAttributable": 4084,
+          "deliveredTokens": 1967449,
+          "queryTokens": 82658
+        }
+      }
+    }
+  },
+  "pairedFileSHA256": "40486f33af90255c661ec84b8402d171a9da58a0d2ae39edd529f51e8dcaeaca"
+}

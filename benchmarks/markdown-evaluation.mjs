@@ -79,8 +79,8 @@ export async function evaluate(task, { docs, questions }, policy, encoder, mode,
                     function measure(budget, passages, tokenLimit) {
                         const { projected, text } = deliver(passages, tokenLimit, encoder);
                         const metrics = evidenceScore(projected, q.gold);
-                        const trace = i === 0 && budget === 512 && ranker === 'dense' && { id: q.id, first: ranked[0].sourceRanges,
-                            doc: ranked[0].doc, deliveredSHA256: sha256(text), ...metrics };
+                        const trace = i === 0 && budget === 512 && ranker === 'dense' && { id: q.id, first: ranked[0]?.sourceRanges ?? [],
+                            doc: ranked[0]?.doc ?? null, deliveredSHA256: sha256(text), ...metrics };
                         measured.push({ ranker, budget, metrics, spent: projected.length, trace });
                     }
                     if (deliveries) {

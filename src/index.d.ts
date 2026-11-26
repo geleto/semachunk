@@ -6,13 +6,15 @@ export interface ChunkingOptions {
 	inputFormat?: 'text' | 'html' | 'markdown' | 'json';
 	/** Select natural blocks, greedy packing, or similarity merging. By default 'auto' packs when no embedding callback is supplied. */
 	chunkingStrategy?: ChunkingStrategy;
+	/** Literal record delimiter for plain text with explicit 'blocks' or 'pack'. LF and CRLF match each other. */
+	separator?: string | undefined;
 	/** Maximum trailing text to repeat in packed chunks, in tokens with a finite maxChunkTokens or UTF-16 units otherwise. Defaults to 0. */
 	chunkOverlap?: number;
 	/** BCP 47 language tag for sentence segmentation. Defaults to 'en'. */
 	locale?: string;
 	/** Soft per-chunk target in UTF-16 units. Defaults to 1024 in Markdown and JSON, and 500 in text and HTML. Use Infinity for token-only sizing. */
 	maxChunkSize?: number;
-	/** Hard token ceiling per chunk and embedding input, including any prefix. Defaults to Infinity. A finite cap also requires countTokens. */
+	/** Token target per chunk and hard ceiling per embedding input. A finite value requires countTokens. Defaults to Infinity. */
 	maxChunkTokens?: number;
 	/** Synchronous token count using the embedding model's tokenizer, including its special tokens. */
 	countTokens?: (text: string) => number;
@@ -52,6 +54,8 @@ export type Embedding = readonly number[] | (ArrayBufferView & ArrayLike<number>
 export interface Chunk<Vector extends Embedding = number[]> {
 	text: string;
 	embedding?: Vector;
+	/** The source fragment or its prefixed text exceeds maxChunkTokens. It has no embedding. */
+	tokenLimitExceeded?: true;
 }
 
 export interface RangedChunk<Vector extends Embedding = number[]> extends Chunk<Vector> {
@@ -77,13 +81,22 @@ export type EmbedBatchCallback<Vector extends Embedding = number[]> = (texts: st
 
 type ChunkArguments<Vector extends Embedding, Options extends unknown[]> =
 	Options | [embedBatchCallback: EmbedBatchCallback<Vector> | null | undefined, ...Options];
-type ChunkFor<Format, Vector extends Embedding> = Format extends 'markdown' ? MarkdownChunk<Vector>
-	: Format extends 'json' ? JsonChunk<Vector> : Chunk<Vector>;
+type ChunkFor<Format, Separator, Vector extends Embedding> = Format extends 'markdown' ? MarkdownChunk<Vector>
+	: Format extends 'json' ? JsonChunk<Vector> : Format extends 'html' ? Chunk<Vector>
+	: Separator extends string ? RangedChunk<Vector> : Chunk<Vector>;
+type Result<Options, Vector extends Embedding> = Options extends ChunkingOptions
+	? ChunkFor<Options['inputFormat'], Options['separator'], Vector> : Chunk<Vector>;
 
 /** Omit the embedding callback to return text chunks and format metadata. */
 export function chunkText<Vector extends Embedding = number[]>(
-	text: string, ...args: ChunkArguments<Vector, [options?: (ChunkingOptions & { inputFormat?: 'text' | 'html' }) | undefined]>
+	text: string, ...args: ChunkArguments<Vector, [options: ChunkingOptions & { inputFormat?: 'text', separator: string }]>
+): Promise<RangedChunk<Vector>[]>;
+export function chunkText<Vector extends Embedding = number[]>(
+	text: string, ...args: ChunkArguments<Vector, [options?: (ChunkingOptions & { inputFormat?: 'text' | 'html', separator?: undefined }) | undefined]>
 ): Promise<Chunk<Vector>[]>;
+export function chunkText<Vector extends Embedding = number[]>(
+	text: string, ...args: ChunkArguments<Vector, [options: ChunkingOptions & { inputFormat?: 'text' }]>
+): Promise<(Chunk<Vector> | RangedChunk<Vector>)[]>;
 export function chunkText<Vector extends Embedding = number[]>(
 	text: string, ...args: ChunkArguments<Vector, [options: ChunkingOptions & { inputFormat: 'markdown' }]>
 ): Promise<MarkdownChunk<Vector>[]>;
@@ -92,6 +105,6 @@ export function chunkText<Vector extends Embedding = number[]>(
 ): Promise<JsonChunk<Vector>[]>;
 export function chunkText<Vector extends Embedding = number[], Options extends ChunkingOptions | undefined = ChunkingOptions | undefined>(
 	text: string, ...args: ChunkArguments<Vector, [options?: Options]>
-): Promise<ChunkFor<Options extends ChunkingOptions ? Options['inputFormat'] : undefined, Vector>[]>;
+): Promise<Result<Options, Vector>[]>;
 
 export function _printVersion(): Promise<void>;

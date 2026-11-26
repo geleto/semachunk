@@ -367,7 +367,7 @@ test('token-limited joins recheck the actual text and batch a newly eligible nei
     assert.ok(run.batches.flat().every(s => s.split(' ').length <= 2));
 });
 
-test('invalid token budgets and unrepresentable input fail before embedding', async () => {
+test('invalid token budgets fail and indivisible text stays available without a vector', async () => {
     for (const n of [0, -1, 0.5, NaN, null]) {
         await assert.rejects(chunkText('', assert.fail, { maxChunkTokens: n }), /maxChunkTokens/);
     }
@@ -375,9 +375,9 @@ test('invalid token budgets and unrepresentable input fail before embedding', as
     for (const count of [NaN, -1, 1.5, '2', Promise.resolve(2)]) {
         await assert.rejects(chunkText(pair, assert.fail, { maxChunkTokens: 4, countTokens: () => count }), /countTokens/);
     }
-    await assert.rejects(chunkText('🌍', assert.fail, {
+    assert.deepEqual(await chunkText('🌍', assert.fail, {
         maxChunkTokens: 2, countTokens: s => [...s].length, chunkPrefix: 'Title'
-    }), /cannot fit one Unicode code point/);
+    }), [{ text: 'Title: 🌍', tokenLimitExceeded: true }]);
 });
 
 test('callbacks can consume or edit their input array without changing cache keys', async () => {

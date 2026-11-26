@@ -1,5 +1,5 @@
 import { alignDocument, compact, cuad, hotpotqa, lowerBound, qasper } from './corpora.mjs';
-import { costs, denseRanker, internCandidates, measure, qualityPlans, split, vocabulary } from './chunking.mjs';
+import { costs, denseRanker, internCandidates, measure, qualityPlans, sourcePieces, split, vocabulary } from './chunking.mjs';
 import { alignPlain } from './delivered-context.mjs';
 import { packSentences } from '../src/packing.js';
 import { tokenBudget } from '../src/token-limit.js';
@@ -26,7 +26,7 @@ export function tokenSpan(source, a, b) {
 export async function prepare(docs, questions, chunkText, encoder, plans) {
     const vocab = vocabulary(), sources = [], windows = [], aligned = [];
     const needFlat = Object.values(plans).some(plan => plan.flatInput);
-    const tokenLimit = Object.values(plans).find(plan => plan.maxChunkTokens)?.maxChunkTokens;
+    const cappedPlans = Object.values(plans).filter(plan => Number.isFinite(plan.maxChunkTokens));
     let base = 0;
     for (const [d, original] of docs.entries()) {
         const raw = original.raw ?? original.text, flat = original.text;
@@ -37,10 +37,12 @@ export async function prepare(docs, questions, chunkText, encoder, plans) {
         internCandidates(parts, 500, vocab);
         for (const plan of Object.values(plans)) {
             if (plan.chunkingStrategy === 'blocks') {
-                (await split(chunkText, raw, plan)).forEach(vocab.intern);
+                (await split(chunkText, raw, { ...plan, countTokens: encoder.countTokens })).forEach(vocab.intern);
             }
             if (plan.pack && plan.maxChunkTokens) {
-                packSentences(parts, plan.maxChunkSize, tokenBudget(plan.maxChunkTokens, encoder.countTokens, '')).forEach(vocab.intern);
+                const fits = tokenBudget(plan.maxChunkTokens, encoder.countTokens, '');
+                const packed = packSentences(parts, plan.maxChunkSize, fits);
+                (fits ? packed.filter(fits) : packed).forEach(vocab.intern);
             }
         }
         if (needFlat) {
@@ -48,8 +50,8 @@ export async function prepare(docs, questions, chunkText, encoder, plans) {
             if (flatParts.join(' ') !== doc.text) throw new Error('Flat control source positions differ in ' + doc.title);
             internCandidates(flatParts, 500, vocab);
         }
-        if (tokenLimit) {
-            const pieces = await split(chunkText, raw, { maxChunkTokens: tokenLimit, countTokens: encoder.countTokens });
+        for (const { flatInput, maxChunkTokens } of cappedPlans) {
+            const pieces = await split(chunkText, flatInput ? flat : raw, { maxChunkTokens, countTokens: encoder.countTokens });
             pieces.forEach(vocab.intern);
         }
         const offsets = await encoder.offsets(doc.text);
@@ -134,7 +136,6 @@ export function evidenceAtBudget(ranked, sources, references, budget, trace) {
         if (trace) trace.push([p.doc, p.start, p.start + take]);
         if (spent === budget) break;
     }
-    if (!spent) throw new Error('Ranked passages contain no tokens');
     let correct = 0, recall = 0;
     for (const ref of references) {
         let hits = 0;
@@ -142,7 +143,7 @@ export function evidenceAtBudget(ranked, sources, references, budget, trace) {
         const fraction = hits / ref.size;
         if (fraction > recall || (fraction === recall && hits > correct)) { correct = hits; recall = fraction; }
     }
-    return { evidenceRecall: recall, contextPrecision: correct / spent, complete: Number(recall === 1),
+    return { evidenceRecall: recall, contextPrecision: spent ? correct / spent : 0, complete: Number(recall === 1),
         budgetFeasible: Number(references.some(ref => ref.size <= budget)), tokensDelivered: spent };
 }
 
@@ -180,6 +181,7 @@ export function scoreMethod(questions, pools, byDoc, sources, gold, vocab, dense
 }
 
 function distribution(values) {
+    if (!values.length) return { count: 0 };
     const sorted = values.toSorted((a, b) => a - b), mid = Math.floor(sorted.length / 2);
     return { min: sorted[0], median: sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2, max: sorted.at(-1) };
 }
@@ -244,23 +246,20 @@ export async function evaluateRag(task, chunkText, encoder, plans, { sample, pai
             rows = [];
             for (const doc of docs) rows.push(await measure(chunkText, doc, plan, vocab, matrix, encoder.countTokens));
             for (const [doc, original] of docs.entries()) {
-                const ids = rows[doc].ids, source = sources[doc];
-                const chunks = alignPlain(original.flat, ids.map(i => vocab.texts[i]));
+                const pieces = sourcePieces(rows[doc], vocab.texts), source = sources[doc];
+                const chunks = alignPlain(original.flat, pieces.map(p => p.text));
+                let a = 0;
                 for (const [i, { sourceRanges }] of chunks.entries()) {
                     // Count the same source tokens even when a layout inserts a space at a sentence break.
                     const start = original.translate(sourceRanges[0].start);
                     const end = original.translate(sourceRanges.at(-1).end - 1) + 1;
-                    const a = byDoc[doc].at(-1)?.end ?? 0, b = lowerBound(source.starts, end);
+                    const b = lowerBound(source.starts, end);
                     if (a && source.ends[a - 1] > start) throw new Error('A source token crosses a chunk boundary in ' + original.title);
-                    if (a < b) byDoc[doc].push({ doc, start: a, end: b, index: ids[i] });
+                    if (a < b && pieces[i].index !== undefined) byDoc[doc].push({ doc, start: a, end: b, index: pieces[i].index });
+                    a = b;
                 }
+                if (a !== source.starts.length) throw new Error('Chunks do not partition the source tokens in ' + original.title);
             }
-            byDoc.forEach((group, d) => {
-                if (group[0]?.start !== 0 || group.at(-1)?.end !== sources[d].starts.length ||
-                    group.some((p, i) => i > 0 && group[i - 1].end !== p.start)) {
-                    throw new Error('Chunks do not partition the source tokens in ' + docs[d].title);
-                }
-            });
         }
         const passages = byDoc.flat();
         const row = scores[name] = { chunks: passages.length, ...costs(rows), chunkTokens: distribution(passages.map(p => p.end - p.start)),

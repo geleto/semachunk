@@ -48,10 +48,10 @@ export function tokenWindows(doc, tokens, size, overlap) {
     return chunks;
 }
 
-export function deliver(ranked, budget, encoder) {
+export function deliver(ranked, budget, encoder, projectTokens = true) {
     const ranges = [];
     let text = '';
-    for (const p of ranked) {
+    for (const [hit, p] of ranked.entries()) {
         const start = text.length + (text ? 2 : 0);
         const candidate = (text ? text + '\n\n' : '') + p.text;
         let end = candidate.length;
@@ -66,11 +66,12 @@ export function deliver(ranked, budget, encoder) {
         for (const r of p.sourceRanges) {
             const a = start + r.outputStart, length = r.outputLength ?? r.end - r.start;
             if (a >= end) break;
-            ranges.push({ doc: p.doc, a, b: Math.min(end, a + length), from: r.start,
+            ranges.push({ hit, doc: p.doc, a, b: Math.min(end, a + length), from: r.start,
                 to: r.outputLength === undefined ? r.start + Math.min(end - a, length) : r.end, collapsed: r.outputLength !== undefined });
         }
         if (end < candidate.length) break;
     }
+    if (!projectTokens) return { text, ranges };
     const tokens = encoder.offsets(text);
     if (tokens.length > budget) throw new Error('Serialized retrieval context exceeds its budget');
     let i = 0;
@@ -84,7 +85,7 @@ export function deliver(ranked, budget, encoder) {
         }
         return spans;
     });
-    return { text, projected };
+    return { text, ranges, projected };
 }
 
 // A source token can straddle an annotation edge, or multiple tokenizer

@@ -16,8 +16,9 @@ async function chunks(source, extra = {}) {
             previous = outputStart + end - start;
         }
         if (extra.maxChunkTokens) {
-            assert.ok(extra.countTokens(chunk.text) <= extra.maxChunkTokens);
-            assert.ok(extra.countTokens(chunk.embeddingText ?? chunk.text) <= extra.maxChunkTokens);
+            const over = extra.countTokens(chunk.text) > extra.maxChunkTokens ||
+                extra.countTokens(chunk.embeddingText ?? chunk.text) > extra.maxChunkTokens;
+            assert.equal(chunk.tokenLimitExceeded, over ? true : undefined);
         }
     }
     return output;
@@ -159,7 +160,9 @@ test('hard splits prefer whole inline links and code, keep whitespace, and advan
     }
     const wrapped = await chunks('> In a quote. A second sentence with words.', { maxChunkTokens: 15, countTokens: length });
     assert.ok(wrapped.every(c => c.text.startsWith('> ')));
-    await assert.rejects(chunks('🌍', { maxChunkTokens: 2, countTokens: length, chunkPrefix: 'X' }), /one Unicode code point/);
+    const [over] = await chunks('🌍', { maxChunkTokens: 2, countTokens: length, chunkPrefix: 'X' });
+    assert.equal(over.text, 'X: 🌍');
+    assert.equal(over.tokenLimitExceeded, true);
 });
 
 test('nested lists preserve repeated markers, indentation and internal headings; definitions and filtered prose are barriers', async () => {

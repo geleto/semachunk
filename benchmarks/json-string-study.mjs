@@ -4,6 +4,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseTree } from 'jsonc-parser';
+import { chunkText } from '../src/index.js';
 import { packedRanges } from '../src/packing.js';
 import { sentenceEnds } from '../src/sentences.js';
 import { splitSpans } from '../src/token-limit.js';
@@ -14,8 +15,9 @@ import { dimension, model, openReplay } from './encoder.mjs';
 import { records, queries, proseCount } from './json-field-corpus.mjs';
 
 const size = 1024, topK = 5;
-const identifierAudit = process.argv.includes('--identifier-audit');
-const output = process.argv.slice(2).find(arg => arg !== '--identifier-audit');
+const verifyRuntime = process.argv.includes('--verify-runtime');
+const identifierAudit = verifyRuntime || process.argv.includes('--identifier-audit');
+const output = process.argv.slice(2).find(arg => !arg.startsWith('--'));
 const policies = identifierAudit ? ['linesThenSentences', 'asciiRuns'] :
     ['intact', 'all', 'bodyOnly', 'lines', 'whitespace', 'sentences', 'sentenceThenWhitespace',
     'linesThenSentences', 'hasBoundary'];
@@ -48,7 +50,7 @@ function cuts(source, field, policy) {
         const escape = /\\(?:u[dD][89abAB][\da-fA-F]{2}\\u[dD][c-fC-F][\da-fA-F]{2}|u[\da-fA-F]{4}|.)/g;
         const protectedSpans = Array.from(source.slice(start, end).matchAll(escape),
             m => [start + m.index, start + m.index + m[0].length]);
-        return splitSpans(source, start, end, (a, b) => b - a <= size, true, protectedSpans, true);
+        return splitSpans(source, start, end, (a, b) => b - a <= size, { protectedSpans, indivisible: true });
     }
     const value = node.value, edges = [start];
     function boundary(i) {
@@ -127,7 +129,7 @@ function pool(id, rows, questions) {
         if (!layouts.has(hash)) layouts.set(hash, { hash, policies: [], chunks });
         layouts.get(hash).policies.push(policy);
     }
-    return { id, sourceSHA256: sha256(source), questions, gold, layouts: [...layouts.values()] };
+    return { id, source, sourceSHA256: sha256(source), questions, gold, layouts: [...layouts.values()] };
 }
 
 function casaiPools() {
@@ -248,6 +250,18 @@ if (identifierAudit) {
         assert.equal(sha256(JSON.stringify(p.gold)), old.referenceSHA256);
         assert.deepEqual(p.questions.map(q => [q.id, q.group]), old.questions);
         assert.equal(p.layouts[0].hash, old.layouts.find(l => l.policies.includes('linesThenSentences')).layoutSHA256);
+    }
+    if (verifyRuntime) {
+        const audit = JSON.parse(await readFile(new URL('./results/2026-11-25-json-identifier-audit.json', import.meta.url)));
+        const changed = new Map(audit.pools.map(p => [p.id, p.layouts.find(l => l.policies.includes('asciiRuns')).layoutSHA256]));
+        datasets.push(urlPool());
+        for (const p of datasets) {
+            const expected = changed.get(p.id) ?? originals.get(p.id).layouts.find(l => l.policies.includes('linesThenSentences')).layoutSHA256;
+            const chunks = await chunkText(p.source, { inputFormat: 'json', maxChunkSize: size });
+            assert.equal(sha256(JSON.stringify(chunks)), expected, p.id);
+        }
+        console.log('Verified', datasets.length, 'public JSON layouts against their archived hashes.');
+        process.exit(0);
     }
     datasets = [...datasets.filter(p => p.layouts.length > 1), urlPool()];
 }

@@ -1,7 +1,7 @@
-import { parseText } from './sentences.js';
+import { parseText, sentenceLocale } from './sentences.js';
 import { copyEmbedding, createBatchEmbedder } from './embeddings.js';
 import { mergeChunks } from './merge.js';
-import { packSentences } from './packing.js';
+import { chunkDelimited, packSentences } from './packing.js';
 import { DEFAULT_CONFIG } from '../config.js';
 import { sentenceTokenLimit, tokenBudget } from './token-limit.js';
 
@@ -41,6 +41,7 @@ export async function chunkText(text, embedBatchCallback, options) {
 		logging = DEFAULT_CONFIG.LOGGING,
 		inputFormat = DEFAULT_CONFIG.INPUT_FORMAT,
 		chunkingStrategy = DEFAULT_CONFIG.CHUNKING_STRATEGY,
+		separator,
 		chunkOverlap = DEFAULT_CONFIG.CHUNK_OVERLAP,
 		locale = DEFAULT_CONFIG.LOCALE,
 		maxChunkSize = inputFormat === 'json' ? DEFAULT_CONFIG.JSON_MAX_CHUNK_SIZE
@@ -90,6 +91,13 @@ export async function chunkText(text, embedBatchCallback, options) {
 	if (!Number.isFinite(candidateMergesPercentageCap) || candidateMergesPercentageCap < 0 || candidateMergesPercentageCap > 100) {
 		throw new RangeError('candidateMergesPercentageCap (legacy candiateMergesPercentageCap) must be between 0 and 100.');
 	}
+	if (separator !== undefined) {
+		if (typeof separator !== 'string' || !separator.length) throw new TypeError('separator must be a nonempty string.');
+		if (inputFormat !== 'text' || !['blocks', 'pack'].includes(chunkingStrategy) || excludeNonLetterSentences) {
+			throw new TypeError("separator requires plain text, explicit 'blocks' or 'pack', and no sentence filtering.");
+		}
+		sentenceLocale(locale);
+	}
 	const embedBatch = createBatchEmbedder(embedBatchCallback, maxEmbeddingBatchSize, maxCachedEmbeddings);
 	const strategy = resolveStrategy(chunkingStrategy, inputFormat, combineChunks, maxChunkSize, maxChunkTokens, chunkOverlap, embedBatch);
 	if (!embedBatch && (strategy === 'semantic' || returnEmbedding)) {
@@ -107,7 +115,9 @@ export async function chunkText(text, embedBatchCallback, options) {
 		calibrate: mergeThresholdMode === 'document' && options?.combineChunksSimilarityThreshold === undefined
 	};
 	let output;
-	if (inputFormat === 'json') {
+	if (separator !== undefined) {
+		output = chunkDelimited(text, separator, { ...parsing, fitsOverlap });
+	} else if (inputFormat === 'json') {
 		if (excludeNonLetterSentences) throw new TypeError('JSON input does not support sentence filtering.');
 		const { chunkJson } = await import('./json.js').catch(error => {
 			if (error.code === 'ERR_MODULE_NOT_FOUND' && error.message.includes("package 'jsonc-parser'")) {
@@ -115,7 +125,7 @@ export async function chunkText(text, embedBatchCallback, options) {
 			}
 			throw error;
 		});
-		output = chunkJson(text, maxChunkSize, fits);
+		output = chunkJson(text, maxChunkSize, fits, locale);
 	} else if (inputFormat === 'markdown') {
 		const { chunkMarkdown } = await import('./markdown-merge.js').catch(error => {
 			if (error.code === 'ERR_MODULE_NOT_FOUND' && /package '(?:mdast-util|micromark-extension)-/.test(error.message)) {
@@ -143,19 +153,24 @@ export async function chunkText(text, embedBatchCallback, options) {
 		}
 		output = chunks.map(text => ({ text }));
 	}
-	if (!prefix && !returnEmbedding) return output;
-	const indexed = output.map(chunk => {
+	if (!prefix && !returnEmbedding && !fits) return output;
+	const indexed = [], pending = [];
+	for (const chunk of output) {
 		const text = prefix + chunk.text;
+		if (fits && !fits(chunk.text)) chunk.tokenLimitExceeded = true;
+		else if (returnEmbedding) {
+			indexed.push(text);
+			pending.push(chunk);
+		}
 		if (prefix && !excludeChunkPrefixInResults) {
 			chunk.text = text;
 			for (const range of chunk.sourceRanges ?? []) range.outputStart += prefix.length;
 		} else if (prefix && chunk.sourceRanges) chunk.embeddingText = text;
-		return text;
-	});
-	if (returnEmbedding) {
+	}
+	if (pending.length) {
 		const embeddings = await embedBatch(indexed);
 		const seen = new Set();
-		output.forEach((chunk, i) => {
+		pending.forEach((chunk, i) => {
 			const vector = embeddings[i];
 			chunk.embedding = seen.has(vector) ? copyEmbedding(vector) : vector;
 			seen.add(vector);

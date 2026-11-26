@@ -1,5 +1,7 @@
 # Delimited text and JSON records
 
+**Completed November 26, 2026.** The public JSON layout packs adjacent fields or array items under the same parent. The maintainer selected this default after reviewing the retrieval and indexing costs of repetition. [Results and decision](../benchmarks/LOG.md#2026-11-26--choosing-the-json-record-layout)
+
 Keep `blocks`, `pack` and `semantic`, with `auto` as the selector. The plan covers the `separator` option for plain text and the `json` input format. Line packing matched recursion on two 40-row fixtures and kept all 1,998 individually fitting rows in a 2,000-event log within 500 characters. [Line benchmarks](../benchmarks/LOG.md#2026-11-25--delimited-records-and-json-plan-review)
 
 `maxChunkSize` is a soft target per chunk in UTF-16 code units. It defaults to 500 for text and HTML and 1,024 for Markdown and JSON. `maxChunkTokens` defaults to `Infinity`, so the tokenizer stays idle. A finite value must be a positive safe integer and requires the embedding model’s synchronous `countTokens(text)`. Set `maxChunkSize: Infinity` for token-only sizing. [Token sizing measurements](../benchmarks/LOG.md#2026-11-25--token-sizing-and-json-field-retrieval)
@@ -22,7 +24,7 @@ The token limit is a hard ceiling for every string sent to the embedding callbac
 
 ## JSON records
 
-The implemented single-child baseline keeps scalar values intact unless a hard token cap requires a split. For the next change, pack long strings at existing line and sentence boundaries and protect uninterrupted runs of non-space printable ASCII, including URLs with query strings. Use this rule for every structured candidate. [String policy comparison](../benchmarks/LOG.md#2026-11-25--json-string-boundaries-and-identifier-retrieval) · [Identifier audit](../benchmarks/LOG.md#2026-11-25--implementation-surface-audit-of-the-delimited-text-and-json-plan)
+The public layout packs long strings at existing line and sentence boundaries and preserves uninterrupted runs of non-space printable ASCII, including URLs with query strings, under the soft target. Every structured candidate uses this rule. The public API reproduced all 372 archived string layouts. [Implementation checks](../benchmarks/LOG.md#2026-11-25--delimited-records-and-json-implementation) · [String policy comparison](../benchmarks/LOG.md#2026-11-25--json-string-boundaries-and-identifier-retrieval)
 
 Lazy-load optional `jsonc-parser@^3.3.1` for JSON. Use the package with its license intact and write original chunking logic and tests. Only a missing parser gets the `npm install --include=optional` hint. [Parser and license](https://github.com/microsoft/node-jsonc-parser/tree/v3.3.1)
 
@@ -33,6 +35,8 @@ Lazy-load optional `jsonc-parser@^3.3.1` for JSON. Use the package with its lice
 - Chunks are source excerpts and can contain a partial JSON value. A singleton or fragment keeps its value’s `jsonPointer`. A group of two or more siblings uses the parent’s pointer. The root is `""`. Encode `~` then `/` as `~0` and `~1`. RFC 6901 pointer evaluation fails when the referenced object member name occurs more than once. Identify those occurrences by source range. Ancestor keys and later fields may be absent from the text. [JSON Pointer](https://www.rfc-editor.org/rfc/rfc6901)
 
 ## Choosing a JSON layout
+
+Sibling packing passed the held-out quality and cost checks and is implemented. Repeating preceding fields also passed the attribution test, with higher indexing cost and a lower ordinary-evidence estimate on affected questions. The maintainer chose sibling packing alone for general use. Omitting standalone fields failed the savings-only quality requirement. [Confirmation results and release decision](../benchmarks/LOG.md#2026-11-26--choosing-the-json-record-layout)
 
 Compare single-child descent with greedy packing of adjacent siblings in the same parent and root record. A packed body spans the first member’s start through the last member’s end, including gaps and commas. Flush before and after a child that requires descent or soft string splitting, or exceeds the token cap on its own with the required caller prefix. Its fragments keep its pointer. Otherwise try appending it with the open group’s context. If the join fails, flush and size the child with the context for its new group. At size zero, emit leaves separately.
 
@@ -67,7 +71,7 @@ Identify each supporting sentence by its record and original sentence index, exc
 
 For a positive, finite `maxChunkSize`, measure the raw UTF-16 string value including its quotes. Validate the JSON locale once using the same function as text and Markdown, independent of field contents. Use decoded line breaks for an over-target value. In a line that alone exceeds the target, use the existing sentence splitter with the configured locale (default `en`). Reject a sentence edge between two non-space printable ASCII characters from U+0021 through U+007E. This keeps a URL or identifier in one piece even if the segmenter recognizes `?` or `!` inside it. Consecutive Chinese sentences can still split without spaces. Greedily pack the resulting units in source order. One unit may exceed the soft target. Use the same rule for root strings, array items and object string values. [Range packer](../src/packing.js) · [Sentence boundaries](../src/sentences.js)
 
-Map chosen offsets in the decoded value to the original spelling. With no escapes the offset is the opening quote plus one plus the decoded offset. Otherwise scan the raw spelling in order, advancing six units for a Unicode escape, two for a short escape, and one per literal UTF-16 unit. Translate only the line and sentence edges needed for packing. Runs of CR, LF, U+2028 and U+2029 belong to the preceding text as in the benchmark. A decoded newline written as `\n` or `\u000a` is a boundary. A literal backslash followed by `n` is ordinary text. Attach the original key and colon to the first piece only. A long key alone cannot trigger a soft cut. Preserve each fragment’s pointer and half-open source range. Zero and `Infinity` skip soft string cuts. Size each piece with its caller prefix under the shared token-limit rule.
+Map chosen offsets in the decoded value to the original spelling. With no escapes the offset is the opening quote plus one plus the decoded offset. Otherwise scan the raw spelling in order, advancing six units for a Unicode escape, two for a short escape, and one per literal UTF-16 unit. Translate only the line and sentence edges needed for packing. Soft cuts keep a run of decoded CR, LF, U+2028 and U+2029 characters with the preceding text. A decoded newline written as `\n` or `\u000a` is a boundary. A literal backslash followed by `n` is ordinary text. Attach the original key and colon to the first piece only. A long key alone cannot trigger a soft cut. Preserve each fragment’s pointer and half-open source range. Zero and `Infinity` skip soft string cuts. Size each piece with its caller prefix under the shared token-limit rule.
 
 The comparison covered English and Traditional Chinese prose, real Casai fields and 1,200-character identifiers. Forced cuts gained 2.7 and 5.0 percentage points on the respective flattened articles at 512 delivered tokens. Keeping paragraph breaks reversed both results. Score the correct source record and the complete literal in one delivered hit separately.
 
@@ -85,7 +89,7 @@ Freeze the 4,084 title-disjoint hard training questions and the 151 with an over
 
 ## Implementation and verification
 
-Implement and verify the literal separator independently of the JSON layout comparison. Measure net runtime JavaScript separately from tests and benchmark code. Keep the strict JSON baseline available while comparing candidates.
+The literal separator, token-limit fallback, long-string policy and sibling packing are implemented. The November 26 sibling-packing study measured 1,318 runtime JavaScript lines against a 1,201-line baseline, including comments and blank lines. That measurement predates the overflow and delimiter follow-up fixes. The four packaged installations cover full optional dependencies, no optional dependencies, the JSON parser alone, or the Markdown parsers alone.
 
 Exercise the shared fallback through public text, HTML, Markdown and JSON calls. Use a mixed input, a prefix that makes every piece exceed the cap, and a tokenizer where joining the prefix to a body reduces the count. Assert which texts reach the provider during semantic scoring and final embedding with bounded and unbounded caches, including when final embeddings are disabled. Round-trip source ranges for visible and hidden prefixes. Compare text and overflow flags with and without a callback for the same `blocks` or `pack` layout.
 

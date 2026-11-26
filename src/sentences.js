@@ -1,4 +1,5 @@
 import { splitBySentence } from 'string-segmenter';
+import { collapseRuns } from './offsets.js';
 import { packSentences } from './packing.js';
 
 const blockElements = new Set(
@@ -72,13 +73,17 @@ export function sentenceLocale(locale = 'en') {
 }
 
 export function* sentenceEnds(text, locale) {
-    // The segmenter uppercases the character after a period and whitespace.
-    // Keep its offsets valid when uppercasing expands a character (e.g. ß).
-    const marked = text.replace(/(?<=\.\s+)[^\x00-\x7f]/gu, c => c.toLocaleUpperCase().slice(0, c.length));
+    // Keep padding out of the segmenter's whitespace lookbehinds. A BOM is a
+    // formatting character for sentence breaks, even though JS counts it as whitespace.
+    const compact = collapseRuns(text, /[^\S\r\n\u2028\u2029]{2,}/gu, run => /^\uFEFF+$/u.test(run) ? '\uFEFF' : ' ');
+    // Mark the character after a period even across a line break, preserving its UTF-16 width.
+    const marked = compact.text.replace(/(\.\s+)([a-z]|[^\x00-\x7f])/gu, (_, gap, c) => gap + c.toLocaleUpperCase().slice(0, c.length));
     let end = 0;
-    for (const { index, segment } of splitBySentence(marked, locale)) {
-        end = index + segment.length;
-        yield end;
+    for (const line of marked.matchAll(/[^\r\n\u2028\u2029]*(?:\r\n|[\r\n\u2028\u2029]|$)/gu)) {
+        for (const { index, segment } of splitBySentence(line[0], locale)) {
+            end = compact.sourceOffset(line.index + index + segment.length);
+            yield end;
+        }
     }
     // A trailing abbreviation with whitespace may still be pending.
     if (end < text.length) yield text.length;

@@ -60,6 +60,46 @@ test('RAG scores intact paragraphs against the same source when sentence splitti
     assert.equal(report.scores.blocks.retrieval.dense[256].complete, 1);
 });
 
+test('RAG skips rejected rows while preserving the positions of later evidence', async () => {
+    const raw = 'A\n\n😀\n\nB';
+    const sample = { docs: [{ title: 'mixed', text: compact(raw), raw }, { title: 'empty', text: '😀' }], questions: [
+        { id: 'middle', text: 'q', pool: [0], references: [[[0, 2, 4]]] },
+        { id: 'last', text: 'q', pool: [0], references: [[[0, 5, 6]]] },
+        { id: 'empty', text: 'q', pool: [1], references: [[[1, 0, 2]]] }
+    ] };
+    const encoder = { countTokens: s => s.includes('😀') ? 2 : wordOffsets(s).length, offsets: wordOffsets,
+        vectors: texts => ({ matrix: new Float32Array(texts.length * dimension).fill(1) }) };
+    const limit = { maxChunkSize: 0, maxChunkTokens: 1 };
+    const plans = { public: { ...limit, chunkingStrategy: 'pack' }, blocks: { ...limit, chunkingStrategy: 'blocks' },
+        reference: { ...limit, pack: true } };
+    const report = await evaluateRag('cuad', chunkText, encoder, plans, { sample, paired: true });
+    for (const name of Object.keys(plans)) {
+        const result = report.scores[name];
+        assert.equal(result.chunks, 2, name);
+        assert.equal(result.providerTexts, 2, name);
+        assert.deepEqual(result.retrieval.dense[256].completeIndices, [1], name);
+        assert.equal(result.retrieval.bm25[256].complete, 1, name);
+    }
+});
+
+test('RAG prepares the distinct pieces needed by every token cap in either plan order', async () => {
+    const text = 'abcdefghij';
+    const sample = { docs: [{ title: 'sample', text }], questions: [
+        { id: 'q', text: 'q', pool: [0], references: [[[0, 8, 10]]] }
+    ] };
+    const encoder = { countTokens: s => s.length, offsets: s => Array.from(s, (_, i) => [i, i + 1]),
+        vectors: texts => ({ matrix: new Float32Array(texts.length * dimension).fill(1) }) };
+    for (const limits of [[2, 3], [3, 2]]) {
+        const plans = Object.fromEntries(limits.map(limit => ['cap' + limit, { maxChunkTokens: limit }]));
+        const { scores } = await evaluateRag('cuad', chunkText, encoder, plans, { sample });
+        for (const limit of limits) {
+            const rows = await chunkText(text, { maxChunkTokens: limit, countTokens: encoder.countTokens });
+            assert.equal(scores['cap' + limit].chunks, rows.length);
+            assert.equal(scores['cap' + limit].retrieval.dense[256].complete, 1);
+        }
+    }
+});
+
 test('multi-document evidence must occur in the delivered prefix of each source', () => {
     const sources = [{ base: 0 }, { base: 8 }], ranked = [passage(0, 0, 4), passage(1, 0, 4)];
     const gold = [new Set([1, 2, 8, 9])];

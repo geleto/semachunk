@@ -35,6 +35,16 @@ export const assets = {
         url: 'https://huggingface.co/datasets/namlh2004/hotpotqa/resolve/7e54db4656209750ff487f6fdf8e39a66dba136b/hotpot_dev_distractor_v1.json',
         checksum: 'e3da074df24e8369009918aa5cdbdd254dadcde4c63f7569d36afd6f2268caa8',
     },
+    hotpotTrain: {
+        name: 'hotpot-train-7e54db.json',
+        url: 'https://huggingface.co/datasets/namlh2004/hotpotqa/resolve/7e54db4656209750ff487f6fdf8e39a66dba136b/hotpot_train_v1.json',
+        checksum: '26650cf50234ef5fb2e664ed70bbecdfd87815e6bffc257e068efea5cf7cd316',
+    },
+    wikisql: {
+        name: 'wikisql-cffb423.tar.bz2',
+        url: 'https://raw.githubusercontent.com/salesforce/WikiSQL/cffb423077756d04c1bac5bcd45167c86903fbcb/data.tar.bz2',
+        checksum: '755c728ab188e364575705c8641f3fafd86fb089cb8b08e8c03f01832aae0881',
+    },
     finqa: {
         name: 'finqa-dev.json',
         url: 'https://raw.githubusercontent.com/czyssrs/FinQA/0f16e2867befa6840783e58be38c9efb9229d742/dataset/dev.json',

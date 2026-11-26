@@ -109,12 +109,12 @@ async function readBatch(path, expectedLength) {
 
 // A completed request is reusable even if a later request fails. The first
 // writer publishes the cache entry atomically and concurrent readers reuse it.
-export async function cachedVectors(texts, countTokens, request, directory, recordInputs = false) {
+export async function cachedVectors(texts, countTokens, request, directory, recordInputs = false, concurrency = 1) {
     const batches = embeddingBatches(texts, countTokens);
     const matrixBytes = Buffer.alloc(texts.length * rowBytes);
     const precomputation = { apiRequests: 0, apiInputs: 0, apiInputTokens: 0, cachedBatches: 0 };
     await mkdir(directory, { recursive: true });
-    for (const { start, end } of batches) {
+    async function fill({ start, end }) {
         const input = texts.slice(start, end), length = input.length * rowBytes;
         const path = join(directory, sha256(JSON.stringify([model, dimension, input])) + '.f32');
         let bytes;
@@ -145,13 +145,14 @@ export async function cachedVectors(texts, countTokens, request, directory, reco
         }
         bytes.copy(matrixBytes, start * rowBytes);
     }
+    for (let i = 0; i < batches.length; i += concurrency) await Promise.all(batches.slice(i, i + concurrency).map(fill));
     const vectorsSHA256 = sha256(matrixBytes);
     if (endianness() === 'BE') matrixBytes.swap32();
     const matrix = new Float32Array(matrixBytes.buffer, matrixBytes.byteOffset, texts.length * dimension);
     return { matrix, textsSHA256: sha256(JSON.stringify(texts)), vectorsSHA256, precomputation };
 }
 
-export function openEncoder(envFile, directory = vectorDirectory) {
+export function openEncoder(envFile, directory = vectorDirectory, concurrency = 1) {
     const tokenizer = openTokenizer();
     let client;
     async function request(input) {
@@ -165,13 +166,13 @@ export function openEncoder(envFile, directory = vectorDirectory) {
         }
     }
     return { ...tokenizer, vectors: (texts, recordInputs) =>
-        cachedVectors(texts, input => Array.isArray(input) ? input.length : tokenizer.countTokens(input), request, directory, recordInputs) };
+        cachedVectors(texts, input => Array.isArray(input) ? input.length : tokenizer.countTokens(input), request, directory, recordInputs, concurrency) };
 }
 
 // Index recorded provider batches by exact input. A new candidate order or
 // batch size can reuse their vectors. Coalesce misses from concurrent documents.
-export async function openReplay(envFile, directory = vectorDirectory, { lengthSafe = false } = {}) {
-    const encoder = openEncoder(envFile, directory);
+export async function openReplay(envFile, directory = vectorDirectory, { lengthSafe = false, concurrency = 1 } = {}) {
+    const encoder = openEncoder(envFile, directory, concurrency);
     await mkdir(directory, { recursive: true });
     const disk = new Map(), memory = new Map();
     for (const name of await readdir(directory)) {

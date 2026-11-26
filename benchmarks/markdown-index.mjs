@@ -131,6 +131,9 @@ export async function indexDocument(doc, policy, costs, initial, context, encode
         const units = await combineMarkdown(doc.source, input, embed, { ...policy, maxChunkSize, fits: joinFits }, initial);
         chunks = units.map(unit => markdownResult(doc.source, unit));
     }
+    // Align every plain-text occurrence before removing rows that cannot be indexed.
+    // Uncapped external controls keep their native size overruns for measurement.
+    if (fits && (policy.cap || (!nativeSplitter && !semanticReference))) chunks = chunks.filter(c => fits(c.text));
     if (required || policy.context) {
         for (const chunk of chunks) chunk.embeddingText = policy.context
             ? contextualize(chunk.text, chunk.headingPath, doc, policy, context, countTokens, required)

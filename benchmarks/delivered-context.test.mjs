@@ -30,6 +30,29 @@ test('cached retrieval distinguishes indexing text on identical displayed passag
     assert.equal(repeated.embeddedTokens, titled.embeddedTokens);
 });
 
+test('a rejected passage earns no retrieval credit, including in an empty search pool', async () => {
+    const dataset = { docs: [{ source: '😀' }, { source: 'A\n\n😀\n\nB' }], questions: [
+        { id: 'empty', text: 'q', pool: [0], references: [[[0, 0, 2]]] },
+        { id: 'missing', text: 'q', pool: [1], references: [[[1, 3, 5]]] },
+        { id: 'last', text: 'q', pool: [1], references: [[[1, 7, 8]]] }
+    ] };
+    const sent = [];
+    const encoder = { stats: {}, countTokens: s => s.length,
+        offsets: s => Array.from(s.matchAll(/./gsu), m => [m.index, m.index + m[0].length, m.index + m[0].length]),
+        embed: texts => { sent.push(...texts); return texts.map(() => [1]); } };
+    await prepareDataset(dataset, encoder);
+    for (const method of ['public-markdown', 'plain-pack', 'pack', 'fixed']) {
+        const result = await evaluate('cuad', dataset, { method, tokens: 1 }, encoder, 'baselines');
+        assert.equal(result.indexTexts, 2, method);
+        assert.equal(result.indexTokens, 2, method);
+        assert.equal(result.complete512['document/dense'], '001', method);
+        assert.equal(result.complete512['document/bm25'], '001', method);
+        assert.deepEqual(result.examples.document.first, []);
+        assert.equal(result.examples.document.doc, null);
+    }
+    assert.ok(!sent.some(s => s.includes('😀')));
+});
+
 test('pooled comparisons keep independent search pools with the same local index distinct', () => {
     const row = bit => ({ hotpotqa: { complete512: { 'pooled/dense': bit } } });
     const sample = bit => ({ samples: { hotpotqa: { groups: [0] } }, runs: { scored: row(bit), packed: row('0') } });
