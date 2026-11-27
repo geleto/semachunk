@@ -1,0 +1,4744 @@
+{
+  "release": "cc39aeb4afdf33909ee1412188bf89035950c2eb",
+  "upstream": "https://github.com/patronus-ai/financebench",
+  "assetSHA256": {
+    "financebench_open_source.jsonl": "a5a2aa673e573e55675fc3c0f9aa38c1cf59d2abc91edb077534f71f10a71877",
+    "financebench_document_information.jsonl": "1c69127783879de8cdadb159d2181f39bc3123b8e0ebf74031c3969d69189575"
+  },
+  "ocrModelSHA256": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2",
+  "citationSHA256": "027b9d7281e28019bc26fab30d09597d4dadd4a844569bc98b0af758b02d0ead",
+  "extractorSHA256": "700b19507ac139b9fa9d6af761fb4eea7c918e3e377256e6a40643d729b4f1da",
+  "nonfinanceManifest": "2026-11-26-semantic-settings-data.json",
+  "companies": {
+    "Ulta Beauty": "development",
+    "PepsiCo": "confirmation",
+    "Amcor": "development",
+    "Johnson & Johnson": "confirmation",
+    "MGM Resorts": "development",
+    "Foot Locker": "confirmation",
+    "Pfizer": "development",
+    "JPMorgan": "confirmation",
+    "3M": "development",
+    "Best Buy": "confirmation",
+    "Adobe": "development",
+    "AMD": "confirmation",
+    "CVS Health": "development",
+    "Kraft Heinz": "confirmation",
+    "General Mills": "development",
+    "Nike": "confirmation",
+    "American Water Works": "development",
+    "Coca-Cola": "confirmation",
+    "American Express": "development",
+    "Boeing": "confirmation",
+    "AES Corporation": "development",
+    "Amazon": "confirmation",
+    "Walmart": "development",
+    "Block": "confirmation",
+    "Costco": "development",
+    "Corning": "confirmation",
+    "Microsoft": "development",
+    "Verizon": "confirmation",
+    "Activision Blizzard": "development",
+    "Lockheed Martin": "confirmation",
+    "Netflix": "development",
+    "Paypal": "confirmation"
+  },
+  "documents": {
+    "3M_2018_10K": {
+      "type": "10k",
+      "company": "3M",
+      "sector": "Industrials",
+      "fold": "development",
+      "pages": 160,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "faf10c53fc6f1a8aa346ec3db79145e3ae6fbb3753c8064924e174d0a973934d",
+      "markdownSHA256": "13f1599cc48d7aca0bb283cc4a3c40e0559a5479832b321fa766bde7b5eb4989",
+      "questions": {
+        "financebench_id_03029": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            60
+          ],
+          "referencesSHA256": "8091da715f97e1d098aac0b421ea1e88a8b720c9773c9dbfa8d53ee4fe4f8ec2"
+        },
+        "financebench_id_04672": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            58
+          ],
+          "referencesSHA256": "65f0a339e564904606f9e240cd79bc5c3aedd2c14276abd371ffd04e49db48d5"
+        }
+      }
+    },
+    "3M_2022_10K": {
+      "type": "10k",
+      "company": "3M",
+      "sector": "Industrials",
+      "fold": "development",
+      "pages": 252,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "d5cf549543a24b04228fd2af979ff2ca94cf64fb008a789340cb9117fbcfde5d",
+      "markdownSHA256": "d3964ee100157bc32e2b24023f199873a119aa54d3d29e860b59f3ee356afd9d",
+      "questions": {
+        "financebench_id_00499": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            48,
+            50,
+            52
+          ],
+          "referencesSHA256": "85c1a682ba9d4fd5bec9535dd3817a885ae404959d8906fc64bf468bda9b69b9"
+        },
+        "financebench_id_01226": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            27
+          ],
+          "referencesSHA256": "444568604db05e07cd0332117e6500484ccaafcc17e6ada9c4ab7d6290f85367"
+        },
+        "financebench_id_01865": {
+          "type": "novel-generated",
+          "publishedPages": [
+            25
+          ],
+          "referencesSHA256": "f78069d07ea3c637b33f705984fe69dced7e62a8eb5ebd5e83377d929a02e158"
+        }
+      }
+    },
+    "3M_2023Q2_10Q": {
+      "type": "10q",
+      "company": "3M",
+      "sector": "Industrials",
+      "fold": "development",
+      "pages": 92,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "3e66115793459f42185feeeab4e7f07dd27ab6dd465d0694ce415e861029cf93",
+      "markdownSHA256": "3e70d08a3e3987515e1432fb80e96021469b970fc506640f44f0d4ff2e17b487",
+      "questions": {
+        "financebench_id_00807": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            5
+          ],
+          "referencesSHA256": "073663488365fde76e45c1d4c10d02504d5cf897dca45c26550bf9ab272a3f5d"
+        },
+        "financebench_id_00941": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            1
+          ],
+          "referencesSHA256": "81eb827d43f97a2278e19d5cc1029ae322a1a319d15499ee496ccc796a6af0c4"
+        },
+        "financebench_id_01858": {
+          "type": "novel-generated",
+          "publishedPages": [
+            62
+          ],
+          "referencesSHA256": "e8b25406f9abe684b4bfcb483b8c20eef4dc14c17181ebe4360345499fa56788"
+        }
+      }
+    },
+    "ACTIVISIONBLIZZARD_2019_10K": {
+      "type": "10k",
+      "company": "Activision Blizzard",
+      "sector": "Communication Services",
+      "fold": "development",
+      "pages": 198,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "017f1bbc1e37f2945a41fa2b5cf39d822e1e9d435a2c2b9c6b1cc76cd114a2df",
+      "markdownSHA256": "c33efe804e8ac2236d5f4f1200592d7dff6f39c408ce58db4619457cb7d611ee",
+      "questions": {
+        "financebench_id_02987": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            69,
+            70
+          ],
+          "referencesSHA256": "8d900ad9f1376ed39d95a6269a89fd73bfbea871f7ecbb51f60b6022ff9c094c"
+        },
+        "financebench_id_07966": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            70,
+            73
+          ],
+          "referencesSHA256": "82deb9ad35de3a6f4084d805180033ef134fd2df505cb5197a456661269fdea7"
+        }
+      }
+    },
+    "ADOBE_2015_10K": {
+      "type": "10k",
+      "company": "Adobe",
+      "sector": "Information Technology",
+      "fold": "development",
+      "pages": 116,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "f9ddba652f19e20752d98b1b4cedcebcb1a9a6d11dd23ab2e2f00f009a164c24",
+      "markdownSHA256": "4e6f252c1c0ad50b0fbcbec3488d45c58f4f368fd68ef5a54798ae904feac1a4",
+      "questions": {
+        "financebench_id_04735": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            59,
+            63
+          ],
+          "referencesSHA256": "a3734b29f6a136896d7ececd12673639ede705b8ed06cf849d6713b7a771807c"
+        }
+      }
+    },
+    "ADOBE_2016_10K": {
+      "type": "10k",
+      "company": "Adobe",
+      "sector": "Information Technology",
+      "fold": "development",
+      "pages": 112,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "655153cdaed14d7093e98ff75595bf850a0d2299fa851ccf5b344ebc2d5038ae",
+      "markdownSHA256": "0cbb69cf63a5f25d2d2e7c6fcf44f81bc53ba665f1463d5f1f85f36c9cc33715",
+      "questions": {
+        "financebench_id_07507": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            62
+          ],
+          "referencesSHA256": "a74446398a16cdb79a1d72ec176293a8a7ff55bbcbb1a4b02c45d94eff63cafc"
+        }
+      }
+    },
+    "ADOBE_2017_10K": {
+      "type": "10k",
+      "company": "Adobe",
+      "sector": "Information Technology",
+      "fold": "development",
+      "pages": 107,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "ace32580369138998de84a0d0e24943766aa8374a17b823fdfae980b9c1458bd",
+      "markdownSHA256": "69d75c64761f344238eef04a0c81916fced101c4d0e26f6c58b45aa0c1c0f593",
+      "questions": {
+        "financebench_id_03856": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            57,
+            61
+          ],
+          "referencesSHA256": "14836215a4f7b514b45bd90953219fc1a8a128d6d41640b00ce68d5481e14084"
+        }
+      }
+    },
+    "ADOBE_2022_10K": {
+      "type": "10k",
+      "company": "Adobe",
+      "sector": "Information Technology",
+      "fold": "development",
+      "pages": 99,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "ce8c716abac26bfa38ae6b71d703112852c8591a4bb19f7c1177beb1dfc87ad2",
+      "markdownSHA256": "b9ac419e94abc51dba4b5f2797dd3a9409daadc301d5655c32b8835c9e87d1e8",
+      "questions": {
+        "financebench_id_00438": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            54
+          ],
+          "referencesSHA256": "9f24eb0f226cec5a47d6eb75596579c40f06e6c0e357c0ecb5757b038c30a1f7"
+        },
+        "financebench_id_00591": {
+          "type": "novel-generated",
+          "publishedPages": [
+            57
+          ],
+          "referencesSHA256": "a49483a96b6cd8646d2ac9b35b961dceccfd63462c800e7da43addcc9e517571"
+        }
+      }
+    },
+    "AES_2022_10K": {
+      "type": "10k",
+      "company": "AES Corporation",
+      "sector": "Utilities",
+      "fold": "development",
+      "pages": 257,
+      "pagesWithoutText": [
+        131,
+        188
+      ],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "9c5de2227534c4d6bf3d805f635bad5d82eddf8e4183a85a3d1311b48b50291d",
+      "markdownSHA256": "b075c9efd5b338797f87142606ae7f43d7ab070904c54fa8b154d1ec8ab0e4a5",
+      "questions": {
+        "financebench_id_00540": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            130,
+            132
+          ],
+          "referencesSHA256": "6910092fb9820bce82fc47b2efdeaa11e900612bbf140c306958f223c419b2a4"
+        },
+        "financebench_id_10420": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            130,
+            132
+          ],
+          "referencesSHA256": "4bc52fa5564d2f1093f48fe2272ee26a754663a56ed046166d54de26e3720e1b"
+        }
+      }
+    },
+    "AMAZON_2017_10K": {
+      "type": "10k",
+      "company": "Amazon",
+      "sector": "Consumer Discretionary",
+      "fold": "confirmation",
+      "pages": 85,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "f8af08ff6c4147351ec3a6e5e2c74e104678ce68fb0d6d476b1e43f685c09a3f",
+      "markdownSHA256": "673e8540368a062fc2fcbc170296a0d8745cfaa28b3baa6d3715d737590070c1",
+      "questions": {
+        "financebench_id_06655": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            38,
+            40
+          ],
+          "referencesSHA256": "de3ccc7c5c103fc03aa3919be1e4b7f20a2ead9a202acdbf94383024b7b02281"
+        },
+        "financebench_id_08135": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            38
+          ],
+          "referencesSHA256": "c068067b8058ac01871de451d56cbab852e557e32d1f9cd43d3bf82cf7d98424"
+        }
+      }
+    },
+    "AMAZON_2019_10K": {
+      "type": "10k",
+      "company": "Amazon",
+      "sector": "Consumer Discretionary",
+      "fold": "confirmation",
+      "pages": 83,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "d7df8c6cf3e351a8d68c7473be4159723d545260a32dbc82a8dd11c254c5584a",
+      "markdownSHA256": "581f49fe45138fbdaa2299e59d707792a1a61f52b1dc8dcd16ff24268f97290c",
+      "questions": {
+        "financebench_id_08286": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            38
+          ],
+          "referencesSHA256": "ca54439fc1867234ea2acbb43d078e8c0884921cbeeb0fc7f5c1394cb63ecb77"
+        }
+      }
+    },
+    "AMCOR_2020_10K": {
+      "type": "10k",
+      "company": "Amcor",
+      "sector": "Materials",
+      "fold": "development",
+      "pages": 195,
+      "pagesWithoutText": [
+        188
+      ],
+      "ocrPages": [
+        179,
+        180,
+        181,
+        182,
+        183,
+        184,
+        185,
+        186,
+        187
+      ],
+      "duplicateScans": {},
+      "pdfSHA256": "da158d5c68835374bcc52205663aa7653af1c2a6b31b09ab775c6e02a40da026",
+      "markdownSHA256": "aaee413f9accd46a78283443eb85fccbd929ca10081f934955fab84316fee13b",
+      "questions": {
+        "financebench_id_03882": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            50
+          ],
+          "referencesSHA256": "3a87d53a5a1270aa64138eaf91aee034b2b2a52562360de6841bdad8666a05db"
+        }
+      }
+    },
+    "AMCOR_2022_8K_dated-2022-07-01": {
+      "type": "8k",
+      "company": "Amcor",
+      "sector": "Materials",
+      "fold": "development",
+      "pages": 9,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "1de32e72c265486469f3b1c7cbfbe064a27055e60f7b43a81439986dda9025ad",
+      "markdownSHA256": "c2f8b9701e56e4cca1e4be8b953fe49d6c72215fb0afed34d14879839890cd0f",
+      "questions": {
+        "financebench_id_01935": {
+          "type": "novel-generated",
+          "publishedPages": [
+            2
+          ],
+          "referencesSHA256": "18dbcb07b1b614fccce912f9a4ca2cf29888d00e23fbd6b3e2967d4d851be539"
+        }
+      }
+    },
+    "AMCOR_2023Q2_10Q": {
+      "type": "10q",
+      "company": "Amcor",
+      "sector": "Materials",
+      "fold": "development",
+      "pages": 57,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "71c39c3f338fc81a99e128e8e871e265818657670a7d29a62c454c905f94524c",
+      "markdownSHA256": "4af7f2050d73d312a292410344471f8c64a6033e4a56b130b32ea23bb5c3d9e5",
+      "questions": {
+        "financebench_id_01936": {
+          "type": "novel-generated",
+          "publishedPages": [
+            15
+          ],
+          "referencesSHA256": "f99ded41982bb23990833dd0200c5db80e69066ee43436160da5aacc43d352fa"
+        }
+      }
+    },
+    "AMCOR_2023Q4_EARNINGS": {
+      "type": "Earnings",
+      "company": "Amcor",
+      "sector": "Materials",
+      "fold": "development",
+      "pages": 14,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "d155b7808e78167831648f476b7e3578e2d98645dee30862bbef4ff50fa24bf4",
+      "markdownSHA256": "b1d661c57a92e497c856ba8e0ca674c34b4503f1f1a5822dd30be37a1c25d331",
+      "questions": {
+        "financebench_id_01928": {
+          "type": "novel-generated",
+          "publishedPages": [
+            12
+          ],
+          "referencesSHA256": "c17f83b5676e50a291a3e69b61d552adca26bf1c6f42105c303ab37153191783"
+        },
+        "financebench_id_01930": {
+          "type": "novel-generated",
+          "publishedPages": [
+            10
+          ],
+          "referencesSHA256": "bdfe4553691396f32682dced1123b563c4604534066aefdf87e52f262bd2e136"
+        }
+      }
+    },
+    "AMCOR_2023_10K": {
+      "type": "10k",
+      "company": "Amcor",
+      "sector": "Materials",
+      "fold": "development",
+      "pages": 156,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "84d7a0291a12f4e68352750dccda3754c78eefdf06e0b5462046357a1ed53332",
+      "markdownSHA256": "472d8f39e4b58d96f49ab9f126feeca869201bc0e120122a1d6405aaf8f8f45a",
+      "questions": {
+        "financebench_id_00799": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            52
+          ],
+          "referencesSHA256": "3a35a9fe9cb10b58608b4543f1e8a518bdf9d1b9bd28b5a0bea7d3ac2036e65e"
+        },
+        "financebench_id_01079": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            64
+          ],
+          "referencesSHA256": "75e1fc0069752a8eb65213564972f9f130eb85c6c89e0654fea3925616f3603c"
+        },
+        "financebench_id_01148": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            5
+          ],
+          "referencesSHA256": "fb5b8cbfbfdf566ffa2d33f6880aecb83a1424019cd5bda54d1db289a6123e52"
+        },
+        "financebench_id_00684": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            50
+          ],
+          "referencesSHA256": "4f40265009d53ce98ca30608c578c0b7692726a9640234dbb42407a57c4b2c7f"
+        }
+      }
+    },
+    "AMD_2015_10K": {
+      "type": "10k",
+      "company": "AMD",
+      "sector": "Information Technology",
+      "fold": "confirmation",
+      "pages": 215,
+      "pagesWithoutText": [
+        130
+      ],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "105fff1c4af84a3d974b0f3fa224122e782aedca60fa3609f2789c80549dd8f6",
+      "markdownSHA256": "c83c43cc1daf2831c5976676d83f61dfe9fb7294e261a707d8d81c6dc8f1fa2a",
+      "questions": {
+        "financebench_id_03069": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            56,
+            60
+          ],
+          "referencesSHA256": "3bf4a62bb994964a2a3983edfe02c520b11165e8af248f918a5af48ae4fb3fe8"
+        }
+      }
+    },
+    "AMD_2022_10K": {
+      "type": "10k",
+      "company": "AMD",
+      "sector": "Information Technology",
+      "fold": "confirmation",
+      "pages": 121,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "a3bd74088fae0ad4aa03d04998a1f4c64fd0b3c693841601b0ac49b46cf5c1f4",
+      "markdownSHA256": "dd3a3ab249de9564ad9a1d66abc28ac19d27e476710791fda6bdf01e57755867",
+      "questions": {
+        "financebench_id_00222": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            56
+          ],
+          "referencesSHA256": "dc817c0738bf5a25e758774afeb56aa75821df235a65da429dc34d3b33c01bda"
+        },
+        "financebench_id_00995": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            4
+          ],
+          "referencesSHA256": "d80616ff466bfca82e9bdba30eecb3bad84af8665f03fd4f345d93db8b625396"
+        },
+        "financebench_id_01198": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            43
+          ],
+          "referencesSHA256": "287f108db5397041288d4948558f440de468c6cce7cfa9b1224d2a112642063f"
+        },
+        "financebench_id_00917": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            43
+          ],
+          "referencesSHA256": "3497d5f7f7671b6b6c10d7eb77b319129418960269242579740ab433dd4db9e6"
+        },
+        "financebench_id_01279": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            58
+          ],
+          "referencesSHA256": "3318fd7a9f4877cd88ce483e684834fb864f34c74fa1bf94f3d973a6f743d502"
+        },
+        "financebench_id_00563": {
+          "type": "novel-generated",
+          "publishedPages": [
+            48
+          ],
+          "referencesSHA256": "e8097735cffd8cfffeb6ecbebdf6719d283d43621c0bf78a72d43ae085278a71"
+        },
+        "financebench_id_00757": {
+          "type": "novel-generated",
+          "publishedPages": [
+            12
+          ],
+          "referencesSHA256": "dfef6c1a27561c29668613eb6059856cb34101aafe0f13d0c5362e01794feca9"
+        }
+      }
+    },
+    "AMERICANEXPRESS_2022_10K": {
+      "type": "10k",
+      "company": "American Express",
+      "sector": "Financials",
+      "fold": "development",
+      "pages": 260,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "d3bbc7ab23d6160e07eab50a359e4d68c40efff9fde3baa168e7c40e06f568e6",
+      "markdownSHA256": "dc49477de2a8840e29e6a787f3f8aae11dd1ca45e68d0bd9e67d5f30f763967e",
+      "questions": {
+        "financebench_id_00476": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            1
+          ],
+          "referencesSHA256": "094823b3c8242e4e7ff60265b78af3f8a72a20ac8dbfadfa42ef2c6fb5b33ceb"
+        },
+        "financebench_id_01028": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            155
+          ],
+          "referencesSHA256": "30aa194acc4a3e698b0966673eb152c741ceb49e5e868b641483294516fd3be0"
+        },
+        "financebench_id_01351": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            44
+          ],
+          "referencesSHA256": "1cec746b5f97c4bca51fbf49a18a36a3c4ebed38d474d93101c708d715e3a4a6"
+        },
+        "financebench_id_01964": {
+          "type": "novel-generated",
+          "publishedPages": [
+            98
+          ],
+          "referencesSHA256": "8663f660ed9034bdfd2a7b8c6dfd9f4662be036d935e6bd8c939fc6d04588d62"
+        },
+        "financebench_id_01981": {
+          "type": "novel-generated",
+          "publishedPages": [
+            45
+          ],
+          "referencesSHA256": "e4a621efeb1e5c3c34e9d12bd3ab0216d85c16e3404d81391ac6a6bf7a353a01"
+        }
+      }
+    },
+    "AMERICANWATERWORKS_2020_10K": {
+      "type": "10k",
+      "company": "American Water Works",
+      "sector": "Utilities",
+      "fold": "development",
+      "pages": 152,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "6b43f1ed70b67c06483d28f8054270d597bce8507f298af2b1b6d9356d728602",
+      "markdownSHA256": "24cedd38348327f4e1d0e4e7a18248c87482c743f765a0802d3eb9f57b6e5248",
+      "questions": {
+        "financebench_id_05718": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            86
+          ],
+          "referencesSHA256": "5e37052870a0a3e77ab82f29a2fd23256864c3270190886187f12a858964a160"
+        }
+      }
+    },
+    "AMERICANWATERWORKS_2021_10K": {
+      "type": "10k",
+      "company": "American Water Works",
+      "sector": "Utilities",
+      "fold": "development",
+      "pages": 181,
+      "pagesWithoutText": [
+        151,
+        153,
+        155,
+        157
+      ],
+      "ocrPages": [],
+      "duplicateScans": {
+        "151": 152,
+        "153": 154,
+        "155": 156
+      },
+      "pdfSHA256": "701528ae6d14a77229468a829ee18f01ed439d5be012d0a915d2683335051029",
+      "markdownSHA256": "7ac667341d220fe65131336f38e153195dd2e9093bebe6e9078780b7f70ab684",
+      "questions": {
+        "financebench_id_04254": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            86,
+            88
+          ],
+          "referencesSHA256": "b63c865aaf2674375818e8a3e4eacbdbe1a34e763172392b60cabc52518d710a"
+        }
+      }
+    },
+    "AMERICANWATERWORKS_2022_10K": {
+      "type": "10k",
+      "company": "American Water Works",
+      "sector": "Utilities",
+      "fold": "development",
+      "pages": 306,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "aea336531f1f8b10ecee1dd61066aab29794504f1f4a1407c857bd1e20d7da40",
+      "markdownSHA256": "6dc93008131068d52a20de033c083a3db84312fb22861e3023cf4a832427914b",
+      "questions": {
+        "financebench_id_00070": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            81,
+            82
+          ],
+          "referencesSHA256": "903a6709944d79131f789f22d3921a67858d6522a8e594fe0ff7926eb49cdb49"
+        }
+      }
+    },
+    "BESTBUY_2017_10K": {
+      "type": "10k",
+      "company": "Best Buy",
+      "sector": "Consumer Discretionary",
+      "fold": "confirmation",
+      "pages": 109,
+      "pagesWithoutText": [
+        20,
+        101
+      ],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "4570187fa697f252e08c8f99c409446fbcde05b08358851d34d4cb1c8bd1cec8",
+      "markdownSHA256": "f8a069398306a0ff1e82ba6436bcccea6bd3b096730e11372b766649080cd9e7",
+      "questions": {
+        "financebench_id_02608": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            56
+          ],
+          "referencesSHA256": "90f3f9211d3dba736ed86dd9ef405d0aac23228771b9cb230f69526e327fb56a"
+        }
+      }
+    },
+    "BESTBUY_2019_10K": {
+      "type": "10k",
+      "company": "Best Buy",
+      "sector": "Consumer Discretionary",
+      "fold": "confirmation",
+      "pages": 107,
+      "pagesWithoutText": [
+        21,
+        100
+      ],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "d3228e9acd2ce498b97a9d2cb99c2330b9a04687b7947908646d205b3eadf30d",
+      "markdownSHA256": "47f98be89a2d85a4025512b739c438c1628a23e0e52ad91fb1583118829a8cae",
+      "questions": {
+        "financebench_id_04417": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            52
+          ],
+          "referencesSHA256": "8b8a1e5be6a87e7df1b0bec3335599188ea6f512ac4ee26cd1e96feac9ffefad"
+        }
+      }
+    },
+    "BESTBUY_2023_10K": {
+      "type": "10k",
+      "company": "Best Buy",
+      "sector": "Consumer Discretionary",
+      "fold": "confirmation",
+      "pages": 75,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "7ca465d31a08be29e8c08d756644d33d818c7254a1215720f265227005cda696",
+      "markdownSHA256": "0527cb5953667f4b9ac506fde7191eaeff2713158aa3de27b9958535fe2a934e",
+      "questions": {
+        "financebench_id_00685": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            40
+          ],
+          "referencesSHA256": "07866d3f8657115ed4fb77fb55ba82eb6b3cb1bcdbaa064fafbe6bb148dcf457"
+        },
+        "financebench_id_01077": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            51
+          ],
+          "referencesSHA256": "9edd490d291a2e8bef66bb43f11ab9469715858013969b0c194b353656b6ec14"
+        },
+        "financebench_id_01275": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            42
+          ],
+          "referencesSHA256": "4f06644519ac6e6441dc9a0f9fac76547670f96cf6546cddc4c51e5ff50e9801"
+        }
+      }
+    },
+    "BESTBUY_2024Q2_10Q": {
+      "type": "10q",
+      "company": "Best Buy",
+      "sector": "Consumer Discretionary",
+      "fold": "confirmation",
+      "pages": 30,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "cf9efb922bdd28d726d7e1605c5fa1f263dda72e033989e3bc9ee3a3bb356c03",
+      "markdownSHA256": "ff172bc51a7c72a8c68f1f67371ff3cf4213f28e1ffca59e2484ed8453a874bc",
+      "questions": {
+        "financebench_id_00288": {
+          "type": "novel-generated",
+          "publishedPages": [
+            20
+          ],
+          "referencesSHA256": "697454e43fcba0068c27db8d08b630c4f6831dfa1e47086d9aba39648706abb4"
+        },
+        "financebench_id_00460": {
+          "type": "novel-generated",
+          "publishedPages": [
+            17
+          ],
+          "referencesSHA256": "d8c7d16dbcf4343738e42a5dadaa57f42e737fb7b5fb721c335b1ddc47516402"
+        },
+        "financebench_id_01902": {
+          "type": "novel-generated",
+          "publishedPages": [
+            18
+          ],
+          "referencesSHA256": "b6394c2f4a7c613fc01d0519c336d3f98f6e8f21e2a8e0ca4311bd61d9c2c7a6"
+        }
+      }
+    },
+    "BLOCK_2016_10K": {
+      "type": "10k",
+      "company": "Block",
+      "sector": "Information Technology",
+      "fold": "confirmation",
+      "pages": 121,
+      "pagesWithoutText": [
+        74
+      ],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "5ef866a19b1110dcdbd1b0bc3c513a04e3d05322384c754cf394ad63f9af8191",
+      "markdownSHA256": "f002e359604d3e987b0e9159c0431596ec8da928ec7a40b5e35161587154c4ca",
+      "questions": {
+        "financebench_id_04660": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            68
+          ],
+          "referencesSHA256": "f41bb4a3e6a39b201b7bd32af66406ef849e67474c1de61afc87a3a6698ed2c9"
+        }
+      }
+    },
+    "BLOCK_2020_10K": {
+      "type": "10k",
+      "company": "Block",
+      "sector": "Information Technology",
+      "fold": "confirmation",
+      "pages": 158,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "c19a9fb25db3270e3a908c202855f4a54f000a06bf19a8b284331810228646fe",
+      "markdownSHA256": "8f16b20755446a4c4d31d05fe32ae5bd3538109ba7fd0fb3cb8df62c28db5947",
+      "questions": {
+        "financebench_id_03838": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            86
+          ],
+          "referencesSHA256": "98ffa58e4504c92b1a2ca86d0db23b797e9dfdd230ad526a623bd00814f60a07"
+        },
+        "financebench_id_07661": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            90
+          ],
+          "referencesSHA256": "e511437e6e03fbe7098b64e2e91f5a7543f2f03a94c5fb0f283d203fff18f3f6"
+        }
+      }
+    },
+    "BOEING_2018_10K": {
+      "type": "10k",
+      "company": "Boeing",
+      "sector": "Industrials",
+      "fold": "confirmation",
+      "pages": 136,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "6f1ace34b3b01778ad7d92d43ccd2f76513d5159ef48fbc07b510296cf2d07dc",
+      "markdownSHA256": "55dd154cdead193a0c195c48b114acbb09be448379ad94731d20481f9d5bcac0",
+      "questions": {
+        "financebench_id_10285": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            52
+          ],
+          "referencesSHA256": "2d636f577dc29557ef6db51496f28472d29dd43f3625f2dc792404b7e2763366"
+        }
+      }
+    },
+    "BOEING_2022_10K": {
+      "type": "10k",
+      "company": "Boeing",
+      "sector": "Industrials",
+      "fold": "confirmation",
+      "pages": 190,
+      "pagesWithoutText": [
+        58,
+        60
+      ],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "09285ff7ee737d3302977104aa05cc53c9dfb0161f3461a89b583dc38b9f2ab6",
+      "markdownSHA256": "1e50514d10783b2aec8a66a6e05e3c93af28ed4a281e78317c1007f2c1f57f09",
+      "questions": {
+        "financebench_id_00517": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            62
+          ],
+          "referencesSHA256": "3f3cd559603367c70f248a60e2a301a4aef477afd864468a25e8c9d78884c92f"
+        },
+        "financebench_id_01091": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            113
+          ],
+          "referencesSHA256": "5cbc666f9e6dacdf8975f5e1127584124db3ddca3642403d00f4ae2b440a59d9"
+        },
+        "financebench_id_00678": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            55
+          ],
+          "referencesSHA256": "1e6552ccc68c6e9ebbba35e49fccc4250399382b2c6b5cfa39e9e0d09c084b8b"
+        },
+        "financebench_id_01290": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            8,
+            10,
+            14
+          ],
+          "referencesSHA256": "0fab43653b102a3c541aaae23bb2872b47881c49247589bc35803b740dfe4470"
+        },
+        "financebench_id_00464": {
+          "type": "novel-generated",
+          "publishedPages": [
+            8
+          ],
+          "referencesSHA256": "e776c4ef0e39c85b0a572f08c66c94f635976a92db327a0ba3de0b10e5eedcad"
+        },
+        "financebench_id_00494": {
+          "type": "novel-generated",
+          "publishedPages": [
+            9
+          ],
+          "referencesSHA256": "10de26796768d91eb524e408643c73f8d5c2bba29f555d416d5db6d49fbe4fe1"
+        }
+      }
+    },
+    "COCACOLA_2017_10K": {
+      "type": "10k",
+      "company": "Coca-Cola",
+      "sector": "Consumer Staples",
+      "fold": "confirmation",
+      "pages": 197,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "b57c75cf20916904f31c6aa7644d6c110f019adf7c76782c7d0ede7b95c65ac1",
+      "markdownSHA256": "22a3e633dfac9882bd072457b26be48165188184409fd0cfa4982a928cd67af9",
+      "questions": {
+        "financebench_id_03473": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            74,
+            76
+          ],
+          "referencesSHA256": "2acbdc8f9ed5de01321fd20839ce5e9c147158485de0c16ba3a7a16cfcb13dc4"
+        }
+      }
+    },
+    "COCACOLA_2021_10K": {
+      "type": "10k",
+      "company": "Coca-Cola",
+      "sector": "Consumer Staples",
+      "fold": "confirmation",
+      "pages": 183,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "46a7059b9da795cd1ea9862d5b4f82a21e9b72e799351927a11f5cb4c528b592",
+      "markdownSHA256": "23e03376a2ec611783604c43a37a12c1c606f39be834de9c60edfb3274255e49",
+      "questions": {
+        "financebench_id_09724": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            62
+          ],
+          "referencesSHA256": "205913ccda84f0da642352ce73775218c13cf4bb22a6b02556362d3c9537e58d"
+        }
+      }
+    },
+    "COCACOLA_2022_10K": {
+      "type": "10k",
+      "company": "Coca-Cola",
+      "sector": "Consumer Staples",
+      "fold": "confirmation",
+      "pages": 183,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "9f91bb914d94d014cfca96e1021c932d5476d8b8ac2a933767bac4c438fd7a71",
+      "markdownSHA256": "21646dec21ef800a98b05fdc619ce014cb3be350d105d682827a0adedd7db3e1",
+      "questions": {
+        "financebench_id_06272": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            63,
+            66
+          ],
+          "referencesSHA256": "caf77885727bc09870f2f42b11e2a39c1f76615450bba2c88921f431d50d9711"
+        }
+      }
+    },
+    "CORNING_2020_10K": {
+      "type": "10k",
+      "company": "Corning",
+      "sector": "Information Technology",
+      "fold": "confirmation",
+      "pages": 138,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "ef471ab9ff6067f117977df6df8b4b5007066286b733981475ac2ccf48d91e59",
+      "markdownSHA256": "83f8253660bcbbb3af325ce5f92d755e13d800a6a6daae8d3eee6253cb4d5377",
+      "questions": {
+        "financebench_id_10130": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            70,
+            72
+          ],
+          "referencesSHA256": "0587d1926d473983664f7f549ec1518cafe056c9deb9bf62ffe0543ff3ae9f2d"
+        }
+      }
+    },
+    "CORNING_2021_10K": {
+      "type": "10k",
+      "company": "Corning",
+      "sector": "Information Technology",
+      "fold": "confirmation",
+      "pages": 125,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "8023fac91ad417f996b692c506ee0e097effd091e698275288e4126cb8a2020e",
+      "markdownSHA256": "19933050952ece9c6c601fa18a008062d7df943ac1cbd0d7a5d4e45b81aa60b5",
+      "questions": {
+        "financebench_id_02981": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            65
+          ],
+          "referencesSHA256": "9bb49db8a9722927777a3173f583575635c28ebc029e42df372017792bad97a0"
+        }
+      }
+    },
+    "CORNING_2022_10K": {
+      "type": "10k",
+      "company": "Corning",
+      "sector": "Information Technology",
+      "fold": "confirmation",
+      "pages": 159,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "a63f102f045826b38ad21a606c33710f62932646fd7c0f1852ce411a4397a3ee",
+      "markdownSHA256": "77d2d6011e16d932ee142d42bbb2f8a205dc2933dc6732ef5658885f47b77fcd",
+      "questions": {
+        "financebench_id_01346": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            24
+          ],
+          "referencesSHA256": "cf7e580a48a785653e0ee4823d0ba544fed4d07e0f81b22d67d912c08335f9ee"
+        },
+        "financebench_id_00005": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            60
+          ],
+          "referencesSHA256": "62c9e51513b65d802ee08b2f8a572126074f0fc29f3eee7901f2f190fdce4e8f"
+        }
+      }
+    },
+    "COSTCO_2021_10K": {
+      "type": "10k",
+      "company": "Costco",
+      "sector": "Consumer Staples",
+      "fold": "development",
+      "pages": 76,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "29e05b3862cf6ffa6cfda34ac82a9fa0fe76b67338c5924da3325c2ee3b08748",
+      "markdownSHA256": "d2d755e360ebfbde38dc5a95926dd0f9253c0383c800976c454466979e3151cc",
+      "questions": {
+        "financebench_id_04209": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            38
+          ],
+          "referencesSHA256": "4d82e39bf90ddb56643f45299e80e59b9aabb486f289ce7999f540ce01151e12"
+        }
+      }
+    },
+    "CVSHEALTH_2018_10K": {
+      "type": "10k",
+      "company": "CVS Health",
+      "sector": "Health Care",
+      "fold": "development",
+      "pages": 392,
+      "pagesWithoutText": [
+        74,
+        78
+      ],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "bdc800e3f52a3e1d7a79c0973af3e94122fa08a76e335ea8305df60a09e1a0dc",
+      "markdownSHA256": "4a90d2629207127719023e8bd70c8655f14aea3ffa5d4cb9d1382afec1c39cdd",
+      "questions": {
+        "financebench_id_05915": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            302,
+            304
+          ],
+          "referencesSHA256": "139ec1c0a5fdf60e96d44c15598f5463e4e4f17e98883f986bb5633da79978c8"
+        }
+      }
+    },
+    "CVSHEALTH_2022_10K": {
+      "type": "10k",
+      "company": "CVS Health",
+      "sector": "Health Care",
+      "fold": "development",
+      "pages": 213,
+      "pagesWithoutText": [
+        206
+      ],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "183c196a41793cd50002ff6b88f8c6d32e4fcb1117ab490a732414e1208cda8f",
+      "markdownSHA256": "1e91d3d6fbe7bd40a835b80b125ce6cbef9221eadb1e072dee7327d878152a65",
+      "questions": {
+        "financebench_id_00790": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            108,
+            110
+          ],
+          "referencesSHA256": "59ef5fd1ef07bdd60fb3b8e6c7c9a564831b37b82c9e4eec6bad3fa5c63bb83e"
+        },
+        "financebench_id_01107": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            173,
+            174
+          ],
+          "referencesSHA256": "4093b217a78031d7e707c8816b93b75a0058b460de07a17b3c8cda6414a02708"
+        },
+        "financebench_id_01244": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            68
+          ],
+          "referencesSHA256": "f20cf3e6659bb397d8fe2cb07445c4e604a254a7ee081dc972ee8c37c39b8b42"
+        }
+      }
+    },
+    "FOOTLOCKER_2022_8K_dated-2022-05-20": {
+      "type": "8k",
+      "company": "Foot Locker",
+      "sector": "Consumer Discretionary",
+      "fold": "confirmation",
+      "pages": 4,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "865f22331a5943a85e53e38d1753addbeb6c42270853cddd0abc73ab23d150e9",
+      "markdownSHA256": "705c0ca537c7226f46985acbbe1fcc9f67b1e164c3fd32c06503eb879378c0ed",
+      "questions": {
+        "financebench_id_00822": {
+          "type": "novel-generated",
+          "publishedPages": [
+            2
+          ],
+          "referencesSHA256": "1a5a21c2bac5df8a98cf715e951316f7da0ec41d7b73a22170b32202ec26009f"
+        }
+      }
+    },
+    "FOOTLOCKER_2022_8K_dated_2022-08-19": {
+      "type": "8k",
+      "company": "Foot Locker",
+      "sector": "Consumer Discretionary",
+      "fold": "confirmation",
+      "pages": 31,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "70fd2d5bfc6955424196b372a5273ffbc74d2f0153f291e10e73edc37962a14e",
+      "markdownSHA256": "e31c70647b4248898483f8c7073c453d8a246a4198c381d7d1353b6c851bdbf2",
+      "questions": {
+        "financebench_id_00839": {
+          "type": "novel-generated",
+          "publishedPages": [
+            2
+          ],
+          "referencesSHA256": "1f52e6299d13cce50d0d9e9bce7b65f4118adf94114393bb3ded454b9be47433"
+        }
+      }
+    },
+    "GENERALMILLS_2019_10K": {
+      "type": "10k",
+      "company": "General Mills",
+      "sector": "Consumer Staples",
+      "fold": "development",
+      "pages": 140,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "e8120ce31b22136e15c14115cdfbf3ddc548e58f15b6febc350c422a4c12d9db",
+      "markdownSHA256": "5ea38c922394de5ebe6db30f09544ec5af3971c1216ae13305610dd8e1c68888",
+      "questions": {
+        "financebench_id_04103": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            53,
+            55
+          ],
+          "referencesSHA256": "a71a851e38968461287e8f52eab8369d47807165f6c402c48336132cee18063e"
+        }
+      }
+    },
+    "GENERALMILLS_2020_10K": {
+      "type": "10k",
+      "company": "General Mills",
+      "sector": "Consumer Staples",
+      "fold": "development",
+      "pages": 127,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "626dd53f9b52e5895b7a7073e1c491008769970609c10e2f6cf8247ed85d6fae",
+      "markdownSHA256": "2d01bca749a3ca3a185bcad8de2a3c3be08c62799b479255ede087b3b73a3b2d",
+      "questions": {
+        "financebench_id_03471": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            50
+          ],
+          "referencesSHA256": "3f7135c3c7afc46f18ff1744b667ccc852f494f4067fa3c4ba977cd4a858cba7"
+        },
+        "financebench_id_04854": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            52
+          ],
+          "referencesSHA256": "ca46f0e878abe41ab3f9e5ea059365f29974482d2d98033b6722b3f79e29579d"
+        }
+      }
+    },
+    "GENERALMILLS_2022_10K": {
+      "type": "10k",
+      "company": "General Mills",
+      "sector": "Consumer Staples",
+      "fold": "development",
+      "pages": 127,
+      "pagesWithoutText": [
+        98,
+        115,
+        117,
+        119,
+        121,
+        123,
+        125,
+        127
+      ],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "27f2cc507ffc056de3b679d124d51b80bd043ce7b8e867c59e2cdfe1d2ea5de3",
+      "markdownSHA256": "30f47098faf6db0aec2161788aac71931a465698dc95c1d40244dd9346e6ddd9",
+      "questions": {
+        "financebench_id_10136": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            45,
+            49
+          ],
+          "referencesSHA256": "d90b9ba749fc4efbf2544fb664bcb3f101fc7e029c3b07c36a467d0f86d2fb39"
+        }
+      }
+    },
+    "JOHNSON_JOHNSON_2022Q4_EARNINGS": {
+      "type": "Earnings",
+      "company": "Johnson & Johnson",
+      "sector": "Health Care",
+      "fold": "confirmation",
+      "pages": 24,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "7ae6bf6f9a998d19e23fd796b58b0f2015085c74712253b78fb90174c12436a7",
+      "markdownSHA256": "38db7f4f0fca6b468429dab1adc059655df5a79694ae2d0861374c51a4973034",
+      "questions": {
+        "financebench_id_00651": {
+          "type": "novel-generated",
+          "publishedPages": [
+            1
+          ],
+          "referencesSHA256": "24beb6996af25eb6856e5cebb87cfbcb710e45b88d484a2ee53ded1fab337eff"
+        },
+        "financebench_id_01484": {
+          "type": "novel-generated",
+          "publishedPages": [
+            2
+          ],
+          "referencesSHA256": "d74bb3e31ecee52d9759fddbb0ff8aba42e459bc93c9f89429210b4b30d9ac60"
+        }
+      }
+    },
+    "JOHNSON_JOHNSON_2022_10K": {
+      "type": "10k",
+      "company": "Johnson & Johnson",
+      "sector": "Health Care",
+      "fold": "confirmation",
+      "pages": 151,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "dba7d6cc97734abd6dcbc1a6a34f82b5d228e60d0a1a32425a90404fd4d3e290",
+      "markdownSHA256": "66a8e59f6e2d314592df9f9de47d52729a8081ac9a6914c4a86309b539b7c8c7",
+      "questions": {
+        "financebench_id_00956": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            28
+          ],
+          "referencesSHA256": "7875a0f5b134bd51ac26f8b50627d4c170bddcc6c0f4cfe1e2f4d737952c9b8f"
+        },
+        "financebench_id_00669": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            34
+          ],
+          "referencesSHA256": "a55d9a9b8736acd382a1ff8cced9119a0acd0edc7d0f7958ae271e2bf1f12ce3"
+        },
+        "financebench_id_00711": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            46,
+            47
+          ],
+          "referencesSHA256": "b14ef835e2a831a59bab56e6d3a06cb5f7c717d47bed485c36eb28880958bf5e"
+        }
+      }
+    },
+    "JOHNSON_JOHNSON_2023Q2_EARNINGS": {
+      "type": "Earnings",
+      "company": "Johnson & Johnson",
+      "sector": "Health Care",
+      "fold": "confirmation",
+      "pages": 24,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "db1f3419d309440e644dc3cdfbb74758e67734dd181e5dbabc7479d0ab92d026",
+      "markdownSHA256": "f2751e1def0dbab1b49a6c3647b56d234223eff52afd7ba1e68eb91b8750863b",
+      "questions": {
+        "financebench_id_01487": {
+          "type": "novel-generated",
+          "publishedPages": [
+            10
+          ],
+          "referencesSHA256": "bceaa107e56c3793661cccf66cd4e2666bed5d2dcaf406d79827a84a294d7828"
+        }
+      }
+    },
+    "JOHNSON_JOHNSON_2023_8K_dated-2023-08-30": {
+      "type": "8k",
+      "company": "Johnson & Johnson",
+      "sector": "Health Care",
+      "fold": "confirmation",
+      "pages": 27,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "0601a4b9f15e4400ced1b2ccb81c309cb66844fbac6b975a76dc490501bea95a",
+      "markdownSHA256": "b77cd7e4a79f5dceb61d7eca57aa5481713006490c1996a38658f71d4123cc35",
+      "questions": {
+        "financebench_id_01488": {
+          "type": "novel-generated",
+          "publishedPages": [
+            4
+          ],
+          "referencesSHA256": "888e4c6546966cbadc02acecdd6ec3fa2cdd9ffb78d192cac13b2629ac9a2511"
+        },
+        "financebench_id_01490": {
+          "type": "novel-generated",
+          "publishedPages": [
+            4
+          ],
+          "referencesSHA256": "888e4c6546966cbadc02acecdd6ec3fa2cdd9ffb78d192cac13b2629ac9a2511"
+        },
+        "financebench_id_01491": {
+          "type": "novel-generated",
+          "publishedPages": [
+            4
+          ],
+          "referencesSHA256": "3e0978c73738961416826b5929c601b1baefbe569d8a9a280ff787fcfd72dcaf"
+        }
+      }
+    },
+    "JPMORGAN_2021Q1_10Q": {
+      "type": "10q",
+      "company": "JPMorgan",
+      "sector": "Financials",
+      "fold": "confirmation",
+      "pages": 179,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "62518c05b02265dc13ca257d9ec0be0aec4449dad53db0c77d93444e7e2cfe97",
+      "markdownSHA256": "919a7dba3237df8856309f017a6dd96eb088ef7222ee7201d83dbdc3ad901506",
+      "questions": {
+        "financebench_id_00299": {
+          "type": "novel-generated",
+          "publishedPages": [
+            19
+          ],
+          "referencesSHA256": "062e808760318cfd3ffc3071a4ff0e0d0b6d7e6e734579162414ad66d59488f2"
+        }
+      }
+    },
+    "JPMORGAN_2022Q2_10Q": {
+      "type": "10q",
+      "company": "JPMorgan",
+      "sector": "Financials",
+      "fold": "confirmation",
+      "pages": 197,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "7d715f552d4eeb6b2a1ea8ae02237b5767306907e761270ac23d74ac5b7e44b5",
+      "markdownSHA256": "d3b320aa349b5fa5743b021553b749a7ea884da73955058514c856a9c181e4dc",
+      "questions": {
+        "financebench_id_00394": {
+          "type": "novel-generated",
+          "publishedPages": [
+            21
+          ],
+          "referencesSHA256": "5d180c1c2d11faf4e5e92e5675c889dd829c683ef4b3332e2dfe6f49f099f5d2"
+        }
+      }
+    },
+    "JPMORGAN_2022_10K": {
+      "type": "10k",
+      "company": "JPMorgan",
+      "sector": "Financials",
+      "fold": "confirmation",
+      "pages": 382,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "c269899950f36edfa496e3c8447a51d86d0a206442a96dc24dcd9317d55b957c",
+      "markdownSHA256": "088c5302b04c5fcd66dbbda6656a3a8398cc19e9618d49793483dea9535330a8",
+      "questions": {}
+    },
+    "JPMORGAN_2023Q2_10Q": {
+      "type": "10q",
+      "company": "JPMorgan",
+      "sector": "Financials",
+      "fold": "confirmation",
+      "pages": 217,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "eef2d9c1fdb5dc82be48166487a9e451c8544aec932a01fb06309ea7cd7122f5",
+      "markdownSHA256": "7acdf02f663783e9d34675238a8514386f0bda28fbd466a964016699203998db",
+      "questions": {
+        "financebench_id_02049": {
+          "type": "novel-generated",
+          "publishedPages": [
+            85
+          ],
+          "referencesSHA256": "e95ae79a5aa4f0085ee509eeb2aada573860dc33bce62514f4d229a3a9fabe0a"
+        }
+      }
+    },
+    "KRAFTHEINZ_2019_10K": {
+      "type": "10k",
+      "company": "Kraft Heinz",
+      "sector": "Consumer Staples",
+      "fold": "confirmation",
+      "pages": 152,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "df1340e7b002e5f412d4c9073292d0f48a2988fd347d5a4f44d017b9680fbae2",
+      "markdownSHA256": "a04b2991d653860c59a14d08d39717d4236b43d9940842cd907c09e06880b32a",
+      "questions": {
+        "financebench_id_10499": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            50,
+            52
+          ],
+          "referencesSHA256": "f31862095b2a6b0be5d834635737389f57c2eb3bf3f92b7659e04d414410c16b"
+        }
+      }
+    },
+    "LOCKHEEDMARTIN_2020_10K": {
+      "type": "10k",
+      "company": "Lockheed Martin",
+      "sector": "Industrials",
+      "fold": "confirmation",
+      "pages": 132,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "1e68051a649270779fc5cb68806612a28d7d81288ed75dd37aa1858717bf55a0",
+      "markdownSHA256": "35f7294b0cb311bcf79db73b5fa4a5aea9d7042078a38d8c73d9e72e3c2c9290",
+      "questions": {
+        "financebench_id_04412": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            67,
+            69
+          ],
+          "referencesSHA256": "b7537243856bac8bf0df344df62ee19731bb646413584263284bf8c1772bd3d2"
+        }
+      }
+    },
+    "LOCKHEEDMARTIN_2021_10K": {
+      "type": "10k",
+      "company": "Lockheed Martin",
+      "sector": "Industrials",
+      "fold": "confirmation",
+      "pages": 136,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "d2486265fedea887bcc621f0b2dbb9670e66fe05203e1378b8e650c9564732fb",
+      "markdownSHA256": "5b4c86925a3b153669fc95b77fb928a54f7d7d062ae65f6325d3f4bb090e4137",
+      "questions": {
+        "financebench_id_03031": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            68
+          ],
+          "referencesSHA256": "ef848789a02ed5c6b8f537881ad7b00a4e526361a62f8bbe86a76248784a4f88"
+        }
+      }
+    },
+    "LOCKHEEDMARTIN_2022_10K": {
+      "type": "10k",
+      "company": "Lockheed Martin",
+      "sector": "Industrials",
+      "fold": "confirmation",
+      "pages": 130,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "9a2317300d0f1e2623ba291fe9ec38fc779c1d1ad989dcfe6f862b77435c6923",
+      "markdownSHA256": "7e48a82649c2c8f102197ade4b76ad9796c51ffbab9bcc91b6ab5461f688fd04",
+      "questions": {
+        "financebench_id_03718": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            63
+          ],
+          "referencesSHA256": "83b4fbf5bd9de1a67b52a83081111e61452b2873f3a5eb39c09c7bf5f88657d1"
+        }
+      }
+    },
+    "MGMRESORTS_2018_10K": {
+      "type": "10k",
+      "company": "MGM Resorts",
+      "sector": "Consumer Discretionary",
+      "fold": "development",
+      "pages": 188,
+      "pagesWithoutText": [
+        143
+      ],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "1b540737f91716aaa23b062499e6cab9c51d258e151f37eb8c65646bb588a0da",
+      "markdownSHA256": "99299ff08224c457ad315baed484e30fb97da4739e001434fb0cd502b0c09565",
+      "questions": {
+        "financebench_id_04171": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            57
+          ],
+          "referencesSHA256": "b0dee186e2b4b2eb413c4eaf21a9f4ddd79f66e874ac74dff3039e8c21c603e4"
+        }
+      }
+    },
+    "MGMRESORTS_2020_10K": {
+      "type": "10k",
+      "company": "MGM Resorts",
+      "sector": "Consumer Discretionary",
+      "fold": "development",
+      "pages": 150,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "98a9a55baf838309d16a730fd63efbcd146be1911b61abb3658b1774f360b099",
+      "markdownSHA256": "f31f59d5c746dc325a601cf5d0a9671201657713a55ba070e8d158b34f0ad154",
+      "questions": {
+        "financebench_id_03849": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            65,
+            67
+          ],
+          "referencesSHA256": "690ab39d91fdb96a96e55ed2b5e8d856ac34599c47007bf043e2e6adf009f91a"
+        }
+      }
+    },
+    "MGMRESORTS_2022Q4_EARNINGS": {
+      "type": "Earnings",
+      "company": "MGM Resorts",
+      "sector": "Consumer Discretionary",
+      "fold": "development",
+      "pages": 15,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "fe9126b17c3656e50d53741b13cb5fb233d4adaf922e4d84072b1d5e564fbfbd",
+      "markdownSHA256": "a69945d342e758e0888ebbaa47cbc389b02b084f965a8a90c65f5c6cc502b0ab",
+      "questions": {
+        "financebench_id_00382": {
+          "type": "novel-generated",
+          "publishedPages": [
+            13
+          ],
+          "referencesSHA256": "7ba065ce99f45508ebb5f3f3f0b141d8820715fafbd3452f0f9bf93df8dd591c"
+        },
+        "financebench_id_01912": {
+          "type": "novel-generated",
+          "publishedPages": [
+            3,
+            4
+          ],
+          "referencesSHA256": "095fe75dfa21298a38d48348fe48cde732659de2293102687f9f6da7d264a293"
+        }
+      }
+    },
+    "MGMRESORTS_2022_10K": {
+      "type": "10k",
+      "company": "MGM Resorts",
+      "sector": "Consumer Discretionary",
+      "fold": "development",
+      "pages": 220,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "130b96c1309c97aaedcabee2fa5d5421e54491e618273bd33c3b1aeddad323ec",
+      "markdownSHA256": "5b3a7c0de145a08cd104fef76190eaf73a993f974d3d4d7d009f73b43ae10c58",
+      "questions": {
+        "financebench_id_01254": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            32
+          ],
+          "referencesSHA256": "080fc85458f42dc7cf03252bda9f5e4b57f8f227a897675f1d608cbd60e98cba"
+        }
+      }
+    },
+    "MGMRESORTS_2023Q2_10Q": {
+      "type": "10q",
+      "company": "MGM Resorts",
+      "sector": "Consumer Discretionary",
+      "fold": "development",
+      "pages": 62,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "09c02fd40073570ae0826d707674154a9cd55a895e94096a82fcf0a4447ea64d",
+      "markdownSHA256": "a291e1e7e5a0435ce34d576e496e7ef0a6e8ddc667afff70b3f6fd4e4648d0c8",
+      "questions": {
+        "financebench_id_00407": {
+          "type": "novel-generated",
+          "publishedPages": [
+            11
+          ],
+          "referencesSHA256": "bbbf216c2bbd527eac626c1a8d507ce834f5ae2cb5fc2bd7f37ffab78eb2ecef"
+        }
+      }
+    },
+    "MICROSOFT_2016_10K": {
+      "type": "10k",
+      "company": "Microsoft",
+      "sector": "Information Technology",
+      "fold": "development",
+      "pages": 121,
+      "pagesWithoutText": [
+        90
+      ],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "f3555bd5ea1802770cc8f2a7ca766392e16fe6504f18688db681d852029404dc",
+      "markdownSHA256": "5d0c3064b76ae9635cd68178dd2df48f0f6c9e59e0dd2d6441708392db9d81c6",
+      "questions": {
+        "financebench_id_04700": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            52
+          ],
+          "referencesSHA256": "1469993109d685aec63c7a7e85de77170408f3ab291fb1d508f4c07bbd366250"
+        }
+      }
+    },
+    "MICROSOFT_2023_10K": {
+      "type": "10k",
+      "company": "Microsoft",
+      "sector": "Information Technology",
+      "fold": "development",
+      "pages": 116,
+      "pagesWithoutText": [
+        116
+      ],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "e534af371c824aab19b8d01f8bc0e9d1e0a3fb418a33119c5224a53d20a0d37b",
+      "markdownSHA256": "7396598c9dc12b9c11d0a242c55e327be6d2de758bd0ef4fcb7266a470427f50",
+      "questions": {
+        "financebench_id_00552": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            60
+          ],
+          "referencesSHA256": "6aac2eaf0b5035f4b582c8410d6db8fd667566609defe26105389ed4eba53c0e"
+        }
+      }
+    },
+    "NETFLIX_2015_10K": {
+      "type": "10k",
+      "company": "Netflix",
+      "sector": "Communication Services",
+      "fold": "development",
+      "pages": 72,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "b22ca874ef08f383bd0b1071677d44f4a242af668f855f00dc9c6d4ac94148e2",
+      "markdownSHA256": "f210412ec976f223696e09d1dbe683c9846a9d09085c04989dc6489495da7a0d",
+      "questions": {
+        "financebench_id_04458": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            40,
+            42
+          ],
+          "referencesSHA256": "e1b38a50ab5615f928d827fab30f109dfb79bc26e0d65d58958dfb8a6611d3e2"
+        }
+      }
+    },
+    "NETFLIX_2017_10K": {
+      "type": "10k",
+      "company": "Netflix",
+      "sector": "Communication Services",
+      "fold": "development",
+      "pages": 73,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "981a69bba010dd1709c74ccec9ca26c61635c02a4f22b76345d26021e88077d6",
+      "markdownSHA256": "c3b414ddea8b20c94bb45623fda7ec7bd3f0c777215a01f7816d117ceb54b8cf",
+      "questions": {
+        "financebench_id_03282": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            45
+          ],
+          "referencesSHA256": "2b83330199596bb0c97a3fc7b2afab1d0858d5dc0a0ea27de68dd0f8cdd9c03d"
+        }
+      }
+    },
+    "NIKE_2018_10K": {
+      "type": "10k",
+      "company": "Nike",
+      "sector": "Consumer Discretionary",
+      "fold": "confirmation",
+      "pages": 97,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "31de66f1e37cabf1785e0ffa66955bf003bf2a9dcf3f4ebe93732d063b7b6ebe",
+      "markdownSHA256": "b0433eea38a1e4f4cceee576030b7e76bddfd5c05362b4e1acff8e6809a1391e",
+      "questions": {
+        "financebench_id_04302": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            46
+          ],
+          "referencesSHA256": "73c32f43e05e6f0a35ef4e2bf0885ae0301888afa6527235c41600389b5748dc"
+        }
+      }
+    },
+    "NIKE_2019_10K": {
+      "type": "10k",
+      "company": "Nike",
+      "sector": "Consumer Discretionary",
+      "fold": "confirmation",
+      "pages": 104,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "7dbdf1bcbf37dd6d6e694ce95bcb23cd6943d08cc9cd1e5ee9832ed8f7eebdc6",
+      "markdownSHA256": "62807148c700a97b732acd5b868f74fdfd7b45aeab64a959fab1ff7620705592",
+      "questions": {
+        "financebench_id_03531": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            54
+          ],
+          "referencesSHA256": "edf3849b1b5a18154f75972c4931c3032899cc22c1e0f7acda54e1d51b436e16"
+        }
+      }
+    },
+    "NIKE_2021_10K": {
+      "type": "10k",
+      "company": "Nike",
+      "sector": "Consumer Discretionary",
+      "fold": "confirmation",
+      "pages": 109,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "73b54e5e0b1b0b33e51ac314f6d9a9db0bcc286269feb24a3445a5f1ff0f7789",
+      "markdownSHA256": "eaca8e4d2231702645c4ced632637db68b2b055619d534129fb45129251643f5",
+      "questions": {
+        "financebench_id_04080": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            59,
+            61
+          ],
+          "referencesSHA256": "b770593b63d06828c211f5d6c51916e6d6f3f01b6b49958bb1f65b321cfbaa89"
+        }
+      }
+    },
+    "NIKE_2023_10K": {
+      "type": "10k",
+      "company": "Nike",
+      "sector": "Consumer Discretionary",
+      "fold": "confirmation",
+      "pages": 106,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "51f5a0fc6ede20de4f5cfdeae8791a57bdd65c95db2ceb263eb120696ff90172",
+      "markdownSHA256": "36559ad2f1d2621fed2269beac9276ba73369da03b3d0480d871015f07f5eefe",
+      "questions": {
+        "financebench_id_01163": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            62
+          ],
+          "referencesSHA256": "1ad830f217cbe06fcd201b8d59cd00aa0f59412fe2b41e91c89f75d2d7c0ee0c"
+        }
+      }
+    },
+    "PAYPAL_2022_10K": {
+      "type": "10k",
+      "company": "Paypal",
+      "sector": "Financials",
+      "fold": "confirmation",
+      "pages": 134,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "0c1dd6cd170261c6bd778de382a211a56a3bb1e009a429246370c97fa0defab3",
+      "markdownSHA256": "56f92f8076fbb16f881dc2c728cdfd0d4f17a8a36fa11d18749a7a74018eab91",
+      "questions": {
+        "financebench_id_00080": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            61
+          ],
+          "referencesSHA256": "9b19ce9605ab3cc0ed20ae3b28fd1f93200842ab46bc2fb8fa17eb136dae8d9d"
+        }
+      }
+    },
+    "PEPSICO_2021_10K": {
+      "type": "10k",
+      "company": "PepsiCo",
+      "sector": "Consumer Staples",
+      "fold": "confirmation",
+      "pages": 549,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "f2c7cf1969c7f6dfc8c0596824e1d6b3cc70f662ee2dd06be84bb27af5635364",
+      "markdownSHA256": "19beaa4ddf0ac1c172ae07df9b128fded5e3f28b788ffc7df6f1672e9d53d649",
+      "questions": {
+        "financebench_id_04980": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            63
+          ],
+          "referencesSHA256": "f95874749bf46ce25971250be9cda5123c6b0d43543ffa6142b2b2843410a235"
+        }
+      }
+    },
+    "PEPSICO_2022_10K": {
+      "type": "10k",
+      "company": "PepsiCo",
+      "sector": "Consumer Staples",
+      "fold": "confirmation",
+      "pages": 503,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "7d8a9f3374e429c58f101319e2da8a0e601a89859e1e4f6854163dd5f8ce6b47",
+      "markdownSHA256": "044e560045fc8bc3a8e27be3aaa854b96a31a78500fc6822887c1125906eff67",
+      "questions": {
+        "financebench_id_01009": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            4,
+            5
+          ],
+          "referencesSHA256": "da47a9775b6511495c71e798df1b8670a9d488b8819692f30891b599fae37c7f"
+        },
+        "financebench_id_00735": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            26
+          ],
+          "referencesSHA256": "464301c5cb0cb68bc829f84eeb43aa799b0889e9e4cc845edc78fbb946ee8953"
+        },
+        "financebench_id_01328": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            78
+          ],
+          "referencesSHA256": "0aeb88747c8f3bbf24189a1a010ffd068b061d16113fdc8b9f2b8ae1130ab1ac"
+        },
+        "financebench_id_03620": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            62,
+            64
+          ],
+          "referencesSHA256": "a535017a3f5b06a35bfa63c757b14b941866aa02866c3c18e2ab6a91f11f708f"
+        },
+        "financebench_id_04481": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            62,
+            64
+          ],
+          "referencesSHA256": "1e16313770312ae13b2a94dab916b3e9c2f5bb7986e5296d2ecc167b9b658dbe"
+        }
+      }
+    },
+    "PEPSICO_2023Q1_EARNINGS": {
+      "type": "Earnings",
+      "company": "PepsiCo",
+      "sector": "Consumer Staples",
+      "fold": "confirmation",
+      "pages": 16,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "a705483ea6c548a2f67c421bc24ced391a6beb8487600b44b54e9ae2aca1f31c",
+      "markdownSHA256": "e6e6fcfe169408d0876826e282add70395d7b255835b1f8fc4c27f3cc6111af4",
+      "questions": {
+        "financebench_id_01474": {
+          "type": "novel-generated",
+          "publishedPages": [
+            1
+          ],
+          "referencesSHA256": "48ab65db23e8b836e1f59b56e824cc1e963ab67267d36bd2c181ae2120e42004"
+        },
+        "financebench_id_01476": {
+          "type": "novel-generated",
+          "publishedPages": [
+            1
+          ],
+          "referencesSHA256": "5cb6416635a750dfa9c2e90f9168d71e41488c8fb4e28f9f0d8ba05be749be00"
+        }
+      }
+    },
+    "PEPSICO_2023_8K_dated-2023-05-05": {
+      "type": "8k",
+      "company": "PepsiCo",
+      "sector": "Consumer Staples",
+      "fold": "confirmation",
+      "pages": 5,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "e8591d6f83d810a0f9edfc540a1a21aa6269a6de4c756b5eb808d5dbbea330ed",
+      "markdownSHA256": "adc35c6ffdb2d1de3825027a3c089d69a76f5efd5ce8cb8914bc9517483f6d5a",
+      "questions": {
+        "financebench_id_01482": {
+          "type": "novel-generated",
+          "publishedPages": [
+            4
+          ],
+          "referencesSHA256": "179810f0d3914a4344f2a176388bb64ec147f627271f17fbab872fbce230dfbd"
+        }
+      }
+    },
+    "PEPSICO_2023_8K_dated-2023-05-30": {
+      "type": "8k",
+      "company": "PepsiCo",
+      "sector": "Consumer Staples",
+      "fold": "confirmation",
+      "pages": 172,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "8e8f99f270b065e105636f54b2684f4c4170b3fc80845ae2f393bf66f3291d2c",
+      "markdownSHA256": "a0c789ec71538ae8e23f3fc6d175c65cf33861b2c72bec379bc759e9627fb2e2",
+      "questions": {
+        "financebench_id_00705": {
+          "type": "novel-generated",
+          "publishedPages": [
+            2
+          ],
+          "referencesSHA256": "c3826ab3f30ba85ce70492305dcf456a1c2db4f2ab167cec4d87811a55a54c45"
+        },
+        "financebench_id_00882": {
+          "type": "novel-generated",
+          "publishedPages": [
+            2
+          ],
+          "referencesSHA256": "6d60fe7edd60d0eaba51d40aebf82bdacf2281fa6da962167f07f32b6d752283"
+        }
+      }
+    },
+    "PFIZER_2021_10K": {
+      "type": "10k",
+      "company": "Pfizer",
+      "sector": "Health Care",
+      "fold": "development",
+      "pages": 143,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "ff3307d5f633c5dbe59a976f5ff5e086af04ba5a5135f2b6411c89538a22a665",
+      "markdownSHA256": "5251e1cc5201f60303ddf4dcbc4fac755d697f0042f91365cf4dc05964c58ac7",
+      "questions": {
+        "financebench_id_00302": {
+          "type": "novel-generated",
+          "publishedPages": [
+            59
+          ],
+          "referencesSHA256": "87264fd67763c6834cf29baa55ae3c49065bbc5984bcebcf3b13b31ec30df7b5"
+        },
+        "financebench_id_00702": {
+          "type": "novel-generated",
+          "publishedPages": [
+            57
+          ],
+          "referencesSHA256": "3189e3ff058a0ee0a5ff065d6096bf667820094914a84d7d80d6ef343c2b1fbf"
+        },
+        "financebench_id_02416": {
+          "type": "novel-generated",
+          "publishedPages": [
+            70,
+            71
+          ],
+          "referencesSHA256": "6e47069f6434181ac7c838c02d3aa76bc16a3a5763d768732a3f08a73c54f656"
+        }
+      }
+    },
+    "Pfizer_2023Q2_10Q": {
+      "type": "10q",
+      "company": "Pfizer",
+      "sector": "Health Care",
+      "fold": "development",
+      "pages": 72,
+      "pagesWithoutText": [
+        2,
+        7
+      ],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "bf6c059a1dd71bd56581c94bce650bd85b56de2f4d0a25b45f05804a8bd6684d",
+      "markdownSHA256": "6bf69082b595d7699e7989f4fe993f597e3143ebee09ece0a907810d3441fd9c",
+      "questions": {
+        "financebench_id_00724": {
+          "type": "novel-generated",
+          "publishedPages": [
+            38
+          ],
+          "referencesSHA256": "c8d145aa49c0aea74b8a326cb94bbab67917d194325c85f2957275e4b4b95aa9"
+        }
+      }
+    },
+    "ULTABEAUTY_2023Q4_EARNINGS": {
+      "type": "Earnings",
+      "company": "Ulta Beauty",
+      "sector": "Consumer Discretionary",
+      "fold": "development",
+      "pages": 9,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "c7df6210a627042e231c9579982648a43f3ff8b630b4020540330c2a85e0d781",
+      "markdownSHA256": "15115d19272f55ac423d38f75bce3471bd72b0da03fc0b40aa46a63e291d285e",
+      "questions": {
+        "financebench_id_00601": {
+          "type": "novel-generated",
+          "publishedPages": [
+            2
+          ],
+          "referencesSHA256": "f8d9f144cf8c35d8d1399a4e174d87a6de78577627a9a0e256c10ad86a4a4c22"
+        },
+        "financebench_id_00603": {
+          "type": "novel-generated",
+          "publishedPages": [
+            3
+          ],
+          "referencesSHA256": "360aebf517c5f4a657f325cf128287837949b9024acb441f3f42d73c176925ef"
+        },
+        "financebench_id_00605": {
+          "type": "novel-generated",
+          "publishedPages": [
+            3
+          ],
+          "referencesSHA256": "72891275350bb50ddaed439e194421553d3144dfa3103a0f333325a327508c28"
+        },
+        "financebench_id_00606": {
+          "type": "novel-generated",
+          "publishedPages": [
+            2
+          ],
+          "referencesSHA256": "1e2e08543a7fc5ada43f8d571b95f3abd106467d4889cd38665bc9990924b546"
+        }
+      }
+    },
+    "ULTABEAUTY_2023_10K": {
+      "type": "10k",
+      "company": "Ulta Beauty",
+      "sector": "Consumer Discretionary",
+      "fold": "development",
+      "pages": 105,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "cdf2ebcfbc2eb9ecf880126d38b186cac1f683dae5bcb50cad15176bfc449ff4",
+      "markdownSHA256": "8b51da8bd9e3e2f54cf696fe4cd80b5af566eccd8418e9ee7becb631ece4cd68",
+      "questions": {
+        "financebench_id_00746": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            1
+          ],
+          "referencesSHA256": "40cac2e6db0bc9aa2d3f0b2fe120dde6e38282a3ee15e3b98e750cb42c550500"
+        },
+        "financebench_id_00521": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            57
+          ],
+          "referencesSHA256": "c4d1b68c0ef34ec12fcb3aca0000cd1f5d4f5934b8c6b52690e98736715bff5d"
+        }
+      }
+    },
+    "VERIZON_2021_10K": {
+      "type": "10k",
+      "company": "Verizon",
+      "sector": "Communication Services",
+      "fold": "confirmation",
+      "pages": 120,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "f7fcb508f920e3df9a07bc858a6d9f0d3cd1e976a46efe72375c9ffb983822ac",
+      "markdownSHA256": "3272375aec2980d41d5d112c76e498982106cdb3a7d7657ec42df31d36e4e4d0",
+      "questions": {
+        "financebench_id_00859": {
+          "type": "novel-generated",
+          "publishedPages": [
+            85
+          ],
+          "referencesSHA256": "7c9562cf3e3ac22e1293183f4c88b5bd74aecc6a116df7f75d13ac40ac235e0f"
+        },
+        "financebench_id_02024": {
+          "type": "novel-generated",
+          "publishedPages": [
+            63,
+            94
+          ],
+          "referencesSHA256": "2f18c79d8ab3799b9d2da59159edbafd5ca063073be34db7f96ae3609b7fc6cd"
+        }
+      }
+    },
+    "VERIZON_2022_10K": {
+      "type": "10k",
+      "company": "Verizon",
+      "sector": "Communication Services",
+      "fold": "confirmation",
+      "pages": 124,
+      "pagesWithoutText": [],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "403d7346e8a059472863d1789527f16e5127a61c2f6c4429012e6227f27576d7",
+      "markdownSHA256": "17dab847ad28370298b8adec8f743629c31bc262b0cc36fd63ac9da6e1bbbeda",
+      "questions": {
+        "financebench_id_00216": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            56
+          ],
+          "referencesSHA256": "02453950d0255266cdc8a6c9fd479d4f7032ff2bbbdf921faf3f1178babe5b98"
+        },
+        "financebench_id_00215": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            23,
+            56
+          ],
+          "referencesSHA256": "8a9d3e5b1cc7df727bff8dbc13f12fdf171f36dc06bddaa16fe05f4143c9d3e8"
+        },
+        "financebench_id_00566": {
+          "type": "domain-relevant",
+          "publishedPages": [
+            77
+          ],
+          "referencesSHA256": "672d1c8f2788e0d5652998664c93e17d14dbf1c9ec44c8a8142032079b110518"
+        }
+      }
+    },
+    "WALMART_2018_10K": {
+      "type": "10k",
+      "company": "Walmart",
+      "sector": "Consumer Staples",
+      "fold": "development",
+      "pages": 304,
+      "pagesWithoutText": [
+        60
+      ],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "661512df698c895a4a5ab3d4ab879fd8ffc8f17a9038e27bcb208401982b6c15",
+      "markdownSHA256": "6b8a4a127c3281746a000fb6d4a2525038d842a4c636c16869e631e77f3f8189",
+      "questions": {
+        "financebench_id_06247": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            57,
+            59
+          ],
+          "referencesSHA256": "37dbef1587278b4b250d46948d5f78387bd67c9439f4b2abae78259bda1d0174"
+        }
+      }
+    },
+    "WALMART_2019_10K": {
+      "type": "10k",
+      "company": "Walmart",
+      "sector": "Consumer Staples",
+      "fold": "development",
+      "pages": 155,
+      "pagesWithoutText": [
+        90,
+        92,
+        94,
+        96,
+        98,
+        100,
+        102,
+        104,
+        106,
+        108,
+        110,
+        112,
+        114,
+        116,
+        118,
+        120,
+        122,
+        124,
+        126,
+        128,
+        130,
+        132,
+        134,
+        136,
+        138,
+        140,
+        142,
+        144,
+        146
+      ],
+      "ocrPages": [],
+      "duplicateScans": {
+        "90": 91,
+        "92": 93,
+        "94": 95,
+        "96": 97,
+        "98": 99,
+        "100": 101,
+        "102": 103,
+        "104": 105,
+        "106": 107,
+        "108": 109,
+        "110": 111,
+        "112": 113,
+        "114": 115,
+        "116": 117,
+        "118": 119,
+        "120": 121,
+        "122": 123,
+        "124": 125,
+        "126": 127,
+        "128": 129,
+        "130": 131,
+        "132": 133,
+        "134": 135,
+        "136": 137,
+        "138": 139,
+        "140": 141,
+        "142": 143,
+        "144": 145
+      },
+      "pdfSHA256": "f1d1b052c2b68c5d68e3575de7069dc47914f03abb02771d2629b10bf7d9e377",
+      "markdownSHA256": "2d537ae365ccd9ad68a1fb012b2c9a85d0df9e2eb31bc06c550388d6b2b50e51",
+      "questions": {
+        "financebench_id_04784": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            48
+          ],
+          "referencesSHA256": "95839e452dabbcf057828fa3207b6c1b11f04eb64c692f260f00b454c6649020"
+        }
+      }
+    },
+    "WALMART_2020_10K": {
+      "type": "10k",
+      "company": "Walmart",
+      "sector": "Consumer Staples",
+      "fold": "development",
+      "pages": 170,
+      "pagesWithoutText": [
+        54,
+        57,
+        71
+      ],
+      "ocrPages": [],
+      "duplicateScans": {},
+      "pdfSHA256": "0f9e2ebc9432caef54fe932ec91ccc6fea3eac89f370073462ae002eabb71a34",
+      "markdownSHA256": "06061b5d16e97b4c9ea289e75edc7b72a7249402c9f780824a033128af96e87f",
+      "questions": {
+        "financebench_id_06741": {
+          "type": "metrics-generated",
+          "publishedPages": [
+            51,
+            56
+          ],
+          "referencesSHA256": "9a15ae5323dd3b9d7b9831c0ea8b536e3c6a233ac93dcade1359b3766c319e62"
+        }
+      }
+    }
+  },
+  "excluded": {
+    "financebench_id_01319": {
+      "document": "AES_2022_10K",
+      "reason": "The prescribed zero denotes an omitted expense line. There is no positive local evidence for the absence."
+    },
+    "financebench_id_00723": {
+      "document": "AMERICANEXPRESS_2022_10K",
+      "reason": "The income statement does not establish that the company does not use operating margin as a performance measure."
+    },
+    "financebench_id_00720": {
+      "document": "AMERICANEXPRESS_2022_10K",
+      "reason": "The income statement does not establish the analyst's claim about the usefulness of gross margin for this business."
+    },
+    "financebench_id_00585": {
+      "document": "BOEING_2022_10K",
+      "reason": "The filing reports effective income tax rates of -0.6% and +14.8%. Both signs in the published answer are reversed."
+    },
+    "financebench_id_02119": {
+      "document": "JPMORGAN_2021Q1_10Q",
+      "reason": "The cited figure is tangible book value per share. The report does not give proceeds per share in a hypothetical liquidation."
+    },
+    "financebench_id_00206": {
+      "document": "JPMORGAN_2022_10K",
+      "reason": "The citation does not explain the relevance of gross margin to a financial institution."
+    },
+    "financebench_id_01911": {
+      "document": "MGMRESORTS_2022Q4_EARNINGS",
+      "reason": "The published zero does not follow from the specified ratio. A negative numerator divided by the positive interest expense is negative."
+    },
+    "financebench_id_00283": {
+      "document": "Pfizer_2023Q2_10Q",
+      "reason": "About 90% of the estimated 700 million had been incurred. The cited figures imply around 70 million remaining rather than the published 77.78 million."
+    },
+    "financebench_id_02419": {
+      "document": "Pfizer_2023Q2_10Q",
+      "reason": "The filing discusses remaining costs of an earlier separation. It does not support the claim that Pfizer was spinning off Upjohn in the second quarter of 2023."
+    }
+  },
+  "sets": {
+    "government-development-ssa-html": {
+      "sources": [
+        "Benefits Planner: Survivors | Planning For Your Survivors | Social Security Administration#2_0",
+        "Benefits Planner: Disability | How You Apply | Social Security Administration#1_0",
+        "Disability Benefits | Social Security Administration#1_0",
+        "Benefits Planner: Retirement | Government Pension Offset (GPO) Calculator | Social Security Administration#2_0",
+        "Benefits Planner: Disability | Approval Process | Social Security Administration#2_0",
+        "Direct Deposit | Social Security Administration#2_0",
+        "Explore The Benefits You May Be Due#2_0",
+        "Benefits Planner: Disability | How You Qualify | Social Security Administration#2_0",
+        "Benefits for People with Disabilities#1_0",
+        "Benefits Planner: Retirement | Medicare Premiums | SSA#2_0"
+      ],
+      "questions": 32,
+      "format": "html",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 32
+      },
+      "sha256": "3d1ea42b632096584f0f034e1d7bf0095ece243b53ef6fcf4bfc805f45679dfb"
+    },
+    "government-development-ssa-text": {
+      "sources": [
+        "Benefits Planner: Survivors | Planning For Your Survivors | Social Security Administration#2_0",
+        "Benefits Planner: Disability | How You Apply | Social Security Administration#1_0",
+        "Disability Benefits | Social Security Administration#1_0",
+        "Benefits Planner: Retirement | Government Pension Offset (GPO) Calculator | Social Security Administration#2_0",
+        "Benefits Planner: Disability | Approval Process | Social Security Administration#2_0",
+        "Direct Deposit | Social Security Administration#2_0",
+        "Explore The Benefits You May Be Due#2_0",
+        "Benefits Planner: Disability | How You Qualify | Social Security Administration#2_0",
+        "Benefits for People with Disabilities#1_0",
+        "Benefits Planner: Retirement | Medicare Premiums | SSA#2_0"
+      ],
+      "questions": 32,
+      "format": "text",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 32
+      },
+      "sha256": "8d375a54a5ec2e64dbaad2f3733200ee2682403702776989afe3dd0c25643fbf"
+    },
+    "government-development-ssa-markdown": {
+      "sources": [
+        "Benefits Planner: Survivors | Planning For Your Survivors | Social Security Administration#2_0",
+        "Benefits Planner: Disability | How You Apply | Social Security Administration#1_0",
+        "Disability Benefits | Social Security Administration#1_0",
+        "Benefits Planner: Retirement | Government Pension Offset (GPO) Calculator | Social Security Administration#2_0",
+        "Benefits Planner: Disability | Approval Process | Social Security Administration#2_0",
+        "Direct Deposit | Social Security Administration#2_0",
+        "Explore The Benefits You May Be Due#2_0",
+        "Benefits Planner: Disability | How You Qualify | Social Security Administration#2_0",
+        "Benefits for People with Disabilities#1_0",
+        "Benefits Planner: Retirement | Medicare Premiums | SSA#2_0"
+      ],
+      "questions": 32,
+      "format": "markdown",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 32
+      },
+      "sha256": "84848dd80a9744f5dd6e8c4e6c26e7f01150d4aa8f219644238feebe6d9c3137"
+    },
+    "government-development-va-html": {
+      "sources": [
+        "Multiple party or contested claims | Veterans Affairs#1_0",
+        "About VA Disability Ratings | Veterans Affairs#1_0",
+        "Change Your VA Direct Deposit Information | Veterans Affairs#1_0",
+        "VA decision reviews and appeals | Veterans Affairs#1_0",
+        "Substance Use Treatment For Veterans | Veterans Affairs#1_0",
+        "VA Mental Health Services | Veterans Affairs#1_0",
+        "Careers And Employment | Veterans Affairs#2_0",
+        "Agent Orange Exposure | Veterans Affairs#1_0",
+        "VA Education Benefits | Veterans Affairs#1_0",
+        "VA Education Benefits | Veterans Affairs#2_0",
+        "VA Life Insurance | Veterans Affairs#1_0",
+        "VA Life Insurance | Veterans Affairs#2_0",
+        "Request a Board Appeal | Veterans Affairs#1_0",
+        "Ionizing Radiation Exposure | Veterans Affairs#1_0",
+        "Eligibility For VA Disability Benefits | Veterans Affairs#1_0",
+        "View Your VA Payment History | Veterans Affairs#1_0",
+        "Add Dependents To Your VA Disability Benefits | Veterans Affairs#1_0",
+        "VA claim exam (C&P exam) | Veterans Affairs#1_0",
+        "Pre-Need Eligibility For Burial In A VA Cemetery | Veterans Affairs#1_0",
+        "VA Title 38 U.S.C. 1151 Claims | Veterans Affairs#1_0",
+        "PTSD Treatment | Veterans Affairs#1_0",
+        "Undergraduate And Graduate Degrees | Veterans Affairs#1_0",
+        "How To Apply For VA Health Care | Veterans Affairs#1_0",
+        "Fiduciary claims | Veterans Affairs#1_0"
+      ],
+      "questions": 95,
+      "format": "html",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 95
+      },
+      "sha256": "6e4fb146527d92a75db84ae1da7f522da2ec05708dd16ea07e7f00d23c15ee75"
+    },
+    "government-development-va-text": {
+      "sources": [
+        "Multiple party or contested claims | Veterans Affairs#1_0",
+        "About VA Disability Ratings | Veterans Affairs#1_0",
+        "Change Your VA Direct Deposit Information | Veterans Affairs#1_0",
+        "VA decision reviews and appeals | Veterans Affairs#1_0",
+        "Substance Use Treatment For Veterans | Veterans Affairs#1_0",
+        "VA Mental Health Services | Veterans Affairs#1_0",
+        "Careers And Employment | Veterans Affairs#2_0",
+        "Agent Orange Exposure | Veterans Affairs#1_0",
+        "VA Education Benefits | Veterans Affairs#1_0",
+        "VA Education Benefits | Veterans Affairs#2_0",
+        "VA Life Insurance | Veterans Affairs#1_0",
+        "VA Life Insurance | Veterans Affairs#2_0",
+        "Request a Board Appeal | Veterans Affairs#1_0",
+        "Ionizing Radiation Exposure | Veterans Affairs#1_0",
+        "Eligibility For VA Disability Benefits | Veterans Affairs#1_0",
+        "View Your VA Payment History | Veterans Affairs#1_0",
+        "Add Dependents To Your VA Disability Benefits | Veterans Affairs#1_0",
+        "VA claim exam (C&P exam) | Veterans Affairs#1_0",
+        "Pre-Need Eligibility For Burial In A VA Cemetery | Veterans Affairs#1_0",
+        "VA Title 38 U.S.C. 1151 Claims | Veterans Affairs#1_0",
+        "PTSD Treatment | Veterans Affairs#1_0",
+        "Undergraduate And Graduate Degrees | Veterans Affairs#1_0",
+        "How To Apply For VA Health Care | Veterans Affairs#1_0",
+        "Fiduciary claims | Veterans Affairs#1_0"
+      ],
+      "questions": 95,
+      "format": "text",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 95
+      },
+      "sha256": "07eb9577d702cb8558628db043a21e122ada8810bec3162bdd9abdfc7630e59c"
+    },
+    "government-development-va-markdown": {
+      "sources": [
+        "Multiple party or contested claims | Veterans Affairs#1_0",
+        "About VA Disability Ratings | Veterans Affairs#1_0",
+        "Change Your VA Direct Deposit Information | Veterans Affairs#1_0",
+        "VA decision reviews and appeals | Veterans Affairs#1_0",
+        "Substance Use Treatment For Veterans | Veterans Affairs#1_0",
+        "VA Mental Health Services | Veterans Affairs#1_0",
+        "Careers And Employment | Veterans Affairs#2_0",
+        "Agent Orange Exposure | Veterans Affairs#1_0",
+        "VA Education Benefits | Veterans Affairs#1_0",
+        "VA Education Benefits | Veterans Affairs#2_0",
+        "VA Life Insurance | Veterans Affairs#1_0",
+        "VA Life Insurance | Veterans Affairs#2_0",
+        "Request a Board Appeal | Veterans Affairs#1_0",
+        "Ionizing Radiation Exposure | Veterans Affairs#1_0",
+        "Eligibility For VA Disability Benefits | Veterans Affairs#1_0",
+        "View Your VA Payment History | Veterans Affairs#1_0",
+        "Add Dependents To Your VA Disability Benefits | Veterans Affairs#1_0",
+        "VA claim exam (C&P exam) | Veterans Affairs#1_0",
+        "Pre-Need Eligibility For Burial In A VA Cemetery | Veterans Affairs#1_0",
+        "VA Title 38 U.S.C. 1151 Claims | Veterans Affairs#1_0",
+        "PTSD Treatment | Veterans Affairs#1_0",
+        "Undergraduate And Graduate Degrees | Veterans Affairs#1_0",
+        "How To Apply For VA Health Care | Veterans Affairs#1_0",
+        "Fiduciary claims | Veterans Affairs#1_0"
+      ],
+      "questions": 95,
+      "format": "markdown",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 95
+      },
+      "sha256": "43fddeb603b995f18ecb5f84adc77321ecee154f4ace4aab6399e14c1f1f19c9"
+    },
+    "government-development-dmv-html": {
+      "sources": [
+        "Commercial vehicle registration fees, vehicle use taxes and supplemental fees#3_0",
+        "New York State Insurance Requirements#3_0",
+        "Replace license or permit#1_0",
+        "How insurance premium reduction works#3_0",
+        "Passenger vehicle registration fees, use taxes and supplemental fees#3_0",
+        "Temporary surrender of vehicle plates (store plates for a season)#3_0",
+        "Escort driver certification#1_0",
+        "File a Freedom of Information Law (FOIL) request#1_0",
+        "Get a motorcycle license#1_0",
+        "Escrow accounts#3_0",
+        "Get a  hazardous materials (HazMat) endorsement#3_0",
+        "Order picture and professional plates#1_0",
+        "Learn about picture and professional plates#3_0",
+        "Resources for non US citizens#3_0",
+        "Information about transaction entries#3_0",
+        "Medical Certification Requirements#3_0",
+        "Federal REAL ID#3_0",
+        "About complaints and charges for dealer and transporter businesses#3_0",
+        "Change name on title after lease buyout#3_0",
+        "Get a driver license#1_0",
+        "Automatic license and registration extension for military personnel#3_0",
+        "NYS Adventure License and Adventure Custom Plates#3_0",
+        "Sharing your information#3_0",
+        "Learn about personalized plates#3_0",
+        "Leandra's Law & ignition interlock devices#3_0"
+      ],
+      "questions": 114,
+      "format": "html",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 114
+      },
+      "sha256": "0110658e526a6ea083e3beeb1f2dadc6d7443d0bdd3a211dec4d6958a41b9a49"
+    },
+    "government-development-dmv-text": {
+      "sources": [
+        "Commercial vehicle registration fees, vehicle use taxes and supplemental fees#3_0",
+        "New York State Insurance Requirements#3_0",
+        "Replace license or permit#1_0",
+        "How insurance premium reduction works#3_0",
+        "Passenger vehicle registration fees, use taxes and supplemental fees#3_0",
+        "Temporary surrender of vehicle plates (store plates for a season)#3_0",
+        "Escort driver certification#1_0",
+        "File a Freedom of Information Law (FOIL) request#1_0",
+        "Get a motorcycle license#1_0",
+        "Escrow accounts#3_0",
+        "Get a  hazardous materials (HazMat) endorsement#3_0",
+        "Order picture and professional plates#1_0",
+        "Learn about picture and professional plates#3_0",
+        "Resources for non US citizens#3_0",
+        "Information about transaction entries#3_0",
+        "Medical Certification Requirements#3_0",
+        "Federal REAL ID#3_0",
+        "About complaints and charges for dealer and transporter businesses#3_0",
+        "Change name on title after lease buyout#3_0",
+        "Get a driver license#1_0",
+        "Automatic license and registration extension for military personnel#3_0",
+        "NYS Adventure License and Adventure Custom Plates#3_0",
+        "Sharing your information#3_0",
+        "Learn about personalized plates#3_0",
+        "Leandra's Law & ignition interlock devices#3_0"
+      ],
+      "questions": 114,
+      "format": "text",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 114
+      },
+      "sha256": "a01240f45fcdbc2b064538d71958db3bcaeb35b0720499ee7a78bc8562f4488b"
+    },
+    "government-development-dmv-markdown": {
+      "sources": [
+        "Commercial vehicle registration fees, vehicle use taxes and supplemental fees#3_0",
+        "New York State Insurance Requirements#3_0",
+        "Replace license or permit#1_0",
+        "How insurance premium reduction works#3_0",
+        "Passenger vehicle registration fees, use taxes and supplemental fees#3_0",
+        "Temporary surrender of vehicle plates (store plates for a season)#3_0",
+        "Escort driver certification#1_0",
+        "File a Freedom of Information Law (FOIL) request#1_0",
+        "Get a motorcycle license#1_0",
+        "Escrow accounts#3_0",
+        "Get a  hazardous materials (HazMat) endorsement#3_0",
+        "Order picture and professional plates#1_0",
+        "Learn about picture and professional plates#3_0",
+        "Resources for non US citizens#3_0",
+        "Information about transaction entries#3_0",
+        "Medical Certification Requirements#3_0",
+        "Federal REAL ID#3_0",
+        "About complaints and charges for dealer and transporter businesses#3_0",
+        "Change name on title after lease buyout#3_0",
+        "Get a driver license#1_0",
+        "Automatic license and registration extension for military personnel#3_0",
+        "NYS Adventure License and Adventure Custom Plates#3_0",
+        "Sharing your information#3_0",
+        "Learn about personalized plates#3_0",
+        "Leandra's Law & ignition interlock devices#3_0"
+      ],
+      "questions": 114,
+      "format": "markdown",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 114
+      },
+      "sha256": "0e9165d1ba21d03e2d6a7e2185ec15fa7fcd2610c6b8e6f2919d93378118ed68"
+    },
+    "government-development-studentaid-html": {
+      "sources": [
+        "Understanding College Costs | Federal Student Aid#1_0",
+        "Parent PLUS Loans | Federal Student Aid#1_0",
+        "IT Standards Library | Federal Student Aid#1_0",
+        "Contracting Information | Federal Student Aid#1_0",
+        "Subsidized and Unsubsidized Loans | Federal Student Aid#1_0",
+        "Closed School Discharge | Federal Student Aid#1_0",
+        "Eligibility for Students with Criminal Convictions | Federal Student Aid#1_0",
+        "Aidan | The FSA Virtual Assistant | Federal Student Aid#1_0",
+        "Loan Servicers | Federal Student Aid#1_0",
+        "Unpaid Refund Discharge | Federal Student Aid#1_0",
+        "Loan Simulator | Federal Student Aid#1_0",
+        "Teacher Loan Forgiveness | Federal Student Aid#1_0",
+        "How to Correct or Update Your FAFSA® Application | Federal Student Aid#1_0",
+        "Link to Us | Federal Student Aid#1_0",
+        "Income-Sensitive Plan | Federal Student Aid#1_0",
+        "Get Temporary Relief | Federal Student Aid#1_0",
+        "Regaining Eligibility | Federal Student Aid#1_0",
+        "Understanding Delinquency and Default | Federal Student Aid#1_0",
+        "Staying Eligible | Federal Student Aid#1_0",
+        "Lower or Suspend Student Loan Payments | Federal Student Aid#1_0",
+        "Collections | Federal Student Aid#1_0",
+        "False Certification Discharge | Federal Student Aid#1_0",
+        "Choosing a School | Federal Student Aid#1_0",
+        "Loan Repayment Checklist | Federal Student Aid#1_0"
+      ],
+      "questions": 194,
+      "format": "html",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 194
+      },
+      "sha256": "6021beee6cfe3b21f8b94df503252d3595ed3cc5d629252f128d269c78b59a69"
+    },
+    "government-development-studentaid-text": {
+      "sources": [
+        "Understanding College Costs | Federal Student Aid#1_0",
+        "Parent PLUS Loans | Federal Student Aid#1_0",
+        "IT Standards Library | Federal Student Aid#1_0",
+        "Contracting Information | Federal Student Aid#1_0",
+        "Subsidized and Unsubsidized Loans | Federal Student Aid#1_0",
+        "Closed School Discharge | Federal Student Aid#1_0",
+        "Eligibility for Students with Criminal Convictions | Federal Student Aid#1_0",
+        "Aidan | The FSA Virtual Assistant | Federal Student Aid#1_0",
+        "Loan Servicers | Federal Student Aid#1_0",
+        "Unpaid Refund Discharge | Federal Student Aid#1_0",
+        "Loan Simulator | Federal Student Aid#1_0",
+        "Teacher Loan Forgiveness | Federal Student Aid#1_0",
+        "How to Correct or Update Your FAFSA® Application | Federal Student Aid#1_0",
+        "Link to Us | Federal Student Aid#1_0",
+        "Income-Sensitive Plan | Federal Student Aid#1_0",
+        "Get Temporary Relief | Federal Student Aid#1_0",
+        "Regaining Eligibility | Federal Student Aid#1_0",
+        "Understanding Delinquency and Default | Federal Student Aid#1_0",
+        "Staying Eligible | Federal Student Aid#1_0",
+        "Lower or Suspend Student Loan Payments | Federal Student Aid#1_0",
+        "Collections | Federal Student Aid#1_0",
+        "False Certification Discharge | Federal Student Aid#1_0",
+        "Choosing a School | Federal Student Aid#1_0",
+        "Loan Repayment Checklist | Federal Student Aid#1_0"
+      ],
+      "questions": 194,
+      "format": "text",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 194
+      },
+      "sha256": "6d019c12acb2edc172ce01e8a79cac0506499b24c9a0213e0f54da8bf13996a5"
+    },
+    "government-development-studentaid-markdown": {
+      "sources": [
+        "Understanding College Costs | Federal Student Aid#1_0",
+        "Parent PLUS Loans | Federal Student Aid#1_0",
+        "IT Standards Library | Federal Student Aid#1_0",
+        "Contracting Information | Federal Student Aid#1_0",
+        "Subsidized and Unsubsidized Loans | Federal Student Aid#1_0",
+        "Closed School Discharge | Federal Student Aid#1_0",
+        "Eligibility for Students with Criminal Convictions | Federal Student Aid#1_0",
+        "Aidan | The FSA Virtual Assistant | Federal Student Aid#1_0",
+        "Loan Servicers | Federal Student Aid#1_0",
+        "Unpaid Refund Discharge | Federal Student Aid#1_0",
+        "Loan Simulator | Federal Student Aid#1_0",
+        "Teacher Loan Forgiveness | Federal Student Aid#1_0",
+        "How to Correct or Update Your FAFSA® Application | Federal Student Aid#1_0",
+        "Link to Us | Federal Student Aid#1_0",
+        "Income-Sensitive Plan | Federal Student Aid#1_0",
+        "Get Temporary Relief | Federal Student Aid#1_0",
+        "Regaining Eligibility | Federal Student Aid#1_0",
+        "Understanding Delinquency and Default | Federal Student Aid#1_0",
+        "Staying Eligible | Federal Student Aid#1_0",
+        "Lower or Suspend Student Loan Payments | Federal Student Aid#1_0",
+        "Collections | Federal Student Aid#1_0",
+        "False Certification Discharge | Federal Student Aid#1_0",
+        "Choosing a School | Federal Student Aid#1_0",
+        "Loan Repayment Checklist | Federal Student Aid#1_0"
+      ],
+      "questions": 194,
+      "format": "markdown",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 194
+      },
+      "sha256": "cbb2066e83dfc7abacd2723534d1e052826b97e22378525296fdc39af7b4e8e0"
+    },
+    "faq-development-published": {
+      "sources": [
+        "rclone",
+        "pnpm",
+        "jellyfin"
+      ],
+      "questions": 26,
+      "format": "markdown",
+      "pool": "manuals",
+      "byEvidence": {
+        "published": 26
+      },
+      "sha256": "d2d1b8d71b5443a4ff380d61130284988dd2315cb6a71733a2f290fd8dd0efc9"
+    },
+    "faq-development-masked": {
+      "sources": [
+        "rclone",
+        "pnpm",
+        "jellyfin"
+      ],
+      "questions": 26,
+      "format": "markdown",
+      "pool": "manuals",
+      "byEvidence": {
+        "published": 26
+      },
+      "sha256": "807fdb3c75a4545958d4dcf062365b873a429c1371b50546bd5af6506a849863"
+    },
+    "papers-development-0": {
+      "sources": [
+        "1811.12254",
+        "1903.07406",
+        "1610.07809",
+        "1610.00956",
+        "1806.04511",
+        "1909.06162",
+        "2003.08380",
+        "2002.01320"
+      ],
+      "questions": 21,
+      "format": "markdown",
+      "pool": "document",
+      "byEvidence": {
+        "paper": 21
+      },
+      "sha256": "1f3ff24b3c414196b695769702d62c7bf7b98d475111f0bf71b4182ad254958d"
+    },
+    "papers-development-1": {
+      "sources": [
+        "1912.01852",
+        "1809.03449",
+        "2003.03014",
+        "2003.11645",
+        "1910.14076",
+        "1911.02855",
+        "1906.01081",
+        "1909.00175"
+      ],
+      "questions": 22,
+      "format": "markdown",
+      "pool": "document",
+      "byEvidence": {
+        "paper": 22
+      },
+      "sha256": "bf0f114a76342f60262121066e200885918da7f9858f417d232a0767051eb953"
+    },
+    "papers-development-2": {
+      "sources": [
+        "1706.00139",
+        "1910.12795",
+        "1903.03530",
+        "1909.10012",
+        "1908.06941",
+        "1808.09029",
+        "2004.02192",
+        "1811.00383"
+      ],
+      "questions": 23,
+      "format": "markdown",
+      "pool": "document",
+      "byEvidence": {
+        "paper": 23
+      },
+      "sha256": "7c409533a58874444123e04f055e59a1b77afb7750935d182dad2b4393e2a80e"
+    },
+    "papers-development-3": {
+      "sources": [
+        "1701.08229",
+        "1912.00903",
+        "2001.08868",
+        "1909.09551",
+        "1909.00326",
+        "1908.01294",
+        "1811.08603",
+        "1808.10245"
+      ],
+      "questions": 22,
+      "format": "markdown",
+      "pool": "document",
+      "byEvidence": {
+        "paper": 22
+      },
+      "sha256": "10070b04cd7c99f5e07493a636fa09f2328e105a7d87871e7a2c3ec649a9c771"
+    },
+    "papers-development-4": {
+      "sources": [
+        "1908.07195",
+        "1707.05236",
+        "1908.06267",
+        "1705.01265",
+        "1911.03343",
+        "1912.08904",
+        "1907.06292",
+        "1609.00425"
+      ],
+      "questions": 22,
+      "format": "markdown",
+      "pool": "document",
+      "byEvidence": {
+        "paper": 22
+      },
+      "sha256": "3c1060b6b1a037d2104581e6e8b9b80cbfb90339bef93e9faa7ef04f0b9d3382"
+    },
+    "papers-development-5": {
+      "sources": [
+        "1609.00559",
+        "2003.03106",
+        "2004.04721",
+        "1910.08293",
+        "1907.01468",
+        "1705.04153",
+        "1611.08661",
+        "1910.09982"
+      ],
+      "questions": 25,
+      "format": "markdown",
+      "pool": "document",
+      "byEvidence": {
+        "paper": 25
+      },
+      "sha256": "1fba0c9bc04da9bc64594870130e702bf79fbc9c3478c9a18817a203cca49d38"
+    },
+    "papers-development-6": {
+      "sources": [
+        "1709.07814",
+        "1709.05036",
+        "1802.00396",
+        "1909.04002",
+        "2003.11562",
+        "1909.00512",
+        "1703.10344",
+        "1906.00790"
+      ],
+      "questions": 19,
+      "format": "markdown",
+      "pool": "document",
+      "byEvidence": {
+        "paper": 19
+      },
+      "sha256": "140196494055e942e6066cfac3fe062ae861d39f64be14ef95e95568b4f9e6c3"
+    },
+    "papers-development-7": {
+      "sources": [
+        "1804.07789",
+        "1805.10824",
+        "1912.01214",
+        "1608.08188",
+        "1802.08636",
+        "1909.02304",
+        "1908.07245",
+        "1706.01678"
+      ],
+      "questions": 27,
+      "format": "markdown",
+      "pool": "document",
+      "byEvidence": {
+        "paper": 27
+      },
+      "sha256": "35adf45fbe4d8942c3ceac29a4dbc4ffaab391df188a05e5bde88f6d2f55e873"
+    },
+    "government-confirmation-ssa-html": {
+      "sources": [
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#3_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#4_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#7_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#10_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#11_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#14_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#17_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#19_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#20_0",
+        "How To Apply For Social Security Disability Benefits#1_0",
+        "How To Apply For Social Security Disability Benefits#3_0",
+        "Benefits Planner: Disability | Social Security Administration#1_0",
+        "my Social Security | Create an Account | Social Security Administratio#1_0",
+        "my Social Security | Create an Account | Social Security Administratio#2_0",
+        "Benefits Planner: Retirement | You Can Apply For Retirement Benefits Or Medicare | Social Security Administration#2_0",
+        "Medicare Benefits | Social Security Administration#2_0",
+        "Learn About Retirement Benefits | SSA#1_0",
+        "Benefits Planner | Social Security Credits and Benefit Eligibility | SSA#1_0",
+        "Benefits Planner | Social Security Credits and Benefit Eligibility | SSA#2_0",
+        "Apply for Retirement Benefits | SSA#1_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#4_0_1",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#4_0_1_2",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#7_0_1_2",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#10_0_1"
+      ],
+      "questions": 90,
+      "format": "html",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 90
+      },
+      "sha256": "b1a1e09a399bb29872d84bab6345a48bdf053cb833c724505586966dc267fd80"
+    },
+    "government-confirmation-ssa-text": {
+      "sources": [
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#3_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#4_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#7_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#10_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#11_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#14_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#17_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#19_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#20_0",
+        "How To Apply For Social Security Disability Benefits#1_0",
+        "How To Apply For Social Security Disability Benefits#3_0",
+        "Benefits Planner: Disability | Social Security Administration#1_0",
+        "my Social Security | Create an Account | Social Security Administratio#1_0",
+        "my Social Security | Create an Account | Social Security Administratio#2_0",
+        "Benefits Planner: Retirement | You Can Apply For Retirement Benefits Or Medicare | Social Security Administration#2_0",
+        "Medicare Benefits | Social Security Administration#2_0",
+        "Learn About Retirement Benefits | SSA#1_0",
+        "Benefits Planner | Social Security Credits and Benefit Eligibility | SSA#1_0",
+        "Benefits Planner | Social Security Credits and Benefit Eligibility | SSA#2_0",
+        "Apply for Retirement Benefits | SSA#1_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#4_0_1",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#4_0_1_2",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#7_0_1_2",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#10_0_1"
+      ],
+      "questions": 90,
+      "format": "text",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 90
+      },
+      "sha256": "c72baf1d17cbbce1ee170931f673434618d63b9788c906c3d6e00ff1653bcf3e"
+    },
+    "government-confirmation-ssa-markdown": {
+      "sources": [
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#3_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#4_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#7_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#10_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#11_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#14_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#17_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#19_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#20_0",
+        "How To Apply For Social Security Disability Benefits#1_0",
+        "How To Apply For Social Security Disability Benefits#3_0",
+        "Benefits Planner: Disability | Social Security Administration#1_0",
+        "my Social Security | Create an Account | Social Security Administratio#1_0",
+        "my Social Security | Create an Account | Social Security Administratio#2_0",
+        "Benefits Planner: Retirement | You Can Apply For Retirement Benefits Or Medicare | Social Security Administration#2_0",
+        "Medicare Benefits | Social Security Administration#2_0",
+        "Learn About Retirement Benefits | SSA#1_0",
+        "Benefits Planner | Social Security Credits and Benefit Eligibility | SSA#1_0",
+        "Benefits Planner | Social Security Credits and Benefit Eligibility | SSA#2_0",
+        "Apply for Retirement Benefits | SSA#1_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#4_0_1",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#4_0_1_2",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#7_0_1_2",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#10_0_1"
+      ],
+      "questions": 90,
+      "format": "markdown",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 90
+      },
+      "sha256": "e75714648bec2f06f0da5f2d47f2336216bb3d223168d19f5a9fa5e6bf7b846f"
+    },
+    "government-confirmation-va-html": {
+      "sources": [
+        "Request Your Military Service Records | Veterans Affairs#1_0",
+        "VA Clothing Allowance | Veterans Affairs#1_0",
+        "Exposure To Specific Environmental Hazards | Veterans Affairs#1_0",
+        "How To Apply For The GI Bill | Veterans Affairs#1_0",
+        "Change Your GI Bill School Or Program | Veterans Affairs#1_0",
+        "Check Your VA Claim Or Appeal Status | Veterans Affairs#1_0",
+        "VA Housing Assistance | Veterans Affairs#1_0",
+        "VA Housing Assistance | Veterans Affairs#2_0",
+        "Aid And Attendance Benefits And Housebound Allowance | VA.gov#1_0",
+        "Employment Benefits For Dependent Family Members | Veterans Affairs#1_0",
+        "Get Your VA Medical Records Online | Veterans Affairs#1_0",
+        "Eligibility For VA Health Care | Veterans Affairs#1_0",
+        "Your Health Care Costs | Veterans Affairs#1_0",
+        "Educational And Career Counseling (VA Chapter 36) | Veterans Affairs#1_0",
+        "VA Pension Benefits | Veterans Affairs#1_0",
+        "VA Pension Benefits | Veterans Affairs#2_0",
+        "Family Group Life Insurance (FSGLI) | Veterans Affairs#1_0",
+        "Eligibility For Veterans Pension | Veterans Affairs#1_0",
+        "Yellow Ribbon Program | Veterans Affairs#1_0",
+        "About VA Insurance Options And Eligibility | Veterans Affairs#1_0",
+        "Frequently asked questions about decision reviews | Veterans Affairs#1_0",
+        "Montgomery GI Bill Active Duty (MGIB-AD) | Veterans Affairs#1_0",
+        "Get A Veteran Health Identification Card (VHIC) | Veterans Affairs#1_0",
+        "Types Of Veteran ID Cards | Veterans Affairs#1_0",
+        "Request a Higher-Level Review | Veterans Affairs#1_0",
+        "Temporary Disability Rating After Surgery Or Cast | Veterans Affairs#1_0",
+        "VA Survivors Pension | Veterans Affairs#1_0",
+        "File a Supplemental Claim with new evidence | Veterans Affairs#1_0",
+        "Mustard Gas Or Lewisite Exposure | Veterans Affairs#1_0",
+        "Veteran Suicide Prevention | Veterans Affairs#1_0",
+        "GI Bill Eligibility | Veterans Affairs#1_0",
+        "Schedule A Burial For A Veteran Or Family Member | Veterans Affairs#1_0",
+        "Your VA Primary Care Provider | Veterans Affairs#1_0"
+      ],
+      "questions": 164,
+      "format": "html",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 164
+      },
+      "sha256": "5d6fa2d918d778ab4cd51d378c3154170d289dfaa44a2c06ed3c7dc00f018438"
+    },
+    "government-confirmation-va-text": {
+      "sources": [
+        "Request Your Military Service Records | Veterans Affairs#1_0",
+        "VA Clothing Allowance | Veterans Affairs#1_0",
+        "Exposure To Specific Environmental Hazards | Veterans Affairs#1_0",
+        "How To Apply For The GI Bill | Veterans Affairs#1_0",
+        "Change Your GI Bill School Or Program | Veterans Affairs#1_0",
+        "Check Your VA Claim Or Appeal Status | Veterans Affairs#1_0",
+        "VA Housing Assistance | Veterans Affairs#1_0",
+        "VA Housing Assistance | Veterans Affairs#2_0",
+        "Aid And Attendance Benefits And Housebound Allowance | VA.gov#1_0",
+        "Employment Benefits For Dependent Family Members | Veterans Affairs#1_0",
+        "Get Your VA Medical Records Online | Veterans Affairs#1_0",
+        "Eligibility For VA Health Care | Veterans Affairs#1_0",
+        "Your Health Care Costs | Veterans Affairs#1_0",
+        "Educational And Career Counseling (VA Chapter 36) | Veterans Affairs#1_0",
+        "VA Pension Benefits | Veterans Affairs#1_0",
+        "VA Pension Benefits | Veterans Affairs#2_0",
+        "Family Group Life Insurance (FSGLI) | Veterans Affairs#1_0",
+        "Eligibility For Veterans Pension | Veterans Affairs#1_0",
+        "Yellow Ribbon Program | Veterans Affairs#1_0",
+        "About VA Insurance Options And Eligibility | Veterans Affairs#1_0",
+        "Frequently asked questions about decision reviews | Veterans Affairs#1_0",
+        "Montgomery GI Bill Active Duty (MGIB-AD) | Veterans Affairs#1_0",
+        "Get A Veteran Health Identification Card (VHIC) | Veterans Affairs#1_0",
+        "Types Of Veteran ID Cards | Veterans Affairs#1_0",
+        "Request a Higher-Level Review | Veterans Affairs#1_0",
+        "Temporary Disability Rating After Surgery Or Cast | Veterans Affairs#1_0",
+        "VA Survivors Pension | Veterans Affairs#1_0",
+        "File a Supplemental Claim with new evidence | Veterans Affairs#1_0",
+        "Mustard Gas Or Lewisite Exposure | Veterans Affairs#1_0",
+        "Veteran Suicide Prevention | Veterans Affairs#1_0",
+        "GI Bill Eligibility | Veterans Affairs#1_0",
+        "Schedule A Burial For A Veteran Or Family Member | Veterans Affairs#1_0",
+        "Your VA Primary Care Provider | Veterans Affairs#1_0"
+      ],
+      "questions": 164,
+      "format": "text",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 164
+      },
+      "sha256": "e74eeb46b6b410f3189219634bf61335529b7637223398592626744a1062ea9d"
+    },
+    "government-confirmation-va-markdown": {
+      "sources": [
+        "Request Your Military Service Records | Veterans Affairs#1_0",
+        "VA Clothing Allowance | Veterans Affairs#1_0",
+        "Exposure To Specific Environmental Hazards | Veterans Affairs#1_0",
+        "How To Apply For The GI Bill | Veterans Affairs#1_0",
+        "Change Your GI Bill School Or Program | Veterans Affairs#1_0",
+        "Check Your VA Claim Or Appeal Status | Veterans Affairs#1_0",
+        "VA Housing Assistance | Veterans Affairs#1_0",
+        "VA Housing Assistance | Veterans Affairs#2_0",
+        "Aid And Attendance Benefits And Housebound Allowance | VA.gov#1_0",
+        "Employment Benefits For Dependent Family Members | Veterans Affairs#1_0",
+        "Get Your VA Medical Records Online | Veterans Affairs#1_0",
+        "Eligibility For VA Health Care | Veterans Affairs#1_0",
+        "Your Health Care Costs | Veterans Affairs#1_0",
+        "Educational And Career Counseling (VA Chapter 36) | Veterans Affairs#1_0",
+        "VA Pension Benefits | Veterans Affairs#1_0",
+        "VA Pension Benefits | Veterans Affairs#2_0",
+        "Family Group Life Insurance (FSGLI) | Veterans Affairs#1_0",
+        "Eligibility For Veterans Pension | Veterans Affairs#1_0",
+        "Yellow Ribbon Program | Veterans Affairs#1_0",
+        "About VA Insurance Options And Eligibility | Veterans Affairs#1_0",
+        "Frequently asked questions about decision reviews | Veterans Affairs#1_0",
+        "Montgomery GI Bill Active Duty (MGIB-AD) | Veterans Affairs#1_0",
+        "Get A Veteran Health Identification Card (VHIC) | Veterans Affairs#1_0",
+        "Types Of Veteran ID Cards | Veterans Affairs#1_0",
+        "Request a Higher-Level Review | Veterans Affairs#1_0",
+        "Temporary Disability Rating After Surgery Or Cast | Veterans Affairs#1_0",
+        "VA Survivors Pension | Veterans Affairs#1_0",
+        "File a Supplemental Claim with new evidence | Veterans Affairs#1_0",
+        "Mustard Gas Or Lewisite Exposure | Veterans Affairs#1_0",
+        "Veteran Suicide Prevention | Veterans Affairs#1_0",
+        "GI Bill Eligibility | Veterans Affairs#1_0",
+        "Schedule A Burial For A Veteran Or Family Member | Veterans Affairs#1_0",
+        "Your VA Primary Care Provider | Veterans Affairs#1_0"
+      ],
+      "questions": 164,
+      "format": "markdown",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 164
+      },
+      "sha256": "44abc7b35f686b54bb246a09d64f731f1e681cb2e9ac9d4e013a382100c0ea44"
+    },
+    "government-confirmation-dmv-html": {
+      "sources": [
+        "Registrations#3_0",
+        "Refunds and transfer credits for surrendered plates#3_0",
+        "Appeal a TVB ticket conviction#1_0",
+        "Top 5 DMV Mistakes and How to Avoid Them#3_0",
+        "Surrender (return or turn in) your plates to the DMV#3_0",
+        "DIAL-IN search accounts#3_0",
+        "About complaints and charges for repair and body shops#3_0",
+        "Schedule and take a road test#1_0",
+        "About the NYS Driver Point System#3_0",
+        "Open an inspection station#1_0",
+        "Insurance lapses#3_0",
+        "How to replace a registration#1_0",
+        "Respond to DMV insurance letters and orders#3_0",
+        "Moving to NY#3_0",
+        "Get an Accident Report#1_0",
+        "Register a snowmobile#1_0",
+        "Pay insurance lapse civil penalty#1_0",
+        "Lost, stolen, or destroyed plates#3_0",
+        "NY State Adventure License FAQs#3_0",
+        "Driver license and learner permit fees and refunds#3_0",
+        "How to renew a registration#1_0",
+        "Restore license after revocation#1_0",
+        "In-transit vehicle permits (temporary registrations)#3_0",
+        "Let the Buyer be Aware#3_0",
+        "If a family member has died#3_0"
+      ],
+      "questions": 92,
+      "format": "html",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 92
+      },
+      "sha256": "41725ef0259d4aef0e58add492618f98ac19102a29da9bd162d7db9ba0859902"
+    },
+    "government-confirmation-dmv-text": {
+      "sources": [
+        "Registrations#3_0",
+        "Refunds and transfer credits for surrendered plates#3_0",
+        "Appeal a TVB ticket conviction#1_0",
+        "Top 5 DMV Mistakes and How to Avoid Them#3_0",
+        "Surrender (return or turn in) your plates to the DMV#3_0",
+        "DIAL-IN search accounts#3_0",
+        "About complaints and charges for repair and body shops#3_0",
+        "Schedule and take a road test#1_0",
+        "About the NYS Driver Point System#3_0",
+        "Open an inspection station#1_0",
+        "Insurance lapses#3_0",
+        "How to replace a registration#1_0",
+        "Respond to DMV insurance letters and orders#3_0",
+        "Moving to NY#3_0",
+        "Get an Accident Report#1_0",
+        "Register a snowmobile#1_0",
+        "Pay insurance lapse civil penalty#1_0",
+        "Lost, stolen, or destroyed plates#3_0",
+        "NY State Adventure License FAQs#3_0",
+        "Driver license and learner permit fees and refunds#3_0",
+        "How to renew a registration#1_0",
+        "Restore license after revocation#1_0",
+        "In-transit vehicle permits (temporary registrations)#3_0",
+        "Let the Buyer be Aware#3_0",
+        "If a family member has died#3_0"
+      ],
+      "questions": 92,
+      "format": "text",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 92
+      },
+      "sha256": "956e2d0fbf76d6743c955bb18db322767fd0ba45bc5e47c75098f8cd8ade3fe7"
+    },
+    "government-confirmation-dmv-markdown": {
+      "sources": [
+        "Registrations#3_0",
+        "Refunds and transfer credits for surrendered plates#3_0",
+        "Appeal a TVB ticket conviction#1_0",
+        "Top 5 DMV Mistakes and How to Avoid Them#3_0",
+        "Surrender (return or turn in) your plates to the DMV#3_0",
+        "DIAL-IN search accounts#3_0",
+        "About complaints and charges for repair and body shops#3_0",
+        "Schedule and take a road test#1_0",
+        "About the NYS Driver Point System#3_0",
+        "Open an inspection station#1_0",
+        "Insurance lapses#3_0",
+        "How to replace a registration#1_0",
+        "Respond to DMV insurance letters and orders#3_0",
+        "Moving to NY#3_0",
+        "Get an Accident Report#1_0",
+        "Register a snowmobile#1_0",
+        "Pay insurance lapse civil penalty#1_0",
+        "Lost, stolen, or destroyed plates#3_0",
+        "NY State Adventure License FAQs#3_0",
+        "Driver license and learner permit fees and refunds#3_0",
+        "How to renew a registration#1_0",
+        "Restore license after revocation#1_0",
+        "In-transit vehicle permits (temporary registrations)#3_0",
+        "Let the Buyer be Aware#3_0",
+        "If a family member has died#3_0"
+      ],
+      "questions": 92,
+      "format": "markdown",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 92
+      },
+      "sha256": "480d30f2d641d8f26148e40ffed3567d093965ae96c05e16b2f6cece2e2cf334"
+    },
+    "government-confirmation-studentaid-html": {
+      "sources": [
+        "Preparing for College | Federal Student Aid#1_0",
+        "Student Loan Deferment | Federal Student Aid#1_0",
+        "How to Review and Correct Your FAFSA® Application | Federal Student Aid#1_0",
+        "Student Loan Forbearance | Federal Student Aid#1_0",
+        "Getting Out of Default | Federal Student Aid#1_0",
+        "Dependency Status | Federal Student Aid#1_0",
+        "Student Aid Report | Federal Student Aid#1_0",
+        "Income-Driven Repayment Plans | Federal Student Aid#1_0",
+        "Grants | Federal Student Aid#1_0",
+        "Eligibility for Non-U.S. Citizens | Federal Student Aid#1_0",
+        "Accepting Aid | Federal Student Aid#1_0",
+        "Receiving Financial Aid | Federal Student Aid#1_0",
+        "Perkins Loan Cancellation and Discharge | Federal Student Aid#1_0",
+        "Student Loan Consolidation | Federal Student Aid#1_0",
+        "Extended Plan | Federal Student Aid#1_0",
+        "Eligibility Requirements | Federal Student Aid#1_0",
+        "Loans | Federal Student Aid#1_0",
+        "Make a Student Loan Payment | Federal Student Aid#1_0",
+        "Aid for Military Families | Federal Student Aid#1_0",
+        "Listing Colleges on the FAFSA® Form | Federal Student Aid#1_0",
+        "Borrower Defense to Repayment | Federal Student Aid#1_0",
+        "Filling Out the FAFSA® Form | Federal Student Aid#1_0",
+        "Tax Benefits for Higher Education | Federal Student Aid#1_0",
+        "Financial Aid Eligibility | Federal Student Aid#1_0",
+        "Questions and Answers About FAFSA® Completion Data | Federal Student Aid#1_0",
+        "Reporting Parent Information | Federal Student Aid#1_0",
+        "Total and Permanent Disability Discharge | Federal Student Aid#1_0"
+      ],
+      "questions": 191,
+      "format": "html",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 191
+      },
+      "sha256": "3bc84bba464284c99723b7f1a7bf95415ca3425b97e4ff7e2a279e4599b6e31e"
+    },
+    "government-confirmation-studentaid-text": {
+      "sources": [
+        "Preparing for College | Federal Student Aid#1_0",
+        "Student Loan Deferment | Federal Student Aid#1_0",
+        "How to Review and Correct Your FAFSA® Application | Federal Student Aid#1_0",
+        "Student Loan Forbearance | Federal Student Aid#1_0",
+        "Getting Out of Default | Federal Student Aid#1_0",
+        "Dependency Status | Federal Student Aid#1_0",
+        "Student Aid Report | Federal Student Aid#1_0",
+        "Income-Driven Repayment Plans | Federal Student Aid#1_0",
+        "Grants | Federal Student Aid#1_0",
+        "Eligibility for Non-U.S. Citizens | Federal Student Aid#1_0",
+        "Accepting Aid | Federal Student Aid#1_0",
+        "Receiving Financial Aid | Federal Student Aid#1_0",
+        "Perkins Loan Cancellation and Discharge | Federal Student Aid#1_0",
+        "Student Loan Consolidation | Federal Student Aid#1_0",
+        "Extended Plan | Federal Student Aid#1_0",
+        "Eligibility Requirements | Federal Student Aid#1_0",
+        "Loans | Federal Student Aid#1_0",
+        "Make a Student Loan Payment | Federal Student Aid#1_0",
+        "Aid for Military Families | Federal Student Aid#1_0",
+        "Listing Colleges on the FAFSA® Form | Federal Student Aid#1_0",
+        "Borrower Defense to Repayment | Federal Student Aid#1_0",
+        "Filling Out the FAFSA® Form | Federal Student Aid#1_0",
+        "Tax Benefits for Higher Education | Federal Student Aid#1_0",
+        "Financial Aid Eligibility | Federal Student Aid#1_0",
+        "Questions and Answers About FAFSA® Completion Data | Federal Student Aid#1_0",
+        "Reporting Parent Information | Federal Student Aid#1_0",
+        "Total and Permanent Disability Discharge | Federal Student Aid#1_0"
+      ],
+      "questions": 191,
+      "format": "text",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 191
+      },
+      "sha256": "4d4b8ee86344ec07e221ca9f5cb9eacfa059e24f94a7d8a184fd6acc23966ce4"
+    },
+    "government-confirmation-studentaid-markdown": {
+      "sources": [
+        "Preparing for College | Federal Student Aid#1_0",
+        "Student Loan Deferment | Federal Student Aid#1_0",
+        "How to Review and Correct Your FAFSA® Application | Federal Student Aid#1_0",
+        "Student Loan Forbearance | Federal Student Aid#1_0",
+        "Getting Out of Default | Federal Student Aid#1_0",
+        "Dependency Status | Federal Student Aid#1_0",
+        "Student Aid Report | Federal Student Aid#1_0",
+        "Income-Driven Repayment Plans | Federal Student Aid#1_0",
+        "Grants | Federal Student Aid#1_0",
+        "Eligibility for Non-U.S. Citizens | Federal Student Aid#1_0",
+        "Accepting Aid | Federal Student Aid#1_0",
+        "Receiving Financial Aid | Federal Student Aid#1_0",
+        "Perkins Loan Cancellation and Discharge | Federal Student Aid#1_0",
+        "Student Loan Consolidation | Federal Student Aid#1_0",
+        "Extended Plan | Federal Student Aid#1_0",
+        "Eligibility Requirements | Federal Student Aid#1_0",
+        "Loans | Federal Student Aid#1_0",
+        "Make a Student Loan Payment | Federal Student Aid#1_0",
+        "Aid for Military Families | Federal Student Aid#1_0",
+        "Listing Colleges on the FAFSA® Form | Federal Student Aid#1_0",
+        "Borrower Defense to Repayment | Federal Student Aid#1_0",
+        "Filling Out the FAFSA® Form | Federal Student Aid#1_0",
+        "Tax Benefits for Higher Education | Federal Student Aid#1_0",
+        "Financial Aid Eligibility | Federal Student Aid#1_0",
+        "Questions and Answers About FAFSA® Completion Data | Federal Student Aid#1_0",
+        "Reporting Parent Information | Federal Student Aid#1_0",
+        "Total and Permanent Disability Discharge | Federal Student Aid#1_0"
+      ],
+      "questions": 191,
+      "format": "markdown",
+      "pool": "agency",
+      "byEvidence": {
+        "published": 191
+      },
+      "sha256": "145977dd8d9e9545902894a3a67fdc1a05c75bbc6c1da29cc4f5b52e639abaa8"
+    },
+    "faq-confirmation-published": {
+      "sources": [
+        "docker",
+        "pandoc",
+        "cargo"
+      ],
+      "questions": 35,
+      "format": "markdown",
+      "pool": "manuals",
+      "byEvidence": {
+        "published": 35
+      },
+      "sha256": "ed1d4d0ab137772d08860c118418cd8a48e4845992eb3ee7b153591f9bfcab43"
+    },
+    "faq-confirmation-masked": {
+      "sources": [
+        "docker",
+        "pandoc",
+        "cargo"
+      ],
+      "questions": 35,
+      "format": "markdown",
+      "pool": "manuals",
+      "byEvidence": {
+        "published": 35
+      },
+      "sha256": "9f9018ac5d41e606e5235f15fd896e320eb4af7215d6213d7e967579d7d007a0"
+    },
+    "papers-confirmation-0": {
+      "sources": [
+        "1704.04452",
+        "1910.06036",
+        "1810.08699",
+        "1908.09246",
+        "2001.07786",
+        "1911.07555",
+        "1605.06083",
+        "1910.14537"
+      ],
+      "questions": 28,
+      "format": "markdown",
+      "pool": "document",
+      "byEvidence": {
+        "paper": 28
+      },
+      "sha256": "da514692b15a8a3e16ba22484050d3dca5e8d4df2f6a105790e1212e15ca8653"
+    },
+    "papers-confirmation-1": {
+      "sources": [
+        "1908.08345",
+        "2002.12612",
+        "1911.03059",
+        "1912.08960",
+        "1707.03569",
+        "1810.04428",
+        "1606.03676",
+        "1806.00738"
+      ],
+      "questions": 23,
+      "format": "markdown",
+      "pool": "document",
+      "byEvidence": {
+        "paper": 23
+      },
+      "sha256": "47ff656c8dc8af9e1df7daed4cae0c9252c913820547221f1a647b2eaf8ecabf"
+    },
+    "papers-confirmation-2": {
+      "sources": [
+        "1911.01371",
+        "1909.05359",
+        "1906.07662",
+        "1812.06864",
+        "1810.04635",
+        "1811.05711",
+        "1805.01445",
+        "1909.00015"
+      ],
+      "questions": 17,
+      "format": "markdown",
+      "pool": "document",
+      "byEvidence": {
+        "paper": 17
+      },
+      "sha256": "fd7239f0dbbf6d8db0d2701bf7af0761c96e74648ef097bc0e81f21454684edb"
+    },
+    "papers-confirmation-3": {
+      "sources": [
+        "1910.14599",
+        "1710.03348",
+        "1809.09194",
+        "1906.01040",
+        "1803.05223",
+        "1804.00720",
+        "1605.03481",
+        "2004.03354"
+      ],
+      "questions": 19,
+      "format": "markdown",
+      "pool": "document",
+      "byEvidence": {
+        "paper": 19
+      },
+      "sha256": "bfe729c0d80b1fe19d9fea3d1b65b95b0db598c6b9bc1ff62b5a0cb62c66d39a"
+    },
+    "papers-confirmation-4": {
+      "sources": [
+        "1909.11687",
+        "1702.03856",
+        "1702.03342",
+        "2002.11910",
+        "1906.10225",
+        "1908.04042",
+        "2004.01853",
+        "1712.05608"
+      ],
+      "questions": 24,
+      "format": "markdown",
+      "pool": "document",
+      "byEvidence": {
+        "paper": 24
+      },
+      "sha256": "996c3739590203b63de6dd233a90dd452a0edbdfdeb872d26df55dc32a3d2538"
+    },
+    "papers-confirmation-5": {
+      "sources": [
+        "1810.12091",
+        "1904.10503",
+        "1809.04267",
+        "1912.06262",
+        "1708.06185",
+        "1909.00105",
+        "1903.11283",
+        "1809.02286"
+      ],
+      "questions": 18,
+      "format": "markdown",
+      "pool": "document",
+      "byEvidence": {
+        "paper": 18
+      },
+      "sha256": "1ea28fce208182e67ec88cc8f3ed273a76828b14fab86099b139ee0ba9c207dd"
+    },
+    "papers-confirmation-6": {
+      "sources": [
+        "1806.11432",
+        "2003.11563",
+        "1911.06964",
+        "1908.10084",
+        "1601.02403",
+        "1912.00667",
+        "1907.09369",
+        "1809.06537"
+      ],
+      "questions": 31,
+      "format": "markdown",
+      "pool": "document",
+      "byEvidence": {
+        "paper": 31
+      },
+      "sha256": "2b9843c1d137e5770c8b60dee04532a08bfb9db9e74a9ea86d97f104384dd724"
+    },
+    "papers-confirmation-7": {
+      "sources": [
+        "1904.04358",
+        "1611.03599",
+        "1706.01875",
+        "2002.08795",
+        "1806.05513",
+        "2003.04642",
+        "2002.04181",
+        "2002.03407"
+      ],
+      "questions": 33,
+      "format": "markdown",
+      "pool": "document",
+      "byEvidence": {
+        "paper": 33
+      },
+      "sha256": "e1bd1d5265b10a32173ad0a05612eb3de4d97495f6e0f05b233b410f9299b6fe"
+    },
+    "faq-fresh-published": {
+      "sources": [
+        "vue",
+        "poetry",
+        "ruff"
+      ],
+      "questions": 44,
+      "format": "markdown",
+      "pool": "manuals",
+      "byEvidence": {
+        "published": 44
+      },
+      "sha256": "b941ed562796aa8622391a39ee78dd321837810ee28797058fa1838749941e1c"
+    },
+    "faq-fresh-masked": {
+      "sources": [
+        "vue",
+        "poetry",
+        "ruff"
+      ],
+      "questions": 44,
+      "format": "markdown",
+      "pool": "manuals",
+      "byEvidence": {
+        "published": 44
+      },
+      "sha256": "1f6c76591abcf0480712fd7d3a01627cc855f2a6b1fdfc10aa467f54c90f3c74"
+    },
+    "finance-development-filing-3M_2018_10K": {
+      "sources": [
+        "3M_2018_10K"
+      ],
+      "questions": 2,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-3M_2018_10K",
+      "byEvidence": {
+        "table": 2
+      },
+      "sha256": "69b8231ad4666a386dcd8f6468dd64e1d45b50388668168aca3bbc4a4087b2fe"
+    },
+    "finance-development-filing-3M_2022_10K": {
+      "sources": [
+        "3M_2022_10K"
+      ],
+      "questions": 3,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-3M_2022_10K",
+      "byEvidence": {
+        "table": 2,
+        "table+text": 1
+      },
+      "sha256": "4f7d85d228e4c43c9a933fdf714c4ddaecbed87d968d5f1e8a1fa0ee599b96c8"
+    },
+    "finance-development-filing-3M_2023Q2_10Q": {
+      "sources": [
+        "3M_2023Q2_10Q"
+      ],
+      "questions": 3,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-3M_2023Q2_10Q",
+      "byEvidence": {
+        "table": 2,
+        "text": 1
+      },
+      "sha256": "e497a4c64cbe5eca8d89ed388c5598f0db8e82307c786ac26cec52a55c65eeab"
+    },
+    "finance-development-filing-ACTIVISIONBLIZZARD_2019_10K": {
+      "sources": [
+        "ACTIVISIONBLIZZARD_2019_10K"
+      ],
+      "questions": 2,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-ACTIVISIONBLIZZARD_2019_10K",
+      "byEvidence": {
+        "table": 2
+      },
+      "sha256": "a8eff51e0bdb3c326e326afd8b289ea278edc705ac4bfdf14bb5f001e364c927"
+    },
+    "finance-development-filing-ADOBE_2015_10K": {
+      "sources": [
+        "ADOBE_2015_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-ADOBE_2015_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "f8bb19801c2a024a714091e7b5ccf058f65c9eea9fb1ec0d64407b5b892933f2"
+    },
+    "finance-development-filing-ADOBE_2016_10K": {
+      "sources": [
+        "ADOBE_2016_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-ADOBE_2016_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "c262acf9cb3b1fbd85fc72186fda9eeaa828c3d5e1bece8726c124ad7e86636b"
+    },
+    "finance-development-filing-ADOBE_2017_10K": {
+      "sources": [
+        "ADOBE_2017_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-ADOBE_2017_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "a4171d09a992e6628f37bf478ab23ce523819b184fae3b6af2be31b8e959c4fe"
+    },
+    "finance-development-filing-ADOBE_2022_10K": {
+      "sources": [
+        "ADOBE_2022_10K"
+      ],
+      "questions": 2,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-ADOBE_2022_10K",
+      "byEvidence": {
+        "table": 2
+      },
+      "sha256": "ed9d105170b8464dd6c76accdafce7b512932e16974935f976044a9885d9e2cb"
+    },
+    "finance-development-filing-AES_2022_10K": {
+      "sources": [
+        "AES_2022_10K"
+      ],
+      "questions": 2,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-AES_2022_10K",
+      "byEvidence": {
+        "table": 2
+      },
+      "sha256": "bfb2bdddf1d52812d88f2a027bd098f13d55c34b3f5f8552fd3c92cfb59aa2eb"
+    },
+    "finance-confirmation-filing-AMAZON_2017_10K": {
+      "sources": [
+        "AMAZON_2017_10K"
+      ],
+      "questions": 2,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-AMAZON_2017_10K",
+      "byEvidence": {
+        "table": 2
+      },
+      "sha256": "02d812996c466cf886a23a1e55baa8507e6c34f3eb64ea9545c02cfd4c5e1ea6"
+    },
+    "finance-confirmation-filing-AMAZON_2019_10K": {
+      "sources": [
+        "AMAZON_2019_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-AMAZON_2019_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "d3575fb21c011d3512de3aa58a03682139f0f1c5dd7aafcd0faa34894c97e512"
+    },
+    "finance-development-filing-AMCOR_2020_10K": {
+      "sources": [
+        "AMCOR_2020_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-AMCOR_2020_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "3e24c3c607e80044cdd3c26ddb9fbbe4326927a614a2f881f5f1112d012215c5"
+    },
+    "finance-development-filing-AMCOR_2022_8K_dated-2022-07-01": {
+      "sources": [
+        "AMCOR_2022_8K_dated-2022-07-01"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-AMCOR_2022_8K_dated-2022-07-01",
+      "byEvidence": {
+        "text": 1
+      },
+      "sha256": "606f46981143df049c145f0f48d0e5deebb60e40745fab60a94137572951fa0f"
+    },
+    "finance-development-filing-AMCOR_2023Q2_10Q": {
+      "sources": [
+        "AMCOR_2023Q2_10Q"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-AMCOR_2023Q2_10Q",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "609ae99a24caf72e7d4fe0b69cc312dfbe9f666605a0d0544d294bc60942763b"
+    },
+    "finance-development-filing-AMCOR_2023Q4_EARNINGS": {
+      "sources": [
+        "AMCOR_2023Q4_EARNINGS"
+      ],
+      "questions": 2,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-AMCOR_2023Q4_EARNINGS",
+      "byEvidence": {
+        "table": 2
+      },
+      "sha256": "c3746188ae9b2d7a038fb40710fc2540f6549d11ebe9ecf06f6dc50e8f6c03dd"
+    },
+    "finance-development-filing-AMCOR_2023_10K": {
+      "sources": [
+        "AMCOR_2023_10K"
+      ],
+      "questions": 4,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-AMCOR_2023_10K",
+      "byEvidence": {
+        "table": 2,
+        "text": 2
+      },
+      "sha256": "e76e2abe7f8ef13d50fafcf618bf0bcb5d629ea0e419a85ff5140702b776fdae"
+    },
+    "finance-confirmation-filing-AMD_2015_10K": {
+      "sources": [
+        "AMD_2015_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-AMD_2015_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "1a2342b56493474e2ba74c72544e59a861365e1b8f02c1b8b25768d15bdcacc5"
+    },
+    "finance-confirmation-filing-AMD_2022_10K": {
+      "sources": [
+        "AMD_2022_10K"
+      ],
+      "questions": 7,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-AMD_2022_10K",
+      "byEvidence": {
+        "table": 3,
+        "text": 4
+      },
+      "sha256": "eee729824cb97209e7d73125d1b701ecfa3d8bf4fd55a03222d9094787496f48"
+    },
+    "finance-development-filing-AMERICANEXPRESS_2022_10K": {
+      "sources": [
+        "AMERICANEXPRESS_2022_10K"
+      ],
+      "questions": 5,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-AMERICANEXPRESS_2022_10K",
+      "byEvidence": {
+        "table": 4,
+        "text": 1
+      },
+      "sha256": "38ae0e50c7690f2ad5a4b90b2c4a04ec4bafc2c211d2f83764223245e23ba540"
+    },
+    "finance-development-filing-AMERICANWATERWORKS_2020_10K": {
+      "sources": [
+        "AMERICANWATERWORKS_2020_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-AMERICANWATERWORKS_2020_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "85f350c05d9d5b453cb695eac50b5419c2ef170e5da4f6a69c22b34cfec87aa9"
+    },
+    "finance-development-filing-AMERICANWATERWORKS_2021_10K": {
+      "sources": [
+        "AMERICANWATERWORKS_2021_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-AMERICANWATERWORKS_2021_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "bedb90eb9607f26a24c2e955215f298fa4409ddb984570ec242f0e667849def4"
+    },
+    "finance-development-filing-AMERICANWATERWORKS_2022_10K": {
+      "sources": [
+        "AMERICANWATERWORKS_2022_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-AMERICANWATERWORKS_2022_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "ec1cc62e749e7c6f0405c132fa70d1d3a2fef4316392ab93c64a8a528331ac7c"
+    },
+    "finance-confirmation-filing-BESTBUY_2017_10K": {
+      "sources": [
+        "BESTBUY_2017_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-BESTBUY_2017_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "562bbf6515de1eda5877fc26a230ac2d8ee902d3662a39c390981511d8d1d9e7"
+    },
+    "finance-confirmation-filing-BESTBUY_2019_10K": {
+      "sources": [
+        "BESTBUY_2019_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-BESTBUY_2019_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "fcd243b7aaff69acff4093b943c8feb57721ce65acc3773274539b494585682c"
+    },
+    "finance-confirmation-filing-BESTBUY_2023_10K": {
+      "sources": [
+        "BESTBUY_2023_10K"
+      ],
+      "questions": 3,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-BESTBUY_2023_10K",
+      "byEvidence": {
+        "table": 2,
+        "text": 1
+      },
+      "sha256": "a14bfee2013ebac4ba6e2a88765a7621d941b1b5295ae2eee6eaf03b3081d1ca"
+    },
+    "finance-confirmation-filing-BESTBUY_2024Q2_10Q": {
+      "sources": [
+        "BESTBUY_2024Q2_10Q"
+      ],
+      "questions": 3,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-BESTBUY_2024Q2_10Q",
+      "byEvidence": {
+        "table": 2,
+        "text": 1
+      },
+      "sha256": "b623e0a182859e8729f3b0fdcabeba5493e9bf74c16cbc85564e4eaf84ab4ed4"
+    },
+    "finance-confirmation-filing-BLOCK_2016_10K": {
+      "sources": [
+        "BLOCK_2016_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-BLOCK_2016_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "4e47d5da9b431aad20271277d06b5d379c1b240f16f8c6e04a26f615ae379b5c"
+    },
+    "finance-confirmation-filing-BLOCK_2020_10K": {
+      "sources": [
+        "BLOCK_2020_10K"
+      ],
+      "questions": 2,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-BLOCK_2020_10K",
+      "byEvidence": {
+        "table": 2
+      },
+      "sha256": "2bace2ca2e434f5f4206e98e7bd111c365242eba97f320d864f25040de399f54"
+    },
+    "finance-confirmation-filing-BOEING_2018_10K": {
+      "sources": [
+        "BOEING_2018_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-BOEING_2018_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "e1210c4be8242de76be5f3f2a8f371b587b56952edaa1212b1b37e7489f4fee5"
+    },
+    "finance-confirmation-filing-BOEING_2022_10K": {
+      "sources": [
+        "BOEING_2022_10K"
+      ],
+      "questions": 6,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-BOEING_2022_10K",
+      "byEvidence": {
+        "table": 2,
+        "text": 4
+      },
+      "sha256": "71528d51c85d38a48941a203a7f67f2cf43b26ffd6fe9491179e6485e1b907e9"
+    },
+    "finance-confirmation-filing-COCACOLA_2017_10K": {
+      "sources": [
+        "COCACOLA_2017_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-COCACOLA_2017_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "5619aa0741980eafc6bb9eabb2a06aa6ab82bc97c95f1a9507edbce0724329f7"
+    },
+    "finance-confirmation-filing-COCACOLA_2021_10K": {
+      "sources": [
+        "COCACOLA_2021_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-COCACOLA_2021_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "a28cb867237b9bd423a7998e11a7f4c65f56a4e683e217b8a241be383cf945f0"
+    },
+    "finance-confirmation-filing-COCACOLA_2022_10K": {
+      "sources": [
+        "COCACOLA_2022_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-COCACOLA_2022_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "df0eb5e2e93d5613e6178d134f52e4e3943ff1d7bf30f6850ab0aa6857622458"
+    },
+    "finance-confirmation-filing-CORNING_2020_10K": {
+      "sources": [
+        "CORNING_2020_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-CORNING_2020_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "ef0bf2f0e17e358b5d5dc14166db0cd4078b3d6088b1853422e2bab88ac8bd07"
+    },
+    "finance-confirmation-filing-CORNING_2021_10K": {
+      "sources": [
+        "CORNING_2021_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-CORNING_2021_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "fe871dbbb04fd908b82b21f4dfa077b52604a4963efe83ae31f649e226460da5"
+    },
+    "finance-confirmation-filing-CORNING_2022_10K": {
+      "sources": [
+        "CORNING_2022_10K"
+      ],
+      "questions": 2,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-CORNING_2022_10K",
+      "byEvidence": {
+        "table": 2
+      },
+      "sha256": "3e138f46c41bd65709fd238626efb6767823dc86bcfdfa05db97175ad177341c"
+    },
+    "finance-development-filing-COSTCO_2021_10K": {
+      "sources": [
+        "COSTCO_2021_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-COSTCO_2021_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "787e6027081d12d53a6b64ffa42ec82c4c341394cbf6a62654cbc958b655c52c"
+    },
+    "finance-development-filing-CVSHEALTH_2018_10K": {
+      "sources": [
+        "CVSHEALTH_2018_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-CVSHEALTH_2018_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "59225dcd7a78c88081a8d7f4d6cbdc53cd1aa4bc8225f70b00a8690c2d298abe"
+    },
+    "finance-development-filing-CVSHEALTH_2022_10K": {
+      "sources": [
+        "CVSHEALTH_2022_10K"
+      ],
+      "questions": 3,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-CVSHEALTH_2022_10K",
+      "byEvidence": {
+        "table": 1,
+        "text": 2
+      },
+      "sha256": "27d0e7d3184ba39d7fdfb78d4817bcea236f2f305d5c0c5502a7f5cbba729136"
+    },
+    "finance-confirmation-filing-FOOTLOCKER_2022_8K_dated-2022-05-20": {
+      "sources": [
+        "FOOTLOCKER_2022_8K_dated-2022-05-20"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-FOOTLOCKER_2022_8K_dated-2022-05-20",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "518a60de6f8f1267e50affcdbeebd131ea2831a9ab20f7e8d50e790d42b7f9f5"
+    },
+    "finance-confirmation-filing-FOOTLOCKER_2022_8K_dated_2022-08-19": {
+      "sources": [
+        "FOOTLOCKER_2022_8K_dated_2022-08-19"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-FOOTLOCKER_2022_8K_dated_2022-08-19",
+      "byEvidence": {
+        "text": 1
+      },
+      "sha256": "5eea6e60764843539f9ac758b84bb655c4f0c840049f3a54575bd03aca175e7e"
+    },
+    "finance-development-filing-GENERALMILLS_2019_10K": {
+      "sources": [
+        "GENERALMILLS_2019_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-GENERALMILLS_2019_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "de1a60905d44e0e22e615c74020ff4b499977d23b017c310f31b4ba06d4614fb"
+    },
+    "finance-development-filing-GENERALMILLS_2020_10K": {
+      "sources": [
+        "GENERALMILLS_2020_10K"
+      ],
+      "questions": 2,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-GENERALMILLS_2020_10K",
+      "byEvidence": {
+        "table": 2
+      },
+      "sha256": "f12779c53801237caa7182ca84e391d42013267486f8cc6a3150011e68b16cef"
+    },
+    "finance-development-filing-GENERALMILLS_2022_10K": {
+      "sources": [
+        "GENERALMILLS_2022_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-GENERALMILLS_2022_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "6a35e8edb7a8e82c3d8aed6210f2244e082754c25d762287bdaf6f67fefa6713"
+    },
+    "finance-confirmation-filing-JOHNSON_JOHNSON_2022Q4_EARNINGS": {
+      "sources": [
+        "JOHNSON_JOHNSON_2022Q4_EARNINGS"
+      ],
+      "questions": 2,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-JOHNSON_JOHNSON_2022Q4_EARNINGS",
+      "byEvidence": {
+        "text": 1,
+        "table": 1
+      },
+      "sha256": "f7f59a55ffa2c832333ca35cd428ec82057fcf4600fc4b2d9f2de5a40f7da78d"
+    },
+    "finance-confirmation-filing-JOHNSON_JOHNSON_2022_10K": {
+      "sources": [
+        "JOHNSON_JOHNSON_2022_10K"
+      ],
+      "questions": 3,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-JOHNSON_JOHNSON_2022_10K",
+      "byEvidence": {
+        "text": 2,
+        "table": 1
+      },
+      "sha256": "7788362439c63f1f5a3a6b1c5b7d75804e703da21577135c4fefd56fcc605a7f"
+    },
+    "finance-confirmation-filing-JOHNSON_JOHNSON_2023Q2_EARNINGS": {
+      "sources": [
+        "JOHNSON_JOHNSON_2023Q2_EARNINGS"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-JOHNSON_JOHNSON_2023Q2_EARNINGS",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "0983c14a6b8ae463ba2e25a83bc00b3dab4c5de7a72ecf14c6b74b18b1caf9c4"
+    },
+    "finance-confirmation-filing-JOHNSON_JOHNSON_2023_8K_dated-2023-08-30": {
+      "sources": [
+        "JOHNSON_JOHNSON_2023_8K_dated-2023-08-30"
+      ],
+      "questions": 3,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-JOHNSON_JOHNSON_2023_8K_dated-2023-08-30",
+      "byEvidence": {
+        "text": 3
+      },
+      "sha256": "c97db56ca6ff088a2c25f444d369eeebd3d7c07a3117cb455db03ab63a07fd52"
+    },
+    "finance-confirmation-filing-JPMORGAN_2021Q1_10Q": {
+      "sources": [
+        "JPMORGAN_2021Q1_10Q"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-JPMORGAN_2021Q1_10Q",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "532c9ce2dc02d440ea3c0f578f168b2a5fa4c6103e685bc02b1e5887453e3891"
+    },
+    "finance-confirmation-filing-JPMORGAN_2022Q2_10Q": {
+      "sources": [
+        "JPMORGAN_2022Q2_10Q"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-JPMORGAN_2022Q2_10Q",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "e4a9e193f3e62a50c8730de4ec64388121949b42a919d2e209ff9a61b7766fa8"
+    },
+    "finance-confirmation-filing-JPMORGAN_2022_10K": {
+      "sources": [
+        "JPMORGAN_2022_10K"
+      ],
+      "questions": 0,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-JPMORGAN_2022_10K",
+      "byEvidence": {},
+      "sha256": "1ef8bd4cfebd8efba7646a3f5dfe46441380081b2baf26c74a13c4508ace003f"
+    },
+    "finance-confirmation-filing-JPMORGAN_2023Q2_10Q": {
+      "sources": [
+        "JPMORGAN_2023Q2_10Q"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-JPMORGAN_2023Q2_10Q",
+      "byEvidence": {
+        "text": 1
+      },
+      "sha256": "89cc13175b8d9108284d2ed8ab3d36267fbd5f40d7b929681d423a114239e726"
+    },
+    "finance-confirmation-filing-KRAFTHEINZ_2019_10K": {
+      "sources": [
+        "KRAFTHEINZ_2019_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-KRAFTHEINZ_2019_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "bac99994145307f4e6361ef3666e44d2787345a8eac77e1471e4d58a33f8b60b"
+    },
+    "finance-confirmation-filing-LOCKHEEDMARTIN_2020_10K": {
+      "sources": [
+        "LOCKHEEDMARTIN_2020_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-LOCKHEEDMARTIN_2020_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "772ef11472797d9352cf0ee338184a3376d5ecc0226452cce23324d90b44d95c"
+    },
+    "finance-confirmation-filing-LOCKHEEDMARTIN_2021_10K": {
+      "sources": [
+        "LOCKHEEDMARTIN_2021_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-LOCKHEEDMARTIN_2021_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "3394e59fbe84008a9c6f0c0c7c3fa73d1917d27bb4fccb360c83cbc6430d2a17"
+    },
+    "finance-confirmation-filing-LOCKHEEDMARTIN_2022_10K": {
+      "sources": [
+        "LOCKHEEDMARTIN_2022_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-LOCKHEEDMARTIN_2022_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "6d1a2000bf24e88c2f84d82e5750f78c5c569ad5ef8bacec85f34499ec867484"
+    },
+    "finance-development-filing-MGMRESORTS_2018_10K": {
+      "sources": [
+        "MGMRESORTS_2018_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-MGMRESORTS_2018_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "30bea50436a07849dc585f8cc4c4d6a9b20e641febe6f522c64b0f8ae487a79e"
+    },
+    "finance-development-filing-MGMRESORTS_2020_10K": {
+      "sources": [
+        "MGMRESORTS_2020_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-MGMRESORTS_2020_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "fd05d4186aa5d757a1a5e587e4a648e6d82942d88edac651d271e49eeea52ab8"
+    },
+    "finance-development-filing-MGMRESORTS_2022Q4_EARNINGS": {
+      "sources": [
+        "MGMRESORTS_2022Q4_EARNINGS"
+      ],
+      "questions": 2,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-MGMRESORTS_2022Q4_EARNINGS",
+      "byEvidence": {
+        "table": 1,
+        "text": 1
+      },
+      "sha256": "a321d37c700e1e1e8d6a3dae44d753e79b86abc23db2857b4b03effda7422a7e"
+    },
+    "finance-development-filing-MGMRESORTS_2022_10K": {
+      "sources": [
+        "MGMRESORTS_2022_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-MGMRESORTS_2022_10K",
+      "byEvidence": {
+        "text": 1
+      },
+      "sha256": "0e2272678cef388851c1378f98866bd47eaf6590f04e2b981387a1fc41871e72"
+    },
+    "finance-development-filing-MGMRESORTS_2023Q2_10Q": {
+      "sources": [
+        "MGMRESORTS_2023Q2_10Q"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-MGMRESORTS_2023Q2_10Q",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "102c45a62aa72ea1e752e93efce06ba991a6b24518ce801817a439d6d0af7d3b"
+    },
+    "finance-development-filing-MICROSOFT_2016_10K": {
+      "sources": [
+        "MICROSOFT_2016_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-MICROSOFT_2016_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "266be9a8a470c5074c55508c21373cabff30548808c26e66f9d3607c73125bfe"
+    },
+    "finance-development-filing-MICROSOFT_2023_10K": {
+      "sources": [
+        "MICROSOFT_2023_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-MICROSOFT_2023_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "11d5f8d8532e1c985496d7f0d3adc1222f0e8f1113e3e0c52b6380e450c6b80d"
+    },
+    "finance-development-filing-NETFLIX_2015_10K": {
+      "sources": [
+        "NETFLIX_2015_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-NETFLIX_2015_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "aebaac7c29840841f2a585fb740036340f02ed2ecc51df4a576b2addef9065b8"
+    },
+    "finance-development-filing-NETFLIX_2017_10K": {
+      "sources": [
+        "NETFLIX_2017_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-NETFLIX_2017_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "4eb48644fe04f9b39fd354cb85515d8bae9ed92ce9f31a0293d008fbb950fce4"
+    },
+    "finance-confirmation-filing-NIKE_2018_10K": {
+      "sources": [
+        "NIKE_2018_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-NIKE_2018_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "3ff03aefcadfde256d2fdce5523573578321da7da0e0b301038c009158a7f927"
+    },
+    "finance-confirmation-filing-NIKE_2019_10K": {
+      "sources": [
+        "NIKE_2019_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-NIKE_2019_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "4152e49b0cb197c8b7bd59c0d8813d28c76a2e524c413080744e1bb5367bfb73"
+    },
+    "finance-confirmation-filing-NIKE_2021_10K": {
+      "sources": [
+        "NIKE_2021_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-NIKE_2021_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "ac4cc4e78090e899b28f8bcaac1484452283c821118e6a64633e963e47c4b328"
+    },
+    "finance-confirmation-filing-NIKE_2023_10K": {
+      "sources": [
+        "NIKE_2023_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-NIKE_2023_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "78bf3c82073bebf74ebd773491337db68704d27be18a9e93f5adb541e4219ed7"
+    },
+    "finance-confirmation-filing-PAYPAL_2022_10K": {
+      "sources": [
+        "PAYPAL_2022_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-PAYPAL_2022_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "8c59dd9973587487f20f0fffb282ae441582b9b958fb42bb7ae431251f5299a5"
+    },
+    "finance-confirmation-filing-PEPSICO_2021_10K": {
+      "sources": [
+        "PEPSICO_2021_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-PEPSICO_2021_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "3f19e34c6eb1d7575c0604aaf7d7bde868384d196a0f0f8ee913c2ec3f44e22e"
+    },
+    "finance-confirmation-filing-PEPSICO_2022_10K": {
+      "sources": [
+        "PEPSICO_2022_10K"
+      ],
+      "questions": 5,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-PEPSICO_2022_10K",
+      "byEvidence": {
+        "text": 2,
+        "table": 3
+      },
+      "sha256": "9b5864492f86173b79193148565876927d9ffe98eca04df2c9389940affa5866"
+    },
+    "finance-confirmation-filing-PEPSICO_2023Q1_EARNINGS": {
+      "sources": [
+        "PEPSICO_2023Q1_EARNINGS"
+      ],
+      "questions": 2,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-PEPSICO_2023Q1_EARNINGS",
+      "byEvidence": {
+        "text": 2
+      },
+      "sha256": "704ce08a8cb945470e24f620957bfbed7c11422952fe0ec1da5f691996b0acf1"
+    },
+    "finance-confirmation-filing-PEPSICO_2023_8K_dated-2023-05-05": {
+      "sources": [
+        "PEPSICO_2023_8K_dated-2023-05-05"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-PEPSICO_2023_8K_dated-2023-05-05",
+      "byEvidence": {
+        "text": 1
+      },
+      "sha256": "76108ceb8a7c9319eb4010f8f190ba9be9f1163429a38ab4cf82c4bf0f197f9c"
+    },
+    "finance-confirmation-filing-PEPSICO_2023_8K_dated-2023-05-30": {
+      "sources": [
+        "PEPSICO_2023_8K_dated-2023-05-30"
+      ],
+      "questions": 2,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-PEPSICO_2023_8K_dated-2023-05-30",
+      "byEvidence": {
+        "text": 2
+      },
+      "sha256": "60f0160781b1a0a4551632d178cd1957f85960c5e8b33b28ea8f046f2f255708"
+    },
+    "finance-development-filing-PFIZER_2021_10K": {
+      "sources": [
+        "PFIZER_2021_10K"
+      ],
+      "questions": 3,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-PFIZER_2021_10K",
+      "byEvidence": {
+        "table": 2,
+        "text": 1
+      },
+      "sha256": "31177e70ca2be377933f005d1ff4f3151f6d5657165d5174e3e6157b29b2dd63"
+    },
+    "finance-development-filing-Pfizer_2023Q2_10Q": {
+      "sources": [
+        "Pfizer_2023Q2_10Q"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-Pfizer_2023Q2_10Q",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "2c2f7dc9058a7db4389c5ef2137a5dac46433639b4afc8af5e89a1c42cba8f55"
+    },
+    "finance-development-filing-ULTABEAUTY_2023Q4_EARNINGS": {
+      "sources": [
+        "ULTABEAUTY_2023Q4_EARNINGS"
+      ],
+      "questions": 4,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-ULTABEAUTY_2023Q4_EARNINGS",
+      "byEvidence": {
+        "text": 4
+      },
+      "sha256": "da585996ce9142790084c6827526617f38cf62dd07e2a4f76d817d54844545f7"
+    },
+    "finance-development-filing-ULTABEAUTY_2023_10K": {
+      "sources": [
+        "ULTABEAUTY_2023_10K"
+      ],
+      "questions": 2,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-ULTABEAUTY_2023_10K",
+      "byEvidence": {
+        "table": 2
+      },
+      "sha256": "bda553c201484b11e55b8edfc3f824fdb9786e66c92cc81e4bd98f0b253ff7ed"
+    },
+    "finance-confirmation-filing-VERIZON_2021_10K": {
+      "sources": [
+        "VERIZON_2021_10K"
+      ],
+      "questions": 2,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-VERIZON_2021_10K",
+      "byEvidence": {
+        "table": 2
+      },
+      "sha256": "ed018cfa8e36ae5715d636eb7ef0652b17cb37215e6ba7bc38506aaf02ed4581"
+    },
+    "finance-confirmation-filing-VERIZON_2022_10K": {
+      "sources": [
+        "VERIZON_2022_10K"
+      ],
+      "questions": 3,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-VERIZON_2022_10K",
+      "byEvidence": {
+        "table": 3
+      },
+      "sha256": "8069132a6a4b58abc299670602b7aebc320aec8d053b92507145996ea1c33ffe"
+    },
+    "finance-development-filing-WALMART_2018_10K": {
+      "sources": [
+        "WALMART_2018_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-WALMART_2018_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "0bf0559c62244534a7f9d8714a215e92a1739dcecd9fa503a23fe78e550b8812"
+    },
+    "finance-development-filing-WALMART_2019_10K": {
+      "sources": [
+        "WALMART_2019_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-WALMART_2019_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "345ef01a0e556f4b254bbed09468e9e5e8d66ad6bccb515ff8f4b3e273718386"
+    },
+    "finance-development-filing-WALMART_2020_10K": {
+      "sources": [
+        "WALMART_2020_10K"
+      ],
+      "questions": 1,
+      "format": "markdown",
+      "pool": "document",
+      "vectorBank": "full-financebench-WALMART_2020_10K",
+      "byEvidence": {
+        "table": 1
+      },
+      "sha256": "8eae4d32adc07e59f879c942d9b5b49d44b3e67a9b8e6bedaf93180bd406d744"
+    }
+  }
+}

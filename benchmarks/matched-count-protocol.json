@@ -1,0 +1,10 @@
+{
+  "model": "text-embedding-3-small",
+  "blockTokens": 256,
+  "semanticLimits": "Both maxChunkSize and maxChunkTokens are Infinity. Use the public semantic-blocks hierarchy and sibling cosine, including edges excluded by the former size cap. Index every resulting passage.",
+  "countSelection": "For each document and rendering, first count public blocks passages. Consider every distinct partition attainable with one cosine cutoff in [-1,1]. Choose the nearest passage count, preferring fewer on a tie and the lowest cutoff partition giving that count. Only the source and target count enter selection. Check the selected layout against the public API.",
+  "shuffles": [1, 2, 3],
+  "control": "Shuffle the observed scores across eligible edges within each document, refit the cutoff to the same structural target, and average the three outcomes per question. The tree and all mandatory boundaries are shared.",
+  "primary": "Repeat the frozen four-domain confirmation benchmark with five dense hits and 512 delivered tokens. Average the three government renderings per question and the four domain scores equally. Pair methods within questions and bootstrap whole page families, FAQ publishers, financial issuers and papers, 4000 draws. The comparison uses previously reported sources. Use development as a replication.",
+  "diagnostics": "Compare complete evidence in the untrimmed first and first five hits, the token volume of those hits, and delivery at 1024 tokens. Report per-document count error, cutoffs, length quantiles, and results restricted to exact-count multi-passage query sources. Existing candidate pools remain intact for this subset. Very long embedding inputs use the existing length-safe token-window pooling."
+}

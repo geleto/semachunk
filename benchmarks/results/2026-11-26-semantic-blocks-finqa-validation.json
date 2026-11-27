@@ -1,0 +1,112 @@
+{
+  "model": "text-embedding-3-small",
+  "task": "finqa",
+  "format": "markdown",
+  "split": "rules-test",
+  "budget": {
+    "tokens": 256
+  },
+  "deliveries": [
+    [
+      "five512",
+      5,
+      512
+    ],
+    [
+      "five1024",
+      5,
+      1024
+    ]
+  ],
+  "documents": 18,
+  "questions": 27,
+  "rows": {
+    "semantic": {
+      "bodyHash": "047b47a8fd8b89bba7223956b009064da877c3e6bb03359d86f7b27f219631cb",
+      "chunks": 176,
+      "indexingTokens": 24033,
+      "indexingCalls": 36,
+      "overTarget": 0,
+      "hits": {
+        "five512": "101011111111111111111110101",
+        "five1024": "101011111111111111111110101"
+      }
+    },
+    "semantic-blocks": {
+      "bodyHash": "b1b9823822952c70406ee6b02fc64c7a239937a8ab842c678326370169df4ee1",
+      "chunks": 163,
+      "indexingTokens": 25596,
+      "indexingCalls": 36,
+      "overTarget": 0,
+      "hits": {
+        "five512": "111111111111111111111101101",
+        "five1024": "111111111111111111111101111"
+      }
+    },
+    "blocks": {
+      "bodyHash": "3b4972105e3187fbfc5157132f5e9a3f6692338961a4aac24dda569e4873d45a",
+      "chunks": 395,
+      "indexingTokens": 13806,
+      "indexingCalls": 18,
+      "overTarget": 0,
+      "hits": {
+        "five512": "100010111010111111101000101",
+        "five1024": "100010111010111111101000101"
+      }
+    },
+    "semantic-blocks/0.05": {
+      "bodyHash": "9c421784ae55c7c507d27363b75a06a4720549c019f716ef9fd66b254a58455a",
+      "chunks": 73,
+      "indexingTokens": 27549,
+      "indexingCalls": 36,
+      "overTarget": 0,
+      "hits": {
+        "five512": "110110111111111111111001101",
+        "five1024": "111111111111111111111111111"
+      }
+    }
+  },
+  "paired": {
+    "five512": {
+      "gains": 3,
+      "losses": 1,
+      "deltaPoints": 7.407407407407407,
+      "ci95": [
+        0,
+        15.384615384615385
+      ]
+    },
+    "five1024": {
+      "gains": 4,
+      "losses": 1,
+      "deltaPoints": 11.11111111111111,
+      "ci95": [
+        0,
+        22.22222222222222
+      ]
+    }
+  },
+  "cutoffComparisons": {
+    "semantic-blocks/0.05": {
+      "five512": {
+        "gains": 3,
+        "losses": 4,
+        "deltaPoints": -3.7037037037037037,
+        "ci95": [
+          -27.27272727272727,
+          12.5
+        ]
+      },
+      "five1024": {
+        "gains": 4,
+        "losses": 0,
+        "deltaPoints": 14.814814814814815,
+        "ci95": [
+          0,
+          26.666666666666668
+        ]
+      }
+    }
+  },
+  "newEmbeddingTokens": 9219
+}

@@ -33,7 +33,7 @@ async function measure(limit) {
         peakAtProviderEntryBytes = Math.max(peakAtProviderEntryBytes, lastProviderEntryBytes);
         providerCalls++; providerTexts += batch.length; singletonCalls += Number(batch.length === 1);
         return batch.map(s => vectors[Number(s[6])]);
-    }, { maxCachedEmbeddings: limit });
+    }, { chunkingStrategy: 'semantic', maxCachedEmbeddings: limit });
     const texts = chunks.map(c => c.text);
     assert.equal(texts.join(' '), text);
     return { maxCachedEmbeddings: Number.isFinite(limit) ? limit : 'Infinity', chunks: texts.length,

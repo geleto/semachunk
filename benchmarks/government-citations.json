@@ -1,0 +1,191 @@
+{
+  "navigationOnlyEvidence": [
+    "Learn about the grant programs that are available from the U.S. Department of Education.",
+    "Learn more to see whether you are eligible and how to apply.",
+    "Learn about consolidation so you can weigh the pros and cons and decide whether a Direct Consolidation Loan is right for you.",
+    "Find out who counts as your parent when you file your FAFSA form.",
+    "Find out what happens after you apply",
+    "Find out how to apply for the GI Bill and other VA education benefits as a Veteran, service member, or qualified family member.",
+    "Learn about ways you can make GI Bill changes. Find out when and how to request changes to your GI Bill school, program, or other VA education benefits so you can keep getting funding to help pay for your education or training.",
+    "Find out how to check the status of a VA claim or appeal online.",
+    "Find out if you can get VA health care as a Veteran.",
+    "Find out which VA insurance programs may be right for you as a Veteran, service member, spouse, or dependent child.",
+    "Find out what happens after you request a decision review",
+    "Find out how to make burial plans for a Veteran, spouse, or dependent family member.",
+    "Learn about college costs and get tips on how to lower costs when you go to school.",
+    "Learn about the eligibility requirements for discharge and how you can apply.",
+    "Learn about the role that student loan servicers play in the repayment process and which servicer handles your federal student loans.",
+    "Learn more about the unpaid refund discharge to see whether you might qualify.",
+    "Learn more about false certification discharge to see whether you might qualify.",
+    "Learn about steps you can take to research possible colleges or career schools.",
+    "Learn about VA disability ratings and how we assign your rating.",
+    "Find out if you can get disability compensation or benefits for illnesses including some cancers believed to be caused by contact with radiation during military service.",
+    "Find out how to view your VA payment history online.",
+    "Find out how to add a dependent spouse, child, and/or parent to your VA disability benefits for additional compensation.",
+    "Find out if you can use GI Bill benefits for college as a Veteran, service member, or qualified dependent. Learn about payment rates for undergraduate and graduate degree courses at institutions of higher learning like a 4-year university, community college, or graduate school.",
+    "Find out how to apply for VA health care benefits as a Veteran or service member."
+  ],
+  "excludedQuestions": {
+    "f4f92037b4e401c1cba0a882caed2835": "The citation gives replacement limits. The question asks how to obtain a replacement card.",
+    "7f8f4ae2243efd6002d0e2ed1082c8bc": "The citation gives replacement limits. The question asks how to obtain a replacement card.",
+    "2d56266d106d7a2036ca561d2ba110ef": "The citation gives replacement limits. The question asks how to obtain a replacement card.",
+    "c9e6d7a5655afdc685ae256afd2638f3": "The citation gives replacement limits. The question asks how to obtain a replacement card.",
+    "c995bb41dc21375fc5600e2592412128": "The citation gives replacement limits. The question asks how to obtain a replacement card.",
+    "194019e7b98dbb0b539b3feb819f4924": "The standalone request does not identify disability benefits.",
+    "429aa5c591d70b7e4add35d9eced3ad3": "The standalone request does not identify disability benefits.",
+    "4d1ec2e8f67c203fad7a949d2d6e06b8": "The citation explains why colleges use FAFSA data. It does not answer this application question.",
+    "49c51271b34879fccac8433d53b3afe2": "The citation explains why colleges use FAFSA data. It does not answer this application question.",
+    "f74208fb140224534ae30d8312cae87a": "The citation explains why colleges use FAFSA data. It does not answer this application question.",
+    "edce5c4b0660321d1aeb8d8a15ad99b5": "The citation explains why colleges use FAFSA data. It does not answer this application question.",
+    "202d3bd50edcfbe020e1baa2347f42c4": "The citation explains why colleges use FAFSA data. It does not answer this application question.",
+    "2cc4ab65748b4c0871477d50f003a135": "The citation explains why colleges use FAFSA data. It does not answer this application question.",
+    "147b5e90462e5049eb280445a4b93649": "The opening turn does not identify the benefit or the medical condition needed to resolve the request.",
+    "cc9cc2f20852afa55131610334339cfa": "The opening turn does not identify the benefit or the medical condition needed to resolve the request.",
+    "92db4f3c68ab3fb2851f4a559d9c2d1e": "The opening turn does not identify the benefit or the medical condition needed to resolve the request.",
+    "78dd333249c3f1deecc949853b711263": "The opening turn does not identify the benefit or the medical condition needed to resolve the request.",
+    "37fc2d39a699209ddb36c4d5fd06dab5": "The opening turn does not identify the benefit or the medical condition needed to resolve the request.",
+    "91cb5e50d0540d788b8442df5cc8eaa7": "The generic disability claim sentence omits the clothing allowance application procedure.",
+    "8433467d2960b9321b4af899f9b8d86e": "The generic disability claim sentence omits the clothing allowance application procedure.",
+    "9b6e1f3e6525dcb8c3d93a96f2679f7b": "The opening turn does not identify a pension or any other specific benefit.",
+    "66db06845b1255cf70de3728de9c5da4": "The citation reports the number of beneficiaries. It does not explain the requested survivor entitlement.",
+    "3bd27b4440108e0b91fa6cecc7f09794": "The citation reports the number of beneficiaries. It does not explain the requested survivor entitlement.",
+    "035fe80bb4eab44604b4be34399dd94d": "The citation reports the number of beneficiaries. It does not explain the requested survivor entitlement."
+  },
+  "alternativeSources": {
+    "2d14ff3dfc15c83f1410f23569217119": [
+      "How To Apply For Social Security Disability Benefits#1_0"
+    ],
+    "82e1751eb70cda5f845243ce9c8f79a2": [
+      "How To Apply For Social Security Disability Benefits#1_0"
+    ],
+    "a6e12448953878fb36783de9511cec94": [
+      "How To Apply For Social Security Disability Benefits#1_0"
+    ],
+    "e872b32075b519855f40839ff1d62c13": [
+      "How To Apply For Social Security Disability Benefits#1_0"
+    ],
+    "b118e963631dedc68a9101785edd50cb": [
+      "How To Apply For Social Security Disability Benefits#1_0"
+    ],
+    "aa88570a8dbffb5b3e7a0df3fbb282b0": [
+      "How To Apply For Social Security Disability Benefits#1_0"
+    ],
+    "d8af4caddb599c0e12311cdc996566c3": [
+      "How To Apply For Social Security Disability Benefits#1_0"
+    ],
+    "382d2b981b82e1093a82616682464707": [
+      "How To Apply For Social Security Disability Benefits#1_0"
+    ],
+    "854711a94d61a2ddc5ca92ae670b37cc": [
+      "my Social Security | Create an Account | Social Security Administratio#2_0"
+    ],
+    "a83019534085ab2fea5a1af027fcb637": [
+      "my Social Security | Create an Account | Social Security Administratio#2_0"
+    ],
+    "0c98b8234370373a9ab0b7a4535bf4a1": [
+      "my Social Security | Create an Account | Social Security Administratio#2_0"
+    ],
+    "6d8f149cc85c3eef1dfa8a7d6095c672": [
+      "my Social Security | Create an Account | Social Security Administratio#1_0"
+    ],
+    "2e76c6c784ac9e6cfa92c27be5c2500c": [
+      "my Social Security | Create an Account | Social Security Administratio#1_0"
+    ],
+    "02b1dc41168cffa62150b86e14e59da2": [
+      "my Social Security | Create an Account | Social Security Administratio#1_0"
+    ],
+    "1bdf300a583b16ea1ef514ea67d97ec6": [
+      "Filling Out the FAFSA® Form | Federal Student Aid#1_0"
+    ],
+    "a8e6f2eab371220d93f5f851f3b07174": [
+      "Filling Out the FAFSA® Form | Federal Student Aid#1_0"
+    ],
+    "df38edd7b5947ad3ea8d864ba5f91968": [
+      "Filling Out the FAFSA® Form | Federal Student Aid#1_0"
+    ],
+    "ec845728ee33565091b6a48c363b8357": [
+      "Filling Out the FAFSA® Form | Federal Student Aid#1_0"
+    ],
+    "9c40581a1a89ec41b778cf327faa9065": [
+      "VA Housing Assistance | Veterans Affairs#2_0"
+    ],
+    "8c7bd4634ac855e794ef90a64814fda3": [
+      "VA Housing Assistance | Veterans Affairs#1_0"
+    ],
+    "0d69abec1cd07e0af1a551f686be71a9": [
+      "VA Housing Assistance | Veterans Affairs#1_0"
+    ],
+    "1e12a7b3fe81a148b252fa8546273cff": [
+      "VA Pension Benefits | Veterans Affairs#2_0"
+    ],
+    "d102abc32f54dc6ec6eff66931ce2c1f": [
+      "VA Pension Benefits | Veterans Affairs#2_0"
+    ],
+    "f5e1ed39ccfec2715b36c196919b17be": [
+      "VA Pension Benefits | Veterans Affairs#2_0"
+    ],
+    "7ed1676d76e6e0f17ff1cd2f90aef3a6": [
+      "VA Pension Benefits | Veterans Affairs#1_0"
+    ],
+    "0b46218a57c42d49078548890c730bde": [
+      "VA Pension Benefits | Veterans Affairs#1_0"
+    ],
+    "feea2054cdc1dd872840f15ae33bedb3": [
+      "VA Pension Benefits | Veterans Affairs#1_0"
+    ],
+    "f50afe38fa1fc4ff7fd442d7319f6591": [
+      "VA Pension Benefits | Veterans Affairs#1_0"
+    ],
+    "320475861d5a3abad71d614fcd8b2d7a": [
+      "VA Pension Benefits | Veterans Affairs#1_0"
+    ],
+    "d8cb0b56841ed17f437087c66f9cb62d": [
+      "VA Pension Benefits | Veterans Affairs#1_0"
+    ],
+    "880dc742128eec2a3a932c34e1dcfc48": [
+      "VA Education Benefits | Veterans Affairs#2_0"
+    ],
+    "89be3aad06b01e204329d95988869b9d": [
+      "VA Education Benefits | Veterans Affairs#2_0"
+    ],
+    "9a1a65190d1f948602e2fa1095443c94": [
+      "VA Education Benefits | Veterans Affairs#2_0"
+    ],
+    "dcb42bd3fc28fb1b4955cd6a1bbeb241": [
+      "VA Education Benefits | Veterans Affairs#1_0"
+    ],
+    "b81700462924e1b582c6069afcf11c1e": [
+      "VA Education Benefits | Veterans Affairs#1_0"
+    ],
+    "466bb52e66d2ab1c8ee93f879b81b959": [
+      "VA Education Benefits | Veterans Affairs#1_0"
+    ],
+    "ef42183ed6d69313025f8e552ab8487b": [
+      "VA Education Benefits | Veterans Affairs#1_0"
+    ],
+    "d8faf255c7c655e4b7317fb41726e9e1": [
+      "VA Education Benefits | Veterans Affairs#1_0"
+    ],
+    "406a3487db1080c994d8500d9257ceed": [
+      "VA Life Insurance | Veterans Affairs#2_0"
+    ],
+    "5a65d6f80fdcc44fed24c6b0db8f0488": [
+      "VA Life Insurance | Veterans Affairs#2_0"
+    ],
+    "0c75ec6ad3f2e333b64b40ec8cd3aa95": [
+      "VA Life Insurance | Veterans Affairs#2_0"
+    ],
+    "2a2557318081367b6d980ade43c0df09": [
+      "VA Life Insurance | Veterans Affairs#2_0"
+    ],
+    "6831b2707385c5bc7acd5ef4a6595dc6": [
+      "VA Life Insurance | Veterans Affairs#1_0"
+    ],
+    "999a50bdcebef0ca5d2be71a26924bf3": [
+      "VA Life Insurance | Veterans Affairs#1_0"
+    ],
+    "5edc9be67a5d04f956676251916b8307": [
+      "VA Life Insurance | Veterans Affairs#1_0"
+    ]
+  }
+}

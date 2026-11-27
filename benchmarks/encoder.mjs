@@ -152,10 +152,15 @@ export async function cachedVectors(texts, countTokens, request, directory, reco
     return { matrix, textsSHA256: sha256(JSON.stringify(texts)), vectorsSHA256, precomputation };
 }
 
-export function openEncoder(envFile, directory = vectorDirectory, concurrency = 1) {
+export function openEncoder(envFile, directory = vectorDirectory, concurrency = 1, maxNewTokens = Infinity) {
     const tokenizer = openTokenizer();
     let client;
     async function request(input) {
+        if (Number.isFinite(maxNewTokens)) {
+            const needed = input.reduce((sum, text) => sum + (Array.isArray(text) ? text.length : tokenizer.countTokens(text)), 0);
+            if (needed > maxNewTokens) throw new Error('Embedding cache miss requires ' + needed + ' new tokens, with ' + maxNewTokens + ' available.');
+            maxNewTokens -= needed;
+        }
         client ??= new OpenAI({ apiKey: await apiKey(envFile), baseURL: 'https://api.openai.com/v1', logLevel: 'off', maxRetries: 5 });
         try {
             return await client.embeddings.create({ input, model, dimensions: dimension, encoding_format: 'base64' });
@@ -171,8 +176,8 @@ export function openEncoder(envFile, directory = vectorDirectory, concurrency = 
 
 // Index recorded provider batches by exact input. A new candidate order or
 // batch size can reuse their vectors. Coalesce misses from concurrent documents.
-export async function openReplay(envFile, directory = vectorDirectory, { lengthSafe = false, concurrency = 1 } = {}) {
-    const encoder = openEncoder(envFile, directory, concurrency);
+export async function openReplay(envFile, directory = vectorDirectory, { lengthSafe = false, concurrency = 1, maxNewTokens = Infinity } = {}) {
+    const encoder = openEncoder(envFile, directory, concurrency, maxNewTokens);
     await mkdir(directory, { recursive: true });
     const disk = new Map(), memory = new Map();
     for (const name of await readdir(directory)) {

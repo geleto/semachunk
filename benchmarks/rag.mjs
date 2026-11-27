@@ -1,5 +1,5 @@
 import { alignDocument, compact, cuad, hotpotqa, lowerBound, qasper } from './corpora.mjs';
-import { costs, denseRanker, internCandidates, measure, qualityPlans, sourcePieces, split, vocabulary } from './chunking.mjs';
+import { costs, denseRanker, internCandidates, measure, qualityPlans, sentencePlan, sourcePieces, split, vocabulary } from './chunking.mjs';
 import { alignPlain } from './delivered-context.mjs';
 import { packSentences } from '../src/packing.js';
 import { tokenBudget } from '../src/token-limit.js';
@@ -14,7 +14,7 @@ export function ragPlans() {
     const grid = qualityPlans();
     const selected = ['sentences', 'blocks-500', 'pack-500', 'semantic-500', 'merge-250-0.5', 'merge-500-0.3', 'merge-500-0.5', 'merge-500-0.7'];
     const base = grid['merge-500-0.5'];
-    return { 'priority-default': {}, ...Object.fromEntries(selected.map(name => [name, grid[name]])),
+    return { 'default': {}, ...Object.fromEntries(selected.map(name => [name, grid[name]])),
         'flat-merge-500-0.5': { ...base, flatInput: true }, 'merge-500-document': grid['merge-500-document'],
         'merge-500-token-256': { ...base, maxChunkTokens: 256 }, 'merge-500-two-passes': { ...base, maxPasses: 2 } };
 }
@@ -36,7 +36,7 @@ export async function prepare(docs, questions, chunkText, encoder, plans) {
         aligned.push(doc);
         internCandidates(parts, 500, vocab);
         for (const plan of Object.values(plans)) {
-            if (plan.chunkingStrategy === 'blocks') {
+            if (!plan.pack && (plan.chunkingStrategy ?? 'blocks') === 'blocks') {
                 (await split(chunkText, raw, { ...plan, countTokens: encoder.countTokens })).forEach(vocab.intern);
             }
             if (plan.pack && plan.maxChunkTokens) {
@@ -51,7 +51,7 @@ export async function prepare(docs, questions, chunkText, encoder, plans) {
             internCandidates(flatParts, 500, vocab);
         }
         for (const { flatInput, maxChunkTokens } of cappedPlans) {
-            const pieces = await split(chunkText, flatInput ? flat : raw, { maxChunkTokens, countTokens: encoder.countTokens });
+            const pieces = await split(chunkText, flatInput ? flat : raw, { ...sentencePlan, maxChunkTokens, countTokens: encoder.countTokens });
             pieces.forEach(vocab.intern);
         }
         const offsets = await encoder.offsets(doc.text);
@@ -229,7 +229,7 @@ export async function evaluateRag(task, chunkText, encoder, plans, { sample, pai
         pools.get(key)[1].push(i);
     });
     const all = task === 'hotpotqa' && [[docs.map((_, d) => d), questions.map((_, i) => i)]];
-    const exampleName = plans['priority-default'] ? 'priority-default' : 'merge-500-0.5';
+    const exampleName = plans['default'] ? 'default' : 'merge-500-0.5';
     const examples = plans[exampleName] ? examineExamples(task, questions, sources, gold) : new Map();
     const pooled = new Map([...examples.keys()].map(i => [i, {}]));
     const scores = {};

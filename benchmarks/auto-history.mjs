@@ -35,14 +35,15 @@ function comparisonPolicies(format, split, view, external) {
     }
     if (external) for (const name of rules) choices[name] = choices.fixed;
     for (const tokens of external && view === 'original' ? [128, 256, 512] : [256]) {
-        for (const chunkingStrategy of ['auto', 'blocks', 'pack', 'semantic']) {
+        choices['default/t' + tokens] = { method, tokens };
+        for (const chunkingStrategy of ['blocks', 'pack', 'semantic']) {
             choices[chunkingStrategy + '/t' + tokens] = { method, chunkingStrategy, tokens };
         }
-        choices['auto/default-chars/t' + tokens] = { method, chars: null, tokens };
+        choices['default/default-chars/t' + tokens] = { method, chars: null, tokens };
     }
     if (format === 'markdown' && view === 'original' && ['replication', 'auto-test'].includes(split)) {
         for (const tokens of [256, 512]) {
-            choices['auto/default-chars/t' + tokens] = { method, chars: null, tokens };
+            choices['default/default-chars/t' + tokens] = { method, chars: null, tokens };
             for (const chunkingStrategy of ['blocks', 'pack', 'semantic']) {
                 choices[chunkingStrategy + '/c1024/t' + tokens] = { method, chunkingStrategy, chars: 1024, tokens };
             }

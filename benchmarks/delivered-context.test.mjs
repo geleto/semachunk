@@ -90,9 +90,9 @@ test('a soft packing target preserves fitting paragraphs while a hard cap splits
         return (await indexDocument(doc, policy, costs, [], {}, encoder)).map(c => c.text);
     }
     assert.deepEqual(await texts({ method: 'pack', tokens: 20, packTarget: 7 }), ['Alpha. Beta.', 'X\n\nY']);
-    assert.deepEqual(await texts({ method: 'public-markdown', tokens: 7 }), ['Alpha. ', 'Beta.', 'X\n\nY']);
-    assert.deepEqual(await texts({ method: 'plain-priority', chunkingStrategy: 'blocks', tokens: 20 }), ['Alpha. Beta.', 'X', 'Y']);
-    assert.deepEqual(await texts({ method: 'plain-priority', chunkingStrategy: 'blocks', tokens: 7 }), ['Alpha.', 'Beta.', 'X', 'Y']);
+    assert.deepEqual(await texts({ method: 'public-markdown', chunkingStrategy: 'pack', tokens: 7 }), ['Alpha. ', 'Beta.', 'X\n\nY']);
+    assert.deepEqual(await texts({ method: 'plain-priority', chunkingStrategy: 'blocks', tokens: 20 }), [source]);
+    assert.deepEqual(await texts({ method: 'plain-priority', chunkingStrategy: 'blocks', tokens: 7 }), ['Alpha.', 'Beta.', 'X\n\nY']);
 });
 
 test('a document rule reranks the pool using each document’s selected layout', async () => {
@@ -101,7 +101,7 @@ test('a document rule reranks the pool using each document’s selected layout',
     const encoder = { stats: {}, countTokens: s => s.length, offsets: s => Array.from(s, (_, i) => [i, i + 1, i + 1]),
         embed: texts => texts.map(s => ['Which?', 'Noise'].includes(s) ? [1, 0] : s === 'Gold' ? [0.8, 0.6] : [0, 1]) };
     await prepareDataset(dataset, encoder);
-    const units = { method: 'public-markdown', tokens: 20, combineChunks: false }, pack = { method: 'pack', tokens: 20 };
+    const units = { method: 'public-markdown', tokens: 5, chunkingStrategy: 'blocks' }, pack = { method: 'pack', tokens: 20 };
     async function hit(select) {
         const row = await evaluate('hotpotqa', dataset, pack, encoder, 'semantic', { deliveries: [['one', 1, 20]], select });
         return row.hits['pooled/dense'].one;

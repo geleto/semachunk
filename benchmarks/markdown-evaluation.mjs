@@ -24,7 +24,7 @@ export async function prepareDataset(dataset, encoder) {
     await encoder.embed(questions.map(q => q.text));
 }
 
-export async function evaluate(task, { docs, questions }, policy, encoder, mode, { deliveries, select } = {}) {
+export async function evaluate(task, { docs, questions }, policy, encoder, mode, { deliveries, select, indexer = indexDocument } = {}) {
     const { countTokens } = encoder;
     const ruleStudy = mode === 'rules', baselines = mode === 'baselines', denseOnly = mode === 'semantic';
     const reuse = ruleStudy || Boolean(deliveries), deliveryKey = JSON.stringify([mode, deliveries]);
@@ -40,7 +40,7 @@ export async function evaluate(task, { docs, questions }, policy, encoder, mode,
         let layout = doc.layouts?.get(key);
         if (!layout) {
             const work = Object.fromEntries(Object.keys(costs).map(k => [k, 0])), scores = [];
-            const rows = await indexDocument(doc, selected, work, scores, context, encoder);
+            const rows = await indexer(doc, selected, work, scores, context, encoder);
             layout = { work, scores, rows: rows.map(row => ({ ...row, doc: d })) };
             doc.layouts?.set(key, layout);
         }

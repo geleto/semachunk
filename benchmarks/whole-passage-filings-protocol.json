@@ -1,0 +1,4 @@
+{
+  "data": "2026-11-27-full-filings-data.json",
+  "inference": "Use the frozen FinanceBench citations and issuer-disjoint folds. Each finance question searches its entire source filing. Preserve the preceding whole-passage study's other three domains and verify their input hashes and per-question outcomes against the archived run. Average the three public-service renderings within question and give the four domains equal weight. Use 4,000 paired cluster bootstrap replicates by page family, publisher, issuer or paper. Report 98.33% intervals for the three primary top-five contrasts and descriptive 95% intervals for top one. Exact-count sensitivity requires multiple passages and equal counts in all three methods on every rendering of the query source."
+}

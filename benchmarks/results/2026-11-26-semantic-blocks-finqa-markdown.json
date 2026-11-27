@@ -1,0 +1,79 @@
+{
+  "model": "text-embedding-3-small",
+  "task": "finqa",
+  "format": "markdown",
+  "split": "confirmation",
+  "budget": {
+    "tokens": 256
+  },
+  "deliveries": [
+    [
+      "five512",
+      5,
+      512
+    ],
+    [
+      "five1024",
+      5,
+      1024
+    ]
+  ],
+  "documents": 25,
+  "questions": 38,
+  "rows": {
+    "semantic": {
+      "bodyHash": "9bce11d6bf80b70cb7a9773054529101eb7b7a67de1c19aa583da71dba7c393a",
+      "chunks": 256,
+      "indexingTokens": 38492,
+      "indexingCalls": 50,
+      "overTarget": 0,
+      "hits": {
+        "five512": "11010110111110100101011110110110010111",
+        "five1024": "11110110111110101101011111110111110111"
+      }
+    },
+    "semantic-blocks": {
+      "bodyHash": "e62d492ba77d766b5ba71aa299fe33d1e4c0305baef9c1ee4ea5dbd9b654d9f3",
+      "chunks": 225,
+      "indexingTokens": 40926,
+      "indexingCalls": 50,
+      "overTarget": 0,
+      "hits": {
+        "five512": "01111110111110101101011110110111111111",
+        "five1024": "11111110111110111101011111110111111111"
+      }
+    },
+    "blocks": {
+      "bodyHash": "98b2ae28ed69325de96f914574ea26880f5b97d099c986d57379475831fef621",
+      "chunks": 611,
+      "indexingTokens": 21902,
+      "indexingCalls": 25,
+      "overTarget": 0,
+      "hits": {
+        "five512": "01010110111110001101011110110010110110",
+        "five1024": "01010110111110001101011110110010110110"
+      }
+    }
+  },
+  "paired": {
+    "five512": {
+      "gains": 6,
+      "losses": 1,
+      "deltaPoints": 13.157894736842104,
+      "ci95": [
+        -2.564102564102564,
+        30
+      ]
+    },
+    "five1024": {
+      "gains": 3,
+      "losses": 0,
+      "deltaPoints": 7.894736842105263,
+      "ci95": [
+        0,
+        19.51219512195122
+      ]
+    }
+  },
+  "newEmbeddingTokens": 6288
+}

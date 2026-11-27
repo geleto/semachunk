@@ -2,16 +2,19 @@ import { dimension } from './encoder.mjs';
 import { tokenBudget } from '../src/token-limit.js';
 import { packSentences } from '../src/packing.js';
 
+export const sentencePlan = { chunkingStrategy: 'pack', maxChunkSize: 0 };
+
 export function qualityPlans() {
-    const plans = { auto: {}, sentences: { combineChunks: false } };
+    const plans = { default: {}, sentences: sentencePlan };
     for (const size of [250, 500, 1000]) {
         plans['blocks-' + size] = { chunkingStrategy: 'blocks', maxChunkSize: size };
         plans['semantic-' + size] = { chunkingStrategy: 'semantic', maxChunkSize: size };
+        plans['semantic-blocks-' + size] = { chunkingStrategy: 'semantic-blocks', maxChunkSize: size };
         plans['pack-' + size] = { pack: true, maxChunkSize: size };
         for (const cutoff of [0.3, 0.4, 0.5, 0.6, 0.7]) {
-            plans['merge-' + size + '-' + cutoff] = { maxChunkSize: size, similarityThreshold: cutoff };
+            plans['merge-' + size + '-' + cutoff] = { chunkingStrategy: 'semantic', maxChunkSize: size, similarityThreshold: cutoff };
         }
-        plans['merge-' + size + '-document'] = { maxChunkSize: size, mergeThresholdMode: 'document' };
+        plans['merge-' + size + '-document'] = { chunkingStrategy: 'semantic', maxChunkSize: size, mergeThresholdMode: 'document' };
     }
     return plans;
 }
@@ -40,9 +43,9 @@ export function internCandidates(parts, maxSize, vocab) {
     }
 }
 
-export async function split(chunkText, text, options) {
+export async function split(chunkText, text, options = sentencePlan) {
     const unexpected = () => { throw new Error('Splitting requested embeddings'); };
-    const chunks = await chunkText(text, unexpected, { combineChunks: false, returnEmbedding: false, ...options });
+    const chunks = await chunkText(text, unexpected, { ...options, returnEmbedding: false });
     return chunks.filter(chunk => !chunk.tokenLimitExceeded).map(chunk => chunk.text);
 }
 

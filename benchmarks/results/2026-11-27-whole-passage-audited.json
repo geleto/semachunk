@@ -1,0 +1,1482 @@
+{
+  "protocol": {
+    "model": "text-embedding-3-small",
+    "limits": {
+      "blocks": 256,
+      "semantic512": 512,
+      "semanticUnlimited": "Infinity"
+    },
+    "matching": "Use each document rendering's public blocks count as the target. Fit the two semantic thresholds independently from that rendering's eligible sibling cosine scores. Choose the nearest attainable count, preferring fewer passages on a tie and then the lowest cutoff partition. The finite-cap search evaluates distinct partitions in cutoff order until it finds an exact match or exhausts them. Verify each chosen layout against the public chunker. Only source text and passage count enter selection.",
+    "retrieval": "Return the full first and first five dense hits. Every query in an agency and fold searches all distinct pages for that agency, in each of the three formats. Each FAQ query searches all the published manuals in its fold. Finance and research questions search the complete specified report or paper. Score complete evidence from any single accepted source citation, preserving every span required by that citation.",
+    "inference": "Retain the issuer-disjoint complete FinanceBench filings and verify their outcomes against the preceding archive. Keep the frozen Doc2Dial pages, nine FAQ publishers and 128 QASPER paper IDs. Select government and paper questions from their previously scored IDs and publish the exclusions. Keep the FAQ publishers disjoint and write independent queries for the published Markdown. Average government renderings within question and give each of the four domains equal weight. Bootstrap paired outcomes 4,000 times by page family, FAQ publisher, issuer or paper. Use 98.33% intervals for the three primary rank-five comparisons and descriptive 95% intervals for rank one. The published folds have already been examined.",
+    "data": "2026-11-27-audited-data.json"
+  },
+  "metrics": [
+    "completeTop1",
+    "recallTop1",
+    "completeTop5",
+    "recallTop5",
+    "top1Tokens",
+    "top5Tokens",
+    "hitsReturned",
+    "poolExhausted"
+  ],
+  "manifestSHA256": "5a06e47657893e486258d6c51c2af239d1e5295b1238e03f3de9365146e21e15",
+  "archiveSHA256": "d510c2e8a590e0aea9842358e8a18e4bfbc17263a4405d4be985f03434b60a23",
+  "reusedFinanceShards": 84,
+  "confirmation": {
+    "questions": {
+      "faq": 76,
+      "finance": 75,
+      "government": 449,
+      "papers": 190
+    },
+    "domains": {
+      "faq": {
+        "blocks": {
+          "completeTop1": 0.8421052631578947,
+          "recallTop1": 0.8421052631578947,
+          "completeTop5": 0.9736842105263158,
+          "recallTop5": 0.9825657894736842,
+          "top1Tokens": 176.32894736842104,
+          "top5Tokens": 849.5921052631579,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semantic512": {
+          "completeTop1": 0.7368421052631579,
+          "recallTop1": 0.7936790394736842,
+          "completeTop5": 0.9210526315789473,
+          "recallTop5": 0.9484066184210527,
+          "top1Tokens": 255.1184210526316,
+          "top5Tokens": 967.6842105263158,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semanticUnlimited": {
+          "completeTop1": 0.75,
+          "recallTop1": 0.8057926578947369,
+          "completeTop5": 0.8947368421052632,
+          "recallTop5": 0.954283052631579,
+          "top1Tokens": 555,
+          "top5Tokens": 1449.0657894736842,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        }
+      },
+      "finance": {
+        "blocks": {
+          "completeTop1": 0.08,
+          "recallTop1": 0.11197074666666666,
+          "completeTop5": 0.26666666666666666,
+          "recallTop5": 0.3429408133333333,
+          "top1Tokens": 184.36,
+          "top5Tokens": 940.3066666666666,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semantic512": {
+          "completeTop1": 0.12,
+          "recallTop1": 0.15144024,
+          "completeTop5": 0.32,
+          "recallTop5": 0.38672873333333335,
+          "top1Tokens": 293.74666666666667,
+          "top5Tokens": 1619.84,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semanticUnlimited": {
+          "completeTop1": 0.17333333333333334,
+          "recallTop1": 0.20804938666666667,
+          "completeTop5": 0.3333333333333333,
+          "recallTop5": 0.41100413333333335,
+          "top1Tokens": 522.7466666666667,
+          "top5Tokens": 2955.826666666667,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        }
+      },
+      "government": {
+        "blocks": {
+          "completeTop1": 0.5931700074239049,
+          "recallTop1": 0.5958349962880475,
+          "completeTop5": 0.9012620638455827,
+          "recallTop5": 0.9020615605048256,
+          "top1Tokens": 171.3192279138827,
+          "top5Tokens": 909.7386785449146,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semantic512": {
+          "completeTop1": 0.579064587973274,
+          "recallTop1": 0.5859843622865627,
+          "completeTop5": 0.8789903489235338,
+          "recallTop5": 0.8908765397178916,
+          "top1Tokens": 243.25835189309578,
+          "top5Tokens": 1238.7327394209353,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semanticUnlimited": {
+          "completeTop1": 0.5642167780252413,
+          "recallTop1": 0.571625855233853,
+          "completeTop5": 0.8700816629547142,
+          "recallTop5": 0.8836639858945805,
+          "top1Tokens": 273.33110616184115,
+          "top5Tokens": 1426.7899034892353,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        }
+      },
+      "papers": {
+        "blocks": {
+          "completeTop1": 0.33157894736842103,
+          "recallTop1": 0.3633989157894737,
+          "completeTop5": 0.6368421052631579,
+          "recallTop5": 0.692606652631579,
+          "top1Tokens": 176.33684210526314,
+          "top5Tokens": 888.7526315789473,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semantic512": {
+          "completeTop1": 0.3157894736842105,
+          "recallTop1": 0.34803237894736844,
+          "completeTop5": 0.6894736842105263,
+          "recallTop5": 0.7410118578947369,
+          "top1Tokens": 241.89473684210526,
+          "top5Tokens": 1177.6894736842105,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semanticUnlimited": {
+          "completeTop1": 0.2789473684210526,
+          "recallTop1": 0.3114557263157895,
+          "completeTop5": 0.7157894736842105,
+          "recallTop5": 0.7550099105263158,
+          "top1Tokens": 284.3157894736842,
+          "top5Tokens": 1477.0473684210526,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        }
+      }
+    },
+    "macro": {
+      "blocks": {
+        "completeTop1": 0.46171355448755513,
+        "recallTop1": 0.47832748047552065,
+        "completeTop5": 0.6946137615754308,
+        "recallTop5": 0.7300437039858555,
+        "top1Tokens": 177.08625434689174,
+        "top5Tokens": 897.0975205134216,
+        "hitsReturned": 5,
+        "poolExhausted": 0
+      },
+      "semantic512": {
+        "completeTop1": 0.4379240417301606,
+        "recallTop1": 0.46978400517690383,
+        "completeTop5": 0.7023791661782519,
+        "recallTop5": 0.7417559373417536,
+        "top1Tokens": 258.50454411362483,
+        "top5Tokens": 1250.9866059078654,
+        "hitsReturned": 5,
+        "poolExhausted": 0
+      },
+      "semanticUnlimited": {
+        "completeTop1": 0.44162436994490684,
+        "recallTop1": 0.4742309065277615,
+        "completeTop5": 0.7034853280193804,
+        "recallTop5": 0.7509902705964522,
+        "top1Tokens": 408.848390575548,
+        "top5Tokens": 1827.1824320126598,
+        "hitsReturned": 5,
+        "poolExhausted": 0
+      }
+    },
+    "comparisons": {
+      "semantic512 vs blocks": {
+        "completeTop5": {
+          "deltaPoints": 0.7765,
+          "paired98.33": [
+            -2.864,
+            4.9
+          ]
+        },
+        "completeTop1": {
+          "deltaPoints": -2.379,
+          "paired95": [
+            -5.53,
+            0.942
+          ]
+        }
+      },
+      "semanticUnlimited vs blocks": {
+        "completeTop5": {
+          "deltaPoints": 0.8872,
+          "paired98.33": [
+            -2.798,
+            4.747
+          ]
+        },
+        "completeTop1": {
+          "deltaPoints": -2.0089,
+          "paired95": [
+            -5.279,
+            1.396
+          ]
+        }
+      },
+      "semantic512 vs semanticUnlimited": {
+        "completeTop5": {
+          "deltaPoints": -0.1106,
+          "paired98.33": [
+            -3.244,
+            3.138
+          ]
+        },
+        "completeTop1": {
+          "deltaPoints": -0.37,
+          "paired95": [
+            -2.693,
+            1.841
+          ]
+        }
+      }
+    },
+    "exactMultiple": {
+      "questions": {
+        "finance": 31,
+        "government": 23,
+        "papers": 55
+      },
+      "domains": {
+        "finance": {
+          "blocks": {
+            "completeTop1": 0.0967741935483871,
+            "recallTop1": 0.1286021612903226,
+            "completeTop5": 0.3870967741935484,
+            "recallTop5": 0.42364835483870966,
+            "top1Tokens": 175.7741935483871,
+            "top5Tokens": 888.1290322580645,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          },
+          "semantic512": {
+            "completeTop1": 0.16129032258064516,
+            "recallTop1": 0.20751035483870967,
+            "completeTop5": 0.41935483870967744,
+            "recallTop5": 0.49134974193548386,
+            "top1Tokens": 311.80645161290323,
+            "top5Tokens": 1504.1612903225807,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          },
+          "semanticUnlimited": {
+            "completeTop1": 0.22580645161290322,
+            "recallTop1": 0.2824483225806452,
+            "completeTop5": 0.3548387096774194,
+            "recallTop5": 0.47422145161290324,
+            "top1Tokens": 602.0967741935484,
+            "top5Tokens": 2647.6451612903224,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          }
+        },
+        "government": {
+          "blocks": {
+            "completeTop1": 0.7971014492753623,
+            "recallTop1": 0.7971014492753623,
+            "completeTop5": 0.8985507246376812,
+            "recallTop5": 0.8985507246376812,
+            "top1Tokens": 147.94202898550725,
+            "top5Tokens": 925.7971014492754,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          },
+          "semantic512": {
+            "completeTop1": 0.6666666666666666,
+            "recallTop1": 0.6666666666666666,
+            "completeTop5": 0.9420289855072463,
+            "recallTop5": 0.9420289855072463,
+            "top1Tokens": 179.59420289855072,
+            "top5Tokens": 1104.9565217391305,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          },
+          "semanticUnlimited": {
+            "completeTop1": 0.5942028985507246,
+            "recallTop1": 0.5942028985507246,
+            "completeTop5": 0.927536231884058,
+            "recallTop5": 0.927536231884058,
+            "top1Tokens": 171.56521739130434,
+            "top5Tokens": 1392.9710144927535,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          }
+        },
+        "papers": {
+          "blocks": {
+            "completeTop1": 0.41818181818181815,
+            "recallTop1": 0.45050385454545455,
+            "completeTop5": 0.6909090909090909,
+            "recallTop5": 0.7566266,
+            "top1Tokens": 174.8,
+            "top5Tokens": 890.9636363636364,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          },
+          "semantic512": {
+            "completeTop1": 0.32727272727272727,
+            "recallTop1": 0.36215214545454544,
+            "completeTop5": 0.7818181818181819,
+            "recallTop5": 0.8197875454545455,
+            "top1Tokens": 233.12727272727273,
+            "top5Tokens": 1192.2545454545455,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          },
+          "semanticUnlimited": {
+            "completeTop1": 0.32727272727272727,
+            "recallTop1": 0.36215214545454544,
+            "completeTop5": 0.7818181818181819,
+            "recallTop5": 0.8197875454545455,
+            "top1Tokens": 351.1272727272727,
+            "top5Tokens": 1580.8,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          }
+        }
+      },
+      "macro": {
+        "blocks": {
+          "completeTop1": 0.43735248700185586,
+          "recallTop1": 0.45873582170371313,
+          "completeTop5": 0.6588521965801069,
+          "recallTop5": 0.692941893158797,
+          "top1Tokens": 166.1720741779648,
+          "top5Tokens": 901.6299233569921,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semantic512": {
+          "completeTop1": 0.38507657217334634,
+          "recallTop1": 0.4121097223199739,
+          "completeTop5": 0.7144006686783686,
+          "recallTop5": 0.7510554242990919,
+          "top1Tokens": 241.50930907957556,
+          "top5Tokens": 1267.1241191720856,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semanticUnlimited": {
+          "completeTop1": 0.3824273591454517,
+          "recallTop1": 0.4129344555286384,
+          "completeTop5": 0.6880643744598864,
+          "recallTop5": 0.7405150763171688,
+          "top1Tokens": 374.9297547707085,
+          "top5Tokens": 1873.805391927692,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        }
+      },
+      "comparisons": {
+        "semantic512 vs blocks": {
+          "completeTop5": {
+            "deltaPoints": 5.5548,
+            "paired98.33": [
+              -2.809,
+              16.445
+            ]
+          },
+          "completeTop1": {
+            "deltaPoints": -5.2276,
+            "paired95": [
+              -14.694,
+              4.925
+            ]
+          }
+        },
+        "semanticUnlimited vs blocks": {
+          "completeTop5": {
+            "deltaPoints": 2.9212,
+            "paired98.33": [
+              -7.666,
+              13.882
+            ]
+          },
+          "completeTop1": {
+            "deltaPoints": -5.4925,
+            "paired95": [
+              -15.151,
+              3.276
+            ]
+          }
+        },
+        "semantic512 vs semanticUnlimited": {
+          "completeTop5": {
+            "deltaPoints": 2.6336,
+            "paired98.33": [
+              -1.332,
+              8.134
+            ]
+          },
+          "completeTop1": {
+            "deltaPoints": 0.2649,
+            "paired95": [
+              -4.532,
+              5.857
+            ]
+          }
+        }
+      }
+    },
+    "layouts": {
+      "blocks": {
+        "documents": 426,
+        "chunks": 31445,
+        "tokens": 5467944,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 62,
+          "median": 192,
+          "p90": 249,
+          "p95": 253,
+          "p99": 256,
+          "max": 256
+        },
+        "over256": 0,
+        "over512": 0,
+        "over1024": 0,
+        "over8191": 0,
+        "exactCount": 426,
+        "withinOne": 426,
+        "fewer": 0,
+        "more": 0,
+        "absoluteCountError": 0,
+        "maxCountError": 0,
+        "sameLayout": 426,
+        "nontrivialCutoffs": 0,
+        "cutoffs": {}
+      },
+      "semantic512": {
+        "documents": 426,
+        "chunks": 31377,
+        "tokens": 5439906,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 6,
+          "median": 111,
+          "p90": 455,
+          "p95": 490,
+          "p99": 509,
+          "max": 512
+        },
+        "over256": 9397,
+        "over512": 0,
+        "over1024": 0,
+        "over8191": 0,
+        "exactCount": 244,
+        "withinOne": 387,
+        "fewer": 114,
+        "more": 68,
+        "absoluteCountError": 224,
+        "maxCountError": 4,
+        "sameLayout": 3,
+        "nontrivialCutoffs": 386,
+        "cutoffs": {
+          "min": 0.02668677894946809,
+          "p10": 0.10194144858007456,
+          "median": 0.17444184955717063,
+          "p90": 0.2741141578254524,
+          "p95": 0.3005622266906698,
+          "p99": 0.361186029523602,
+          "max": 0.42379656055810927
+        }
+      },
+      "semanticUnlimited": {
+        "documents": 426,
+        "chunks": 31413,
+        "tokens": 5438143,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 4,
+          "median": 59,
+          "p90": 460,
+          "p95": 715,
+          "p99": 1492,
+          "max": 7756
+        },
+        "over256": 6000,
+        "over512": 2693,
+        "over1024": 779,
+        "over8191": 0,
+        "exactCount": 224,
+        "withinOne": 385,
+        "fewer": 110,
+        "more": 92,
+        "absoluteCountError": 248,
+        "maxCountError": 3,
+        "sameLayout": 3,
+        "nontrivialCutoffs": 413,
+        "cutoffs": {
+          "min": 0.02668677894946809,
+          "p10": 0.10731312006869487,
+          "median": 0.18955779932465755,
+          "p90": 0.2999907489039715,
+          "p95": 0.3188980832659588,
+          "p99": 0.38568799706292056,
+          "max": 0.45228465461938994
+        }
+      }
+    },
+    "distinctSources": 218,
+    "allThreeExact": 174,
+    "allThreeWithinOneOfBlocks": 367,
+    "financialEvidence": {
+      "text": {
+        "questions": 25,
+        "complete": {
+          "blocks": {
+            "completeTop1": 5,
+            "completeTop5": 13
+          },
+          "semantic512": {
+            "completeTop1": 3,
+            "completeTop5": 11
+          },
+          "semanticUnlimited": {
+            "completeTop1": 5,
+            "completeTop5": 12
+          }
+        }
+      },
+      "table": {
+        "questions": 50,
+        "complete": {
+          "blocks": {
+            "completeTop1": 1,
+            "completeTop5": 7
+          },
+          "semantic512": {
+            "completeTop1": 6,
+            "completeTop5": 13
+          },
+          "semanticUnlimited": {
+            "completeTop1": 8,
+            "completeTop5": 13
+          }
+        }
+      },
+      "table+text": {
+        "questions": 0,
+        "complete": {
+          "blocks": {
+            "completeTop1": 0,
+            "completeTop5": 0
+          },
+          "semantic512": {
+            "completeTop1": 0,
+            "completeTop5": 0
+          },
+          "semanticUnlimited": {
+            "completeTop1": 0,
+            "completeTop5": 0
+          }
+        }
+      }
+    },
+    "financialLayouts": {
+      "blocks": {
+        "documents": 44,
+        "chunks": 27274,
+        "tokens": 4740789,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 62,
+          "median": 192,
+          "p90": 250,
+          "p95": 253,
+          "p99": 256,
+          "max": 256
+        },
+        "over256": 0,
+        "over512": 0,
+        "over1024": 0,
+        "over8191": 0,
+        "exactCount": 44,
+        "withinOne": 44,
+        "fewer": 0,
+        "more": 0,
+        "absoluteCountError": 0,
+        "maxCountError": 0,
+        "sameLayout": 44,
+        "nontrivialCutoffs": 0,
+        "cutoffs": {}
+      },
+      "semantic512": {
+        "documents": 44,
+        "chunks": 27271,
+        "tokens": 4711581,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 5,
+          "median": 109,
+          "p90": 456,
+          "p95": 490,
+          "p99": 509,
+          "max": 512
+        },
+        "over256": 8171,
+        "over512": 0,
+        "over1024": 0,
+        "over8191": 0,
+        "exactCount": 28,
+        "withinOne": 42,
+        "fewer": 9,
+        "more": 7,
+        "absoluteCountError": 21,
+        "maxCountError": 4,
+        "sameLayout": 0,
+        "nontrivialCutoffs": 44,
+        "cutoffs": {
+          "min": 0.19434174823508985,
+          "p10": 0.2117890795216091,
+          "median": 0.2657152424504686,
+          "p90": 0.31412200489320175,
+          "p95": 0.32521065598627696,
+          "p99": 0.3981016040826275,
+          "max": 0.3981016040826275
+        }
+      },
+      "semanticUnlimited": {
+        "documents": 44,
+        "chunks": 27269,
+        "tokens": 4709532,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 4,
+          "median": 56,
+          "p90": 453,
+          "p95": 724,
+          "p99": 1541,
+          "max": 7756
+        },
+        "over256": 5099,
+        "over512": 2319,
+        "over1024": 710,
+        "over8191": 0,
+        "exactCount": 28,
+        "withinOne": 43,
+        "fewer": 10,
+        "more": 6,
+        "absoluteCountError": 17,
+        "maxCountError": 2,
+        "sameLayout": 0,
+        "nontrivialCutoffs": 44,
+        "cutoffs": {
+          "min": 0.21715525403387076,
+          "p10": 0.23456923831765555,
+          "median": 0.30127806544878166,
+          "p90": 0.34330174993014606,
+          "p95": 0.3754980999935019,
+          "p99": 0.45228465461938994,
+          "max": 0.45228465461938994
+        }
+      }
+    },
+    "financialComparisons": {
+      "semantic512 vs blocks": {
+        "completeTop5": {
+          "deltaPoints": 5.3333,
+          "paired98.33": [
+            -5.556,
+            18.75
+          ]
+        },
+        "completeTop1": {
+          "deltaPoints": 4.0,
+          "paired95": [
+            -3.922,
+            13.725
+          ]
+        }
+      },
+      "semanticUnlimited vs blocks": {
+        "completeTop5": {
+          "deltaPoints": 6.6667,
+          "paired98.33": [
+            -3.75,
+            16.667
+          ]
+        },
+        "completeTop1": {
+          "deltaPoints": 9.3333,
+          "paired95": [
+            3.571,
+            16.176
+          ]
+        }
+      },
+      "semantic512 vs semanticUnlimited": {
+        "completeTop5": {
+          "deltaPoints": -1.3333,
+          "paired98.33": [
+            -10.769,
+            9.434
+          ]
+        },
+        "completeTop1": {
+          "deltaPoints": -5.3333,
+          "paired95": [
+            -10.345,
+            0.0
+          ]
+        }
+      }
+    }
+  },
+  "development": {
+    "questions": {
+      "faq": 22,
+      "finance": 66,
+      "government": 347,
+      "papers": 179
+    },
+    "domains": {
+      "faq": {
+        "blocks": {
+          "completeTop1": 0.8181818181818182,
+          "recallTop1": 0.8341750909090909,
+          "completeTop5": 0.9545454545454546,
+          "recallTop5": 0.9545454545454546,
+          "top1Tokens": 143.0909090909091,
+          "top5Tokens": 752.8181818181819,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semantic512": {
+          "completeTop1": 0.7272727272727273,
+          "recallTop1": 0.7992505454545454,
+          "completeTop5": 1,
+          "recallTop5": 1,
+          "top1Tokens": 152.72727272727272,
+          "top5Tokens": 843.3181818181819,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semanticUnlimited": {
+          "completeTop1": 0.6818181818181818,
+          "recallTop1": 0.7931899545454545,
+          "completeTop5": 1,
+          "recallTop5": 1,
+          "top1Tokens": 208.5909090909091,
+          "top5Tokens": 1020.3181818181819,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        }
+      },
+      "finance": {
+        "blocks": {
+          "completeTop1": 0.045454545454545456,
+          "recallTop1": 0.07434566666666667,
+          "completeTop5": 0.09090909090909091,
+          "recallTop5": 0.11943872727272728,
+          "top1Tokens": 199.75757575757575,
+          "top5Tokens": 948.439393939394,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semantic512": {
+          "completeTop1": 0.045454545454545456,
+          "recallTop1": 0.07125704545454546,
+          "completeTop5": 0.15151515151515152,
+          "recallTop5": 0.24652407575757576,
+          "top1Tokens": 288.59090909090907,
+          "top5Tokens": 1432.3030303030303,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semanticUnlimited": {
+          "completeTop1": 0.07575757575757576,
+          "recallTop1": 0.10016536363636364,
+          "completeTop5": 0.21212121212121213,
+          "recallTop5": 0.2765755,
+          "top1Tokens": 461.9848484848485,
+          "top5Tokens": 2000.121212121212,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        }
+      },
+      "government": {
+        "blocks": {
+          "completeTop1": 0.6801152737752161,
+          "recallTop1": 0.680537944284342,
+          "completeTop5": 0.9365994236311239,
+          "recallTop5": 0.9365994236311239,
+          "top1Tokens": 178.5552353506244,
+          "top5Tokens": 922.6541786743516,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semantic512": {
+          "completeTop1": 0.6426512968299711,
+          "recallTop1": 0.643605507204611,
+          "completeTop5": 0.9289145052833814,
+          "recallTop5": 0.9381547050912584,
+          "top1Tokens": 240.94428434197886,
+          "top5Tokens": 1258.3698366954852,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semanticUnlimited": {
+          "completeTop1": 0.6195965417867435,
+          "recallTop1": 0.6205507521613832,
+          "completeTop5": 0.9212295869356388,
+          "recallTop5": 0.9304697867435159,
+          "top1Tokens": 257.7031700288184,
+          "top5Tokens": 1428.4678194044188,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        }
+      },
+      "papers": {
+        "blocks": {
+          "completeTop1": 0.25139664804469275,
+          "recallTop1": 0.2890231396648045,
+          "completeTop5": 0.6983240223463687,
+          "recallTop5": 0.7530301452513967,
+          "top1Tokens": 175.53631284916202,
+          "top5Tokens": 900.9832402234637,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semantic512": {
+          "completeTop1": 0.29608938547486036,
+          "recallTop1": 0.32632626815642457,
+          "completeTop5": 0.659217877094972,
+          "recallTop5": 0.722959687150838,
+          "top1Tokens": 226.60335195530726,
+          "top5Tokens": 1192.9217877094973,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semanticUnlimited": {
+          "completeTop1": 0.3016759776536313,
+          "recallTop1": 0.3279295530726257,
+          "completeTop5": 0.7094972067039106,
+          "recallTop5": 0.7647784804469274,
+          "top1Tokens": 310.98324022346367,
+          "top5Tokens": 1512.0837988826815,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        }
+      }
+    },
+    "macro": {
+      "blocks": {
+        "completeTop1": 0.44878707136406815,
+        "recallTop1": 0.469520460381226,
+        "completeTop5": 0.6700944978580096,
+        "recallTop5": 0.6909034376751756,
+        "top1Tokens": 174.23500826206782,
+        "top5Tokens": 881.2237486638478,
+        "hitsReturned": 5,
+        "poolExhausted": 0
+      },
+      "semantic512": {
+        "completeTop1": 0.42786698875802603,
+        "recallTop1": 0.4601098415675316,
+        "completeTop5": 0.6849118834733763,
+        "recallTop5": 0.7269096169999181,
+        "top1Tokens": 227.21645452886696,
+        "top5Tokens": 1181.7282091315487,
+        "hitsReturned": 5,
+        "poolExhausted": 0
+      },
+      "semanticUnlimited": {
+        "completeTop1": 0.4197120692540331,
+        "recallTop1": 0.46045890585395677,
+        "completeTop5": 0.7107120014401904,
+        "recallTop5": 0.7429559417976108,
+        "top1Tokens": 309.81554195700994,
+        "top5Tokens": 1490.2477530566237,
+        "hitsReturned": 5,
+        "poolExhausted": 0
+      }
+    },
+    "comparisons": {
+      "semantic512 vs blocks": {
+        "completeTop5": {
+          "deltaPoints": 1.4817,
+          "paired98.33": [
+            -1.805,
+            4.762
+          ]
+        },
+        "completeTop1": {
+          "deltaPoints": -2.092,
+          "paired95": [
+            -6.469,
+            2.222
+          ]
+        }
+      },
+      "semanticUnlimited vs blocks": {
+        "completeTop5": {
+          "deltaPoints": 4.0618,
+          "paired98.33": [
+            -0.388,
+            8.499
+          ]
+        },
+        "completeTop1": {
+          "deltaPoints": -2.9075,
+          "paired95": [
+            -9.406,
+            3.65
+          ]
+        }
+      },
+      "semantic512 vs semanticUnlimited": {
+        "completeTop5": {
+          "deltaPoints": -2.58,
+          "paired98.33": [
+            -5.325,
+            -0.005
+          ]
+        },
+        "completeTop1": {
+          "deltaPoints": 0.8155,
+          "paired95": [
+            -2.309,
+            3.847
+          ]
+        }
+      }
+    },
+    "exactMultiple": {
+      "questions": {
+        "faq": 9,
+        "finance": 28,
+        "government": 32,
+        "papers": 40
+      },
+      "domains": {
+        "faq": {
+          "blocks": {
+            "completeTop1": 0.7777777777777778,
+            "recallTop1": 0.8168724444444444,
+            "completeTop5": 1,
+            "recallTop5": 1,
+            "top1Tokens": 76.55555555555556,
+            "top5Tokens": 483.8888888888889,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          },
+          "semantic512": {
+            "completeTop1": 0.7777777777777778,
+            "recallTop1": 0.8168724444444444,
+            "completeTop5": 1,
+            "recallTop5": 1,
+            "top1Tokens": 74.11111111111111,
+            "top5Tokens": 472.55555555555554,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          },
+          "semanticUnlimited": {
+            "completeTop1": 0.7777777777777778,
+            "recallTop1": 0.8168724444444444,
+            "completeTop5": 1,
+            "recallTop5": 1,
+            "top1Tokens": 74.11111111111111,
+            "top5Tokens": 472.55555555555554,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          }
+        },
+        "finance": {
+          "blocks": {
+            "completeTop1": 0,
+            "recallTop1": 0.020146535714285714,
+            "completeTop5": 0.03571428571428571,
+            "recallTop5": 0.055860821428571426,
+            "top1Tokens": 209.71428571428572,
+            "top5Tokens": 980.8571428571429,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          },
+          "semantic512": {
+            "completeTop1": 0,
+            "recallTop1": 0.020146535714285714,
+            "completeTop5": 0.03571428571428571,
+            "recallTop5": 0.1427322857142857,
+            "top1Tokens": 278.64285714285717,
+            "top5Tokens": 1416.3214285714287,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          },
+          "semanticUnlimited": {
+            "completeTop1": 0,
+            "recallTop1": 0,
+            "completeTop5": 0.10714285714285714,
+            "recallTop5": 0.10714285714285714,
+            "top1Tokens": 369.14285714285717,
+            "top5Tokens": 1853.25,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          }
+        },
+        "government": {
+          "blocks": {
+            "completeTop1": 0.7291666666666666,
+            "recallTop1": 0.7291666666666666,
+            "completeTop5": 0.9270833333333334,
+            "recallTop5": 0.9270833333333334,
+            "top1Tokens": 176.03125,
+            "top5Tokens": 927.7291666666666,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          },
+          "semantic512": {
+            "completeTop1": 0.5833333333333334,
+            "recallTop1": 0.5833333333333334,
+            "completeTop5": 0.8854166666666666,
+            "recallTop5": 0.8854166666666666,
+            "top1Tokens": 258.65625,
+            "top5Tokens": 1244.6666666666667,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          },
+          "semanticUnlimited": {
+            "completeTop1": 0.44791666666666663,
+            "recallTop1": 0.44791666666666663,
+            "completeTop5": 0.8958333333333334,
+            "recallTop5": 0.8958333333333334,
+            "top1Tokens": 212.71875,
+            "top5Tokens": 1254.1979166666667,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          }
+        },
+        "papers": {
+          "blocks": {
+            "completeTop1": 0.3,
+            "recallTop1": 0.32568085,
+            "completeTop5": 0.75,
+            "recallTop5": 0.76784135,
+            "top1Tokens": 165.15,
+            "top5Tokens": 867.65,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          },
+          "semantic512": {
+            "completeTop1": 0.375,
+            "recallTop1": 0.391959925,
+            "completeTop5": 0.75,
+            "recallTop5": 0.7975456,
+            "top1Tokens": 243.35,
+            "top5Tokens": 1163.6,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          },
+          "semanticUnlimited": {
+            "completeTop1": 0.375,
+            "recallTop1": 0.3996872,
+            "completeTop5": 0.775,
+            "recallTop5": 0.86524365,
+            "top1Tokens": 258.775,
+            "top5Tokens": 1319.3,
+            "hitsReturned": 5,
+            "poolExhausted": 0
+          }
+        }
+      },
+      "macro": {
+        "blocks": {
+          "completeTop1": 0.4517361111111111,
+          "recallTop1": 0.4729666242063492,
+          "completeTop5": 0.6781994047619048,
+          "recallTop5": 0.6876963761904762,
+          "top1Tokens": 156.86277281746032,
+          "top5Tokens": 815.0312996031746,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semantic512": {
+          "completeTop1": 0.4340277777777778,
+          "recallTop1": 0.4530780596230159,
+          "completeTop5": 0.6677827380952381,
+          "recallTop5": 0.7064236380952381,
+          "top1Tokens": 213.69005456349208,
+          "top5Tokens": 1074.2859126984126,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        },
+        "semanticUnlimited": {
+          "completeTop1": 0.4001736111111111,
+          "recallTop1": 0.4161190777777778,
+          "completeTop5": 0.6944940476190476,
+          "recallTop5": 0.7170549601190477,
+          "top1Tokens": 228.68692956349207,
+          "top5Tokens": 1224.8258680555555,
+          "hitsReturned": 5,
+          "poolExhausted": 0
+        }
+      },
+      "comparisons": {
+        "semantic512 vs blocks": {
+          "completeTop5": {
+            "deltaPoints": -1.0417,
+            "paired98.33": [
+              -4.251,
+              2.933
+            ]
+          },
+          "completeTop1": {
+            "deltaPoints": -1.7708,
+            "paired95": [
+              -5.934,
+              3.073
+            ]
+          }
+        },
+        "semanticUnlimited vs blocks": {
+          "completeTop5": {
+            "deltaPoints": 1.6295,
+            "paired98.33": [
+              -1.899,
+              5.918
+            ]
+          },
+          "completeTop1": {
+            "deltaPoints": -5.1562,
+            "paired95": [
+              -11.429,
+              1.458
+            ]
+          }
+        },
+        "semantic512 vs semanticUnlimited": {
+          "completeTop5": {
+            "deltaPoints": -2.6711,
+            "paired98.33": [
+              -5.941,
+              0.0
+            ]
+          },
+          "completeTop1": {
+            "deltaPoints": 3.3854,
+            "paired95": [
+              -1.25,
+              9.59
+            ]
+          }
+        }
+      }
+    },
+    "layouts": {
+      "blocks": {
+        "documents": 356,
+        "chunks": 29298,
+        "tokens": 5044392,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 63,
+          "median": 189,
+          "p90": 248,
+          "p95": 253,
+          "p99": 256,
+          "max": 256
+        },
+        "over256": 0,
+        "over512": 0,
+        "over1024": 0,
+        "over8191": 0,
+        "exactCount": 356,
+        "withinOne": 356,
+        "fewer": 0,
+        "more": 0,
+        "absoluteCountError": 0,
+        "maxCountError": 0,
+        "sameLayout": 356,
+        "nontrivialCutoffs": 0,
+        "cutoffs": {}
+      },
+      "semantic512": {
+        "documents": 356,
+        "chunks": 29223,
+        "tokens": 5029607,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 6,
+          "median": 110,
+          "p90": 452,
+          "p95": 488,
+          "p99": 509,
+          "max": 512
+        },
+        "over256": 8561,
+        "over512": 0,
+        "over1024": 0,
+        "over8191": 0,
+        "exactCount": 178,
+        "withinOne": 328,
+        "fewer": 123,
+        "more": 55,
+        "absoluteCountError": 215,
+        "maxCountError": 10,
+        "sameLayout": 4,
+        "nontrivialCutoffs": 302,
+        "cutoffs": {
+          "min": 0.05917421665116569,
+          "p10": 0.10494014923631671,
+          "median": 0.19024594230952918,
+          "p90": 0.3048362205119352,
+          "p95": 0.3186786838836496,
+          "p99": 0.4125044527038826,
+          "max": 0.46013225215692416
+        }
+      },
+      "semanticUnlimited": {
+        "documents": 356,
+        "chunks": 29250,
+        "tokens": 5030133,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 5,
+          "median": 66,
+          "p90": 451,
+          "p95": 706,
+          "p99": 1431,
+          "max": 9713
+        },
+        "over256": 5541,
+        "over512": 2428,
+        "over1024": 639,
+        "over8191": 1,
+        "exactCount": 162,
+        "withinOne": 311,
+        "fewer": 115,
+        "more": 79,
+        "absoluteCountError": 248,
+        "maxCountError": 6,
+        "sameLayout": 4,
+        "nontrivialCutoffs": 330,
+        "cutoffs": {
+          "min": 0.06419356308480881,
+          "p10": 0.11815127346701998,
+          "median": 0.20647330487388643,
+          "p90": 0.32494752324004017,
+          "p95": 0.34701437829509507,
+          "p99": 0.41824539201297706,
+          "max": 0.46013225215692416
+        }
+      }
+    },
+    "distinctSources": 190,
+    "allThreeExact": 114,
+    "allThreeWithinOneOfBlocks": 299,
+    "financialEvidence": {
+      "text": {
+        "questions": 14,
+        "complete": {
+          "blocks": {
+            "completeTop1": 2,
+            "completeTop5": 4
+          },
+          "semantic512": {
+            "completeTop1": 1,
+            "completeTop5": 5
+          },
+          "semanticUnlimited": {
+            "completeTop1": 4,
+            "completeTop5": 7
+          }
+        }
+      },
+      "table": {
+        "questions": 51,
+        "complete": {
+          "blocks": {
+            "completeTop1": 1,
+            "completeTop5": 2
+          },
+          "semantic512": {
+            "completeTop1": 2,
+            "completeTop5": 5
+          },
+          "semanticUnlimited": {
+            "completeTop1": 1,
+            "completeTop5": 7
+          }
+        }
+      },
+      "table+text": {
+        "questions": 1,
+        "complete": {
+          "blocks": {
+            "completeTop1": 0,
+            "completeTop5": 0
+          },
+          "semantic512": {
+            "completeTop1": 0,
+            "completeTop5": 0
+          },
+          "semanticUnlimited": {
+            "completeTop1": 0,
+            "completeTop5": 0
+          }
+        }
+      }
+    },
+    "financialLayouts": {
+      "blocks": {
+        "documents": 40,
+        "chunks": 25698,
+        "tokens": 4421909,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 63,
+          "median": 189,
+          "p90": 248,
+          "p95": 252,
+          "p99": 256,
+          "max": 256
+        },
+        "over256": 0,
+        "over512": 0,
+        "over1024": 0,
+        "over8191": 0,
+        "exactCount": 40,
+        "withinOne": 40,
+        "fewer": 0,
+        "more": 0,
+        "absoluteCountError": 0,
+        "maxCountError": 0,
+        "sameLayout": 40,
+        "nontrivialCutoffs": 0,
+        "cutoffs": {}
+      },
+      "semantic512": {
+        "documents": 40,
+        "chunks": 25711,
+        "tokens": 4405885,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 5,
+          "median": 108,
+          "p90": 453,
+          "p95": 488,
+          "p99": 509,
+          "max": 512
+        },
+        "over256": 7507,
+        "over512": 0,
+        "over1024": 0,
+        "over8191": 0,
+        "exactCount": 28,
+        "withinOne": 37,
+        "fewer": 5,
+        "more": 7,
+        "absoluteCountError": 23,
+        "maxCountError": 10,
+        "sameLayout": 0,
+        "nontrivialCutoffs": 40,
+        "cutoffs": {
+          "min": 0.06578694170788979,
+          "p10": 0.23897446205355588,
+          "median": 0.29952057902372003,
+          "p90": 0.32664152483909575,
+          "p95": 0.3353497928269734,
+          "p99": 0.39029159429678795,
+          "max": 0.39029159429678795
+        }
+      },
+      "semanticUnlimited": {
+        "documents": 40,
+        "chunks": 25700,
+        "tokens": 4406163,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 4,
+          "median": 64,
+          "p90": 449,
+          "p95": 712,
+          "p99": 1462,
+          "max": 9713
+        },
+        "over256": 4772,
+        "over512": 2117,
+        "over1024": 581,
+        "over8191": 1,
+        "exactCount": 22,
+        "withinOne": 38,
+        "fewer": 11,
+        "more": 7,
+        "absoluteCountError": 24,
+        "maxCountError": 6,
+        "sameLayout": 0,
+        "nontrivialCutoffs": 40,
+        "cutoffs": {
+          "min": 0.20393924712905048,
+          "p10": 0.2716198092113371,
+          "median": 0.32624527305283957,
+          "p90": 0.3534081400410245,
+          "p95": 0.3651315571802318,
+          "p99": 0.4443392607549089,
+          "max": 0.4443392607549089
+        }
+      }
+    },
+    "financialComparisons": {
+      "semantic512 vs blocks": {
+        "completeTop5": {
+          "deltaPoints": 6.0606,
+          "paired98.33": [
+            0.0,
+            10.769
+          ]
+        },
+        "completeTop1": {
+          "deltaPoints": 0,
+          "paired95": [
+            -6.061,
+            8.333
+          ]
+        }
+      },
+      "semanticUnlimited vs blocks": {
+        "completeTop5": {
+          "deltaPoints": 12.1212,
+          "paired98.33": [
+            0.0,
+            24.242
+          ]
+        },
+        "completeTop1": {
+          "deltaPoints": 3.0303,
+          "paired95": [
+            -5.797,
+            17.5
+          ]
+        }
+      },
+      "semantic512 vs semanticUnlimited": {
+        "completeTop5": {
+          "deltaPoints": -6.0606,
+          "paired98.33": [
+            -14.815,
+            0.0
+          ]
+        },
+        "completeTop1": {
+          "deltaPoints": -3.0303,
+          "paired95": [
+            -10.606,
+            3.125
+          ]
+        }
+      }
+    }
+  }
+}

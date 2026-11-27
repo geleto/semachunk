@@ -99,8 +99,9 @@ export async function indexDocument(doc, policy, costs, initial, context, encode
         const markdown = policy.method === 'public-markdown';
         const output = await chunkText(doc.source, record, { inputFormat: markdown ? 'markdown' : 'text',
             maxChunkSize: policy.chars === null || (policy.chars === undefined && policy.tokens === undefined) ? undefined : maxChunkSize,
-            combineChunks: policy.combineChunks,
             chunkingStrategy: policy.method === 'plain-pack' ? 'pack' : policy.chunkingStrategy, chunkOverlap: policy.chunkOverlap,
+            combineChunksSimilarityThreshold: policy.combineChunksSimilarityThreshold,
+            mergeThresholdMode: policy.mergeThresholdMode,
             maxChunkTokens, countTokens, maxEmbeddingBatchSize: 256, chunkPrefix: doc.chunkPrefix, excludeChunkPrefixInResults: true });
         chunks = markdown ? output.map(({ embedding, ...chunk }) => chunk) : alignPlain(doc.source, output.map(c => c.text));
     } else if (nativeSplitter) {

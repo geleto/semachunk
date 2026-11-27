@@ -47,7 +47,7 @@ for (const item of cases) {
         return 'Subject ' + topic + ' discusses sample ' + String(i).padStart(5, '0') + '.';
     }).join(' ');
     const options = {
-        maxChunkSize: 500, similarityThreshold: 0.5, combineChunksSimilarityThreshold: 0.5,
+        chunkingStrategy: 'semantic', maxChunkSize: 500, similarityThreshold: 0.5, combineChunksSimilarityThreshold: 0.5,
         maxMergesPerPass: item.cap, maxUncappedPasses: 100, candiateMergesPercentageCap: 40,
         uncappedCandidateMerges: 12, returnEmbedding: true
     };

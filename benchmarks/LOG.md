@@ -1,5 +1,254 @@
 # Chunking improvements and benchmark results
 
+## 2026-11-27 · Document and citation audit
+
+The confirmation comparison covers 790 questions. Five complete hits never exhausted a candidate pool in either fold for any of the three indexes. The smallest confirmation pool had ten passages. Thresholds target each document's structural passage count using only its text. Each method returns all the text of its first five hits. [Source manifest and exclusions](results/2026-11-27-audited-data.json) · [Per-question outcomes](results/2026-11-27-whole-passage-audited-outcomes.jsonl.gz)
+
+| Complete evidence in the first five hits | Questions | Blocks, 256 tokens | Semantic-blocks, 512 tokens | Semantic-blocks, unlimited |
+|---|---:|---:|---:|---:|
+| Government services | 449 | 90.13% | 87.90% | 87.01% |
+| Software FAQs | 76 | 97.37% | 92.11% | 89.47% |
+| Research papers | 190 | 63.68% | 68.95% | 71.58% |
+| Financial filings | 75 | 26.67% | 32.00% | 33.33% |
+| Equal-weight domain mean | | 69.46% | 70.24% | 70.35% |
+
+For each method in column order, the mean tokens returned across domains were 897, 1,251 and 1,827 per question (rounded). Relative to blocks, the capped semantic index gained 0.78 percentage points with a paired 98.33% interval of −2.86 to +4.90. The unlimited index gained 0.89 points with an interval of −2.80 to +4.75. These previously examined folds give a descriptive comparison. [Full results, including rank one, tokens and paired intervals](results/2026-11-27-whole-passage-audited.json)
+
+- **Government services.** Five of the 192 Doc2Dial pages duplicated another page's visible text. We merged their questions into the canonical copies, restored 60 missing page titles from the release and retained the distinct applicant profiles. Every query now searches all pages in its agency and fold. Forty-five questions accept a verified quotation on another relevant page. Of the 972 previous questions, 152 cited only navigation text and 24 had an underspecified request or evidence that answered a different question. The remaining 796 are scored in all three formats. [Government review](government-citations.json)
+- **Software FAQs.** All nine manuals retain their original headings and examples. We rewrote the questions independently of the headings and cited the answer lines. Seven of the 105 entries pointed elsewhere for the requested information. The six confirmation manuals now share one search pool of 122 structural passages. [Reviewed questions and citations](faq-citations.json)
+- **Research papers.** All 128 supplied papers remain in the corpus. We matched each annotator's highlighted evidence to the text and checked that the citation can be indexed. All spans from one answer are jointly required. Five of the 374 previously scored questions had no usable text citation, including two dataset questions whose entire annotation was the heading of an empty section. [QASPER source and audit](results/2026-11-27-audited-data.json)
+- **Finance.** We verified the archived results on all 84 source documents. On the 50 table questions the top-five counts were 7, 13 and 13. On the 25 prose questions they were 13, 11 and 12. All PDF bytes were checked against the recorded SHA-256. The manifest preserves both the published source link and a release-pinned PDF link for each document. [Finance source registry](results/2026-11-27-audited-data.json) · [PDF citations](financebench-citations.json)
+
+## 2026-11-27 · Full financial filings with whole-passage retrieval
+
+We replaced the one-page FinQA inputs in the active comparison with 84 complete FinanceBench filings and earnings releases. They span 32 issuers and 12,013 PDF pages. Each question searches its entire source document. On the previous confirmation set, the first five hits exhausted the finance candidate pool for 80.1% of questions. On the new confirmation set, this happened for zero questions. The median held-out filing produced 584 structural chunks. [Frozen corpus and exclusions](results/2026-11-27-full-filings-data.json) · [Citations](financebench-citations.json)
+
+| Held-out finance, 75 questions | Index chunks across 44 filings | Complete evidence in first hit | Complete evidence in first five | Mean tokens in first five |
+|---|---:|---:|---:|---:|
+| `blocks`, 256 tokens | 27,274 | 6/75 (8.0%) | 20/75 (26.7%) | 940 |
+| `semantic-blocks`, 512 tokens | 27,271 | 9/75 (12.0%) | 24/75 (32.0%) | 1,620 |
+| `semantic-blocks`, unlimited | 27,269 | 13/75 (17.3%) | 25/75 (33.3%) | 2,956 |
+
+Both semantic indexes recovered complete evidence on 13 of 50 table questions in the first five hits. Structural chunks recovered seven. On the 25 prose questions, the counts were 13 for structural chunks, 11 for capped semantic chunks and 12 for unlimited semantic chunks. The issuer-bootstrap 98.33% intervals for the semantic gains over structural chunks were −5.6 to +18.8 percentage points at 512 tokens and −3.8 to +16.7 points with unlimited size. The 66 development questions scored 9.1%, 15.2% and 21.2% at rank five, respectively. [Per-question outcomes](results/2026-11-27-whole-passage-filings-outcomes.jsonl.gz)
+
+The semantic thresholds use each filing's structural passage count as their target, with every hit returned in full. All three counts were within one passage of the structural target on 41 of the 44 confirmation filings. Across all four equally weighted domains, complete evidence at rank five reached 66.10% for `blocks`, 64.26% for capped `semantic-blocks` and 64.59% for unlimited `semantic-blocks`. The three nonfinancial domains reuse the same per-question results as the earlier run. [Comparison and intervals](results/2026-11-27-whole-passage-filings.json) · [Reproduction instructions](README.md#compare-three-limits-with-whole-passage-retrieval)
+
+## 2026-11-27 · Three chunk limits with whole-passage retrieval
+
+The first five whole results from `blocks` at 256 tokens contained all the annotated answer evidence on 84.32% of confirmation questions, averaged over the four domains. The two semantic methods scored 81.20% and 81.26%. The 512-token semantic cap gave the highest first-hit score on confirmation and reduced the mean tokens returned in five hits by 18.5% relative to unlimited semantic chunks. [Protocol](whole-passage-protocol.json) · [Reproduction instructions](README.md#compare-three-limits-with-whole-passage-retrieval)
+
+| Confirmation, 1,266 questions | Index chunks | Complete in first hit | Complete in first five | Evidence-token recall in first five | Mean tokens in first hit | Mean tokens in first five |
+|---|---:|---:|---:|---:|---:|---:|
+| `blocks`, 256 tokens | 4,877 | 51.16% | **84.32%** | 87.07% | 183 | 865 |
+| `semantic-blocks`, 512 tokens | 4,812 | **53.53%** | 81.20% | 87.66% | 255 | 1,067 |
+| `semantic-blocks`, unlimited | 4,851 | 52.49% | 81.26% | **88.34%** | 323 | 1,309 |
+
+The benchmark scored every source range in each returned passage. It reused the 338 confirmation sources and their 556 renderings, the same dense encoder, and the same search pools as the preceding experiment. Public-service pages, masked technical FAQs, financial pages and research papers have equal domain weights. Size limits apply when creating the index. The first-hit metric credits an answer only when that single passage contains a complete annotated evidence set. The five-hit metric allows the evidence to span passages.
+
+Each semantic method fitted its own cutoff to the 256-token structural count for each rendering, before considering questions or answers. All three counts matched exactly in 324 renderings. Both semantic counts were within one of the target in 503. The largest individual count differences were two for the capped method and three for the unlimited method. The median cutoff among renderings with active semantic splits was 0.194 at 512 tokens and 0.210 at unlimited size. The largest indexed passages were 256, 512 and 3,234 tokens respectively.
+
+| Source domain | Questions | First hit, blocks / semantic 512 / unlimited | First five, blocks / semantic 512 / unlimited |
+|---|---:|---:|---:|
+| Public-service pages | 537 | 58.91% / 57.36% / 56.42% | 89.01% / 86.84% / 86.10% |
+| Masked technical FAQs | 79 | 53.16% / 53.16% / 50.63% | 88.61% / 73.42% / 74.68% |
+| Financial pages | 457 | 63.02% / 76.15% / 80.09% | 99.56% / 99.78% / 100.00% |
+| Research papers | 193 | 29.53% / 27.46% / 22.80% | 60.10% / 64.77% / 64.25% |
+
+The financial first-hit gain includes mixed table-and-prose questions, where the methods recovered 19, 34 and 37 of 51 answers respectively. On these within-document financial searches, five hits included every passage in the candidate pool for 80.09% of confirmation questions under each configuration. That limits what the top-five scores can distinguish. FAQs show the largest structural advantage at five hits.
+
+Against `blocks`, semantic 512 gained 2.38 percentage points on the first hit (descriptive source-clustered 95% interval −1.40 to +5.73) and lost 3.12 points on the first five (98.33% interval −6.25 to +0.10, adjusted for three comparisons). Semantic 512 versus unlimited changed the five-hit score by −0.06 points (adjusted interval −2.48 to +3.05). All three adjusted intervals on the confirmation endpoint include zero.
+
+On 552 confirmation questions whose sources produced exactly equal counts above one for all three methods in every rendering, five-hit completeness was 80.68%, 77.79% and 79.98% respectively. These questions retained their original candidate pools. On the separate 1,122 development questions, the three five-hit scores were 87.92%, 82.46% and 83.69%. Both folds had been used in earlier studies. The rerun reproduced all 8,664 archived method-by-question/rendering outcomes for the structural and unlimited controls, including full-hit evidence and token counts. [Full results and paired intervals](results/2026-11-27-whole-passage.json) · [Per-document counts and paired question outcomes](results/2026-11-27-whole-passage-outcomes.jsonl.gz)
+
+## 2026-11-26 · Uncapped semantic splitting at a matched passage count
+
+The structural reference is public `blocks` at 256 tokens. For each document, public `semantic-blocks` used `maxChunkSize: Infinity` and `maxChunkTokens: Infinity`. We chose the cosine cutoff producing the nearest attainable passage count to the structural reference. Opening a nested branch can create several passages, so a single threshold can skip the exact target. Ties favored the lower count. Only the document and its target count entered selection. Each selected layout was checked against the public chunker, including the text and source ranges. [Protocol](matched-count-protocol.json) · [Reproduction instructions](README.md#compare-uncapped-semantic-passages-at-a-matched-count)
+
+On 338 distinct confirmation sources in 556 document renderings, structural packing produced 4,877 passages and semantic splitting produced 4,851. Counts matched exactly on 365 renderings and were within one on 518. The largest mismatch was three. The median fitted cutoff among renderings with an active cut was 0.210, with the middle 80% between 0.113 and 0.379. The same four domains and 1,266 confirmation questions were used as in the earlier benchmark. Their scores had been reported previously. A separate replay covered the 1,122 development questions.
+
+| Complete evidence on confirmation | Structural `blocks` | Uncapped `semantic-blocks` | Shuffled similarities, mean of three runs |
+|---|---:|---:|---:|
+| First hit, whole passage | 51.16% | 52.49% | 48.58% |
+| First hit, at most 256 tokens delivered | 51.16% | 33.34% | 33.56% |
+| Five hits, whole passages | 84.32% | 81.26% | 82.12% |
+| Five hits, 1,024 tokens delivered | 83.43% | 72.87% | 77.25% |
+| Five hits, 512 tokens delivered | **75.04%** | **57.66%** | 62.98% |
+
+The uncapped first-hit gain over `blocks` was 1.33 percentage points, with a source-clustered 95% interval of −2.42 to +4.56. Real similarities outscored shuffled similarities by 3.90 points on that measure (interval +0.91 to +7.41). Each shuffle permuted the same scores within each document, retained the same tree and refit its cutoff to the same target count. At 512 delivered tokens, genuine semantic splitting finished 17.38 points below `blocks` (interval −20.75 to −13.13). On development the corresponding scores were 65.43% and 76.22%. On the 625 confirmation questions whose source had multiple passages and exactly matched counts in every evaluated rendering, the scores were 54.10% and 75.17%. The original search pools were retained for that subset.
+
+Passage counts conceal the length distribution. The median semantic passage was 82 tokens versus 200 for `blocks`, but the semantic 95th percentile was 642 tokens and its longest passage was 3,234. Of the semantic passages, 417 exceeded the entire 512-token delivery budget. The five retrieved passages averaged 1,309 tokens for semantic splitting and 865 for structural packing. Without clipping, semantic splitting recovered 88.34% of individual evidence tokens versus 87.07% for `blocks`, while fewer queries had *all* their evidence in the five hits. Every emitted passage was indexed. [Per-document counts, cutoffs, sizes and paired query outcomes](results/2026-11-26-matched-count-outcomes.jsonl.gz)
+
+The first-ranked passage averaged 323 tokens with semantic splitting, 279 with shuffled scores and 183 with `blocks`. After seeing the whole-first-hit scores, we replayed those exact rankings with the same 256-token maximum prefix for each first hit. Semantic first-hit completeness fell to 33.34%, versus 51.16% for `blocks` (difference −17.82 points, descriptive 95% interval −23.42 to −12.98). This check uses the benchmark's existing prefix delivery rule. A reader who can consume the whole section has access to the evidence measured in the first row of the table.
+
+| Source domain | Questions | First whole hit, blocks → semantic | Five hits at 512 tokens, blocks → semantic |
+|---|---:|---:|---:|
+| Public-service pages, averaged across renderings | 537 | 58.91% → 56.42% | 82.06% → 71.63% |
+| Masked technical FAQs | 79 | 53.16% → 50.63% | 79.75% → 45.57% |
+| Financial pages | 457 | 63.02% → 80.09% | 90.15% → 87.53% |
+| Research papers | 193 | 29.53% → 22.80% | 48.19% → 25.91% |
+
+Financial pages drove the increase in first-hit completeness. At 512 delivered tokens, the semantic method recovered 44 of 51 mixed table-and-prose answers versus 39 with `blocks`. It recovered 278 of 317 table-only answers versus 295, and both recovered 78 of 89 prose-only answers. On research papers, the five untrimmed semantic passages contained complete evidence for 64.25% of questions versus 60.10% for `blocks`, while the 512-token budget delivered it for only 25.91% versus 48.19%. Use shared-root `blocks` at 256 tokens as the reference configuration for the five-hit, 512-token retrieval profile. [Full results and paired intervals](results/2026-11-26-matched-count.json)
+
+## 2026-11-26 · Choosing chunk sizes and semantic cutoffs with a shared document root
+
+`blocks` now starts at the document root in the public API. Top-level paragraphs or Markdown sections can share a passage up to the configured size. The structural and semantic strategies use the same root and preserve omission barriers. JSON retains its existing record boundaries. The independent-root scores in earlier entries describe the earlier implementation.
+
+The primary retrieval question is whether five dense-search hits deliver every annotated piece of an answer within 512 tokens. The selection score gives equal weight to public-service pages, technical FAQs, financial pages and research papers. A public-service question counts once across its HTML, Markdown and text renderings. The primary chunk cap was 256 tokens with zero overlap. Cutoffs were selected on 1,122 development questions and frozen before evaluating the 1,266 confirmation questions. We compared ten fixed cutoffs from −1 to 0.65 for each semantic family, document calibration, protection for paragraphs that fit, and three rules that move an existing split. The latter keep the structural chunk count fixed. [Protocol](semantic-settings-protocol.json) · [Frozen cutoff selections](results/2026-11-26-semantic-settings-nominees.json)
+
+The confirmation set contains 537 public-service questions, 79 publisher-authored FAQ questions with their headings masked, 457 financial questions and 193 questions about research papers. Of these, 694 come from sources previously unused in the chunking studies. Financial reports, publishers, papers and public-service page families are disjoint between development and confirmation. Government searches include distractors from the same agency, FAQ searches cover the manuals in their cohort, and finance and research searches run within the requested document. These are English-language evidence retrieval measurements. [Dataset manifest](results/2026-11-26-semantic-settings-data.json) · [Reproduction instructions](README.md#search-thresholds-against-the-shared-root-baseline)
+
+| Held-out complete evidence at 256 chunk tokens | Four-domain mean | Public service | Masked FAQs | Finance | Papers | Indexed chunks |
+|---|---:|---:|---:|---:|---:|---:|
+| Shared-root `blocks` | **75.04%** | 82.06% | 79.75% | 90.15% | 48.19% | 4,877 |
+| `pack` | 70.50% | 77.59% | 68.35% | 85.78% | 50.26% | 5,205 |
+| `semantic`, shipped settings | 68.38% | 80.88% | 53.16% | 92.34% | 47.15% | 7,836 |
+| `semantic`, development cutoff 0.10 | 70.64% | 80.26% | 68.35% | 87.31% | 46.63% | 5,730 |
+| `semantic-blocks`, development cutoff −1 | 75.04% | 82.06% | 79.75% | 90.15% | 48.19% | 4,877 |
+| `semantic-blocks`, shipped cutoff 0.15 | 69.77% | 80.26% | 60.76% | 90.37% | 47.67% | 6,240 |
+| Move an existing split to the weakest similarity | 75.12% | 83.18% | 79.75% | 88.84% | 48.70% | 4,877 |
+| Move an existing split to balance lengths | 75.25% | 81.75% | 79.75% | 90.81% | 48.70% | 4,877 |
+
+Use shared-root `blocks` at 256 tokens and zero overlap as the reference configuration for this retrieval budget. The flat 0.10 nominee finished 4.40 percentage points below it, with a source-clustered 98.33% interval of −8.24 to −0.55 points. Against the shipped flat settings, 0.10 gained 2.26 points with a descriptive 95% interval of −0.36 to +4.99. The hierarchical −1 nominee produced identical passage layouts to `blocks` in all 179 retrieval runs. Moving existing boundaries gained 0.08 points, with an interval of −1.12 to +1.52. Neither the observed gain nor the interval met the adoption rule. The length-balancing control was exploratory. Its small change also gives little reason to add a second packing pass. [Frozen size choices](results/2026-11-26-semantic-settings-sizes.json) · [Full curves and paired intervals](results/2026-11-26-semantic-settings.json)
+
+Across the ten fixed cutoffs, the highest observed flat score was 71.03% at 0.05. For `semantic-blocks`, −1 and 0 tied `blocks`, 0.05 scored 74.63%, 0.10 scored 73.59%, 0.30 scored 60.10% and 0.40 scored 47.99%. Document calibration scored 49.19% for `semantic-blocks`. Protecting a paragraph that already fits improved the 0.15 result from 69.77% to 73.50%. On the identical public-service questions rendered as plain text, flat 0.10 recovered 416 answers versus 410 for `blocks`. On HTML it recovered 416 versus 447. The same Markdown format produced opposing results on finances, research and FAQs.
+
+| Held-out results by chunk cap | `blocks`, 512 tokens delivered | Flat `semantic` 0.10, 512 delivered | `blocks`, 1,024 delivered |
+|---|---:|---:|---:|
+| 128 tokens | 67.64% | 63.86% | 68.11% |
+| 256 tokens | **75.04%** | 70.64% | 83.43% |
+| 512 tokens | 68.86% | **70.36%** | **85.00%** |
+
+Each finalist independently selected 256 tokens on the development objective. At a fixed 512-token chunk cap, flat 0.10 did better than `blocks` by 1.50 points, with a descriptive 95% interval of −1.78 to +4.88. Allowing 1,024 delivered tokens increased the structural score at all three caps and favored larger chunks. On the 694 previously unused confirmation questions, averaged over the three covered domains, `blocks` scored 70.36%, flat 0.10 scored 66.62%, hierarchical 0.15 scored 64.20%, and moving existing boundaries scored 70.09%.
+
+On the same smaller set of sources embedded with both models, `blocks` scored 80.19% with `text-embedding-3-small` and 81.42% with `text-embedding-3-large`. The weakest-boundary rule scored 80.05% and 81.87% respectively. Flat 0.10 scored 76.82% and 80.35%. Across the full primary index, `blocks` used zero embedding tokens to choose its boundaries, compared with 1.44 million for flat 0.10, 1.34 million for hierarchical 0.15 and 129 thousand for moving existing boundaries. All methods used embeddings for retrieval.
+
+`blocks` already preserves useful semantic cues through the document structure. Extra cuts can separate the evidence needed to answer one question, leaving more passages to compete for five hits. At 0.15, `semantic-blocks` lost 15 FAQ answers that `blocks` retrieved. In all 15 cases, some required evidence fell outside the top five even before delivery clipping. Ten of those answers also lost the single passage that had previously covered the full evidence. At 0.40 the number of research questions with all their evidence present in at least one indexed passage fell from 158 to 60 out of 193. This loss happens during chunking, before the retriever ranks anything. The financial results below show where the same operation can help.
+
+The old FinQA sample selected 115 questions requiring both a table row and prose. Its 77 pages each supplied one extracted table with a median of six data rows. At a cutoff of 0.15, `semantic-blocks` gained five answers and lost one against shared-root `blocks` (76 versus 72). Only 158 of 1,147 questions in the official FinQA test file require both kinds of evidence. For the new experiment we selected 64 reports per fold before inspecting evidence type and retained every mapped question. The 34 confirmation issuers supplied 159 pages, with a median of five data rows per table. Even a prose-only question in this corpus comes from a financial page containing a table. [FinQA](https://github.com/czyssrs/FinQA) · [QASPER](https://huggingface.co/datasets/allenai/qasper)
+
+| Fresh financial pages, complete evidence at 512 delivered tokens | Prose only (89) | Table only (317) | Table and prose (51) | All (457) |
+|---|---:|---:|---:|---:|
+| `blocks` | 78 | 295 | 39 | 412 |
+| `semantic-blocks`, 0.15 | 77 | 297 | 39 | 413 |
+| `semantic-blocks`, 0.40 selected on financial development data | 80 | 301 | 41 | 422 |
+| `semantic-blocks`, document-calibrated | 81 | 298 | 44 | 423 |
+| `semantic`, 0.10 selected across domains | 79 | 289 | 31 | 399 |
+| `semantic`, shipped settings | 82 | 302 | 38 | 422 |
+
+The 0.15 splits recovered an International Paper question about North American printing-paper sales and lost an Air Products question about average interest expense across three years. Both questions require a table row and prose. For the sales question, the new layout put all the evidence into one passage. For the interest question, both layouts retrieved the necessary evidence within five hits, but the 512-token delivery limit clipped it for `semantic-blocks`. At 0.40, the largest absolute gain came from table-only questions. The financial-domain gain at that cutoff was 2.19 points, with a descriptive issuer-clustered 95% interval of −1.43 to +6.31. The results identify a candidate for numerical report-page retrieval, with uncertainty about transfer to other issuers.
+
+Topic labels give a separate check on what the similarity score captures. On 718 WikiSection articles, moving an existing boundary to the weakest eligible sibling pair recovered 41 additional annotated transitions at the same passage count. Exact boundary F1 rose from 38.26% to 39.09%. On 162 QMSum transcripts, the same rule reduced F1 from 3.20% to 2.95%. Flat `semantic` at 0.10 scored 29.55% and 2.00% respectively. An exact topic transition and an answer-retrieval success measure different outcomes.
+
+The eight historical datasets were replayed separately. Flat 0.10 improved FriendsQA dialogue retrieval from 58.03% to 62.03% and HotpotQA from 80.08% to 80.86%. It scored 50.37% versus 51.85% on the older QASPER cohort and 50.43% versus 62.61% on the old mixed-evidence FinQA cohort. At the original 500-character cap it improved SQuAD answer hit rate from 93.14% to 95.42%. These sets had appeared in earlier tuning rounds and used their original metrics and search pools. [Paired question outcomes and topic counts](results/2026-11-26-semantic-settings-outcomes.jsonl.gz)
+
+## 2026-11-26 · Semantic cuts on a broader document benchmark
+
+The new retrieval benchmark adds 192 real public-service pages from four agencies, six independently published technical FAQs, and three Casai guides. The public-service split keeps page versions and identical rendered pages in the same fold. The 61 FAQ questions come from the publishers. Six additional Casai questions were written for this study and have exact source evidence. The new topic task uses all 718 held-out WikiSection disease articles and 162 QMSum meetings previously unused in these experiments. Development uses 359 other articles and 35 other meetings. The matched HTML, Markdown and text versions count as one underlying source. [Checksummed manifest](results/2026-11-26-tree-corpus.json) · [Reproduction instructions](README.md#compare-semantic-cuts-on-the-document-tree)
+
+Of 2,563 Doc2Dial openings with grounded replies, 1,177 had all their citations uniquely locatable in the source HTML. All 1,177 survived the three representation checks. Reading the candidate queries and gold strings revealed standalone greetings, keyboard noise, non-answers and navigation headings. A question and reference screen removed 205 openings from the decision metric, leaving 435 development and 537 confirmation questions. This screen was added during the run after preliminary aggregate results were visible. The same exclusions apply to every method and representation. The matching pages remain searchable. The results also report all 1,177 before screening. [Review rules](tree-labels.py) · [Exclusion reasons and affected question IDs](results/2026-11-26-tree-labels.json)
+
+Five dense-search hits shared 512 delivered tokens in the primary comparison, with a 256-token chunk limit and the small embedding model. Complete evidence requires every annotated part of the answer. The study also measured fractional annotated-token recall and a 1,024-token delivery budget. The no-cut control gives all top-level siblings a common parent and applies the same size checks as `semantic-blocks`. Testing that control isolates what semantic vetoes add to structural packing. The fitting-paragraph variant uses the fixed 0.15 cutoff but suppresses semantic splits inside a paragraph that already fits.
+
+| Held-out retrieval, complete answers at 512 delivered tokens | Questions | `blocks` | Shared tree, no cuts | 0.05 | 0.15 | 0.30 | Protect fitting paragraphs at 0.15 | Existing `semantic` |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Public-service HTML | 537 | 446 | 447 | 446 | 427 | 314 | 440 | 428 |
+| Same pages rendered as Markdown | 537 | 464 | 465 | 465 | 463 | 396 | 470 | 447 |
+| Same pages rendered as text | 537 | 196 | 410 | 405 | 403 | 348 | 403 | 428 |
+| Published technical FAQ headings | 35 | 32 | 32 | 31 | 28 | 20 | 31 | 25 |
+| Masked technical FAQ headings | 35 | 31 | 31 | 30 | 24 | 14 | 27 | 20 |
+| Casai product checks | 6 | 4 | 4 | 4 | 4 | 5 | 4 | 4 |
+
+In plain text, independent top-level paragraphs made `blocks` spend its five search hits on small fragments. Sharing the document root reduced the index from 5,181 chunks to 615 at the same 256-token limit and recovered 214 additional complete answers. Applying a 0.15 cutoff to that same tree gained 22 answers and lost 29. Native HTML already supplied grouping. There the 0.15 cutoff gained seven answers and lost 27, a change of −3.72 percentage points with a source-family bootstrap interval of −7.64 to −0.82. Protecting fitting paragraphs gained five net Markdown answers over structural packing, or +0.93 points with an interval of −0.89 to +3.33. It still left the masked manuals four complete answers below structural packing. The Casai cases exercise local requirements and come from one project.
+
+| Exact topic boundaries, 256-token chunks | Topics changing | Shared tree F1 | 0.05 F1 | 0.15 F1 | 0.30 F1 | Protect fitting paragraphs F1 |
+|---|---:|---:|---:|---:|---:|---:|
+| WikiSection articles | 4,783 | 38.26% | 38.28% | 38.13% | 35.67% | 38.07% |
+| QMSum between single-topic turns | 466 | 3.20% | 3.22% | 3.21% | 1.70% | 3.33% |
+
+The 0.15 tree found 149 additional article boundaries among 677 newly positioned cuts and lost 54 previously matched boundaries. Article recall rose from 39.89% to 41.88%, while precision fell from 36.76% to 35.00%. On meetings, 44 of 3,812 new evaluable cuts matched a topic change and 23 previously matched cuts disappeared. Thousands of ordinary meeting turns are about the same topic, and these transcripts regularly need several chunks for one topic. F1 here measures agreement with exact human-labeled transitions. The `blocks` strategy marks every labeled meeting transition while also splitting at 80,689 same-topic turns.
+
+The edge replay explains one source of the difference. On the 12-meeting development panel, 34 of 5,407 evaluable sibling pairs in the `group` category changed topic. The 0.15 threshold flagged 13 of those 5,407 pairs and none of the 13 changed topic. Another 83 below-threshold pairs were inside paragraphs, where the turn-level ground truth cannot classify them. Repacking can move many downstream chunk boundaries after a single veto. The replay groups eligible cosine scores by node role, depth, document-length bin and local size. [Edge measurements](results/2026-11-26-tree-edges.json.gz)
+
+At the common 1,024-character target the shared tree retrieved 453 HTML, 471 Markdown and 435 plain-text complete answers out of 537. The corresponding 0.15 results were 427, 466 and 420. Three intact TypeScript examples in the Casai guides exceeded the character target, reaching 2,117 to 2,374 characters. Every emitted chunk met the 256-token limit in the token-mode experiments. On the 90-question held-out SSA subset, switching to the large encoder changed the plain-text 0.15 result from five answers below its own no-cut control to two above. On masked manuals the large encoder retrieved 32 complete answers with the no-cut tree and 26 at 0.15. A numeric threshold depends on the embedding model as well as the document.
+
+The original 0.15 scores and chunk counts reproduced on all eight historical benchmarks. Keep the existing papers, contracts and financial reports as separate regression cases. Keep FriendsQA and short HotpotQA passages as stress tests for dialogue and short documents. Their question counts should not determine the default. The financial-report advantage survives this comparison. On the 115 original FinQA questions, `blocks` retrieved 56 complete references, the shared no-cut tree retrieved 72, and 0.15 and paragraph protection both retrieved 76. On 135 QASPER questions the same four layouts scored 70, 70, 68 and 71. A financial-page win supports preserving relationships between prose and tables. It provides little evidence about splitting changes of topic in an ordinary paragraph.
+
+The revised study completed 164 dataset/profile shards and recorded 9,648,153 new provider input tokens across both encoders. The historical replays are accounted for separately. Use the shared no-cut tree as the structural baseline for further development. For factual retrieval, the results favor keeping adjacent evidence together. Exact topic discovery has its own precision and recall tradeoff. A format-, depth- or file-length-specific threshold adds complexity without a demonstrated transferable gain here. The English government conversations are crowdsourced, the Markdown government view retains source heading depth and normalized paragraphs, and the FAQ split has three held-out publishers. Real Casai traffic, multilingual retrieval and OCR layout would address different coverage questions. [Paired results and source-family intervals](results/2026-11-26-tree-experiments.json) · [Per-question and per-document outcomes](results/2026-11-26-tree-outcomes.jsonl.gz)
+
+## 2026-11-26 · Dataset audit for semantic-blocks
+
+Keep the eight existing datasets for regression. Add direct topic labels, native HTML and technical Markdown before tuning another rule. The 0.15 tree improved the seven-dataset mean by 1.98 percentage points over `blocks` on the primary retrieval profile. FinQA contributed a 17.39-point gain. As a sensitivity check, the equal-weight difference across the six other datasets was −0.59 points. FinQA deliberately selects questions that require both table and prose evidence. Its result supports keeping related material together. [Archived per-question scores](results/2026-11-26-semantic-blocks-cutoffs.json)
+
+| Held-out dataset | Evidence and coverage |
+|---|---|
+| CUAD | 298 answerable questions across 24 contracts. The labels identify clause spans. On these sources `blocks` retrieved 101 complete references, the tree at 0.15 retrieved 96 and the tree at 0.3 retrieved 115. |
+| QASPER | 135 questions across 48 papers, with 46 papers contributing scored questions. The rendered Markdown reaches heading depth five. The median shortest annotated reference was 144 tokens. At 0.15, complete references fell from 70 to 68 relative to `blocks`, while annotated-token recall rose from 61.3% to 62.6%. |
+| FinQA | 115 questions, 77 pages and 68 report groups. The pages have Markdown tables and no Markdown headings. `blocks` scored 56, the tree at zero scored 72 and the tree at 0.15 scored 76. |
+| HotpotQA | 128 multi-hop questions. Of 1,262 source articles, 1,202 fit whole at 256 tokens. The rendering has a title and no subheadings. This stresses the cost of fragmenting short sources. |
+| FriendsQA and QMSum | FriendsQA has 1,201 questions from eight TV episodes and a median answer of three tokens. QMSum has 244 questions from 35 meetings. On 136 questions even the shortest annotated reference exceeds the 512-token delivery budget, so QMSum measures recall. |
+| SQuAD and WikiSection | SQuAD uses 437 questions from eight flattened articles. The separate editorial-boundary test uses eight English city articles with 47 reference boundaries. Both remove much of the source layout. |
+
+The document cohorts use pinned sources and deterministic group selection. SQuAD and WikiSection use systematic subsamples. The cutoff sweep fixes one input format per dataset, uses one embedding model and gives each retrieval dataset equal weight. A format comparison therefore also changes the content and the annotations. These previously inspected sources are useful regression cases for future work. [Document sampling](markdown-corpora.mjs) · [Quality sampling](corpora.mjs) · [Cutoff protocol](semantic-blocks-cutoffs.mjs)
+
+**What a lower cutoff does.** At zero, QASPER produced the exact `blocks` passage and citation hash. Building that paper index still used 649,325 embedding tokens, versus 266,790 for `blocks`. On FinQA the zero-cutoff tree emitted 331 passages, versus 1,823 for `blocks`. The tree gives top-level siblings a common parent that permits joining them, and zero can still split a pair with negative cosine. The next comparison needs ordinary `blocks`, the identical tree and packing rules with semantic cuts disabled, and that tree with cuts enabled. This isolates the effect of a topic cut from the effect of allowing a new join. [Tree implementation](../src/semantic-blocks.js) · [Archived passage hashes and costs](results/2026-11-26-semantic-blocks-cutoffs.json)
+
+**External practice.** LangChain publishes hand-written questions over a fixed snapshot of its Python documentation. Its table study grades generated answers to 30 questions from six documents, including 25 questions derived from tables. The chunk-size notebook compares page splitting with 50-, 100- and 250-token chunks. It also maintains deterministic splitter fixtures. [Documentation QA](https://www.langchain.com/blog/public-langsmith-benchmarks) · [Table benchmark](https://www.langchain.com/blog/benchmarking-rag-on-tables) · [Chunk-size notebook](https://langchain-ai.github.io/langchain-benchmarks/notebooks/retrieval/semi_structured_benchmarking/ss_eval_chunk_sizes.html) · [LangChain JS splitter tests](https://github.com/langchain-ai/langchainjs/blob/f8879c4b43152a82ca5282306b19df1b84b3dd65/libs/langchain-textsplitters/src/tests/text_splitter.test.ts)
+
+Mastra's published chunker tests use constructed Markdown to check heading families, bottom-up merging, code preservation and token thresholds. Its `semantic-markdown` implementation uses heading relationships and token counts. The repository and documentation reviewed supplied behavioral fixtures and no labeled retrieval comparison for that splitter. [Mastra document tests](https://github.com/mastra-ai/mastra/blob/0c9ea1fb5638b7ee47ab6e146dcaf44295a41fa8/packages/rag/src/document/document.test.ts#L3515) · [Transformer implementation](https://github.com/mastra-ai/mastra/blob/0c9ea1fb5638b7ee47ab6e146dcaf44295a41fa8/packages/rag/src/document/transformers/semantic-markdown.ts#L105)
+
+**Data preparation.** The checks below inspect annotations and source identity. They use no embeddings or retrieval runs. Reproduce the inventory with `python benchmarks/semantic-blocks-corpus-audit.py`. [Checksummed source inventory and Doc2Dial split](results/2026-11-26-semantic-blocks-corpus-audit.json)
+
+- The unused English disease portion of WikiSection supplies 718 test articles and 4,783 editorial boundaries. The separate validation split has 359 articles and 2,446 boundaries. Retain the published offsets as labels and withhold the reference headings when measuring topic discovery. [WikiSection dataset](https://github.com/sebastianarnold/WikiSection)
+- The unused QMSum training partition supplies 162 meetings with 725 human-labeled topics. At 466 adjacent turn boundaries each side has a single, different topic. Another 80,689 pairs have the same single topic. Exclude the 7,019 ambiguous or unlabeled pairs from this metric. The transcripts have no exact duplicates in the previously scored validation or test sets. These labels measure changes at turn boundaries. [QMSum annotation method](https://aclanthology.org/2021.naacl-main.472/)
+- Doc2Dial supplies native HTML, separate annotated text and grounded dialogues from four public-service domains. The official training and test sets share 237 document versions. Of 2,563 opening questions with a grounded solution reply, 1,177 have every gold span uniquely locatable in normalized HTML text, across 192 document versions. Grouping by page-title family and identical rendered content gives 506 development questions and 671 confirmation questions, with all four domains in both. Use the raw HTML as input. The next loader must verify the source offsets through HTML and Markdown rendering and account for missing or repeated evidence. [Doc2Dial schema and groundings](https://huggingface.co/datasets/IBM/doc2dial) · [Dataset paper](https://aclanthology.org/2020.emnlp-main.652/)
+- Add native technical Markdown from distinct manuals, including Casai material relevant to its users. Review exact evidence for conditions and exceptions, code and explanations, and real topic changes inside fitting sections. Render the same sources as HTML and plain text, carry the evidence offsets across renderings, and keep all versions of a source in one partition. This labeled manual set is still outstanding.
+
+**First policy to compare on the revised data.** Keep the fixed 0.15 control. Try preserving a fitting paragraph and using semantic cuts between adjacent paragraphs or subsections, descending to sentences when size requires it. Record the node type, local size as a fraction of the active character or token limit, cosine, and whether a cut was optional or forced by size. Report precision and recall for optional topic cuts, damage to previously co-retrievable evidence, retrieval under the same delivery budget, and embedding cost. Group uncertainty estimates by source. Whole-file length and absolute nesting depth can be inspected after accounting for node type and local size. A wrapper heading can increase depth everywhere with identical prose. A second embedding model checks whether a numeric cutoff transfers. The existing fixed setting remains the reference pending the revised benchmark.
+
+## 2026-11-26 · One cutoff for semantic-blocks
+
+`semantic-blocks` now defaults to a fixed cosine of **0.15** for text, Markdown and HTML. Calibration selected one setting across CUAD contracts, QASPER papers, FinQA financial reports, HotpotQA, QMSum meetings, FriendsQA dialogue and SQuAD. Each retrieval dataset carried equal weight. HotpotQA's shortlist and pooled results were averaged within the task. QMSum measured annotated evidence recall, SQuAD measured answer hits, and the other tasks measured complete evidence. The held-out samples contained 2,558 questions. WikiSection separately measured editorial boundaries on eight held-out articles.
+
+| Tree cutoff | Calibration retrieval score | Held-out retrieval score | Held-out score with 1,024 delivered tokens | Held-out WikiSection boundary F1 |
+|---|---:|---:|---:|---:|
+| 0 | 55.57% | 58.57% | 70.54% | 0.261 |
+| 0.05 | 55.61% | 58.60% | 70.57% | 0.276 |
+| **0.15** | **55.88%** | **58.75%** | 69.65% | 0.233 |
+| 0.3 | 48.19% | 53.30% | 58.49% | 0.325 |
+| 0.5 | 42.73% | 44.62% | 45.84% | 0.345 |
+| Document-relative | 49.78% | 49.72% | 51.75% | 0.321 |
+
+The document retrieval runs used 256-token chunks and up to five passages sharing 512 tokens for the primary score. SQuAD used its usual 256-token retrieval budget for both columns. The flat-text benchmarks used 500-character chunks for this comparison and also ran at 250 and 1,000 characters. The previous format-dependent tree defaults scored 51.81% on held-out retrieval. Ordinary `blocks` scored 56.77% and `semantic` scored 58.77%. The cutoff sweep used `text-embedding-3-small` and English text and Markdown. HTML shares the cutoff and has parser regression tests. [Results and per-question outcomes](results/2026-11-26-semantic-blocks-cutoffs.json) · [Study runner](semantic-blocks-cutoffs.mjs)
+
+At the public character targets, a further 199 questions from the four document datasets scored 60.88% at 0.15, 61.54% at both 0 and 0.05, and 52.21% with the document-relative rule. The character targets were 500 for text and 1,024 for Markdown. Each policy emitted the same 161 over-target contract passages under the soft character limit. The token-limited runs recorded zero over-target passages. [Character-limit check](results/2026-11-26-semantic-blocks-cutoffs.json)
+
+## 2026-11-26 · Semantic merging on the parser tree
+
+Compare the public `semantic` strategy, `semantic-blocks` and structural `blocks`. The tree strategy scores adjacent children at each level. A weak boundary splits its ancestors. Sibling sections under the document root can join, as can related tables, code and prose. The existing `semantic` strategy uses priority merging in text and original prose boundaries within each Markdown section. [Implementation](../src/semantic-blocks.js) · [Boundary and citation tests](../tests/semantic-blocks.test.js)
+
+The first paired run used the existing confirmation splits, `text-embedding-3-small`, a 256-token chunk budget and the native threshold settings of each strategy. The retriever ranked passages within the source document and delivered up to five passages sharing 512 tokens. A hit required a complete annotated evidence reference in the delivered text. Parentheses show index rows. The paired intervals resample source groups.
+
+| Input | Questions | `semantic` hits (rows) | `semantic-blocks` hits (rows) | `blocks` hits (rows) | Paired difference in percentage points, 95% interval |
+|---|---:|---:|---:|---:|---:|
+| QASPER papers, Markdown | 38 | 26 (567) | 14 (1,173) | 21 (352) | −31.6 [−54.8, −14.6] |
+| FinQA financial reports, Markdown | 38 | 25 (256) | 30 (225) | 23 (611) | +13.2 [−2.6, +30.0] |
+| CUAD contracts, text | 91 | 24 (457) | 23 (501) | 27 (1,158) | −1.1 [−8.1, +4.0] |
+
+On the papers, cold indexing used 142,329 embedding tokens for `semantic-blocks` and 97,043 for `semantic`. On contracts the corresponding totals were 170,670 and 276,442. Both budgets and each question’s paired outcome are in the reports. [Papers](results/2026-11-26-semantic-blocks-qasper-markdown.json) · [Financial reports](results/2026-11-26-semantic-blocks-finqa-markdown.json) · [Contracts](results/2026-11-26-semantic-blocks-cuad-text.json)
+
+On the separate flat-text check at 500 characters, `semantic` recovered 417 of 437 held-out SQuAD answers and `semantic-blocks` recovered 408. On eight held-out WikiSection articles, exact editorial-boundary F1 was 0.416 and 0.276 respectively. Both comparisons used the same sentence-normalized text and frozen embedding matrices. [Flat-text results](results/2026-11-26-semantic-blocks-quality.json)
+
+For the Markdown cutoff check, compare the document-relative setting with fixed cosine cutoffs of 0.05, 0.3 and 0.5 on the separate QASPER and FinQA calibration groups. Choose the highest mean complete-evidence rate across the two tasks for five hits sharing 512 tokens. Break ties with fewer cold indexing tokens. Check the single selected setting on the separate `rules-test` groups against the existing Markdown semantic strategy. [Study runner](semantic-blocks-study.mjs)
+
+A fixed cutoff of 0.05 led calibration at 49.80% mean complete evidence across the two tasks. Document calibration reached 48.72%, fixed 0.3 reached 42.34% and fixed 0.5 reached 35.97%. [Paper calibration](results/2026-11-26-semantic-blocks-qasper-calibration.json) · [Financial calibration](results/2026-11-26-semantic-blocks-finqa-calibration.json)
+
+| Independent Markdown sample | Questions | `semantic`, 512 delivered tokens | Tree at 0.05, 512 | `semantic`, 1,024 | Tree at 0.05, 1,024 |
+|---|---:|---:|---:|---:|---:|
+| QASPER papers | 27 | 13 | 13 | 14 | 14 |
+| FinQA financial reports | 27 | 23 | 22 | 23 | 27 |
+
+At 512 delivered tokens the paper comparison exchanged one gain for one loss. The financial comparison recorded three gains and four losses. At 1,024 tokens the financial comparison gained four and lost zero. On these papers the 0.05 tree produced exactly the same passages and citations as ordinary `blocks`, at 129,793 cold indexing tokens versus 50,537 for `blocks`. These samples support retaining `semantic` as the general semantic strategy and keeping the tree variant opt-in. Across the recorded experiments, the provider supplied 454,216 new embedding input tokens. [Paper validation](results/2026-11-26-semantic-blocks-qasper-validation.json) · [Financial validation](results/2026-11-26-semantic-blocks-finqa-validation.json)
+
 ## 2026-11-26 · Token-limit rescue and retrieval scoring
 
 - With `cl100k_base` and a one-token cap, JSON `"합니다"` used to skip `합`. Joining it to the completed neighbor gives `합니다`, which fits in one token. The shared splitter now retries adjacent final ranges when either still exceeds the cap. The provider receives the full word, and two fitting soft spans keep their boundary. The neighboring-range check passed for 2,440 tokenizer probes and all 8,192 combinations of fitting proper substrings of the JSON source `"abc"`. [Splitter](../src/token-limit.js) · [Regression tests](../tests/token-overflow.test.js)

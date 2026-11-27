@@ -1,0 +1,41 @@
+{
+  "criterion": "Among 128, 256 and 512 tokens use the best development macro-complete score, retaining 256 when within one percentage point. Use the same five-hit, 512-token delivery objective and the already-frozen methods.",
+  "sizes": {
+    "blocks": 256,
+    "pack": 256,
+    "semantic/shipped": 256,
+    "semantic-blocks/0.15": 256,
+    "semantic/0.1": 256,
+    "semantic-blocks/-1": 256,
+    "boundary/weakest": 256
+  },
+  "development": {
+    "128": {
+      "blocks": 0.6765443214254893,
+      "pack": 0.6885825881771538,
+      "semantic/shipped": 0.6333618058913949,
+      "semantic-blocks/0.15": 0.6629897605648939,
+      "semantic/0.1": 0.6886364674874986,
+      "semantic-blocks/-1": 0.6765443214254893,
+      "boundary/weakest": 0.6806374621824588
+    },
+    "256": {
+      "blocks": 0.7622339643855647,
+      "pack": 0.7154912850718004,
+      "semantic/shipped": 0.707797600947189,
+      "semantic-blocks/0.15": 0.7387723577384704,
+      "semantic/0.1": 0.7308897207526708,
+      "semantic-blocks/-1": 0.7622339643855647,
+      "boundary/weakest": 0.7678862314840597
+    },
+    "512": {
+      "blocks": 0.7084312330350266,
+      "pack": 0.6899027470433928,
+      "semantic/shipped": 0.6842246915570406,
+      "semantic-blocks/0.15": 0.6798048911025788,
+      "semantic/0.1": 0.6904235803767262,
+      "semantic-blocks/-1": 0.7084312330350266,
+      "boundary/weakest": 0.702160660333348
+    }
+  }
+}

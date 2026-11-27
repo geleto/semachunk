@@ -54,8 +54,16 @@ export async function evaluateQuality(task, chunkText, encoder, plans) {
     const vocab = vocabulary(), docs = [];
     for (const original of await qualityTasks[task]()) {
         const parts = await split(chunkText, original.text);
-        docs.push({ ...alignDocument(original, parts), parts, raw: original.text });
+        // These fixtures flatten paragraphs and score offsets in the sentence-normalized
+        // text. Give every strategy that same string, including its sentence separators.
+        const aligned = alignDocument(original, parts);
+        docs.push({ ...aligned, parts, raw: aligned.text });
         internCandidates(parts, 1000, vocab);
+        for (const plan of Object.values(plans)) {
+            if (!plan.pack && (plan.chunkingStrategy ?? 'blocks') === 'blocks') {
+                (await split(chunkText, aligned.text, plan)).forEach(vocab.intern);
+            }
+        }
     }
     for (const doc of docs) for (const [query] of doc.questions ?? []) vocab.intern(query);
     const { matrix, vectorsSHA256, textsSHA256, precomputation } = await encoder.vectors(vocab.texts);

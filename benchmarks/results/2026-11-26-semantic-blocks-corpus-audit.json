@@ -1,0 +1,898 @@
+{
+  "doc2dial": {
+    "distinctNormalizedHtmlTexts": 475,
+    "documentVersionsWithEligibleOpenings": 192,
+    "domains": {
+      "dmv": {
+        "ambiguousHtmlSpan": 763,
+        "documentVersions": 149,
+        "groundedOpeningQuestions": 561,
+        "missingHtmlSpan": 4691,
+        "openingsWithEverySpanUniqueInHtml": 233,
+        "uniqueHtmlSpan": 5963
+      },
+      "ssa": {
+        "ambiguousHtmlSpan": 446,
+        "documentVersions": 109,
+        "groundedOpeningQuestions": 594,
+        "missingHtmlSpan": 3543,
+        "openingsWithEverySpanUniqueInHtml": 238,
+        "uniqueHtmlSpan": 3645
+      },
+      "studentaid": {
+        "ambiguousHtmlSpan": 650,
+        "documentVersions": 92,
+        "groundedOpeningQuestions": 641,
+        "missingHtmlSpan": 2678,
+        "openingsWithEverySpanUniqueInHtml": 414,
+        "uniqueHtmlSpan": 3684
+      },
+      "va": {
+        "ambiguousHtmlSpan": 927,
+        "documentVersions": 138,
+        "groundedOpeningQuestions": 767,
+        "missingHtmlSpan": 4034,
+        "openingsWithEverySpanUniqueInHtml": 292,
+        "uniqueHtmlSpan": 4635
+      }
+    },
+    "officialTrainTestSharedDocumentVersions": 237,
+    "sourceFamilySplits": {
+      "confirmation": {
+        "byDomain": {
+          "dmv": 103,
+          "ssa": 172,
+          "studentaid": 207,
+          "va": 189
+        },
+        "documents": [
+          [
+            "dmv",
+            "About complaints and charges for repair and body shops#3_0"
+          ],
+          [
+            "dmv",
+            "About the NYS Driver Point System#3_0"
+          ],
+          [
+            "dmv",
+            "Appeal a TVB ticket conviction#1_0"
+          ],
+          [
+            "dmv",
+            "DIAL-IN search accounts#3_0"
+          ],
+          [
+            "dmv",
+            "Driver license and learner permit fees and refunds#3_0"
+          ],
+          [
+            "dmv",
+            "Get an Accident Report#1_0"
+          ],
+          [
+            "dmv",
+            "How to renew a registration#1_0"
+          ],
+          [
+            "dmv",
+            "How to replace a registration#1_0"
+          ],
+          [
+            "dmv",
+            "If a family member has died#3_0"
+          ],
+          [
+            "dmv",
+            "In-transit vehicle permits (temporary registrations)#3_0"
+          ],
+          [
+            "dmv",
+            "Insurance lapses#3_0"
+          ],
+          [
+            "dmv",
+            "Let the Buyer be Aware#3_0"
+          ],
+          [
+            "dmv",
+            "Lost, stolen, or destroyed plates#3_0"
+          ],
+          [
+            "dmv",
+            "Moving to NY#3_0"
+          ],
+          [
+            "dmv",
+            "NY State Adventure License FAQs#3_0"
+          ],
+          [
+            "dmv",
+            "Open an inspection station#1_0"
+          ],
+          [
+            "dmv",
+            "Pay insurance lapse civil penalty#1_0"
+          ],
+          [
+            "dmv",
+            "Refunds and transfer credits for surrendered plates#3_0"
+          ],
+          [
+            "dmv",
+            "Register a snowmobile#1_0"
+          ],
+          [
+            "dmv",
+            "Registrations#3_0"
+          ],
+          [
+            "dmv",
+            "Respond to DMV insurance letters and orders#3_0"
+          ],
+          [
+            "dmv",
+            "Restore license after revocation#1_0"
+          ],
+          [
+            "dmv",
+            "Schedule and take a road test#1_0"
+          ],
+          [
+            "dmv",
+            "Surrender (return or turn in) your plates to the DMV#3_0"
+          ],
+          [
+            "dmv",
+            "Top 5 DMV Mistakes and How to Avoid Them#3_0"
+          ],
+          [
+            "ssa",
+            "Apply for Retirement Benefits | SSA#1_0"
+          ],
+          [
+            "ssa",
+            "Benefits Planner | Social Security Credits and Benefit Eligibility | SSA#1_0"
+          ],
+          [
+            "ssa",
+            "Benefits Planner | Social Security Credits and Benefit Eligibility | SSA#2_0"
+          ],
+          [
+            "ssa",
+            "Benefits Planner: Disability | Social Security Administration#1_0"
+          ],
+          [
+            "ssa",
+            "Benefits Planner: Retirement | You Can Apply For Retirement Benefits Or Medicare | Social Security Administration#2_0"
+          ],
+          [
+            "ssa",
+            "How To Apply For Social Security Disability Benefits#1_0"
+          ],
+          [
+            "ssa",
+            "How To Apply For Social Security Disability Benefits#3_0"
+          ],
+          [
+            "ssa",
+            "Learn About Retirement Benefits | SSA#1_0"
+          ],
+          [
+            "ssa",
+            "Learn what documents you will need to get a Social Security Card | Social Security Administration#10_0"
+          ],
+          [
+            "ssa",
+            "Learn what documents you will need to get a Social Security Card | Social Security Administration#10_0_1"
+          ],
+          [
+            "ssa",
+            "Learn what documents you will need to get a Social Security Card | Social Security Administration#11_0"
+          ],
+          [
+            "ssa",
+            "Learn what documents you will need to get a Social Security Card | Social Security Administration#14_0"
+          ],
+          [
+            "ssa",
+            "Learn what documents you will need to get a Social Security Card | Social Security Administration#17_0"
+          ],
+          [
+            "ssa",
+            "Learn what documents you will need to get a Social Security Card | Social Security Administration#19_0"
+          ],
+          [
+            "ssa",
+            "Learn what documents you will need to get a Social Security Card | Social Security Administration#20_0"
+          ],
+          [
+            "ssa",
+            "Learn what documents you will need to get a Social Security Card | Social Security Administration#3_0"
+          ],
+          [
+            "ssa",
+            "Learn what documents you will need to get a Social Security Card | Social Security Administration#4_0"
+          ],
+          [
+            "ssa",
+            "Learn what documents you will need to get a Social Security Card | Social Security Administration#4_0_1"
+          ],
+          [
+            "ssa",
+            "Learn what documents you will need to get a Social Security Card | Social Security Administration#4_0_1_2"
+          ],
+          [
+            "ssa",
+            "Learn what documents you will need to get a Social Security Card | Social Security Administration#7_0"
+          ],
+          [
+            "ssa",
+            "Learn what documents you will need to get a Social Security Card | Social Security Administration#7_0_1_2"
+          ],
+          [
+            "ssa",
+            "Medicare Benefits | Social Security Administration#2_0"
+          ],
+          [
+            "ssa",
+            "my Social Security | Create an Account | Social Security Administratio#1_0"
+          ],
+          [
+            "ssa",
+            "my Social Security | Create an Account | Social Security Administratio#2_0"
+          ],
+          [
+            "studentaid",
+            "Accepting Aid | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Aid for Military Families | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Borrower Defense to Repayment | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Dependency Status | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Eligibility Requirements | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Eligibility for Non-U.S. Citizens | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Extended Plan | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Filling Out the FAFSA\u00ae Form | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Financial Aid Eligibility | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Getting Out of Default | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Grants | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "How to Review and Correct Your FAFSA\u00ae Application | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Income-Driven Repayment Plans | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Listing Colleges on the FAFSA\u00ae Form | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Loans | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Make a Student Loan Payment | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Perkins Loan Cancellation and Discharge | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Preparing for College | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Questions and Answers About FAFSA\u00ae Completion Data | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Receiving Financial Aid | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Reporting Parent Information | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Student Aid Report | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Student Loan Consolidation | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Student Loan Deferment | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Student Loan Forbearance | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Tax Benefits for Higher Education | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Total and Permanent Disability Discharge | Federal Student Aid#1_0"
+          ],
+          [
+            "va",
+            "About VA Insurance Options And Eligibility | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Aid And Attendance Benefits And Housebound Allowance | VA.gov#1_0"
+          ],
+          [
+            "va",
+            "Change Your GI Bill School Or Program | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Check Your VA Claim Or Appeal Status | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Educational And Career Counseling (VA Chapter 36) | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Eligibility For VA Health Care | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Eligibility For Veterans Pension | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Employment Benefits For Dependent Family Members | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Exposure To Specific Environmental Hazards | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Family Group Life Insurance (FSGLI) | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "File a Supplemental Claim with new evidence | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Frequently asked questions about decision reviews | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "GI Bill Eligibility | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Get A Veteran Health Identification Card (VHIC) | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Get Your VA Medical Records Online | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "How To Apply For The GI Bill | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Montgomery GI Bill Active Duty (MGIB-AD) | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Mustard Gas Or Lewisite Exposure | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Request Your Military Service Records | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Request a Higher-Level Review | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Schedule A Burial For A Veteran Or Family Member | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Temporary Disability Rating After Surgery Or Cast | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Types Of Veteran ID Cards | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "VA Clothing Allowance | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "VA Housing Assistance | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "VA Housing Assistance | Veterans Affairs#2_0"
+          ],
+          [
+            "va",
+            "VA Pension Benefits | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "VA Pension Benefits | Veterans Affairs#2_0"
+          ],
+          [
+            "va",
+            "VA Survivors Pension | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Veteran Suicide Prevention | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Yellow Ribbon Program | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Your Health Care Costs | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Your VA Primary Care Provider | Veterans Affairs#1_0"
+          ]
+        ],
+        "openingIdsSHA256": "7311470b9e9105fb64b47718cc3b9aed41413ccfe96f882bcbb3a2f4a1f4f8b9",
+        "openingQuestions": 671,
+        "sourceFamilies": 92
+      },
+      "development": {
+        "byDomain": {
+          "dmv": 130,
+          "ssa": 66,
+          "studentaid": 207,
+          "va": 103
+        },
+        "documents": [
+          [
+            "dmv",
+            "About complaints and charges for dealer and transporter businesses#3_0"
+          ],
+          [
+            "dmv",
+            "Automatic license and registration extension for military personnel#3_0"
+          ],
+          [
+            "dmv",
+            "Change name on title after lease buyout#3_0"
+          ],
+          [
+            "dmv",
+            "Commercial vehicle registration fees, vehicle use taxes and supplemental fees#3_0"
+          ],
+          [
+            "dmv",
+            "Escort driver certification#1_0"
+          ],
+          [
+            "dmv",
+            "Escrow accounts#3_0"
+          ],
+          [
+            "dmv",
+            "Federal REAL ID#3_0"
+          ],
+          [
+            "dmv",
+            "File a Freedom of Information Law (FOIL) request#1_0"
+          ],
+          [
+            "dmv",
+            "Get a  hazardous materials (HazMat) endorsement#3_0"
+          ],
+          [
+            "dmv",
+            "Get a driver license#1_0"
+          ],
+          [
+            "dmv",
+            "Get a motorcycle license#1_0"
+          ],
+          [
+            "dmv",
+            "How insurance premium reduction works#3_0"
+          ],
+          [
+            "dmv",
+            "Information about transaction entries#3_0"
+          ],
+          [
+            "dmv",
+            "Leandra's Law & ignition interlock devices#3_0"
+          ],
+          [
+            "dmv",
+            "Learn about personalized plates#3_0"
+          ],
+          [
+            "dmv",
+            "Learn about picture and professional plates#3_0"
+          ],
+          [
+            "dmv",
+            "Medical Certification Requirements#3_0"
+          ],
+          [
+            "dmv",
+            "NYS Adventure License and Adventure Custom Plates#3_0"
+          ],
+          [
+            "dmv",
+            "New York State Insurance Requirements#3_0"
+          ],
+          [
+            "dmv",
+            "Order picture and professional plates#1_0"
+          ],
+          [
+            "dmv",
+            "Passenger vehicle registration fees, use taxes and supplemental fees#3_0"
+          ],
+          [
+            "dmv",
+            "Replace license or permit#1_0"
+          ],
+          [
+            "dmv",
+            "Resources for non US citizens#3_0"
+          ],
+          [
+            "dmv",
+            "Sharing your information#3_0"
+          ],
+          [
+            "dmv",
+            "Temporary surrender of vehicle plates (store plates for a season)#3_0"
+          ],
+          [
+            "ssa",
+            "Benefits Planner: Disability | Approval Process | Social Security Administration#2_0"
+          ],
+          [
+            "ssa",
+            "Benefits Planner: Disability | How You Apply | Social Security Administration#1_0"
+          ],
+          [
+            "ssa",
+            "Benefits Planner: Disability | How You Qualify | Social Security Administration#2_0"
+          ],
+          [
+            "ssa",
+            "Benefits Planner: Retirement | Government Pension Offset (GPO) Calculator | Social Security Administration#2_0"
+          ],
+          [
+            "ssa",
+            "Benefits Planner: Retirement | Medicare Premiums | SSA#2_0"
+          ],
+          [
+            "ssa",
+            "Benefits Planner: Survivors | Planning For Your Survivors | Social Security Administration#2_0"
+          ],
+          [
+            "ssa",
+            "Benefits for People with Disabilities#1_0"
+          ],
+          [
+            "ssa",
+            "Direct Deposit | Social Security Administration#2_0"
+          ],
+          [
+            "ssa",
+            "Disability Benefits | Social Security Administration#1_0"
+          ],
+          [
+            "ssa",
+            "Explore The Benefits You May Be Due#2_0"
+          ],
+          [
+            "studentaid",
+            "Aidan | The FSA Virtual Assistant | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Choosing a School | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Closed School Discharge | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Collections | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Contracting Information | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Eligibility for Students with Criminal Convictions | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "False Certification Discharge | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Get Temporary Relief | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "How to Correct or Update Your FAFSA\u00ae Application | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "IT Standards Library | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Income-Sensitive Plan | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Link to Us | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Loan Repayment Checklist | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Loan Servicers | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Loan Simulator | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Lower or Suspend Student Loan Payments | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Parent PLUS Loans | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Regaining Eligibility | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Staying Eligible | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Subsidized and Unsubsidized Loans | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Teacher Loan Forgiveness | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Understanding College Costs | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Understanding Delinquency and Default | Federal Student Aid#1_0"
+          ],
+          [
+            "studentaid",
+            "Unpaid Refund Discharge | Federal Student Aid#1_0"
+          ],
+          [
+            "va",
+            "About VA Disability Ratings | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Add Dependents To Your VA Disability Benefits | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Agent Orange Exposure | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Careers And Employment | Veterans Affairs#2_0"
+          ],
+          [
+            "va",
+            "Change Your VA Direct Deposit Information | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Eligibility For VA Disability Benefits | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Fiduciary claims | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "How To Apply For VA Health Care | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Ionizing Radiation Exposure | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Multiple party or contested claims | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "PTSD Treatment | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Pre-Need Eligibility For Burial In A VA Cemetery | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Request a Board Appeal | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Substance Use Treatment For Veterans | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "Undergraduate And Graduate Degrees | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "VA Education Benefits | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "VA Education Benefits | Veterans Affairs#2_0"
+          ],
+          [
+            "va",
+            "VA Life Insurance | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "VA Life Insurance | Veterans Affairs#2_0"
+          ],
+          [
+            "va",
+            "VA Mental Health Services | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "VA Title 38 U.S.C. 1151 Claims | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "VA claim exam (C&P exam) | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "VA decision reviews and appeals | Veterans Affairs#1_0"
+          ],
+          [
+            "va",
+            "View Your VA Payment History | Veterans Affairs#1_0"
+          ]
+        ],
+        "openingIdsSHA256": "8e89db7abfee2809660128a93e208bc82ef97adf6f78fb42e73ee45e621fcdbf",
+        "openingQuestions": 506,
+        "sourceFamilies": 81
+      }
+    }
+  },
+  "qmsum": {
+    "partitions": {
+      "test": {
+        "meetings": 35,
+        "sameTopic": 18429,
+        "topicChange": 104,
+        "topics": 147,
+        "topicsWithMultipleSpans": 28,
+        "unknownOrOverlapping": 2150
+      },
+      "train": {
+        "meetings": 162,
+        "sameTopic": 80689,
+        "topicChange": 466,
+        "topics": 725,
+        "topicsWithMultipleSpans": 33,
+        "unknownOrOverlapping": 7019
+      },
+      "val": {
+        "meetings": 35,
+        "sameTopic": 19162,
+        "topicChange": 102,
+        "topics": 149,
+        "topicsWithMultipleSpans": 8,
+        "unknownOrOverlapping": 824
+      }
+    },
+    "trainTranscriptsAlsoInValOrTest": 0
+  },
+  "sources": {
+    "doc2dial-v1.0.1.zip": [
+      "https://raw.githubusercontent.com/doc2dial/doc2dial.github.io/30fa02bacefca711cc4503f118cc50365225e9b9/file/doc2dial_v1.0.1.zip",
+      "94499fa5259f69018d2458cb948552e7a05f424711a95a562bb9e816a515dc23"
+    ],
+    "qmsum-test.jsonl": [
+      "https://raw.githubusercontent.com/Yale-LILY/QMSum/83d7768c1f2b4dfeb091385d3dc7e239b8e5bb7e/data/ALL/jsonl/test.jsonl",
+      "6bcd428211260ad2efae3af76cbaf6a7f5ae4bb5e1e59c45a4b8e89539cb9208"
+    ],
+    "qmsum-train.jsonl": [
+      "https://raw.githubusercontent.com/Yale-LILY/QMSum/83d7768c1f2b4dfeb091385d3dc7e239b8e5bb7e/data/ALL/jsonl/train.jsonl",
+      "55964a968e4b4c1c9da2434678f213f3b70c0c3d3cf609f5cd4ecd44cc8d2427"
+    ],
+    "qmsum-val.jsonl": [
+      "https://raw.githubusercontent.com/Yale-LILY/QMSum/83d7768c1f2b4dfeb091385d3dc7e239b8e5bb7e/data/ALL/jsonl/val.jsonl",
+      "fc7444e241bdbe6997c01720d07f1a58b7357284acb73f909766e5a4700db49f"
+    ],
+    "wikisection.tar.gz": [
+      "https://raw.githubusercontent.com/sebastianarnold/WikiSection/9d1bd55da4bc2dc985b5f4493e8214caa86100b8/wikisection_dataset_json.tar.gz",
+      "f37810a95702737b153a3034dbb877d08ecc699900f1a01c70110d47a5a016b8"
+    ]
+  },
+  "wikiSectionEnglishDisease": {
+    "test": {
+      "articles": 718,
+      "editorialBoundaries": 4783
+    },
+    "validation": {
+      "articles": 359,
+      "editorialBoundaries": 2446
+    }
+  }
+}

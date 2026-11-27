@@ -1,0 +1,319 @@
+{
+  "selection": {
+    "semantic": "semantic/0.1",
+    "semantic-blocks": "semantic-blocks/-1",
+    "alternative": "boundary/weakest"
+  },
+  "development": {
+    "blocks": {
+      "primary": 0.7622339643855647,
+      "domains": {
+        "government": 0.8636015325670499,
+        "faq": 0.8461538461538461,
+        "finance": 0.8916666666666667,
+        "papers": 0.44751381215469616
+      },
+      "selectionTokens": 0
+    },
+    "pack": {
+      "primary": 0.7154912850718004,
+      "domains": {
+        "government": 0.8291187739463601,
+        "faq": 0.6923076923076923,
+        "finance": 0.8875,
+        "papers": 0.4530386740331492
+      },
+      "selectionTokens": 0
+    },
+    "semantic/shipped": {
+      "primary": 0.707797600947189,
+      "domains": {
+        "government": 0.8482758620689655,
+        "faq": 0.6153846153846154,
+        "finance": 0.8979166666666667,
+        "papers": 0.4696132596685083
+      },
+      "selectionTokens": 1072010
+    },
+    "semantic-blocks/0.15": {
+      "primary": 0.7387723577384704,
+      "domains": {
+        "government": 0.8344827586206897,
+        "faq": 0.8076923076923077,
+        "finance": 0.8875,
+        "papers": 0.425414364640884
+      },
+      "selectionTokens": 1144874
+    },
+    "semantic/-1": {
+      "primary": 0.7295487245840885,
+      "domains": {
+        "government": 0.8521072796934865,
+        "faq": 0.6923076923076923,
+        "finance": 0.9041666666666667,
+        "papers": 0.4696132596685083
+      },
+      "selectionTokens": 1070624
+    },
+    "semantic/0": {
+      "primary": 0.7295487245840885,
+      "domains": {
+        "government": 0.8521072796934865,
+        "faq": 0.6923076923076923,
+        "finance": 0.9041666666666667,
+        "papers": 0.4696132596685083
+      },
+      "selectionTokens": 1070624
+    },
+    "semantic/0.05": {
+      "primary": 0.7299318663465406,
+      "domains": {
+        "government": 0.853639846743295,
+        "faq": 0.6923076923076923,
+        "finance": 0.9041666666666667,
+        "papers": 0.4696132596685083
+      },
+      "selectionTokens": 1072010
+    },
+    "semantic/0.1": {
+      "primary": 0.7308897207526708,
+      "domains": {
+        "government": 0.8574712643678161,
+        "faq": 0.6923076923076923,
+        "finance": 0.9041666666666667,
+        "papers": 0.4696132596685083
+      },
+      "selectionTokens": 1083372
+    },
+    "semantic/0.15": {
+      "primary": 0.7157726598920755,
+      "domains": {
+        "government": 0.8375478927203065,
+        "faq": 0.6538461538461539,
+        "finance": 0.9020833333333333,
+        "papers": 0.4696132596685083
+      },
+      "selectionTokens": 1096464
+    },
+    "semantic/0.2": {
+      "primary": 0.7077805621909261,
+      "domains": {
+        "government": 0.8076628352490421,
+        "faq": 0.6538461538461539,
+        "finance": 0.9,
+        "papers": 0.4696132596685083
+      },
+      "selectionTokens": 1107700
+    },
+    "semantic/0.3": {
+      "primary": 0.6989144223441828,
+      "domains": {
+        "government": 0.7701149425287356,
+        "faq": 0.6538461538461539,
+        "finance": 0.9020833333333333,
+        "papers": 0.4696132596685083
+      },
+      "selectionTokens": 1082712
+    },
+    "semantic/0.4": {
+      "primary": 0.6838136344244651,
+      "domains": {
+        "government": 0.7363984674329502,
+        "faq": 0.6153846153846154,
+        "finance": 0.9083333333333333,
+        "papers": 0.47513812154696133
+      },
+      "selectionTokens": 984366
+    },
+    "semantic/0.5": {
+      "primary": 0.6297914168225776,
+      "domains": {
+        "government": 0.6007662835249042,
+        "faq": 0.5384615384615384,
+        "finance": 0.89375,
+        "papers": 0.4861878453038674
+      },
+      "selectionTokens": 810108
+    },
+    "semantic/0.65": {
+      "primary": 0.5695891810080227,
+      "domains": {
+        "government": 0.4475095785440613,
+        "faq": 0.5,
+        "finance": 0.8833333333333333,
+        "papers": 0.44751381215469616
+      },
+      "selectionTokens": 633490
+    },
+    "semantic/document": {
+      "primary": 0.6809776775755415,
+      "domains": {
+        "government": 0.7409961685823755,
+        "faq": 0.6153846153846154,
+        "finance": 0.8979166666666667,
+        "papers": 0.4696132596685083
+      },
+      "selectionTokens": 1058288
+    },
+    "semantic-blocks/-1": {
+      "primary": 0.7622339643855647,
+      "domains": {
+        "government": 0.8636015325670499,
+        "faq": 0.8461538461538461,
+        "finance": 0.8916666666666667,
+        "papers": 0.44751381215469616
+      },
+      "selectionTokens": 1144874
+    },
+    "semantic-blocks/0": {
+      "primary": 0.7622339643855647,
+      "domains": {
+        "government": 0.8636015325670499,
+        "faq": 0.8461538461538461,
+        "finance": 0.8916666666666667,
+        "papers": 0.44751381215469616
+      },
+      "selectionTokens": 1144874
+    },
+    "semantic-blocks/0.05": {
+      "primary": 0.7622339643855647,
+      "domains": {
+        "government": 0.8636015325670499,
+        "faq": 0.8461538461538461,
+        "finance": 0.8916666666666667,
+        "papers": 0.44751381215469616
+      },
+      "selectionTokens": 1144874
+    },
+    "semantic-blocks/0.1": {
+      "primary": 0.749183963917425,
+      "domains": {
+        "government": 0.8574712643678161,
+        "faq": 0.8076923076923077,
+        "finance": 0.8895833333333333,
+        "papers": 0.4419889502762431
+      },
+      "selectionTokens": 1144874
+    },
+    "semantic-blocks/0.2": {
+      "primary": 0.6987320361591056,
+      "domains": {
+        "government": 0.7961685823754789,
+        "faq": 0.7307692307692307,
+        "finance": 0.88125,
+        "papers": 0.3867403314917127
+      },
+      "selectionTokens": 1144874
+    },
+    "semantic-blocks/0.3": {
+      "primary": 0.6452960082547265,
+      "domains": {
+        "government": 0.7601532567049808,
+        "faq": 0.6538461538461539,
+        "finance": 0.8854166666666666,
+        "papers": 0.281767955801105
+      },
+      "selectionTokens": 1144874
+    },
+    "semantic-blocks/0.4": {
+      "primary": 0.5433853243108577,
+      "domains": {
+        "government": 0.6804597701149425,
+        "faq": 0.4230769230769231,
+        "finance": 0.9208333333333333,
+        "papers": 0.14917127071823205
+      },
+      "selectionTokens": 1144874
+    },
+    "semantic-blocks/0.5": {
+      "primary": 0.4531549583925632,
+      "domains": {
+        "government": 0.5241379310344828,
+        "faq": 0.3076923076923077,
+        "finance": 0.8979166666666667,
+        "papers": 0.08287292817679558
+      },
+      "selectionTokens": 1144874
+    },
+    "semantic-blocks/0.65": {
+      "primary": 0.37216282700571374,
+      "domains": {
+        "government": 0.37777777777777777,
+        "faq": 0.19230769230769232,
+        "finance": 0.8854166666666666,
+        "papers": 0.03314917127071823
+      },
+      "selectionTokens": 1144874
+    },
+    "semantic-blocks/document": {
+      "primary": 0.5376784222635813,
+      "domains": {
+        "government": 0.6781609195402298,
+        "faq": 0.38461538461538464,
+        "finance": 0.9166666666666666,
+        "papers": 0.1712707182320442
+      },
+      "selectionTokens": 1144874
+    },
+    "paragraph/0.05": {
+      "primary": 0.7622339643855647,
+      "domains": {
+        "government": 0.8636015325670499,
+        "faq": 0.8461538461538461,
+        "finance": 0.8916666666666667,
+        "papers": 0.44751381215469616
+      },
+      "selectionTokens": 709212
+    },
+    "paragraph/0.15": {
+      "primary": 0.7613838686001241,
+      "domains": {
+        "government": 0.864367816091954,
+        "faq": 0.8461538461538461,
+        "finance": 0.8875,
+        "papers": 0.44751381215469616
+      },
+      "selectionTokens": 709212
+    },
+    "paragraph/0.3": {
+      "primary": 0.7392222831821446,
+      "domains": {
+        "government": 0.8436781609195402,
+        "faq": 0.7692307692307693,
+        "finance": 0.8854166666666666,
+        "papers": 0.4585635359116022
+      },
+      "selectionTokens": 709212
+    },
+    "boundary/balance": {
+      "primary": 0.7626633171275603,
+      "domains": {
+        "government": 0.871264367816092,
+        "faq": 0.8076923076923077,
+        "finance": 0.9020833333333333,
+        "papers": 0.4696132596685083
+      },
+      "selectionTokens": 0
+    },
+    "boundary/weakest": {
+      "primary": 0.7678862314840597,
+      "domains": {
+        "government": 0.8613026819923372,
+        "faq": 0.8461538461538461,
+        "finance": 0.9,
+        "papers": 0.46408839779005523
+      },
+      "selectionTokens": 91950
+    },
+    "boundary/0.3": {
+      "primary": 0.7639581023165992,
+      "domains": {
+        "government": 0.8704980842911877,
+        "faq": 0.8461538461538461,
+        "finance": 0.8916666666666667,
+        "papers": 0.44751381215469616
+      },
+      "selectionTokens": 91950
+    }
+  }
+}

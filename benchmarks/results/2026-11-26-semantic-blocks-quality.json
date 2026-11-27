@@ -1,0 +1,208 @@
+{
+  "startedUTC": "2026-11-26T16:48:30.497Z",
+  "implementationSHA256": "6dc518f4a819e9cf26c41d79994b6ffeb5f990aa5f22006de1043d1a350b0cf4",
+  "harnessSHA256": "2c590d9624b2cd3c9d8f9af1b027b840dd75851d5ad8d83d58600ef3e6db8978",
+  "node": "v24.14.1",
+  "platform": "win32-x64",
+  "libraries": {
+    "esbuild": "0.28.2",
+    "openai": "7.62.0",
+    "playwright": "1.61.0",
+    "tiktoken": "1.0.22",
+    "typescript": "5.9.3"
+  },
+  "embedding": {
+    "provider": "OpenAI",
+    "model": "text-embedding-3-small",
+    "dimensions": 1536,
+    "encoding": "cl100k_base",
+    "maxInputTokens": 8192
+  },
+  "artifactsSHA256": {
+    "squad.json": "95aa6a52d5d6a735563366753ca50492a658031da74f301ac5238b03966972c9",
+    "wikisection.tar.gz": "f37810a95702737b153a3034dbb877d08ecc699900f1a01c70110d47a5a016b8"
+  },
+  "contextTokens": 256,
+  "plans": {
+    "semantic-500": {
+      "chunkingStrategy": "semantic",
+      "maxChunkSize": 500
+    },
+    "semantic-blocks-500": {
+      "chunkingStrategy": "semantic-blocks",
+      "maxChunkSize": 500
+    }
+  },
+  "squad": {
+    "documents": {
+      "calibration": [
+        "Super_Bowl_50",
+        "Martin_Luther",
+        "Oxygen",
+        "Fresno,_California",
+        "American_Broadcasting_Company",
+        "Private_school",
+        "Yuan_dynasty",
+        "Scottish_Parliament"
+      ],
+      "heldout": [
+        "Nikola_Tesla",
+        "Victoria_(Australia)",
+        "European_Union_law",
+        "Geology",
+        "Immune_system",
+        "Economic_inequality",
+        "Chloroplast",
+        "United_Methodist_Church"
+      ]
+    },
+    "sentences": 675,
+    "distinctTexts": 5122,
+    "textsSHA256": "e73d4a4a8b494862c406dbc64e1f42f4f4a75e7532c36d76bc8b68aabae2830d",
+    "vectorsSHA256": "23c6ecdf38328319495bbe4987f7758a5984b522cec2fd7983069f131d4cbdac",
+    "precomputation": {
+      "apiRequests": 0,
+      "apiInputs": 0,
+      "apiInputTokens": 0,
+      "cachedBatches": 21
+    },
+    "scores": {
+      "semantic-500": {
+        "calibration": {
+          "questions": 481,
+          "hits": 459,
+          "hitRate": 0.9542619542619543,
+          "top1Hits": 368,
+          "chunks": 129,
+          "providerCalls": 30,
+          "providerTexts": 491,
+          "singletonCalls": 3
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 417,
+          "hitRate": 0.954233409610984,
+          "top1Hits": 339,
+          "chunks": 142,
+          "providerCalls": 31,
+          "providerTexts": 588,
+          "singletonCalls": 4
+        }
+      },
+      "semantic-blocks-500": {
+        "calibration": {
+          "questions": 481,
+          "hits": 439,
+          "hitRate": 0.9126819126819127,
+          "top1Hits": 355,
+          "chunks": 113,
+          "providerCalls": 16,
+          "providerTexts": 410,
+          "singletonCalls": 0
+        },
+        "heldout": {
+          "questions": 437,
+          "hits": 408,
+          "hitRate": 0.9336384439359268,
+          "top1Hits": 340,
+          "chunks": 129,
+          "providerCalls": 16,
+          "providerTexts": 483,
+          "singletonCalls": 0
+        }
+      }
+    }
+  },
+  "wikisection": {
+    "documents": {
+      "calibration": [
+        "https://en.wikipedia.org/wiki/Richfield,_Utah",
+        "https://en.wikipedia.org/wiki/Monticello,_Illinois",
+        "https://en.wikipedia.org/wiki/Slutsk",
+        "https://en.wikipedia.org/wiki/Lübeck",
+        "https://en.wikipedia.org/wiki/Glasgow",
+        "https://en.wikipedia.org/wiki/Pevek",
+        "https://en.wikipedia.org/wiki/Willowbrook,_Kansas",
+        "https://en.wikipedia.org/wiki/Crystal_Lake,_Iowa"
+      ],
+      "heldout": [
+        "https://en.wikipedia.org/wiki/Thornhill,_Kentucky",
+        "https://en.wikipedia.org/wiki/Khojaly_(city)",
+        "https://en.wikipedia.org/wiki/Uberaba",
+        "https://en.wikipedia.org/wiki/Cruces,_Cuba",
+        "https://en.wikipedia.org/wiki/Jerash",
+        "https://en.wikipedia.org/wiki/Jeju_City",
+        "https://en.wikipedia.org/wiki/Parker,_Florida",
+        "https://en.wikipedia.org/wiki/Aasiaat"
+      ]
+    },
+    "sentences": 1159,
+    "distinctTexts": 8179,
+    "textsSHA256": "562c1e812713092616f08ff93e35e775eef115c8ff9a7bf449d4bafd867ce5f7",
+    "vectorsSHA256": "c13379a06287c44e0e21061473f10e8f7e6f6c93397b7e1d59cb12a30e612f86",
+    "precomputation": {
+      "apiRequests": 0,
+      "apiInputs": 0,
+      "apiInputTokens": 0,
+      "cachedBatches": 32
+    },
+    "scores": {
+      "semantic-500": {
+        "calibration": {
+          "matched": 42,
+          "predicted": 320,
+          "gold": 81,
+          "precision": 0.13125,
+          "recall": 0.5185185185185185,
+          "f1": 0.20947630922693267,
+          "windowDiff": 0.799963664421208,
+          "chunks": 328,
+          "providerCalls": 37,
+          "providerTexts": 1476,
+          "singletonCalls": 5
+        },
+        "heldout": {
+          "matched": 26,
+          "predicted": 78,
+          "gold": 47,
+          "precision": 0.3333333333333333,
+          "recall": 0.5531914893617021,
+          "f1": 0.416,
+          "windowDiff": 0.5917363873886748,
+          "chunks": 86,
+          "providerCalls": 32,
+          "providerTexts": 426,
+          "singletonCalls": 3
+        }
+      },
+      "semantic-blocks-500": {
+        "calibration": {
+          "matched": 26,
+          "predicted": 284,
+          "gold": 81,
+          "precision": 0.09154929577464789,
+          "recall": 0.32098765432098764,
+          "f1": 0.14246575342465753,
+          "windowDiff": 0.7384124520430981,
+          "chunks": 292,
+          "providerCalls": 16,
+          "providerTexts": 1166,
+          "singletonCalls": 0
+        },
+        "heldout": {
+          "matched": 16,
+          "predicted": 69,
+          "gold": 47,
+          "precision": 0.2318840579710145,
+          "recall": 0.3404255319148936,
+          "f1": 0.27586206896551724,
+          "windowDiff": 0.5632602571404718,
+          "chunks": 77,
+          "providerCalls": 16,
+          "providerTexts": 324,
+          "singletonCalls": 0
+        }
+      }
+    }
+  }
+}

@@ -22,13 +22,13 @@ function argumentsFor(args, rag) {
     const result = { implementation: join(here, '..') };
     for (let i = 0; i < args.length; i++) {
         const key = args[i];
-        if (rag && key === '--methods') {
+        if (key === '--methods') {
             const names = [];
             while (args[i + 1] && !args[i + 1].startsWith('--')) names.push(args[++i]);
             if (!names.length) throw new Error('--methods needs at least one method');
             result.methods = names;
         } else {
-            if (!['--implementation', '--output', '--env-file', ...(rag ? ['--task'] : [])].includes(key)) {
+            if (!['--implementation', '--output', '--env-file', '--new-tokens', ...(rag ? ['--task'] : [])].includes(key)) {
                 throw new Error('Unknown option ' + key);
             }
             const value = args[++i];
@@ -51,7 +51,7 @@ async function main() {
     if (rag && tasks.some(t => !Object.hasOwn(ragTasks, t))) throw new Error('Unknown RAG task ' + options.task);
     let plans = rag ? ragPlans() : qualityPlans();
     if (options.methods) plans = Object.fromEntries(options.methods.map(name => {
-        if (!Object.hasOwn(plans, name)) throw new Error('Unknown RAG method ' + name);
+        if (!Object.hasOwn(plans, name)) throw new Error('Unknown ' + suite + ' method ' + name);
         return [name, plans[name]];
     }));
     const { devDependencies: libraries } = JSON.parse(await readFile(join(here, '..', 'package.json'), 'utf8'));
@@ -63,7 +63,9 @@ async function main() {
         artifactsSHA256: Object.fromEntries(tasks.map(task => [assets[task].name, assets[task].checksum])),
         ...(rag ? { contextBudgets: budgets, rankers: { dense: 'cosine with ' + model, bm25: { k1: 1.2, b: 0.75 } },
             plans: { ...plans, [windowName]: windowPlan }, tasks: {} } : { contextTokens: 256, plans }) };
-    const encoder = openEncoder(options['env-file']);
+    const maxNewTokens = options['new-tokens'] === undefined ? Infinity : Number(options['new-tokens']);
+    if (maxNewTokens !== Infinity && (!Number.isSafeInteger(maxNewTokens) || maxNewTokens < 0)) throw new Error('Invalid new-token budget.');
+    const encoder = openEncoder(options['env-file'], undefined, 1, maxNewTokens);
     try {
         for (const task of tasks) {
             console.log('Running', task);

@@ -1,0 +1,387 @@
+{
+  "model": "text-embedding-3-small",
+  "split": "confirmation",
+  "deliveries": [
+    [
+      "five512",
+      5,
+      512
+    ],
+    [
+      "five1024",
+      5,
+      1024
+    ]
+  ],
+  "tasks": {
+    "qasper": {
+      "format": "markdown",
+      "documents": 12,
+      "questions": 38,
+      "rows": {
+        "blocks": {
+          "256": {
+            "bodyHash": "4f22e9f7983ef94533a8935e5714f9064fc85ca80ea12e08f88caa7827656fed",
+            "chunks": 352,
+            "chunkTokens": {
+              "count": 352,
+              "min": 10,
+              "p10": 89,
+              "median": 189,
+              "p90": 248,
+              "max": 256
+            },
+            "meanChunkTokens": 178.20454545454547,
+            "indexingTokens": 62728,
+            "complete": {
+              "five512": 21,
+              "five1024": 27
+            },
+            "hits": {
+              "five512": "10010010010111100110001111011011110100",
+              "five1024": "10010111011111110110011111111011110100"
+            }
+          },
+          "512": {
+            "bodyHash": "5219df52a7efa682198ef123fc8bc78bf4166258692cf7211d21f8a542ef47f3",
+            "chunks": 184,
+            "chunkTokens": {
+              "count": 184,
+              "min": 46,
+              "p10": 129,
+              "median": 380,
+              "p90": 494,
+              "max": 512
+            },
+            "meanChunkTokens": 341.0108695652174,
+            "indexingTokens": 62746,
+            "complete": {
+              "five512": 17,
+              "five1024": 23
+            },
+            "hits": {
+              "five512": "00010011011101100110000011011011010000",
+              "five1024": "00010011011101110110000111011011111101"
+            }
+          }
+        },
+        "semantic-blocks": {
+          "256": {
+            "bodyHash": "2951d7997db2be06ff466b1765f2243483bc2e099110fbccdf637f9595b6bf28",
+            "chunks": 1173,
+            "chunkTokens": {
+              "count": 1173,
+              "min": 2,
+              "p10": 10,
+              "median": 33,
+              "p90": 130,
+              "max": 256
+            },
+            "meanChunkTokens": 54.00341005967604,
+            "indexingTokens": 142329,
+            "complete": {
+              "five512": 14,
+              "five1024": 14
+            },
+            "hits": {
+              "five512": "00010000000110101110001101011011000000",
+              "five1024": "00010000000110101110001101011011000000"
+            }
+          },
+          "512": {
+            "bodyHash": "b94d7e025bfb615b34e2aa08d878c4ac7cfb06058cc6e944633880f0365987e9",
+            "chunks": 1175,
+            "chunkTokens": {
+              "count": 1175,
+              "min": 2,
+              "p10": 9,
+              "median": 32,
+              "p90": 120,
+              "max": 503
+            },
+            "meanChunkTokens": 53.94212765957447,
+            "indexingTokens": 165510,
+            "complete": {
+              "five512": 14,
+              "five1024": 14
+            },
+            "hits": {
+              "five512": "00010000000110101110001101011011000000",
+              "five1024": "00010000000110101110001101011011000000"
+            }
+          }
+        },
+        "semantic-blocks-at-0.05": {
+          "256": {
+            "bodyHash": "53d3c391b675b2f9a97d6a7125561ec6d1e3ad41214ceadd58f6837c82eb61af",
+            "chunks": 353,
+            "chunkTokens": {
+              "count": 353,
+              "min": 10,
+              "p10": 88,
+              "median": 189,
+              "p90": 248,
+              "max": 256
+            },
+            "meanChunkTokens": 177.69971671388103,
+            "indexingTokens": 156597,
+            "complete": {
+              "five512": 21,
+              "five1024": 27
+            },
+            "hits": {
+              "five512": "10010010010111100110001111011011110100",
+              "five1024": "10010111011111110110011111111011110100"
+            }
+          },
+          "512": {
+            "bodyHash": "1d1c6492cde57d9cfece92c8b56c7a34ecb3a70acd52ce9fa81cba075d589543",
+            "chunks": 186,
+            "chunkTokens": {
+              "count": 186,
+              "min": 24,
+              "p10": 128,
+              "median": 379,
+              "p90": 494,
+              "max": 512
+            },
+            "meanChunkTokens": 337.3440860215054,
+            "indexingTokens": 181243,
+            "complete": {
+              "five512": 17,
+              "five1024": 23
+            },
+            "hits": {
+              "five512": "00010011011101100110000011011011010000",
+              "five1024": "00010011011101110110000111011011111101"
+            }
+          }
+        }
+      },
+      "capComparisons": {
+        "blocks": {
+          "five512": {
+            "gains": 2,
+            "losses": 6,
+            "deltaPoints": -10.526315789473685,
+            "ci95": [
+              -25,
+              2.857142857142857
+            ]
+          },
+          "five1024": {
+            "gains": 2,
+            "losses": 6,
+            "deltaPoints": -10.526315789473685,
+            "ci95": [
+              -23.809523809523807,
+              5.405405405405405
+            ]
+          }
+        },
+        "semantic-blocks": {
+          "five512": {
+            "gains": 0,
+            "losses": 0,
+            "deltaPoints": 0,
+            "ci95": [
+              0,
+              0
+            ]
+          },
+          "five1024": {
+            "gains": 0,
+            "losses": 0,
+            "deltaPoints": 0,
+            "ci95": [
+              0,
+              0
+            ]
+          }
+        },
+        "semantic-blocks-at-0.05": {
+          "five512": {
+            "gains": 2,
+            "losses": 6,
+            "deltaPoints": -10.526315789473685,
+            "ci95": [
+              -25,
+              2.857142857142857
+            ]
+          },
+          "five1024": {
+            "gains": 2,
+            "losses": 6,
+            "deltaPoints": -10.526315789473685,
+            "ci95": [
+              -23.809523809523807,
+              5.405405405405405
+            ]
+          }
+        }
+      },
+      "originalBlockOnly": {
+        "five512": {
+          "count": 8,
+          "recoveredByTree512": 0
+        },
+        "five1024": {
+          "count": 14,
+          "recoveredByTree512": 0
+        }
+      }
+    },
+    "cuad": {
+      "format": "text",
+      "documents": 6,
+      "questions": 91,
+      "rows": {
+        "blocks": {
+          "256": {
+            "bodyHash": "a8907f6e5d42cad7beeb2c4c31ce7dfcd059867b72d1db610c450810107ed2bb",
+            "chunks": 1158,
+            "chunkTokens": {
+              "count": 1158,
+              "min": 1,
+              "p10": 3,
+              "median": 36,
+              "p90": 217,
+              "max": 256
+            },
+            "meanChunkTokens": 72.51640759930915,
+            "indexingTokens": 81986,
+            "complete": {
+              "five512": 27,
+              "five1024": 34
+            },
+            "hits": {
+              "five512": "0000110100011001010110000000000000011101000000000101011010000000000000001111100100000000111",
+              "five1024": "0000110100011001010111110100001000011101000000000101011010000000001000001111100100010000111"
+            }
+          },
+          "512": {
+            "bodyHash": "1d759322eab06a324c9cada69267dfd2a3b0819f63f8011ef9d00106f4a5c45f",
+            "chunks": 1027,
+            "chunkTokens": {
+              "count": 1027,
+              "min": 1,
+              "p10": 3,
+              "median": 27,
+              "p90": 267,
+              "max": 512
+            },
+            "meanChunkTokens": 81.77020447906524,
+            "indexingTokens": 81990,
+            "complete": {
+              "five512": 25,
+              "five1024": 33
+            },
+            "hits": {
+              "five512": "0000110100011001010110000000000000011101000000000101111010000000000000001110000000000000111",
+              "five1024": "0000110100011001010111111111000000011101000000000101111010000000000000001110000100000000111"
+            }
+          }
+        },
+        "semantic-blocks": {
+          "256": {
+            "bodyHash": "05865091d983c90c34c05d4884ec8c01d6a430e7876724b663cf9b310234ea80",
+            "chunks": 501,
+            "chunkTokens": {
+              "count": 501,
+              "min": 1,
+              "p10": 22,
+              "median": 197,
+              "p90": 249,
+              "max": 256
+            },
+            "meanChunkTokens": 168.3193612774451,
+            "indexingTokens": 170670,
+            "complete": {
+              "five512": 23,
+              "five1024": 34
+            },
+            "hits": {
+              "five512": "0000000100001001010110000000000000001001000010000101011010000000000000001111100100000000111",
+              "five1024": "0000010100011001010111110100001000001101000010000111011010000000001000001111100100010000111"
+            }
+          },
+          "512": {
+            "bodyHash": "c1df3e306d3aca1f3d250e45ee3efb7443dc283e90098824e49b4117b99a521c",
+            "chunks": 260,
+            "chunkTokens": {
+              "count": 260,
+              "min": 1,
+              "p10": 22,
+              "median": 405,
+              "p90": 505,
+              "max": 512
+            },
+            "meanChunkTokens": 324.58076923076925,
+            "indexingTokens": 194020,
+            "complete": {
+              "five512": 20,
+              "five1024": 32
+            },
+            "hits": {
+              "five512": "0000000100011001100110000000000000001101000000000101111010000000000000001110000000000000001",
+              "five1024": "0000010100011001100110110111000000001101100000000111111010000000001000001110000100000000111"
+            }
+          }
+        }
+      },
+      "capComparisons": {
+        "blocks": {
+          "five512": {
+            "gains": 1,
+            "losses": 3,
+            "deltaPoints": -2.197802197802198,
+            "ci95": [
+              -8.737864077669903,
+              2.8846153846153846
+            ]
+          },
+          "five1024": {
+            "gains": 4,
+            "losses": 5,
+            "deltaPoints": -1.098901098901099,
+            "ci95": [
+              -7.936507936507936,
+              7.4074074074074066
+            ]
+          }
+        },
+        "semantic-blocks": {
+          "five512": {
+            "gains": 4,
+            "losses": 7,
+            "deltaPoints": -3.2967032967032965,
+            "ci95": [
+              -13.88888888888889,
+              4.2105263157894735
+            ]
+          },
+          "five1024": {
+            "gains": 5,
+            "losses": 7,
+            "deltaPoints": -2.197802197802198,
+            "ci95": [
+              -8.737864077669903,
+              2.8846153846153846
+            ]
+          }
+        }
+      },
+      "originalBlockOnly": {
+        "five512": {
+          "count": 5,
+          "recoveredByTree512": 2
+        },
+        "five1024": {
+          "count": 2,
+          "recoveredByTree512": 0
+        }
+      }
+    }
+  },
+  "newEmbeddingTokens": 115066
+}

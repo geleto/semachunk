@@ -53,7 +53,7 @@ function document(id, title) {
     return { doc, add };
 }
 
-function papers(rows) {
+export function papers(rows, selectCitation = (_answer, ranges) => ranges) {
     const data = corpus();
     for (const [id, row] of rows) {
         const { doc, add } = document(id, row.title), d = data.docs.length;
@@ -84,8 +84,12 @@ function papers(rows) {
             for (const { answer } of qa.answers) {
                 if (answer.unanswerable) continue;
                 const matches = answer.evidence.map(e => positions.get(compact(e)));
-                if (matches.length && matches.every(m => m?.length === 1)) references.push(matches.map(m => m[0]));
-                else omit(data, 'ambiguousOrNontextAnnotation');
+                if (!matches.length || !matches.every(m => m?.length === 1)) {
+                    omit(data, 'ambiguousOrNontextAnnotation');
+                    continue;
+                }
+                const ref = selectCitation(answer, matches.map(m => m[0]), doc.source);
+                if (ref?.length) references.push(ref);
             }
             if (references.length) data.questions.push({ id: qa.question_id, group: id, text: qa.question, pool: [d], references });
             else omit(data, 'noCompleteTextReference');
@@ -99,7 +103,7 @@ function mixedEvidence(row) {
     const ids = Object.keys(row.qa.gold_inds);
     return ids.some(k => k.startsWith('table_')) && ids.some(k => k.startsWith('text_'));
 }
-function finances(rows) {
+export function finances(rows) {
     const data = corpus(), pages = new Map();
     for (const row of rows) {
         if (!pages.has(row.filename)) {

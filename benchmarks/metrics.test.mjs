@@ -55,7 +55,9 @@ test('RAG scores intact paragraphs against the same source when sentence splitti
     ] };
     const encoder = { countTokens: s => wordOffsets(s).length, offsets: wordOffsets,
         vectors: texts => ({ matrix: new Float32Array(texts.length * dimension).fill(1) }) };
-    const report = await evaluateRag('cuad', chunkText, encoder, { blocks: { chunkingStrategy: 'blocks', maxChunkSize: 500 } }, { sample });
+    const report = await evaluateRag('cuad', chunkText, encoder, {
+        blocks: { chunkingStrategy: 'blocks', maxChunkSize: 'Alpha!Beta. Gamma.'.length }
+    }, { sample });
     assert.equal(report.scores.blocks.chunks, 2);
     assert.equal(report.scores.blocks.retrieval.dense[256].complete, 1);
 });

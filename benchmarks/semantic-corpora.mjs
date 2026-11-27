@@ -2,6 +2,49 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { asset, compact } from './corpora.mjs';
 
+export async function friendsDialogue(split = 'test') {
+    const files = {
+        dev: ['dev', '3a85d3fcb175589ffd050fb4bf431da77a6e12589c8ec03f1d54060ce33ec703'],
+        test: ['tst', 'a98f24d4b04ac9f8d9468088febf304bd90eada134537277c1a425e31c0372bc']
+    };
+    const [suffix, checksum] = files[split];
+    const release = { name: 'friendsqa-' + split + '.json', checksum,
+        url: 'https://raw.githubusercontent.com/emorynlp/FriendsQA/9ce6c98a6acf13c87d96b6811e4409b5de43bdfe/dat/friendsqa_' + suffix + '.json' };
+    const { data } = JSON.parse(await readFile(await asset(release), 'utf8'));
+    const docs = [], questions = [];
+    let references = 0;
+    for (const { title, paragraphs } of data.sort((a, b) => a.title.localeCompare(b.title, 'en', { numeric: true }))) {
+        const id = title.match(/^s\d+_e\d+/)[0];
+        if (docs.at(-1)?.id !== id) docs.push({ id, source: '' });
+        const d = docs.length - 1, doc = docs[d];
+        for (const scene of paragraphs) {
+            const turns = scene['utterances:'].map(({ uid, speakers, utterance }, i) => {
+                assert.equal(uid, i);
+                const label = speakers.join(', ');
+                if (doc.source) doc.source += '\n';
+                const start = doc.source.length, body = start + label.length + 2;
+                doc.source += label + ': ' + utterance;
+                return { start, label, body, words: [...utterance.matchAll(/\S+/gu)] };
+            });
+            for (const q of scene.qas) {
+                const alternatives = q.answers.map(a => {
+                    const t = turns[a.utterance_id];
+                    const at = a.is_speaker ? t.label.indexOf(a.answer_text) : t.words[a.inner_start].index;
+                    assert.ok(at >= 0);
+                    const start = (a.is_speaker ? t.start : t.body) + at;
+                    const end = a.is_speaker ? start + a.answer_text.length : t.body + t.words[a.inner_end].index + t.words[a.inner_end][0].length;
+                    assert.equal(doc.source.slice(start, end), a.answer_text);
+                    references++;
+                    return [[d, start, end]];
+                });
+                assert.ok(alternatives.length);
+                questions.push({ id: q.id, group: id, text: q.question, pool: [d], references: alternatives });
+            }
+        }
+    }
+    return { release, scenes: data.length, references, dataset: { docs, questions } };
+}
+
 export async function meetings(split = 'test') {
     const checksum = { test: '6bcd428211260ad2efae3af76cbaf6a7f5ae4bb5e1e59c45a4b8e89539cb9208',
         val: 'fc7444e241bdbe6997c01720d07f1a58b7357284acb73f909766e5a4700db49f' }[split];

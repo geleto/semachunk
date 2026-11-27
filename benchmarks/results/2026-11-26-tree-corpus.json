@@ -1,0 +1,270 @@
+{
+  "version": 1,
+  "manuals": [
+    {
+      "id": "rclone",
+      "group": "rclone/rclone",
+      "split": "development",
+      "url": "https://raw.githubusercontent.com/rclone/rclone/cd9c861693c874ba446f0b6f6708f0a20ae636fa/docs/content/faq.md",
+      "sha256": "fdec4c8b90e9dbf142d892aaa873e92e7551f78066776f4dc6a4e9ef9b0bd3f3"
+    },
+    {
+      "id": "docker",
+      "group": "docker/docs",
+      "split": "confirmation",
+      "url": "https://raw.githubusercontent.com/docker/docs/e8a4ce7a531961f3fbd8986ccfbf7715628f903b/content/manuals/compose/support-and-feedback/faq.md",
+      "sha256": "0e35d69a20a1b76e867cddadde50384d669d5e9907b1f30f81aaf342ec7b67a7"
+    },
+    {
+      "id": "pandoc",
+      "group": "jgm/pandoc",
+      "split": "confirmation",
+      "url": "https://raw.githubusercontent.com/jgm/pandoc/50c337cb9c32467310026af43ba904582a656711/doc/faqs.md",
+      "sha256": "1a152cee7a23655321e27f61ebdcdb4ce3adee82c00b68f76d76927aefb0619b"
+    },
+    {
+      "id": "pnpm",
+      "group": "pnpm/pnpm.io",
+      "split": "development",
+      "url": "https://raw.githubusercontent.com/pnpm/pnpm.io/58864a152d11882918c6b5af63974007b7b661c1/docs/faq.md",
+      "sha256": "7b1c81de882b3ef5878ea8041a823baa32122ee999993b91c8d130150743fde0"
+    },
+    {
+      "id": "cargo",
+      "group": "rust-lang/cargo",
+      "split": "confirmation",
+      "url": "https://raw.githubusercontent.com/rust-lang/cargo/1c15deee3cd6c5e49d7f1189dba9be2b6a7af938/doc/book/src/faq.md",
+      "sha256": "3eb4789075309b9ce93537d62b0b929aa5a2234d608e2e6133c4b7b5874bbcce"
+    },
+    {
+      "id": "jellyfin",
+      "group": "jellyfin/jellyfin.org",
+      "split": "development",
+      "url": "https://raw.githubusercontent.com/jellyfin/jellyfin.org/ce09cd62679d4551135aabb8b9904f70d1bce2a4/docs/general/faq.md",
+      "sha256": "3531b2f9ff3dbcbd9d93767109013c0f9e491fd5f3c84fe2c709c0bbfe7e3338"
+    },
+    {
+      "id": "retrieval-to-grounded-answers",
+      "group": "geleto/casai",
+      "split": "product",
+      "url": "https://raw.githubusercontent.com/geleto/casai/2cad8a588f9c057201c81c0e97e41ee182cea1e3/docs/matrix/articles/retrieval-to-grounded-answers.md",
+      "sha256": "8ffa95bc1be6d20eb72e4f9c6188ce5dd3166d632b45ce33d02e4844fd90f7cb"
+    },
+    {
+      "id": "draft-review-revise",
+      "group": "geleto/casai",
+      "split": "product",
+      "url": "https://raw.githubusercontent.com/geleto/casai/2cad8a588f9c057201c81c0e97e41ee182cea1e3/docs/matrix/articles/draft-review-revise.md",
+      "sha256": "41b8d96879a44168fe83c978e7d061aff77fbba3b2eac4580bdabd2ac564f0e6"
+    },
+    {
+      "id": "change-implementation-keep-workflow",
+      "group": "geleto/casai",
+      "split": "product",
+      "url": "https://raw.githubusercontent.com/geleto/casai/2cad8a588f9c057201c81c0e97e41ee182cea1e3/docs/matrix/articles/change-implementation-keep-workflow.md",
+      "sha256": "61fb136101fa2589d40d6666bf3fe84eb5f5b2d90a172fcf0f23f8de1f22e7fe"
+    }
+  ],
+  "exclusions": {
+    "unmatchedOrAmbiguous": 0,
+    "unindexedMarkdownEvidence": 0
+  },
+  "retrieval": {
+    "government-development-ssa-html": {
+      "documents": 10,
+      "groups": 10,
+      "questions": 66,
+      "sha256": "158527631d4dbbaccc500bb33c8b4b20c483d2c62708738b2332880c0f6e3667"
+    },
+    "government-development-ssa-text": {
+      "documents": 10,
+      "groups": 10,
+      "questions": 66,
+      "sha256": "5ea78be8135f9aa92621869a3eacc5bdb99bf301a56636b7d5003f3d67763d4b"
+    },
+    "government-development-ssa-markdown": {
+      "documents": 10,
+      "groups": 10,
+      "questions": 66,
+      "sha256": "bf25a1f73d71990845218b177fb78633100eb1730bfeb7ee3b599aeb18731665"
+    },
+    "government-confirmation-ssa-html": {
+      "documents": 24,
+      "groups": 9,
+      "questions": 172,
+      "sha256": "e5338ee2248b92e61d24770a58be28e624e73936c5ed886b98e8a8ca44087c0d"
+    },
+    "government-confirmation-ssa-text": {
+      "documents": 24,
+      "groups": 9,
+      "questions": 172,
+      "sha256": "3cfc4159b2b071d8e076190ce66d846f10d88bdc2334503dc938a9592670c10d"
+    },
+    "government-confirmation-ssa-markdown": {
+      "documents": 24,
+      "groups": 9,
+      "questions": 172,
+      "sha256": "7496a9d7756db722ea124592127a03674348720a77f694d8a9468bae3b1cf8b1"
+    },
+    "government-development-va-html": {
+      "documents": 24,
+      "groups": 22,
+      "questions": 103,
+      "sha256": "111d128a4df055224e388e9fa0b7432b4d6b1b29b813fcd8ea9ea839ddde76eb"
+    },
+    "government-development-va-text": {
+      "documents": 24,
+      "groups": 22,
+      "questions": 103,
+      "sha256": "6ce2830bcf02d1473ea150588f26c5641ac77435105d51eb01a2dae6b13ac9f3"
+    },
+    "government-development-va-markdown": {
+      "documents": 24,
+      "groups": 22,
+      "questions": 103,
+      "sha256": "7ab3c574e452c804bfc36a9313b2e2cd2bd75bc54f140ceb80ae682bd4574e9a"
+    },
+    "government-confirmation-va-html": {
+      "documents": 33,
+      "groups": 31,
+      "questions": 189,
+      "sha256": "19d66867e8051c971313ddb8e04c4a64b41827a8e345d2b05ab4831a39d2e634"
+    },
+    "government-confirmation-va-text": {
+      "documents": 33,
+      "groups": 31,
+      "questions": 189,
+      "sha256": "cbac3bec526a384b4d74200ac87e458d93a8f7994b7a2ced5cd1caa8350402bd"
+    },
+    "government-confirmation-va-markdown": {
+      "documents": 33,
+      "groups": 31,
+      "questions": 189,
+      "sha256": "707d16add729b6024d9d8234b298590168407e6fe67686e6d0dd371aa63f8a15"
+    },
+    "government-confirmation-dmv-html": {
+      "documents": 25,
+      "groups": 25,
+      "questions": 103,
+      "sha256": "ab4720cebd23672c147efc319faabbed93fa2c9386de585a39b6ac7b4a1442c2"
+    },
+    "government-confirmation-dmv-text": {
+      "documents": 25,
+      "groups": 25,
+      "questions": 103,
+      "sha256": "ba6f522139f14a28e8fc8179026ae2f5bf7e5c09fab1ed64f2a2da30485c61ee"
+    },
+    "government-confirmation-dmv-markdown": {
+      "documents": 25,
+      "groups": 25,
+      "questions": 103,
+      "sha256": "b4bf751f8e7ac5d6c5cfdf782ce6c20a1fd96e19567ddc68c5781eeb4031d301"
+    },
+    "government-development-dmv-html": {
+      "documents": 25,
+      "groups": 25,
+      "questions": 130,
+      "sha256": "ced10a7fedf043e85b876acd699c802621e91a7e6826b6e21fc5c80dc7204cac"
+    },
+    "government-development-dmv-text": {
+      "documents": 25,
+      "groups": 25,
+      "questions": 130,
+      "sha256": "0bcc4fb039b924258dca7c347f251e00ce13adee66114ebe610d0124c9c4b696"
+    },
+    "government-development-dmv-markdown": {
+      "documents": 25,
+      "groups": 25,
+      "questions": 130,
+      "sha256": "2a326adb2e77393daf8234687defd66e1d4c5bb7679088db2e0fefcbcbddf898"
+    },
+    "government-confirmation-studentaid-html": {
+      "documents": 27,
+      "groups": 27,
+      "questions": 207,
+      "sha256": "12fc146355ee74968b6479caf4e65f72fe388de6f979dfc88344aa2f9637986e"
+    },
+    "government-confirmation-studentaid-text": {
+      "documents": 27,
+      "groups": 27,
+      "questions": 207,
+      "sha256": "38bd761d3c105e323b27d75b2b6f68103deda7b64675c3f072192f2b3b702a7e"
+    },
+    "government-confirmation-studentaid-markdown": {
+      "documents": 27,
+      "groups": 27,
+      "questions": 207,
+      "sha256": "f2b69f97e97ac7830124b10135c26f4854c59f0e11a1ce40d935ad77c1a79e6d"
+    },
+    "government-development-studentaid-html": {
+      "documents": 24,
+      "groups": 24,
+      "questions": 207,
+      "sha256": "d401a128653c967baa622dec5892b7aba0cdc015a85f6737ec4ea0ae9a54ae4b"
+    },
+    "government-development-studentaid-text": {
+      "documents": 24,
+      "groups": 24,
+      "questions": 207,
+      "sha256": "3092fb359d96b468dd3a1181f001b202048a8c4d8a6fa61a5d54573bf52abc1d"
+    },
+    "government-development-studentaid-markdown": {
+      "documents": 24,
+      "groups": 24,
+      "questions": 207,
+      "sha256": "367b178fb95a99d7d38f30ba2e34912670557ab3fb3d2f2c5d4d56c4e57c9613"
+    },
+    "faq-development-published": {
+      "documents": 3,
+      "groups": 3,
+      "questions": 26,
+      "sha256": "d2d1b8d71b5443a4ff380d61130284988dd2315cb6a71733a2f290fd8dd0efc9"
+    },
+    "faq-development-masked": {
+      "documents": 3,
+      "groups": 3,
+      "questions": 26,
+      "sha256": "807fdb3c75a4545958d4dcf062365b873a429c1371b50546bd5af6506a849863"
+    },
+    "faq-confirmation-published": {
+      "documents": 3,
+      "groups": 3,
+      "questions": 35,
+      "sha256": "ed1d4d0ab137772d08860c118418cd8a48e4845992eb3ee7b153591f9bfcab43"
+    },
+    "faq-confirmation-masked": {
+      "documents": 3,
+      "groups": 3,
+      "questions": 35,
+      "sha256": "9f9018ac5d41e606e5235f15fd896e320eb4af7215d6213d7e967579d7d007a0"
+    },
+    "casai-product": {
+      "documents": 3,
+      "groups": 1,
+      "questions": 6,
+      "sha256": "bc559904c83613d0ef915f33e9e6d4973a0480b5cbd0b1f75fff99bc494d1290"
+    }
+  },
+  "boundaries": {
+    "wiki-development": {
+      "documents": 359,
+      "sha256": "c88ba53c91ee8f6886aebb77ea846afa45a2e275544bd799d5b865b7296c12b4",
+      "positives": 2446
+    },
+    "wiki-confirmation": {
+      "documents": 718,
+      "sha256": "40a7d2ea4c841d2dcc8b152da53ea56f2f751d0a53d3010e0f2c7d28e19ba495",
+      "positives": 4783
+    },
+    "meetings-development": {
+      "documents": 35,
+      "sha256": "a32def40421683d3528473a8efefb82cb14162a831d8deab8005516240e8736e",
+      "positives": 102
+    },
+    "meetings-confirmation": {
+      "documents": 162,
+      "sha256": "b1d47318fe8c2ddc7911ecbf39fa6687c0c9815be3b7f7fdfcdf2a1be2d1408b",
+      "positives": 466
+    }
+  }
+}

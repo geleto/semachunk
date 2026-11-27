@@ -47,7 +47,8 @@ assert.ok(Number.isSafeInteger(concurrency) && concurrency > 0);
 const start = Number(values.start), stop = start + Number(values.batches);
 assert.ok(Number.isSafeInteger(start) && start >= 0 && stop > start);
 const scoringCode = await Promise.all(['json-record-study.mjs', 'json-evidence.mjs', 'json-layouts.mjs', 'delivered-context.mjs', 'encoder.mjs',
-    'chunking.mjs', '../src/index.js', '../src/json.js', '../src/sentences.js', '../src/packing.js', '../src/offsets.js', '../src/token-limit.js']
+    'chunking.mjs', '../src/index.js', '../src/json.js', '../src/json-records.js', '../src/sentences.js', '../src/abbreviations.js', '../src/packing.js',
+    '../src/offsets.js', '../src/token-limit.js']
     .map(f => readFile(join(here, f), 'utf8')));
 const version = sha256(JSON.stringify([settings, scoringCode])).slice(0, 16);
 const reports = join(directory, 'scores', corpus + '-' + version);

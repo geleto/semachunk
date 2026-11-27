@@ -2,6 +2,97 @@
 
 The quality suite scores short-answer retrieval and editorial boundaries. The RAG suite searches complete contracts, research papers and collections of related and distracting passages. The Node performance suite measures batching and library time on large documents. Each run writes a new JSON file under `benchmarks/results/`. [Results and change log](LOG.md)
 
+## Compare three limits with whole-passage retrieval
+
+The three indexes use `blocks` at 256 tokens and `semantic-blocks` at 512 tokens and unlimited size. Both semantic thresholds target each document's structural passage count. The main measure is whether the first five dense hits together cover a complete citation. Every hit is returned in full. The report also records first-hit coverage and the actual tokens returned. Government questions contribute one observation averaged across the three formats. Each of the four domains receives equal weight. [Protocol](whole-passage-audited-protocol.json) · [Results](results/2026-11-27-whole-passage-audited.json)
+
+| Domain | Search scope | What counts as evidence |
+|---|---|---|
+| FinanceBench | The entire specified filing or earnings release. The 84 reports cover 32 issuers across nine sectors. | Reviewed PDF lines and table rows, including references across pages. There are 141 scored questions out of 150. |
+| Doc2Dial government services | All distinct pages for the agency in that fold. The same page is rendered as HTML, text and Markdown. | A complete source quotation on the cited page or a reviewed equivalent page. The audit records duplicate pages, restored titles and excluded questions. |
+| Software FAQs | All three development manuals or all six confirmation manuals, with their published headings, examples and code. | Independently worded questions cite selected lines in the original Markdown. Each alternative gives a complete answer. |
+| QASPER research papers | The full text and captions supplied for the specified paper. The folds contain 64 distinct papers each. | All the highlighted spans of any one text-supported annotator answer. Image-dependent and unresolved citations are excluded. |
+
+The source manifest records each PDF's publisher URL, an immutable copy in the FinanceBench release and its SHA-256. Downloaded PDFs stay in `benchmarks/.cache/financebench/pdfs/`. The same manifest pins the government archive, QASPER release and nine original manuals. Finance citations use one-based physical PDF pages and extracted lines. FAQ citations use one-based lines in the pinned Markdown file. [Source manifest](results/2026-11-27-audited-data.json) · [Finance citations](financebench-citations.json) · [Government citation review](government-citations.json) · [FAQ citations](faq-citations.json)
+
+Run `python benchmarks/whole-passage.py report` to regenerate the comparison offline from the committed outcomes. To rebuild the nonfinancial documents and remeasure retrieval, use the hierarchical chunker implementation, its Node dependencies and the configured benchmark embedding provider.
+
+```powershell
+python benchmarks/tree-corpus.py government
+node benchmarks/audited-data.mjs
+python benchmarks/whole-passage.py all --workers 4
+```
+
+The audited report verifies and reuses the finance outcomes from the full-filing comparison. To rebuild those inputs and measure the finance indexes independently, run the following from the repository root. The builder verifies the PDF files and extracted documents against their pinned hashes. All 84 filings contribute to index-size statistics, including one with no scored question. [Full-filing manifest](results/2026-11-27-full-filings-data.json) · [FinanceBench dataset card](https://huggingface.co/datasets/PatronusAI/financebench)
+
+```powershell
+python -m venv benchmarks/.cache/financebench/venv
+& benchmarks/.cache/financebench/venv/Scripts/python.exe -m pip install PyMuPDF==1.26.7
+& benchmarks/.cache/financebench/venv/Scripts/python.exe benchmarks/financebench-data.py build
+python benchmarks/whole-passage.py all --filings --workers 4
+```
+
+Use `--filings` to reproduce the first full-filing comparison and `--legacy` with the historical settings-study inputs for the one-page FinQA comparison. [Full-filing results](results/2026-11-27-whole-passage-filings.json) · [Archived FinQA results](results/2026-11-27-whole-passage.json)
+
+## Compare uncapped semantic passages at a matched count
+
+For each source, count the passages returned by `blocks` at 256 tokens. Set both size limits to `Infinity` for `semantic-blocks` and fit a separate cosine cutoff to that passage count. Increasing the cutoff can introduce several boundaries when a nested branch opens. The runner finds the closest attainable count over the distinct edge scores and verifies the selected texts and source ranges against the public API. Cutoff selection reads only the source and the structural count. Three deterministic permutations of the same scores test what the similarity ranking contributes on the same tree. [Protocol](matched-count-protocol.json)
+
+With the settings-study documents prepared, run `python benchmarks/matched-count.py all --workers 4`. The runner replays both folds with the original encoder, questions and candidate pools. It reports full evidence in the first hit, in five hits, and after the five hits share 512 or 1,024 tokens. It checks the structural layouts and per-question baseline scores against the archived experiment. `python benchmarks/matched-count.py report` regenerates the report from completed local shards. [Results](results/2026-11-26-matched-count.json)
+
+## Search thresholds against the shared-root baseline
+
+The settings study runs the public `blocks`, `pack`, `semantic` and `semantic-blocks` entry points. Each semantic family gets ten fixed cosine cutoffs from −1 through 0.65 and document calibration. Additional candidates protect fitting paragraphs or move a boundary between two already necessary chunks. The latter may move whole siblings when both resulting chunks fit and each reaches half the cap. One control selects the more balanced lengths without embeddings. The semantic variant selects the lowest local cosine, handling disjoint pairs in document order and preserving the passage count. [Selection and uncertainty protocol](semantic-settings-protocol.json)
+
+The primary retrieval profile uses `text-embedding-3-small`, a 256-token chunk limit, five hits and 512 delivered tokens. The government questions use their original agency pools. Papers and financial questions search the source document supplied with the question. Each FAQ query searches its publisher cohort. A government question contributes one averaged observation across its HTML, text and Markdown renderings. The domain average gives equal weight to government, masked FAQs, financial pages and papers. Confirmation uses 64 financial reports with issuers disjoint from development, 64 other research papers, and three extra FAQ publishers alongside the earlier confirmation sources. FinQA includes all mapped questions on each sampled report, irrespective of which evidence type answers them. [Corpus manifest](results/2026-11-26-semantic-settings-data.json) · [FinQA](https://github.com/czyssrs/FinQA) · [QASPER](https://huggingface.co/datasets/allenai/qasper)
+
+Run the following from the repository root after preparing the document-tree corpus described below. Development freezes one nominee from each semantic family and one alternative. Size selection uses development outcomes at 128, 256 and 512 tokens. It retains 256 when that configuration falls within one percentage point of the best for the same method. The report includes matched comparisons with the large encoder, exact article and meeting topic transitions, unclipped top-five coverage, and the effect of the delivery budget. It also checks earlier results against the same questions. Jobs resume from local checkpoints.
+
+```powershell
+node benchmarks/semantic-settings-data.mjs
+python benchmarks/semantic-settings-run.py development
+python benchmarks/semantic-settings-run.py sizes
+python benchmarks/semantic-settings-run.py confirmation
+python benchmarks/semantic-settings-run.py topics
+foreach ($datasetName in @('squad','wikisection','finqa','qasper','cuad','hotpotqa','friendsqa','qmsum')) {
+    node benchmarks/semantic-settings-regression.mjs $datasetName
+    if ($LASTEXITCODE -ne 0) { throw "Regression failed for $datasetName" }
+}
+python benchmarks/semantic-settings-report.py
+```
+
+## Compare semantic cuts on the document tree
+
+The benchmark has two separate outcomes. Retrieval measures whether five dense-search hits deliver every cited part of an answer within 512 or 1,024 tokens. Segmentation measures exact agreement with independently labeled topic changes. The primary chunk limit is 256 tokens. A second pass uses a common 1,024-character target in every format. [Corpus manifest](results/2026-11-26-tree-corpus.json) · [Question and evidence exclusions](results/2026-11-26-tree-labels.json)
+
+Run the following from the repository root with Node, Python 3, the project dependencies and the embedding provider configured. The first three commands reproduce the source files and validate the frozen manifests. Jobs checkpoint one file per retrieval pool or boundary shard under `benchmarks/.cache/tree-corpus`. The runner resumes completed shards. The following commands use PowerShell.
+
+```powershell
+python benchmarks/tree-corpus.py
+node benchmarks/tree-dataset.mjs
+python benchmarks/tree-labels.py
+python benchmarks/tree-study.py --workers 3
+foreach ($datasetName in @('squad','wikisection','finqa','qasper','cuad','hotpotqa','friendsqa','qmsum')) {
+    node benchmarks/tree-regression.mjs $datasetName
+    if ($LASTEXITCODE -ne 0) { throw "Regression failed for $datasetName" }
+}
+foreach ($embeddingModel in @('text-embedding-3-small','text-embedding-3-large')) {
+    $env:SEMACHUNK_BENCHMARK_MODEL = $embeddingModel
+    node benchmarks/tree-edges.mjs
+    if ($LASTEXITCODE -ne 0) { throw "Edge replay failed for $embeddingModel" }
+}
+Remove-Item Env:SEMACHUNK_BENCHMARK_MODEL
+python benchmarks/tree-report.py
+```
+
+The controls are the shipped `blocks` and `semantic` strategies and a shared document root with every scoreable pair allowed to merge. The last control retains all size guards. The three fixed cutoffs are 0.05, 0.15 and 0.30. The fitting-paragraph candidate uses 0.15 between siblings and considers internal sentence boundaries only when the paragraph exceeds the active size limit. `semantic` runs on the primary retrieval profile. [Experimental policies](tree-policy.mjs)
+
+Doc2Dial uses annotated solutions and preconditions from opening exchanges. Each query searches its agency’s pages in its own fold. Other versions of its target page family are removed from that query’s search pool. Each gold span must occur uniquely and round-trip through all three input representations. The publisher’s FAQ headings can reproduce the query verbatim. Each manual runs once with its published headings and once with its question headings replaced by `FAQ`. FAQ evidence is the whole published answer body, including code and subordinate passages. The six Casai queries have source spans selected by the assistant who wrote the queries for this study. [Doc2Dial](https://aclanthology.org/2020.emnlp-main.652/) · [Pinned manuals and file digests](results/2026-11-26-tree-corpus.json)
+
+WikiSection uses the original article body without injecting the reference headings. QMSum uses speaker-attributed turns separated by blank lines. Only turn boundaries with one human-labeled topic on each side contribute to meeting precision and recall. Both datasets retain the original text for validating offsets. A new or removed cut is a physical chunk boundary relative to the shared-root control, so segmentation results include the effect of repacking downstream passages. [WikiSection](https://github.com/sebastianarnold/WikiSection) · [QMSum](https://aclanthology.org/2021.naacl-main.472/)
+
+The small encoder covers all new retrieval sets in both sizing modes and both full topic cohorts in token mode. The large encoder repeats the SSA pages in three formats, all manuals and the Casai cases. Both sensitivity profiles use the same 32 development articles and 12 development meetings, selected by a hash of source ID. Both encoders use 1,536 dimensions. Paired intervals resample source families or complete documents 2,000 times. The labeled edge replay records node role, depth capped at three, document tokens below or above 2,048, local size in quarters of the active token limit, cosine band and mean, and independently labeled topic status where available.
+
 ## Compare JSON record layouts
 
 Node runs the JSON study’s scoring, nomination, report and tests. Preparing the pinned HotpotQA, WikiSQL and FinQA datasets requires Python 3. The release protocol requires `text-embedding-3-small` at 1,536 dimensions and five hits sharing 512 delivered tokens. Scoring rejects a conflicting `SEMACHUNK_BENCHMARK_MODEL` override. The first three scoring runs use development data. Freeze the candidate sequence and generic reference before scoring the independent confirmation questions.
@@ -56,12 +147,19 @@ Exact boundary precision, recall and F1 pool counts across articles in each spli
 
 - The priority-merge grid crosses maximum sizes of 250, 500 and 1,000 UTF-16 code units with cosine cutoffs of 0.3, 0.4, 0.5, 0.6, 0.7 and a per-document cutoff. Each task selects its own setting on calibration, maximizing answer hits or exact boundary F1. Ties favor fewer indexed chunks, then the first setting in the listed grid order. Held-out results are reported for every setting.
 - The suite also measures the public default, individual sentences, and explicit block, packing and semantic layouts at all three sizes.
+- To compare the current flat-text defaults, run `node benchmarks/run.mjs quality --methods semantic-500 semantic-blocks-500 --new-tokens 0`. This uses the 500-character setting on the same sentence-normalized inputs for both strategies. The cutoff sweep also records the earlier fixed 0.05 setting.
 - All methods use `text-embedding-3-small` at its full 1,536 dimensions. The runner precomputes the union of contiguous chunks up to the largest candidate size, individual long sentences and queries. It sends up to 256 inputs per request, checks the 8,192-token input limit and the 300,000-token request limit, and preserves the provider's row indices. [OpenAI embeddings](https://developers.openai.com/api/docs/guides/embeddings) · [API limits](https://developers.openai.com/api/reference/resources/embeddings/methods/create)
 - The runner imports the checkout's `chunkText` directly. Costs count its actual provider calls, input texts and single-item calls, including final indexing. Greedy packing makes one indexing call per document. Offline precomputation and query encoding are excluded from these counts.
 - Each report records the embedding model, tokenizer, dimensions, sample IDs and hashes of the ordered inputs and vector bytes. Per-dataset `precomputation` records successful live requests, inputs, API-reported input tokens and batches read from cache. Compare vector hashes when reproducing a run. Older reports record their original model and token budgets.
 - Both quality datasets use English Wikipedia and a single embedding model. Small differences can depend on the articles, context budget and retriever. The reports retain per-split sample identities, raw counts, settings, runtime versions, and hashes of the implementation, scoring harness, assets and vectors.
 
 ## Run the RAG evidence benchmark
+
+The [semantic-blocks dataset audit](LOG.md#2026-11-26--dataset-audit-for-semantic-blocks) records which source types and topic boundaries the current suite covers. Run `python benchmarks/semantic-blocks-corpus-audit.py` to verify the proposed WikiSection, QMSum and Doc2Dial sources and reproduce the Doc2Dial page-family splits.
+
+To compare a single `semantic-blocks` cutoff across document types, run `node benchmarks/semantic-blocks-cutoffs.mjs cutoffs.json`. It tests fixed cosines of 0, 0.05, 0.15, 0.3 and 0.5 and a cutoff calculated per document. Each retrieval dataset has equal weight in the calibration score. The seven datasets are CUAD, QASPER, FinQA, HotpotQA, QMSum, FriendsQA and SQuAD. The score averages HotpotQA's two search pools within the dataset. QMSum measures the fraction of annotated evidence delivered, and the other datasets measure complete evidence or answer hits. WikiSection measures editorial boundary F1 separately. The report includes independent results for every setting and a further check on four document datasets at the public character targets. The runner reuses cached embeddings and saves a checkpoint after each dataset.
+
+To compare the two semantic strategies on the same annotated questions, run `node benchmarks/semantic-blocks-study.mjs`. The default uses the QASPER confirmation sample as Markdown, 256-token chunks, and up to five passages sharing 512 or 1,024 delivered tokens. It runs the public `semantic`, `semantic-blocks` and `blocks` strategies. The report includes complete-evidence hits, paired gains and losses, document-group confidence intervals and cold indexing tokens. Use `--task cuad` or `--task finqa` for contracts or financial reports, `--format text` for the plain-text parser and `--chars 500` for a character target. It reuses cached vectors by default. `--new-tokens N` permits up to N new provider input tokens. `--output file.json` saves the result.
 
 After `npm ci`, run
 
@@ -71,7 +169,7 @@ npm run benchmark:rag
 
 To run one dataset, use `npm run benchmark:rag -- --task cuad` with a task name of `cuad`, `qasper` or `hotpotqa`. The three pinned data files total about 72 MB. CUAD and HotpotQA use checksummed JSON mirrors of the original splits. A cache from the ZIP/Parquet loader needs one download per changed dataset. The sample IDs, texts and gold evidence are identical. Each report records sample IDs, lengths in `cl100k_base` tokens, exclusions, indexing costs and source ranges for example queries.
 
-Use `--methods priority-default merge-500-0.5 merge-500-document` to compare the checkout's default, the previous 0.5 cutoff and document calibration alongside the token window. For an older implementation, select settings it supports. Include `flat-merge-500-0.5` to compare its normal input with a flattened control on a shared vector matrix.
+Use `--methods default merge-500-0.5 merge-500-document` to compare the checkout's default, the previous 0.5 cutoff and document calibration alongside the token window. For an older implementation, select settings it supports. Include `flat-merge-500-0.5` to compare its normal input with a flattened control on a shared vector matrix.
 
 | Task | What the retriever can search | What constitutes complete evidence |
 |---|---|---|

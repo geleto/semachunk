@@ -9,7 +9,7 @@ import { meetings } from './semantic-corpora.mjs';
 const output = process.argv[2];
 if (!output || existsSync(output)) throw new Error('Supply a new JSON result path.');
 const deliveries = [['five512', 5, 512], [512, Infinity, 512], ['top5', 5, Infinity]];
-const modes = { semantic: { method: 'plain-priority', chunkingStrategy: 'semantic' }, sentences: { method: 'plain-priority', combineChunks: false },
+const modes = { semantic: { method: 'plain-priority', chunkingStrategy: 'semantic' }, sentences: { method: 'plain-pack', chars: 0 },
     paragraph: { method: 'plain-priority', chunkingStrategy: 'blocks' }, pack: { method: 'plain-pack' }, recursive: { method: 'recursive', overlap: 0 },
     'recursive-capped': { method: 'recursive', overlap: 0, cap: true } };
 const report = { model, encodingName, bodyTokens: 256, cohorts: {} };

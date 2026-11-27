@@ -1,0 +1,174 @@
+{
+  "model": "text-embedding-3-small",
+  "task": "finqa",
+  "format": "markdown",
+  "split": "calibration",
+  "budget": {
+    "tokens": 256
+  },
+  "deliveries": [
+    [
+      "five512",
+      5,
+      512
+    ],
+    [
+      "five1024",
+      5,
+      1024
+    ]
+  ],
+  "documents": 28,
+  "questions": 43,
+  "rows": {
+    "semantic": {
+      "bodyHash": "ccb260904515b6d5ce821fe32d8e0b1f8fc5e78f2ef4832b8c90236ebd8c8a44",
+      "chunks": 294,
+      "indexingTokens": 42203,
+      "indexingCalls": 55,
+      "overTarget": 0,
+      "hits": {
+        "five512": "0101101011011111010011010011111101111011000",
+        "five1024": "0101101011011111010011010011111111111011111"
+      }
+    },
+    "semantic-blocks": {
+      "bodyHash": "255aba34365c9440228bbe5f663e7adb2c6ee6d3d09c50a4b0819b58ee1685f4",
+      "chunks": 273,
+      "indexingTokens": 45134,
+      "indexingCalls": 56,
+      "overTarget": 0,
+      "hits": {
+        "five512": "0101111111111110010011110111111111111011010",
+        "five1024": "0101111111111111110011111111111111111011111"
+      }
+    },
+    "blocks": {
+      "bodyHash": "1339a18c4223ed392930ac217de8bff3ec9cfcd6dd7603d70fa707bee2e412c3",
+      "chunks": 649,
+      "indexingTokens": 24678,
+      "indexingCalls": 28,
+      "overTarget": 0,
+      "hits": {
+        "five512": "0101100001011110010011010011000101011011010",
+        "five1024": "0101100001011110010011010011000101011011010"
+      }
+    },
+    "semantic-blocks/0.05": {
+      "bodyHash": "5cb7956414d572408377389f03850d92f9a50813e90eb19b127ff6406228cd4c",
+      "chunks": 124,
+      "indexingTokens": 47794,
+      "indexingCalls": 56,
+      "overTarget": 0,
+      "hits": {
+        "five512": "0101110101011001111011110011101110111111000",
+        "five1024": "1101111111111111111011111111111111111111111"
+      }
+    },
+    "semantic-blocks/0.3": {
+      "bodyHash": "0330a06a82780f6774bda9e074853741621960d850c27428f511cb3e2b39c9da",
+      "chunks": 170,
+      "indexingTokens": 47241,
+      "indexingCalls": 56,
+      "overTarget": 0,
+      "hits": {
+        "five512": "0100111101111000111011110111101111111011000",
+        "five1024": "0100111111111111111011111111111111111011111"
+      }
+    },
+    "semantic-blocks/0.5": {
+      "bodyHash": "e5620e6b893c4dabc4fd718b2f4951173c5f58819d460c62bae0f0b00477ad3e",
+      "chunks": 397,
+      "indexingTokens": 40240,
+      "indexingCalls": 56,
+      "overTarget": 0,
+      "hits": {
+        "five512": "0101110001011111010011010011001111011011010",
+        "five1024": "0101110001011111010011011011001111011011010"
+      }
+    }
+  },
+  "paired": {
+    "five512": {
+      "gains": 7,
+      "losses": 1,
+      "deltaPoints": 13.953488372093023,
+      "ci95": [
+        0,
+        27.450980392156865
+      ]
+    },
+    "five1024": {
+      "gains": 7,
+      "losses": 0,
+      "deltaPoints": 16.27906976744186,
+      "ci95": [
+        4.444444444444445,
+        28.888888888888886
+      ]
+    }
+  },
+  "cutoffComparisons": {
+    "semantic-blocks/0.05": {
+      "five512": {
+        "gains": 7,
+        "losses": 6,
+        "deltaPoints": 2.3255813953488373,
+        "ci95": [
+          -17.647058823529413,
+          18.6046511627907
+        ]
+      },
+      "five1024": {
+        "gains": 10,
+        "losses": 0,
+        "deltaPoints": 23.25581395348837,
+        "ci95": [
+          9.375,
+          37.2093023255814
+        ]
+      }
+    },
+    "semantic-blocks/0.3": {
+      "five512": {
+        "gains": 8,
+        "losses": 6,
+        "deltaPoints": 4.651162790697675,
+        "ci95": [
+          -15.909090909090908,
+          22.5
+        ]
+      },
+      "five1024": {
+        "gains": 8,
+        "losses": 1,
+        "deltaPoints": 16.27906976744186,
+        "ci95": [
+          2.4390243902439024,
+          29.268292682926827
+        ]
+      }
+    },
+    "semantic-blocks/0.5": {
+      "five512": {
+        "gains": 3,
+        "losses": 5,
+        "deltaPoints": -4.651162790697675,
+        "ci95": [
+          -18.421052631578945,
+          5.263157894736842
+        ]
+      },
+      "five1024": {
+        "gains": 2,
+        "losses": 7,
+        "deltaPoints": -11.627906976744185,
+        "ci95": [
+          -23.076923076923077,
+          -3.571428571428571
+        ]
+      }
+    }
+  },
+  "newEmbeddingTokens": 14343
+}

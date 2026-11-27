@@ -1,0 +1,14 @@
+{
+  "model": "text-embedding-3-small",
+  "chunkTokens": 256,
+  "hits": 5,
+  "deliveryTokens": [512, 1024],
+  "thresholds": [-1, 0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.65],
+  "controls": ["blocks", "pack", "semantic/shipped", "semantic-blocks/0.15"],
+  "alternative": ["paragraph/0.05", "paragraph/0.15", "paragraph/0.3", "boundary/balance", "boundary/weakest", "boundary/0.3"],
+  "development": "Four domains carry equal weight: public-service pages, masked published FAQs, financial pages and research papers. Average the three renderings of each government query first. Within each domain weight each question equally. Financial pages include all mapped questions on 64 preselected reports per fold, with issuer-disjoint folds. Research papers use disjoint groups of 64 previously unused papers per fold. The three fresh FAQ publishers are confirmation-only. Published FAQ headings are a sensitivity check.",
+  "selection": "Maximize development mean complete evidence at five hits and 512 delivered tokens. Select one candidate per semantic family and one alternative. On ties prefer lower selection embedding volume, then protocol order. Freeze these names before opening confirmation scores. Sensitivities: compare 128 and 512 chunk tokens on the same confirmation questions for blocks, pack and the nominees; compare the same retrieval outcomes at 1024 delivered tokens. Run the original cutoff grids at 256 on confirmation for descriptive curves, with primary inference restricted to the three frozen nominees. Include the active semantic defaults throughout.",
+  "inference": "Resample whole sources within each domain (page family including all renderings, publisher, issuer, paper), 4000 paired replicates. For the three primary comparisons use 98.33% intervals, with a minimum gain of one percentage point for adopting the additional semantic complexity. Report stratum and secondary results descriptively. The center of the threshold comparison is the actual public blocks implementation at the identical cap.",
+  "transfer": "Repeat the 256-token locked candidates with text-embedding-3-large on the SSA pages, the confirmation and fresh manuals, and shards zero and one of the fresh financial pages and papers. Both models use 1536 dimensions. Report the matched small-encoder subset alongside it.",
+  "diagnostics": "Compare complete evidence after clipping, annotated-token recall, full evidence within any single indexed passage, and full evidence among the five hits before clipping. Record chunk count, size and embedding tokens for selection and indexing. Separately compare annotated physical topic changes on WikiSection and QMSum for finalists."
+}

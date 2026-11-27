@@ -114,7 +114,7 @@ async function main() {
     }
     for (const [name, policy] of Object.entries(report.shortlist)) await run(name, policy);
     const controls = { 'plain-default': { method: 'plain-priority', chars: 500 }, 'markdown-default': { method: 'pack', chars: 500 },
-        'plain-pack': { method: 'plain-pack', tokens }, 'plain-priority': { method: 'plain-priority', tokens },
+        'plain-pack': { method: 'plain-pack', tokens }, 'plain-priority': { method: 'plain-priority', chunkingStrategy: 'semantic', tokens },
         'window-128': { method: 'window', tokens: 128 } };
     if (tokens !== 128) controls['window-' + tokens] = { method: 'window', tokens };
     for (const [name, policy] of Object.entries(controls)) await run(name, policy);

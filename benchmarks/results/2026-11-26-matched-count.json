@@ -1,0 +1,2483 @@
+{
+  "protocol": {
+    "model": "text-embedding-3-small",
+    "blockTokens": 256,
+    "semanticLimits": "Both maxChunkSize and maxChunkTokens are Infinity. Use the public semantic-blocks hierarchy and sibling cosine, including edges excluded by the former size cap. Index every resulting passage.",
+    "countSelection": "For each document and rendering, first count public blocks passages. Consider every distinct partition attainable with one cosine cutoff in [-1,1]. Choose the nearest passage count, preferring fewer on a tie and the lowest cutoff partition giving that count. Only the source and target count enter selection. Check the selected layout against the public API.",
+    "shuffles": [
+      1,
+      2,
+      3
+    ],
+    "control": "Shuffle the observed scores across eligible edges within each document, refit the cutoff to the same structural target, and average the three outcomes per question. The tree and all mandatory boundaries are shared.",
+    "primary": "Repeat the frozen four-domain confirmation benchmark with five dense hits and 512 delivered tokens. Average the three government renderings per question and the four domain scores equally. Pair methods within questions and bootstrap whole page families, FAQ publishers, financial issuers and papers, 4000 draws. The comparison uses previously reported sources. Use development as a replication.",
+    "diagnostics": "Compare complete evidence in the untrimmed first and first five hits, the token volume of those hits, and delivery at 1024 tokens. Report per-document count error, cutoffs, length quantiles, and results restricted to exact-count multi-passage query sources. Existing candidate pools remain intact for this subset. Very long embedding inputs use the existing length-safe token-window pooling."
+  },
+  "metrics": [
+    "complete512",
+    "recall512",
+    "complete1024",
+    "recall1024",
+    "completeInOnePassage",
+    "completeTop5",
+    "completeTop1",
+    "recallTop1",
+    "recallTop5",
+    "top5Tokens",
+    "completeTop1At256",
+    "recallTop1At256",
+    "top1Tokens"
+  ],
+  "baselineOutcomesReproduced": 4332,
+  "additionalDiagnostic": "After seeing the untrimmed top-one results, replay the same rankings and clip the first hit to 256 tokens for every method. Also record the untrimmed first hit's token count.",
+  "newEmbeddingTokens": 4031028,
+  "confirmation": {
+    "questions": {
+      "faq": 79,
+      "finance": 457,
+      "government": 537,
+      "papers": 193
+    },
+    "domains": {
+      "faq": {
+        "blocks": {
+          "complete512": 0.7974683544303798,
+          "recall512": 0.8631318987341772,
+          "complete1024": 0.8607594936708861,
+          "recall1024": 0.9029739493670886,
+          "completeInOnePassage": 0.6835443037974683,
+          "completeTop5": 0.8860759493670886,
+          "completeTop1": 0.5316455696202531,
+          "recallTop1": 0.654369582278481,
+          "recallTop5": 0.9247927341772152,
+          "top5Tokens": 839.253164556962,
+          "completeTop1At256": 0.5316455696202531,
+          "recallTop1At256": 0.654369582278481,
+          "top1Tokens": 172.56962025316454
+        },
+        "semantic": {
+          "complete512": 0.45569620253164556,
+          "recall512": 0.6830717721518987,
+          "complete1024": 0.620253164556962,
+          "recall1024": 0.8233972658227848,
+          "completeInOnePassage": 0.6962025316455697,
+          "completeTop5": 0.7468354430379747,
+          "completeTop1": 0.5063291139240507,
+          "recallTop1": 0.6275708481012658,
+          "recallTop5": 0.9287335443037975,
+          "top5Tokens": 1463.632911392405,
+          "completeTop1At256": 0.22784810126582278,
+          "recallTop1At256": 0.40545355696202534,
+          "top1Tokens": 398.50632911392404
+        },
+        "shuffle1": {
+          "complete512": 0.6075949367088608,
+          "recall512": 0.7392661139240506,
+          "complete1024": 0.7721518987341772,
+          "recall1024": 0.8847487848101265,
+          "completeInOnePassage": 0.6962025316455697,
+          "completeTop5": 0.8481012658227848,
+          "completeTop1": 0.5063291139240507,
+          "recallTop1": 0.6048518607594937,
+          "recallTop5": 0.9405928734177215,
+          "top5Tokens": 1178.493670886076,
+          "completeTop1At256": 0.2911392405063291,
+          "recallTop1At256": 0.43820943037974686,
+          "top1Tokens": 275.24050632911394
+        },
+        "shuffle2": {
+          "complete512": 0.5822784810126582,
+          "recall512": 0.7054776202531645,
+          "complete1024": 0.7721518987341772,
+          "recall1024": 0.8582354810126582,
+          "completeInOnePassage": 0.7088607594936709,
+          "completeTop5": 0.8227848101265823,
+          "completeTop1": 0.46835443037974683,
+          "recallTop1": 0.5911260759493671,
+          "recallTop5": 0.9251617215189873,
+          "top5Tokens": 1216.5949367088608,
+          "completeTop1At256": 0.24050632911392406,
+          "recallTop1At256": 0.398036164556962,
+          "top1Tokens": 319.8481012658228
+        },
+        "shuffle3": {
+          "complete512": 0.4936708860759494,
+          "recall512": 0.6555466075949367,
+          "complete1024": 0.6835443037974683,
+          "recall1024": 0.823553493670886,
+          "completeInOnePassage": 0.6708860759493671,
+          "completeTop5": 0.7721518987341772,
+          "completeTop1": 0.5189873417721519,
+          "recallTop1": 0.6746104556962025,
+          "recallTop5": 0.8823495949367088,
+          "top5Tokens": 1124.506329113924,
+          "completeTop1At256": 0.17721518987341772,
+          "recallTop1At256": 0.3932822911392405,
+          "top1Tokens": 441.82278481012656
+        },
+        "shuffled": {
+          "complete512": 0.5611814345991561,
+          "recall512": 0.7000967805907173,
+          "complete1024": 0.7426160337552743,
+          "recall1024": 0.8555125864978903,
+          "completeInOnePassage": 0.6919831223628692,
+          "completeTop5": 0.8143459915611814,
+          "completeTop1": 0.49789029535864976,
+          "recallTop1": 0.6235294641350211,
+          "recallTop5": 0.9160347299578059,
+          "top5Tokens": 1173.198312236287,
+          "completeTop1At256": 0.23628691983122363,
+          "recallTop1At256": 0.4098426286919831,
+          "top1Tokens": 345.63713080168776
+        }
+      },
+      "finance": {
+        "blocks": {
+          "complete512": 0.9015317286652079,
+          "recall512": 0.9339081925601751,
+          "complete1024": 0.9934354485776805,
+          "recall1024": 0.9955418315098469,
+          "completeInOnePassage": 0.9168490153172867,
+          "completeTop5": 0.9956236323851203,
+          "completeTop1": 0.6301969365426696,
+          "recallTop1": 0.6701556433260394,
+          "recallTop5": 0.9956236323851203,
+          "top5Tokens": 812.6695842450766,
+          "completeTop1At256": 0.6301969365426696,
+          "recallTop1At256": 0.6701556433260394,
+          "top1Tokens": 209.86433260393872
+        },
+        "semantic": {
+          "complete512": 0.87527352297593,
+          "recall512": 0.900612829321663,
+          "complete1024": 0.9912472647702407,
+          "recall1024": 0.9942561838074399,
+          "completeInOnePassage": 0.9606126914660832,
+          "completeTop5": 1,
+          "completeTop1": 0.8008752735229759,
+          "recallTop1": 0.8196758993435449,
+          "recallTop5": 1,
+          "top5Tokens": 843.8052516411378,
+          "completeTop1At256": 0.4638949671772429,
+          "recallTop1At256": 0.5446975645514223,
+          "top1Tokens": 338.47045951859957
+        },
+        "shuffle1": {
+          "complete512": 0.912472647702407,
+          "recall512": 0.923703124726477,
+          "complete1024": 0.9978118161925602,
+          "recall1024": 0.9993340306345733,
+          "completeInOnePassage": 0.9606126914660832,
+          "completeTop5": 1,
+          "completeTop1": 0.7308533916849015,
+          "recallTop1": 0.7486554442013129,
+          "recallTop5": 1,
+          "top5Tokens": 829.0612691466083,
+          "completeTop1At256": 0.5120350109409191,
+          "recallTop1At256": 0.5726848512035011,
+          "top1Tokens": 304.94091903719914
+        },
+        "shuffle2": {
+          "complete512": 0.9080962800875274,
+          "recall512": 0.9338616148796499,
+          "complete1024": 0.986870897155361,
+          "recall1024": 0.9886842538293217,
+          "completeInOnePassage": 0.9540481400437637,
+          "completeTop5": 1,
+          "completeTop1": 0.7177242888402626,
+          "recallTop1": 0.7380390897155361,
+          "recallTop5": 1,
+          "top5Tokens": 828.9212253829322,
+          "completeTop1At256": 0.48577680525164113,
+          "recallTop1At256": 0.5606227352297593,
+          "top1Tokens": 298.70459518599563
+        },
+        "shuffle3": {
+          "complete512": 0.899343544857768,
+          "recall512": 0.9265009496717724,
+          "complete1024": 0.9912472647702407,
+          "recall1024": 0.9950775951859956,
+          "completeInOnePassage": 0.9452954048140044,
+          "completeTop5": 0.9956236323851203,
+          "completeTop1": 0.7133479212253829,
+          "recallTop1": 0.7384784792122538,
+          "recallTop5": 0.9966055098468272,
+          "top5Tokens": 834.6652078774617,
+          "completeTop1At256": 0.48358862144420134,
+          "recallTop1At256": 0.5708138687089716,
+          "top1Tokens": 295.1903719912473
+        },
+        "shuffled": {
+          "complete512": 0.9066374908825675,
+          "recall512": 0.9280218964259664,
+          "complete1024": 0.9919766593727206,
+          "recall1024": 0.9943652932166301,
+          "completeInOnePassage": 0.9533187454412837,
+          "completeTop5": 0.9985412107950401,
+          "completeTop1": 0.7206418672501823,
+          "recallTop1": 0.7417243377097009,
+          "recallTop5": 0.9988685032822757,
+          "top5Tokens": 830.8825674690007,
+          "completeTop1At256": 0.49380014587892046,
+          "recallTop1At256": 0.5680404850474107,
+          "top1Tokens": 299.61196207148066
+        }
+      },
+      "government": {
+        "blocks": {
+          "complete512": 0.8206083178150217,
+          "recall512": 0.8296533022967101,
+          "complete1024": 0.8870266914959652,
+          "recall1024": 0.8876951719428926,
+          "completeInOnePassage": 0.9919304779639975,
+          "completeTop5": 0.8901303538175046,
+          "completeTop1": 0.5890751086281812,
+          "recallTop1": 0.5913033767846059,
+          "recallTop5": 0.8907988342644321,
+          "top5Tokens": 918.1750465549349,
+          "completeTop1At256": 0.5890751086281812,
+          "recallTop1At256": 0.5913033767846059,
+          "top1Tokens": 172.42892613283675
+        },
+        "semantic": {
+          "complete512": 0.7163252638112974,
+          "recall512": 0.7291405058969584,
+          "complete1024": 0.8162631905648665,
+          "recall1024": 0.8274807442582247,
+          "completeInOnePassage": 0.9459962756052142,
+          "completeTop5": 0.8609559279950342,
+          "completeTop1": 0.5642458100558659,
+          "recallTop1": 0.5704407368094351,
+          "recallTop5": 0.8718275226567349,
+          "top5Tokens": 1455.195530726257,
+          "completeTop1At256": 0.5226567349472377,
+          "recallTop1At256": 0.5300645189323402,
+          "top1Tokens": 273.2768466790813
+        },
+        "shuffle1": {
+          "complete512": 0.7194289261328367,
+          "recall512": 0.7384526381129733,
+          "complete1024": 0.8162631905648665,
+          "recall1024": 0.8354293563004345,
+          "completeInOnePassage": 0.957169459962756,
+          "completeTop5": 0.8696461824953445,
+          "completeTop1": 0.5394165114835505,
+          "recallTop1": 0.545993295468653,
+          "recallTop5": 0.8854111843575418,
+          "top5Tokens": 1301.7070142768466,
+          "completeTop1At256": 0.4903786468032278,
+          "recallTop1At256": 0.49753905462445686,
+          "top1Tokens": 245.29608938547486
+        },
+        "shuffle2": {
+          "complete512": 0.7132216014897579,
+          "recall512": 0.7229348808193669,
+          "complete1024": 0.8311607697082557,
+          "recall1024": 0.8371783488516449,
+          "completeInOnePassage": 0.978895096213532,
+          "completeTop5": 0.8752327746741154,
+          "completeTop1": 0.5400372439478585,
+          "recallTop1": 0.5471279168218498,
+          "recallTop5": 0.8802468361266295,
+          "top5Tokens": 1267.4885164494103,
+          "completeTop1At256": 0.49162011173184356,
+          "recallTop1At256": 0.5001788684047176,
+          "top1Tokens": 247.79950341402855
+        },
+        "shuffle3": {
+          "complete512": 0.7219118559900682,
+          "recall512": 0.7354420527622595,
+          "complete1024": 0.8230912476722533,
+          "recall1024": 0.8344507113594041,
+          "completeInOnePassage": 0.9726877715704532,
+          "completeTop5": 0.8572315332091869,
+          "completeTop1": 0.5456238361266295,
+          "recallTop1": 0.5550872973308504,
+          "recallTop5": 0.8677529224084419,
+          "top5Tokens": 1252.1036623215393,
+          "completeTop1At256": 0.4972067039106145,
+          "recallTop1At256": 0.5081584121663563,
+          "top1Tokens": 255.01179391682186
+        },
+        "shuffled": {
+          "complete512": 0.718187461204221,
+          "recall512": 0.7322765238981999,
+          "complete1024": 0.8235050693151251,
+          "recall1024": 0.8356861388371611,
+          "completeInOnePassage": 0.9695841092489137,
+          "completeTop5": 0.867370163459549,
+          "completeTop1": 0.5416925305193462,
+          "recallTop1": 0.5494028365404511,
+          "recallTop5": 0.877803647630871,
+          "top5Tokens": 1273.7663976825988,
+          "completeTop1At256": 0.4930684874818953,
+          "recallTop1At256": 0.5019587783985102,
+          "top1Tokens": 249.36912890544176
+        }
+      },
+      "papers": {
+        "blocks": {
+          "complete512": 0.48186528497409326,
+          "recall512": 0.5524656165803109,
+          "complete1024": 0.5958549222797928,
+          "recall1024": 0.67102596373057,
+          "completeInOnePassage": 0.8186528497409327,
+          "completeTop5": 0.6010362694300518,
+          "completeTop1": 0.29533678756476683,
+          "recallTop1": 0.34961811917098445,
+          "recallTop5": 0.6716016683937824,
+          "top5Tokens": 889.8341968911917,
+          "completeTop1At256": 0.29533678756476683,
+          "recallTop1At256": 0.34961811917098445,
+          "top1Tokens": 176.60621761658032
+        },
+        "semantic": {
+          "complete512": 0.25906735751295334,
+          "recall512": 0.373807518134715,
+          "complete1024": 0.48704663212435234,
+          "recall1024": 0.6038062694300518,
+          "completeInOnePassage": 0.8134715025906736,
+          "completeTop5": 0.6424870466321243,
+          "completeTop1": 0.22797927461139897,
+          "recallTop1": 0.29097026424870465,
+          "recallTop5": 0.7329542279792746,
+          "top5Tokens": 1474.461139896373,
+          "completeTop1At256": 0.11917098445595854,
+          "recallTop1At256": 0.20316441968911916,
+          "top1Tokens": 281.89637305699483
+        },
+        "shuffle1": {
+          "complete512": 0.35233160621761656,
+          "recall512": 0.46328087046632127,
+          "complete1024": 0.5284974093264249,
+          "recall1024": 0.6379353316062176,
+          "completeInOnePassage": 0.7823834196891192,
+          "completeTop5": 0.6113989637305699,
+          "completeTop1": 0.20725388601036268,
+          "recallTop1": 0.27612126943005183,
+          "recallTop5": 0.6978457564766839,
+          "top5Tokens": 1174.3678756476684,
+          "completeTop1At256": 0.13471502590673576,
+          "recallTop1At256": 0.23963718652849741,
+          "top1Tokens": 233.70466321243524
+        },
+        "shuffle2": {
+          "complete512": 0.29015544041450775,
+          "recall512": 0.42614728497409327,
+          "complete1024": 0.5233160621761658,
+          "recall1024": 0.6344527720207254,
+          "completeInOnePassage": 0.7461139896373057,
+          "completeTop5": 0.5854922279792746,
+          "completeTop1": 0.16062176165803108,
+          "recallTop1": 0.24393818134715026,
+          "recallTop5": 0.6989922331606218,
+          "top5Tokens": 1194.082901554404,
+          "completeTop1At256": 0.11917098445595854,
+          "recallTop1At256": 0.21227134715025905,
+          "top1Tokens": 212.3782383419689
+        },
+        "shuffle3": {
+          "complete512": 0.35751295336787564,
+          "recall512": 0.48073473575129533,
+          "complete1024": 0.5440414507772021,
+          "recall1024": 0.6535349015544042,
+          "completeInOnePassage": 0.7461139896373057,
+          "completeTop5": 0.616580310880829,
+          "completeTop1": 0.18134715025906736,
+          "recallTop1": 0.2564600259067358,
+          "recallTop5": 0.7000873575129534,
+          "top5Tokens": 1194.8808290155441,
+          "completeTop1At256": 0.10362694300518134,
+          "recallTop1At256": 0.21880901554404145,
+          "top1Tokens": 223.60103626943004
+        },
+        "shuffled": {
+          "complete512": 0.3333333333333333,
+          "recall512": 0.45672096373057,
+          "complete1024": 0.531951640759931,
+          "recall1024": 0.6419743350604491,
+          "completeInOnePassage": 0.7582037996545768,
+          "completeTop5": 0.6044905008635578,
+          "completeTop1": 0.18307426597582038,
+          "recallTop1": 0.2588398255613126,
+          "recallTop5": 0.698975115716753,
+          "top5Tokens": 1187.7772020725388,
+          "completeTop1At256": 0.11917098445595854,
+          "recallTop1At256": 0.22357251640759931,
+          "top1Tokens": 223.2279792746114
+        }
+      }
+    },
+    "macro": {
+      "blocks": {
+        "complete512": 0.7503684214711757,
+        "recall512": 0.7947897525428433,
+        "complete1024": 0.8342691390060811,
+        "recall1024": 0.8643092291375996,
+        "completeInOnePassage": 0.8527441617049213,
+        "completeTop5": 0.8432165512499413,
+        "completeTop1": 0.5115636005889677,
+        "recallTop1": 0.5663616803900277,
+        "recallTop5": 0.8707042173051375,
+        "top5Tokens": 864.9829980620414,
+        "completeTop1At256": 0.5115636005889677,
+        "recallTop1At256": 0.5663616803900277,
+        "top1Tokens": 182.86727415163008
+      },
+      "semantic": {
+        "complete512": 0.5765905867079566,
+        "recall512": 0.6716581563763088,
+        "complete1024": 0.7287025630041054,
+        "recall1024": 0.8122351158296253,
+        "completeInOnePassage": 0.8540707503268852,
+        "completeTop5": 0.8125696044162833,
+        "completeTop1": 0.5248573680285729,
+        "recallTop1": 0.5771644371257376,
+        "recallTop5": 0.8833788237349518,
+        "top5Tokens": 1309.273708414043,
+        "completeTop1At256": 0.3333926969615655,
+        "recallTop1At256": 0.42084501503372673,
+        "top1Tokens": 323.0375020921499
+      },
+      "shuffle1": {
+        "complete512": 0.6479570291904303,
+        "recall512": 0.7161756868074556,
+        "complete1024": 0.7786810787045072,
+        "recall1024": 0.839361875837838,
+        "completeInOnePassage": 0.849092025690882,
+        "completeTop5": 0.8322866030121748,
+        "completeTop1": 0.49596322577571633,
+        "recallTop1": 0.5439054674648779,
+        "recallTop5": 0.8809624535629867,
+        "top5Tokens": 1120.9074574892998,
+        "completeTop1At256": 0.35706698103930296,
+        "recallTop1At256": 0.43701763068405053,
+        "top1Tokens": 264.7955444910558
+      },
+      "shuffle2": {
+        "complete512": 0.6234379507511129,
+        "recall512": 0.6971053502315686,
+        "complete1024": 0.77837490694349,
+        "recall1024": 0.8296377139285875,
+        "completeInOnePassage": 0.846979496347068,
+        "completeTop5": 0.8208774531949931,
+        "completeTop1": 0.47168443120647474,
+        "recallTop1": 0.5300578159584758,
+        "recallTop5": 0.8761001977015597,
+        "top5Tokens": 1126.7718950239018,
+        "completeTop1At256": 0.33426855763834185,
+        "recallTop1At256": 0.4177772788354245,
+        "top1Tokens": 269.682609551954
+      },
+      "shuffle3": {
+        "complete512": 0.6181098100729153,
+        "recall512": 0.699556086445066,
+        "complete1024": 0.7604810667542912,
+        "recall1024": 0.8266541754426725,
+        "completeInOnePassage": 0.8337458104927826,
+        "completeTop5": 0.8103968438023283,
+        "completeTop1": 0.4898265623458079,
+        "recallTop1": 0.5561590645365107,
+        "recallTop5": 0.8616988461762328,
+        "top5Tokens": 1101.5390070821172,
+        "completeTop1At256": 0.3154093645583537,
+        "recallTop1At256": 0.42276589688965244,
+        "top1Tokens": 303.90649674690644
+      },
+      "shuffled": {
+        "complete512": 0.6298349300048195,
+        "recall512": 0.7042790411613634,
+        "complete1024": 0.7725123508007627,
+        "recall1024": 0.8318845884030327,
+        "completeInOnePassage": 0.8432724441769108,
+        "completeTop5": 0.821186966669832,
+        "completeTop1": 0.48582473977599966,
+        "recallTop1": 0.5433741159866214,
+        "recallTop5": 0.8729204991469264,
+        "top5Tokens": 1116.4061198651063,
+        "completeTop1At256": 0.3355816344119995,
+        "recallTop1At256": 0.42585360213637585,
+        "top1Tokens": 279.4615502633054
+      }
+    },
+    "exactMultiple": {
+      "questions": {
+        "faq": 45,
+        "finance": 444,
+        "government": 55,
+        "papers": 81
+      },
+      "domains": {
+        "faq": {
+          "blocks": {
+            "complete512": 0.7777777777777778,
+            "recall512": 0.8411678666666667,
+            "complete1024": 0.8,
+            "recall1024": 0.8609804444444444,
+            "completeInOnePassage": 0.5555555555555556,
+            "completeTop5": 0.8222222222222222,
+            "completeTop1": 0.4,
+            "recallTop1": 0.5674994444444444,
+            "recallTop5": 0.8770623111111111,
+            "top5Tokens": 725.8666666666667,
+            "completeTop1At256": 0.4,
+            "recallTop1At256": 0.5674994444444444,
+            "top1Tokens": 157.6
+          },
+          "semantic": {
+            "complete512": 0.37777777777777777,
+            "recall512": 0.7227701555555556,
+            "complete1024": 0.4888888888888889,
+            "recall1024": 0.7938946,
+            "completeInOnePassage": 0.5777777777777777,
+            "completeTop5": 0.6,
+            "completeTop1": 0.4,
+            "recallTop1": 0.5714569333333334,
+            "recallTop5": 0.8936066,
+            "top5Tokens": 1385.5111111111112,
+            "completeTop1At256": 0.2,
+            "recallTop1At256": 0.42387773333333334,
+            "top1Tokens": 313.75555555555553
+          },
+          "shuffle1": {
+            "complete512": 0.6,
+            "recall512": 0.7351555777777777,
+            "complete1024": 0.7333333333333333,
+            "recall1024": 0.8569684888888889,
+            "completeInOnePassage": 0.6,
+            "completeTop5": 0.8,
+            "completeTop1": 0.4222222222222222,
+            "recallTop1": 0.5449042222222222,
+            "recallTop5": 0.9099173111111111,
+            "top5Tokens": 1081.2666666666667,
+            "completeTop1At256": 0.24444444444444444,
+            "recallTop1At256": 0.4255133555555556,
+            "top1Tokens": 221.6
+          },
+          "shuffle2": {
+            "complete512": 0.6666666666666666,
+            "recall512": 0.7986297777777778,
+            "complete1024": 0.7555555555555555,
+            "recall1024": 0.8706557333333333,
+            "completeInOnePassage": 0.6222222222222222,
+            "completeTop5": 0.7777777777777778,
+            "completeTop1": 0.4888888888888889,
+            "recallTop1": 0.6453184444444444,
+            "recallTop5": 0.9160617333333333,
+            "top5Tokens": 1064.111111111111,
+            "completeTop1At256": 0.26666666666666666,
+            "recallTop1At256": 0.4737911111111111,
+            "top1Tokens": 251.55555555555554
+          },
+          "shuffle3": {
+            "complete512": 0.5333333333333333,
+            "recall512": 0.7511762222222222,
+            "complete1024": 0.6444444444444445,
+            "recall1024": 0.8336342888888889,
+            "completeInOnePassage": 0.5777777777777777,
+            "completeTop5": 0.6888888888888889,
+            "completeTop1": 0.4666666666666667,
+            "recallTop1": 0.6570487111111111,
+            "recallTop5": 0.8492193333333333,
+            "top5Tokens": 802.5777777777778,
+            "completeTop1At256": 0.2,
+            "recallTop1At256": 0.4572515555555556,
+            "top1Tokens": 318.2
+          },
+          "shuffled": {
+            "complete512": 0.6,
+            "recall512": 0.7616538592592592,
+            "complete1024": 0.7111111111111111,
+            "recall1024": 0.8537528370370371,
+            "completeInOnePassage": 0.6,
+            "completeTop5": 0.7555555555555555,
+            "completeTop1": 0.45925925925925926,
+            "recallTop1": 0.6157571259259259,
+            "recallTop5": 0.8917327925925926,
+            "top5Tokens": 982.6518518518519,
+            "completeTop1At256": 0.23703703703703702,
+            "recallTop1At256": 0.45218534074074074,
+            "top1Tokens": 263.7851851851852
+          }
+        },
+        "finance": {
+          "blocks": {
+            "complete512": 0.8986486486486487,
+            "recall512": 0.931973072072072,
+            "complete1024": 0.9932432432432432,
+            "recall1024": 0.9954112995495495,
+            "completeInOnePassage": 0.9144144144144144,
+            "completeTop5": 0.9954954954954955,
+            "completeTop1": 0.6216216216216216,
+            "recallTop1": 0.6627502905405406,
+            "recallTop5": 0.9954954954954955,
+            "top5Tokens": 822.3063063063063,
+            "completeTop1At256": 0.6216216216216216,
+            "recallTop1At256": 0.6627502905405406,
+            "top1Tokens": 209.30180180180182
+          },
+          "semantic": {
+            "complete512": 0.8716216216216216,
+            "recall512": 0.8977028445945946,
+            "complete1024": 0.990990990990991,
+            "recall1024": 0.994088009009009,
+            "completeInOnePassage": 0.9594594594594594,
+            "completeTop5": 1,
+            "completeTop1": 0.795045045045045,
+            "recallTop1": 0.8143961396396396,
+            "recallTop5": 1,
+            "top5Tokens": 854.3581081081081,
+            "completeTop1At256": 0.4572072072072072,
+            "recallTop1At256": 0.5366733153153154,
+            "top1Tokens": 339.47072072072075
+          },
+          "shuffle1": {
+            "complete512": 0.9166666666666666,
+            "recall512": 0.928225963963964,
+            "complete1024": 0.9977477477477478,
+            "recall1024": 0.9993145315315315,
+            "completeInOnePassage": 0.9594594594594594,
+            "completeTop5": 1,
+            "completeTop1": 0.7297297297297297,
+            "recallTop1": 0.7480530135135135,
+            "recallTop5": 1,
+            "top5Tokens": 839.1418918918919,
+            "completeTop1At256": 0.509009009009009,
+            "recallTop1At256": 0.5714346328828829,
+            "top1Tokens": 305.6689189189189
+          },
+          "shuffle2": {
+            "complete512": 0.9054054054054054,
+            "recall512": 0.9319251306306306,
+            "complete1024": 0.9864864864864865,
+            "recall1024": 0.9883529369369369,
+            "completeInOnePassage": 0.9527027027027027,
+            "completeTop5": 1,
+            "completeTop1": 0.7094594594594594,
+            "recallTop1": 0.730369063063063,
+            "recallTop5": 1,
+            "top5Tokens": 838.9887387387388,
+            "completeTop1At256": 0.4797297297297297,
+            "recallTop1At256": 0.5501954527027026,
+            "top1Tokens": 298.81756756756755
+          },
+          "shuffle3": {
+            "complete512": 0.9076576576576577,
+            "recall512": 0.9288785225225226,
+            "complete1024": 0.990990990990991,
+            "recall1024": 0.9949334707207207,
+            "completeInOnePassage": 0.9459459459459459,
+            "completeTop5": 0.9954954954954955,
+            "completeTop1": 0.7162162162162162,
+            "recallTop1": 0.7412833918918919,
+            "recallTop5": 0.9965061216216217,
+            "top5Tokens": 844.9099099099099,
+            "completeTop1At256": 0.4797297297297297,
+            "recallTop1At256": 0.5687096824324325,
+            "top1Tokens": 298.29954954954957
+          },
+          "shuffled": {
+            "complete512": 0.9099099099099099,
+            "recall512": 0.929676539039039,
+            "complete1024": 0.9917417417417418,
+            "recall1024": 0.9942003130630631,
+            "completeInOnePassage": 0.9527027027027027,
+            "completeTop5": 0.9984984984984985,
+            "completeTop1": 0.7184684684684685,
+            "recallTop1": 0.7399018228228228,
+            "recallTop5": 0.9988353738738739,
+            "top5Tokens": 841.0135135135135,
+            "completeTop1At256": 0.4894894894894895,
+            "recallTop1At256": 0.5634465893393393,
+            "top1Tokens": 300.9286786786787
+          }
+        },
+        "government": {
+          "blocks": {
+            "complete512": 0.8242424242424242,
+            "recall512": 0.8268632242424242,
+            "complete1024": 0.8727272727272727,
+            "recall1024": 0.8727272727272727,
+            "completeInOnePassage": 1,
+            "completeTop5": 0.8727272727272727,
+            "completeTop1": 0.6121212121212121,
+            "recallTop1": 0.6121212121212121,
+            "recallTop5": 0.8727272727272727,
+            "top5Tokens": 922.3090909090909,
+            "completeTop1At256": 0.6121212121212121,
+            "recallTop1At256": 0.6121212121212121,
+            "top1Tokens": 173.27878787878788
+          },
+          "semantic": {
+            "complete512": 0.6060606060606061,
+            "recall512": 0.6145782060606061,
+            "complete1024": 0.7515151515151515,
+            "recall1024": 0.7515151515151515,
+            "completeInOnePassage": 1,
+            "completeTop5": 0.7878787878787878,
+            "completeTop1": 0.47878787878787876,
+            "recallTop1": 0.47878787878787876,
+            "recallTop5": 0.7878787878787878,
+            "top5Tokens": 1642.6303030303031,
+            "completeTop1At256": 0.4606060606060606,
+            "recallTop1At256": 0.4606060606060606,
+            "top1Tokens": 309.9939393939394
+          },
+          "shuffle1": {
+            "complete512": 0.806060606060606,
+            "recall512": 0.812612606060606,
+            "complete1024": 0.8545454545454545,
+            "recall1024": 0.8545454545454545,
+            "completeInOnePassage": 1,
+            "completeTop5": 0.8848484848484849,
+            "completeTop1": 0.5272727272727272,
+            "recallTop1": 0.5272727272727272,
+            "recallTop5": 0.8848484848484849,
+            "top5Tokens": 1343.7939393939394,
+            "completeTop1At256": 0.4848484848484848,
+            "recallTop1At256": 0.4848484848484848,
+            "top1Tokens": 247.73333333333332
+          },
+          "shuffle2": {
+            "complete512": 0.7454545454545455,
+            "recall512": 0.7454545454545455,
+            "complete1024": 0.8303030303030303,
+            "recall1024": 0.8303030303030303,
+            "completeInOnePassage": 1,
+            "completeTop5": 0.8363636363636363,
+            "completeTop1": 0.5636363636363636,
+            "recallTop1": 0.5636363636363636,
+            "recallTop5": 0.8363636363636363,
+            "top5Tokens": 1144.521212121212,
+            "completeTop1At256": 0.5333333333333333,
+            "recallTop1At256": 0.5333333333333333,
+            "top1Tokens": 212.92121212121214
+          },
+          "shuffle3": {
+            "complete512": 0.7515151515151515,
+            "recall512": 0.7593775515151515,
+            "complete1024": 0.8181818181818181,
+            "recall1024": 0.8181818181818181,
+            "completeInOnePassage": 1,
+            "completeTop5": 0.8181818181818181,
+            "completeTop1": 0.509090909090909,
+            "recallTop1": 0.509090909090909,
+            "recallTop5": 0.8181818181818181,
+            "top5Tokens": 1140.1939393939394,
+            "completeTop1At256": 0.509090909090909,
+            "recallTop1At256": 0.509090909090909,
+            "top1Tokens": 236.73333333333332
+          },
+          "shuffled": {
+            "complete512": 0.7676767676767676,
+            "recall512": 0.7724815676767677,
+            "complete1024": 0.8343434343434344,
+            "recall1024": 0.8343434343434344,
+            "completeInOnePassage": 1,
+            "completeTop5": 0.8464646464646465,
+            "completeTop1": 0.5333333333333333,
+            "recallTop1": 0.5333333333333333,
+            "recallTop5": 0.8464646464646465,
+            "top5Tokens": 1209.5030303030303,
+            "completeTop1At256": 0.509090909090909,
+            "recallTop1At256": 0.509090909090909,
+            "top1Tokens": 232.46262626262626
+          }
+        },
+        "papers": {
+          "blocks": {
+            "complete512": 0.5061728395061729,
+            "recall512": 0.6197138395061729,
+            "complete1024": 0.5802469135802469,
+            "recall1024": 0.6935800987654321,
+            "completeInOnePassage": 0.7901234567901234,
+            "completeTop5": 0.5925925925925926,
+            "completeTop1": 0.345679012345679,
+            "recallTop1": 0.42729193827160494,
+            "recallTop5": 0.6949518395061728,
+            "top5Tokens": 886.1234567901234,
+            "completeTop1At256": 0.345679012345679,
+            "recallTop1At256": 0.42729193827160494,
+            "top1Tokens": 180.09876543209876
+          },
+          "semantic": {
+            "complete512": 0.30864197530864196,
+            "recall512": 0.4253900987654321,
+            "complete1024": 0.49382716049382713,
+            "recall1024": 0.6109165185185185,
+            "completeInOnePassage": 0.7901234567901234,
+            "completeTop5": 0.654320987654321,
+            "completeTop1": 0.25925925925925924,
+            "recallTop1": 0.3067950987654321,
+            "recallTop5": 0.7541158518518518,
+            "top5Tokens": 1445.4567901234568,
+            "completeTop1At256": 0.12345679012345678,
+            "recallTop1At256": 0.2003087901234568,
+            "top1Tokens": 294.0617283950617
+          },
+          "shuffle1": {
+            "complete512": 0.38271604938271603,
+            "recall512": 0.5093400617283951,
+            "complete1024": 0.5679012345679012,
+            "recall1024": 0.6802597777777778,
+            "completeInOnePassage": 0.8148148148148148,
+            "completeTop5": 0.6419753086419753,
+            "completeTop1": 0.2345679012345679,
+            "recallTop1": 0.309673975308642,
+            "recallTop5": 0.7344553827160494,
+            "top5Tokens": 1218.5432098765432,
+            "completeTop1At256": 0.16049382716049382,
+            "recallTop1At256": 0.26762082716049385,
+            "top1Tokens": 253.54320987654322
+          },
+          "shuffle2": {
+            "complete512": 0.2839506172839506,
+            "recall512": 0.4508762098765432,
+            "complete1024": 0.5555555555555556,
+            "recall1024": 0.6759628271604938,
+            "completeInOnePassage": 0.7530864197530864,
+            "completeTop5": 0.6049382716049383,
+            "completeTop1": 0.16049382716049382,
+            "recallTop1": 0.2525612962962963,
+            "recallTop5": 0.7263216172839506,
+            "top5Tokens": 1087.0987654320988,
+            "completeTop1At256": 0.1111111111111111,
+            "recallTop1At256": 0.22532087654320987,
+            "top1Tokens": 215.65432098765433
+          },
+          "shuffle3": {
+            "complete512": 0.43209876543209874,
+            "recall512": 0.5632097530864197,
+            "complete1024": 0.6419753086419753,
+            "recall1024": 0.7175979012345679,
+            "completeInOnePassage": 0.7530864197530864,
+            "completeTop5": 0.6790123456790124,
+            "completeTop1": 0.24691358024691357,
+            "recallTop1": 0.31090495061728396,
+            "recallTop5": 0.7441837160493827,
+            "top5Tokens": 1190.1975308641975,
+            "completeTop1At256": 0.12345679012345678,
+            "recallTop1At256": 0.25601534567901235,
+            "top1Tokens": 237.37037037037038
+          },
+          "shuffled": {
+            "complete512": 0.3662551440329218,
+            "recall512": 0.5078086748971193,
+            "complete1024": 0.588477366255144,
+            "recall1024": 0.6912735020576132,
+            "completeInOnePassage": 0.7736625514403292,
+            "completeTop5": 0.6419753086419753,
+            "completeTop1": 0.2139917695473251,
+            "recallTop1": 0.2910467407407407,
+            "recallTop5": 0.7349869053497943,
+            "top5Tokens": 1165.2798353909466,
+            "completeTop1At256": 0.1316872427983539,
+            "recallTop1At256": 0.24965234979423867,
+            "top1Tokens": 235.52263374485597
+          }
+        }
+      },
+      "macro": {
+        "blocks": {
+          "complete512": 0.7517104225437559,
+          "recall512": 0.804929500621834,
+          "complete1024": 0.8115543573876907,
+          "recall1024": 0.8556747788716748,
+          "completeInOnePassage": 0.8150233566900233,
+          "completeTop5": 0.8207593957593957,
+          "completeTop1": 0.49485546152212817,
+          "recallTop1": 0.5674157213444505,
+          "recallTop5": 0.860059229710013,
+          "top5Tokens": 839.1513801680468,
+          "completeTop1At256": 0.49485546152212817,
+          "recallTop1At256": 0.5674157213444505,
+          "top1Tokens": 180.0698387781721
+        },
+        "semantic": {
+          "complete512": 0.5410254951921618,
+          "recall512": 0.6651103262440471,
+          "complete1024": 0.6813055479722147,
+          "recall1024": 0.7876035697606697,
+          "completeInOnePassage": 0.8318401735068401,
+          "completeTop5": 0.7605499438832772,
+          "completeTop1": 0.48327304577304575,
+          "recallTop1": 0.542859012631571,
+          "recallTop5": 0.85890030993266,
+          "top5Tokens": 1331.9890780932449,
+          "completeTop1At256": 0.31031751448418116,
+          "recallTop1At256": 0.4053664748445415,
+          "top1Tokens": 314.32048601631936
+        },
+        "shuffle1": {
+          "complete512": 0.6763608305274972,
+          "recall512": 0.7463335523826857,
+          "complete1024": 0.7883819425486092,
+          "recall1024": 0.8477720631859131,
+          "completeInOnePassage": 0.8435685685685685,
+          "completeTop5": 0.831705948372615,
+          "completeTop1": 0.47844814511481176,
+          "recallTop1": 0.5324759845792763,
+          "recallTop5": 0.8823052946689114,
+          "top5Tokens": 1120.6864269572602,
+          "completeTop1At256": 0.34969894136560803,
+          "recallTop1At256": 0.4373543251118543,
+          "top1Tokens": 257.13636553219885
+        },
+        "shuffle2": {
+          "complete512": 0.650369308702642,
+          "recall512": 0.7317214159348743,
+          "complete1024": 0.781975156975157,
+          "recall1024": 0.8413186319334486,
+          "completeInOnePassage": 0.8320028361695029,
+          "completeTop5": 0.8047699214365881,
+          "completeTop1": 0.48061963478630143,
+          "recallTop1": 0.5479712918600419,
+          "recallTop5": 0.86968674674523,
+          "top5Tokens": 1033.6799568507902,
+          "completeTop1At256": 0.3477102102102102,
+          "recallTop1At256": 0.4456601934225892,
+          "top1Tokens": 244.7371640579974
+        },
+        "shuffle3": {
+          "complete512": 0.6561512269845603,
+          "recall512": 0.750660512336579,
+          "complete1024": 0.7738981405648072,
+          "recall1024": 0.8410868697564989,
+          "completeInOnePassage": 0.8192025358692026,
+          "completeTop5": 0.7953946370613038,
+          "completeTop1": 0.4847218430551764,
+          "recallTop1": 0.554581990677799,
+          "recallTop5": 0.8520227472965389,
+          "top5Tokens": 994.4697894864562,
+          "completeTop1At256": 0.3280693572360239,
+          "recallTop1At256": 0.4477668731894774,
+          "top1Tokens": 272.65081331331334
+        },
+        "shuffled": {
+          "complete512": 0.6609604554048998,
+          "recall512": 0.7429051602180463,
+          "complete1024": 0.7814184133628579,
+          "recall1024": 0.8433925216252869,
+          "completeInOnePassage": 0.831591313535758,
+          "completeTop5": 0.8106235022901689,
+          "completeTop1": 0.4812632076520965,
+          "recallTop1": 0.5450097557057056,
+          "recallTop5": 0.8680049295702268,
+          "top5Tokens": 1049.6120577648355,
+          "completeTop1At256": 0.34182616960394735,
+          "recallTop1At256": 0.44359379724130693,
+          "top1Tokens": 258.1747809678365
+        }
+      },
+      "comparison": {
+        "deltaPoints": -21.0685,
+        "paired95": [
+          -28.359,
+          -15.416
+        ]
+      }
+    },
+    "layouts": {
+      "blocks": {
+        "documents": 556,
+        "chunks": 4877,
+        "tokens": 871580,
+        "sizeTokens": {
+          "min": 2,
+          "p10": 68,
+          "median": 200,
+          "p90": 250,
+          "p95": 253,
+          "p99": 256,
+          "max": 256
+        },
+        "over256": 0,
+        "over512": 0,
+        "over1024": 0,
+        "over8191": 0,
+        "exactCount": 556,
+        "withinOne": 556,
+        "fewer": 0,
+        "more": 0,
+        "absoluteCountError": 0,
+        "maxCountError": 0,
+        "sameLayout": 556,
+        "nontrivialCutoffs": 0,
+        "cutoffs": {}
+      },
+      "semantic": {
+        "documents": 556,
+        "chunks": 4851,
+        "tokens": 871770,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 6,
+          "median": 82,
+          "p90": 479,
+          "p95": 642,
+          "p99": 1165,
+          "max": 3234
+        },
+        "over256": 1141,
+        "over512": 417,
+        "over1024": 71,
+        "over8191": 0,
+        "exactCount": 365,
+        "withinOne": 518,
+        "fewer": 103,
+        "more": 88,
+        "absoluteCountError": 234,
+        "maxCountError": 3,
+        "sameLayout": 12,
+        "nontrivialCutoffs": 538,
+        "cutoffs": {
+          "min": 0.02668677894946809,
+          "p10": 0.11319536376062544,
+          "median": 0.20988083269778107,
+          "p90": 0.37943793757194544,
+          "p95": 0.42379656055810927,
+          "p99": 0.4844825223396301,
+          "max": 0.5663145319803875
+        }
+      },
+      "shuffle1": {
+        "documents": 556,
+        "chunks": 4829,
+        "tokens": 871763,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 18,
+          "median": 102,
+          "p90": 456,
+          "p95": 616,
+          "p99": 954,
+          "max": 1805
+        },
+        "over256": 1127,
+        "over512": 382,
+        "over1024": 35,
+        "over8191": 0,
+        "exactCount": 328,
+        "withinOne": 514,
+        "fewer": 125,
+        "more": 103,
+        "absoluteCountError": 282,
+        "maxCountError": 4,
+        "sameLayout": 12,
+        "nontrivialCutoffs": 521,
+        "cutoffs": {
+          "min": 0.02668677894946809,
+          "p10": 0.10614402591598104,
+          "median": 0.21439051572157425,
+          "p90": 0.3825747925200248,
+          "p95": 0.42544331628263754,
+          "p99": 0.4844825223396301,
+          "max": 0.5663145319803875
+        }
+      },
+      "shuffle2": {
+        "documents": 556,
+        "chunks": 4822,
+        "tokens": 871722,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 19,
+          "median": 101,
+          "p90": 452,
+          "p95": 625,
+          "p99": 955,
+          "max": 1956
+        },
+        "over256": 1136,
+        "over512": 370,
+        "over1024": 36,
+        "over8191": 0,
+        "exactCount": 350,
+        "withinOne": 516,
+        "fewer": 119,
+        "more": 87,
+        "absoluteCountError": 253,
+        "maxCountError": 3,
+        "sameLayout": 16,
+        "nontrivialCutoffs": 521,
+        "cutoffs": {
+          "min": 0.02668677894946809,
+          "p10": 0.10614402591598104,
+          "median": 0.21439051572157425,
+          "p90": 0.37943793757194544,
+          "p95": 0.425238813382693,
+          "p99": 0.4844825223396301,
+          "max": 0.5663145319803875
+        }
+      },
+      "shuffle3": {
+        "documents": 556,
+        "chunks": 4840,
+        "tokens": 871803,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 19,
+          "median": 101,
+          "p90": 452,
+          "p95": 598,
+          "p99": 929,
+          "max": 1964
+        },
+        "over256": 1152,
+        "over512": 353,
+        "over1024": 32,
+        "over8191": 0,
+        "exactCount": 350,
+        "withinOne": 515,
+        "fewer": 113,
+        "more": 93,
+        "absoluteCountError": 255,
+        "maxCountError": 4,
+        "sameLayout": 12,
+        "nontrivialCutoffs": 527,
+        "cutoffs": {
+          "min": 0.02668677894946809,
+          "p10": 0.10614402591598104,
+          "median": 0.21196728182322533,
+          "p90": 0.37943793757194544,
+          "p95": 0.425238813382693,
+          "p99": 0.4844825223396301,
+          "max": 0.5663145319803875
+        }
+      }
+    },
+    "distinctSources": 338,
+    "longSelectionInputs": 1,
+    "comparisons": {
+      "blocks": {
+        "complete512": {
+          "deltaPoints": -17.3778,
+          "paired95": [
+            -20.746,
+            -13.129
+          ]
+        },
+        "complete1024": {
+          "deltaPoints": -10.5567,
+          "paired95": [
+            -13.226,
+            -7.682
+          ]
+        },
+        "completeTop1": {
+          "deltaPoints": 1.3294,
+          "paired95": [
+            -2.417,
+            4.56
+          ]
+        },
+        "completeTop5": {
+          "deltaPoints": -3.0647,
+          "paired95": [
+            -6.641,
+            0.113
+          ]
+        },
+        "completeTop1At256": {
+          "deltaPoints": -17.8171,
+          "paired95": [
+            -23.417,
+            -12.977
+          ]
+        }
+      },
+      "shuffled": {
+        "complete512": {
+          "deltaPoints": -5.3244,
+          "paired95": [
+            -9.164,
+            -0.876
+          ]
+        },
+        "complete1024": {
+          "deltaPoints": -4.381,
+          "paired95": [
+            -7.218,
+            -0.954
+          ]
+        },
+        "completeTop1": {
+          "deltaPoints": 3.9033,
+          "paired95": [
+            0.913,
+            7.411
+          ]
+        },
+        "completeTop5": {
+          "deltaPoints": -0.8617,
+          "paired95": [
+            -4.052,
+            2.165
+          ]
+        },
+        "completeTop1At256": {
+          "deltaPoints": -0.2189,
+          "paired95": [
+            -3.015,
+            2.689
+          ]
+        }
+      }
+    },
+    "byDomain512": {
+      "faq": {
+        "deltaPoints": -34.1772,
+        "paired95": [
+          -41.772,
+          -21.429
+        ]
+      },
+      "finance": {
+        "deltaPoints": -2.6258,
+        "paired95": [
+          -7.219,
+          1.86
+        ]
+      },
+      "government": {
+        "deltaPoints": -10.4283,
+        "paired95": [
+          -14.772,
+          -6.555
+        ]
+      },
+      "papers": {
+        "deltaPoints": -22.2798,
+        "paired95": [
+          -31.414,
+          -13.861
+        ]
+      }
+    }
+  },
+  "development": {
+    "questions": {
+      "faq": 26,
+      "finance": 480,
+      "government": 435,
+      "papers": 181
+    },
+    "domains": {
+      "faq": {
+        "blocks": {
+          "complete512": 0.8461538461538461,
+          "recall512": 0.8837750384615385,
+          "complete1024": 0.9230769230769231,
+          "recall1024": 0.9606981153846154,
+          "completeInOnePassage": 0.8076923076923077,
+          "completeTop5": 0.9230769230769231,
+          "completeTop1": 0.5,
+          "recallTop1": 0.5693491153846154,
+          "recallTop5": 0.9606981153846154,
+          "top5Tokens": 855.6923076923077,
+          "completeTop1At256": 0.5,
+          "recallTop1At256": 0.5693491153846154,
+          "top1Tokens": 170.69230769230768
+        },
+        "semantic": {
+          "complete512": 0.6923076923076923,
+          "recall512": 0.9049924230769231,
+          "complete1024": 0.7692307692307693,
+          "recall1024": 0.929777,
+          "completeInOnePassage": 0.6923076923076923,
+          "completeTop5": 0.8076923076923077,
+          "completeTop1": 0.5,
+          "recallTop1": 0.6108597692307692,
+          "recallTop5": 0.9682385384615385,
+          "top5Tokens": 1188.1538461538462,
+          "completeTop1At256": 0.3076923076923077,
+          "recallTop1At256": 0.4454859230769231,
+          "top1Tokens": 204.1153846153846
+        },
+        "shuffle1": {
+          "complete512": 0.6538461538461539,
+          "recall512": 0.8079653846153846,
+          "complete1024": 0.8461538461538461,
+          "recall1024": 0.9266516923076923,
+          "completeInOnePassage": 0.7692307692307693,
+          "completeTop5": 0.8461538461538461,
+          "completeTop1": 0.5,
+          "recallTop1": 0.5704140769230769,
+          "recallTop5": 0.9266516923076923,
+          "top5Tokens": 1175.1153846153845,
+          "completeTop1At256": 0.34615384615384615,
+          "recallTop1At256": 0.4412189615384615,
+          "top1Tokens": 224.03846153846155
+        },
+        "shuffle2": {
+          "complete512": 0.6538461538461539,
+          "recall512": 0.7237428076923077,
+          "complete1024": 0.8076923076923077,
+          "recall1024": 0.8944544615384615,
+          "completeInOnePassage": 0.8076923076923077,
+          "completeTop5": 0.8461538461538461,
+          "completeTop1": 0.5769230769230769,
+          "recallTop1": 0.6168579615384615,
+          "recallTop5": 0.9107714615384616,
+          "top5Tokens": 1133.576923076923,
+          "completeTop1At256": 0.2692307692307692,
+          "recallTop1At256": 0.36786184615384615,
+          "top1Tokens": 468.5
+        },
+        "shuffle3": {
+          "complete512": 0.6538461538461539,
+          "recall512": 0.7820613461538461,
+          "complete1024": 0.7692307692307693,
+          "recall1024": 0.8660606923076923,
+          "completeInOnePassage": 0.7692307692307693,
+          "completeTop5": 0.8461538461538461,
+          "completeTop1": 0.38461538461538464,
+          "recallTop1": 0.4598961153846154,
+          "recallTop5": 0.9531880769230769,
+          "top5Tokens": 1210.8846153846155,
+          "completeTop1At256": 0.23076923076923078,
+          "recallTop1At256": 0.35557684615384616,
+          "top1Tokens": 251.5
+        },
+        "shuffled": {
+          "complete512": 0.6538461538461539,
+          "recall512": 0.7712565128205128,
+          "complete1024": 0.8076923076923077,
+          "recall1024": 0.895722282051282,
+          "completeInOnePassage": 0.782051282051282,
+          "completeTop5": 0.8461538461538461,
+          "completeTop1": 0.48717948717948717,
+          "recallTop1": 0.5490560512820513,
+          "recallTop5": 0.9302037435897436,
+          "top5Tokens": 1173.1923076923076,
+          "completeTop1At256": 0.28205128205128205,
+          "recallTop1At256": 0.38821921794871794,
+          "top1Tokens": 314.6794871794872
+        }
+      },
+      "finance": {
+        "blocks": {
+          "complete512": 0.8916666666666667,
+          "recall512": 0.9406976458333334,
+          "complete1024": 0.9895833333333334,
+          "recall1024": 0.99714446875,
+          "completeInOnePassage": 0.8729166666666667,
+          "completeTop5": 0.99375,
+          "completeTop1": 0.6958333333333333,
+          "recallTop1": 0.7605415333333333,
+          "recallTop5": 0.9986297375,
+          "top5Tokens": 827.7,
+          "completeTop1At256": 0.6958333333333333,
+          "recallTop1At256": 0.7605415333333333,
+          "top1Tokens": 216.40625
+        },
+        "semantic": {
+          "complete512": 0.8541666666666666,
+          "recall512": 0.89704815625,
+          "complete1024": 0.99375,
+          "recall1024": 0.9966845145833333,
+          "completeInOnePassage": 0.95,
+          "completeTop5": 1,
+          "completeTop1": 0.8625,
+          "recallTop1": 0.8930506395833333,
+          "recallTop5": 1,
+          "top5Tokens": 857.3020833333334,
+          "completeTop1At256": 0.4666666666666667,
+          "recallTop1At256": 0.5732379354166667,
+          "top1Tokens": 386.93958333333336
+        },
+        "shuffle1": {
+          "complete512": 0.91875,
+          "recall512": 0.9492606354166667,
+          "complete1024": 0.9979166666666667,
+          "recall1024": 0.9997195520833333,
+          "completeInOnePassage": 0.9270833333333334,
+          "completeTop5": 1,
+          "completeTop1": 0.75,
+          "recallTop1": 0.7824976583333333,
+          "recallTop5": 1,
+          "top5Tokens": 839.89375,
+          "completeTop1At256": 0.525,
+          "recallTop1At256": 0.6119666666666667,
+          "top1Tokens": 306.99583333333334
+        },
+        "shuffle2": {
+          "complete512": 0.8916666666666667,
+          "recall512": 0.9260839166666667,
+          "complete1024": 0.9979166666666667,
+          "recall1024": 0.9987012979166666,
+          "completeInOnePassage": 0.9270833333333334,
+          "completeTop5": 1,
+          "completeTop1": 0.7520833333333333,
+          "recallTop1": 0.79112863125,
+          "recallTop5": 1,
+          "top5Tokens": 845.8583333333333,
+          "completeTop1At256": 0.5208333333333334,
+          "recallTop1At256": 0.5995124979166667,
+          "top1Tokens": 311.92083333333335
+        },
+        "shuffle3": {
+          "complete512": 0.8604166666666667,
+          "recall512": 0.9059915583333333,
+          "complete1024": 0.9916666666666667,
+          "recall1024": 0.9962378541666667,
+          "completeInOnePassage": 0.9375,
+          "completeTop5": 0.9958333333333333,
+          "completeTop1": 0.7375,
+          "recallTop1": 0.7695469895833333,
+          "recallTop5": 0.9990234375,
+          "top5Tokens": 843.85,
+          "completeTop1At256": 0.5520833333333334,
+          "recallTop1At256": 0.6280612666666666,
+          "top1Tokens": 301.07916666666665
+        },
+        "shuffled": {
+          "complete512": 0.8902777777777777,
+          "recall512": 0.9271120368055555,
+          "complete1024": 0.9958333333333333,
+          "recall1024": 0.9982195680555556,
+          "completeInOnePassage": 0.9305555555555556,
+          "completeTop5": 0.9986111111111111,
+          "completeTop1": 0.7465277777777778,
+          "recallTop1": 0.7810577597222222,
+          "recallTop5": 0.9996744791666666,
+          "top5Tokens": 843.2006944444445,
+          "completeTop1At256": 0.5326388888888889,
+          "recallTop1At256": 0.61318014375,
+          "top1Tokens": 306.66527777777776
+        }
+      },
+      "government": {
+        "blocks": {
+          "complete512": 0.8636015325670499,
+          "recall512": 0.8659783295019157,
+          "complete1024": 0.9126436781609195,
+          "recall1024": 0.913358875862069,
+          "completeInOnePassage": 0.9977011494252873,
+          "completeTop5": 0.9149425287356322,
+          "completeTop1": 0.6444444444444445,
+          "recallTop1": 0.6447816091954023,
+          "recallTop5": 0.9149425287356322,
+          "top5Tokens": 921.1570881226054,
+          "completeTop1At256": 0.6444444444444445,
+          "recallTop1At256": 0.6447816091954023,
+          "top1Tokens": 175.64521072796936
+        },
+        "semantic": {
+          "complete512": 0.7946360153256705,
+          "recall512": 0.7974481540229885,
+          "complete1024": 0.8758620689655172,
+          "recall1024": 0.8856155126436781,
+          "completeInOnePassage": 0.9816091954022989,
+          "completeTop5": 0.9210727969348659,
+          "completeTop1": 0.6053639846743295,
+          "recallTop1": 0.6061251593869732,
+          "recallTop5": 0.9284437149425288,
+          "top5Tokens": 1420.111111111111,
+          "completeTop1At256": 0.5386973180076629,
+          "recallTop1At256": 0.5438649011494253,
+          "top1Tokens": 259.37011494252874
+        },
+        "shuffle1": {
+          "complete512": 0.7831417624521073,
+          "recall512": 0.7858441777777778,
+          "complete1024": 0.8750957854406131,
+          "recall1024": 0.8793831134099617,
+          "completeInOnePassage": 0.9908045977011494,
+          "completeTop5": 0.9026819923371647,
+          "completeTop1": 0.5892720306513409,
+          "recallTop1": 0.5896091954022988,
+          "recallTop5": 0.9069693203065134,
+          "top5Tokens": 1200.5455938697319,
+          "completeTop1At256": 0.5287356321839081,
+          "recallTop1At256": 0.5332000513409961,
+          "top1Tokens": 225.44214559386972
+        },
+        "shuffle2": {
+          "complete512": 0.8084291187739463,
+          "recall512": 0.816195553256705,
+          "complete1024": 0.8919540229885058,
+          "recall1024": 0.8947930666666667,
+          "completeInOnePassage": 0.9938697318007663,
+          "completeTop5": 0.9233716475095786,
+          "completeTop1": 0.6467432950191571,
+          "recallTop1": 0.6486637180076629,
+          "recallTop5": 0.9253100130268199,
+          "top5Tokens": 1251.2781609195401,
+          "completeTop1At256": 0.5900383141762452,
+          "recallTop1At256": 0.6003479969348658,
+          "top1Tokens": 248.87126436781608
+        },
+        "shuffle3": {
+          "complete512": 0.8099616858237548,
+          "recall512": 0.8168065563218391,
+          "complete1024": 0.8896551724137931,
+          "recall1024": 0.89062749348659,
+          "completeInOnePassage": 0.9961685823754789,
+          "completeTop5": 0.918007662835249,
+          "completeTop1": 0.6229885057471264,
+          "recallTop1": 0.6242280750957854,
+          "recallTop5": 0.918007662835249,
+          "top5Tokens": 1198.3302681992336,
+          "completeTop1At256": 0.5739463601532567,
+          "recallTop1At256": 0.5784283494252873,
+          "top1Tokens": 236.9111111111111
+        },
+        "shuffled": {
+          "complete512": 0.8005108556832695,
+          "recall512": 0.8062820957854406,
+          "complete1024": 0.8855683269476373,
+          "recall1024": 0.8882678911877394,
+          "completeInOnePassage": 0.9936143039591315,
+          "completeTop5": 0.9146871008939974,
+          "completeTop1": 0.6196679438058749,
+          "recallTop1": 0.620833662835249,
+          "recallTop5": 0.9167623320561942,
+          "top5Tokens": 1216.7180076628351,
+          "completeTop1At256": 0.5642401021711366,
+          "recallTop1At256": 0.5706587992337164,
+          "top1Tokens": 237.074840357599
+        }
+      },
+      "papers": {
+        "blocks": {
+          "complete512": 0.44751381215469616,
+          "recall512": 0.5598177845303868,
+          "complete1024": 0.6795580110497238,
+          "recall1024": 0.7377383867403315,
+          "completeInOnePassage": 0.7513812154696132,
+          "completeTop5": 0.6850828729281768,
+          "completeTop1": 0.2541436464088398,
+          "recallTop1": 0.2960161491712707,
+          "recallTop5": 0.7388743370165746,
+          "top5Tokens": 900.5414364640884,
+          "completeTop1At256": 0.2541436464088398,
+          "recallTop1At256": 0.2960161491712707,
+          "top1Tokens": 175.71823204419888
+        },
+        "semantic": {
+          "complete512": 0.27624309392265195,
+          "recall512": 0.4148451546961326,
+          "complete1024": 0.46408839779005523,
+          "recall1024": 0.6025720386740332,
+          "completeInOnePassage": 0.7458563535911602,
+          "completeTop5": 0.6187845303867403,
+          "completeTop1": 0.2541436464088398,
+          "recallTop1": 0.31123452486187847,
+          "recallTop5": 0.7334483812154696,
+          "top5Tokens": 1503.011049723757,
+          "completeTop1At256": 0.12154696132596685,
+          "recallTop1At256": 0.19579001657458564,
+          "top1Tokens": 309.9226519337017
+        },
+        "shuffle1": {
+          "complete512": 0.30386740331491713,
+          "recall512": 0.44891652486187844,
+          "complete1024": 0.49171270718232046,
+          "recall1024": 0.6125074254143646,
+          "completeInOnePassage": 0.6795580110497238,
+          "completeTop5": 0.585635359116022,
+          "completeTop1": 0.2430939226519337,
+          "recallTop1": 0.30921270165745857,
+          "recallTop5": 0.6928814198895028,
+          "top5Tokens": 1182.5414364640883,
+          "completeTop1At256": 0.11602209944751381,
+          "recallTop1At256": 0.20978813812154695,
+          "top1Tokens": 234.22099447513813
+        },
+        "shuffle2": {
+          "complete512": 0.34806629834254144,
+          "recall512": 0.45399235359116025,
+          "complete1024": 0.48066298342541436,
+          "recall1024": 0.610798408839779,
+          "completeInOnePassage": 0.6740331491712708,
+          "completeTop5": 0.569060773480663,
+          "completeTop1": 0.14917127071823205,
+          "recallTop1": 0.24599929281767957,
+          "recallTop5": 0.6765052154696133,
+          "top5Tokens": 1170.3038674033148,
+          "completeTop1At256": 0.0718232044198895,
+          "recallTop1At256": 0.1795297900552486,
+          "top1Tokens": 221.3646408839779
+        },
+        "shuffle3": {
+          "complete512": 0.3314917127071823,
+          "recall512": 0.4528194143646409,
+          "complete1024": 0.47513812154696133,
+          "recall1024": 0.5963684364640884,
+          "completeInOnePassage": 0.6906077348066298,
+          "completeTop5": 0.580110497237569,
+          "completeTop1": 0.18232044198895028,
+          "recallTop1": 0.2766231712707182,
+          "recallTop5": 0.6764288287292818,
+          "top5Tokens": 1174.2596685082874,
+          "completeTop1At256": 0.11049723756906077,
+          "recallTop1At256": 0.20940611049723756,
+          "top1Tokens": 225.1767955801105
+        },
+        "shuffled": {
+          "complete512": 0.3278084714548803,
+          "recall512": 0.45190943093922653,
+          "complete1024": 0.48250460405156537,
+          "recall1024": 0.6065580902394107,
+          "completeInOnePassage": 0.6813996316758748,
+          "completeTop5": 0.578268876611418,
+          "completeTop1": 0.19152854511970532,
+          "recallTop1": 0.27727838858195214,
+          "recallTop5": 0.6819384880294659,
+          "top5Tokens": 1175.7016574585634,
+          "completeTop1At256": 0.09944751381215469,
+          "recallTop1At256": 0.19957467955801106,
+          "top1Tokens": 226.92081031307552
+        }
+      }
+    },
+    "macro": {
+      "blocks": {
+        "complete512": 0.7622339643855647,
+        "recall512": 0.8125671995817936,
+        "complete1024": 0.876215486405225,
+        "recall1024": 0.902234961684254,
+        "completeInOnePassage": 0.8574228348134687,
+        "completeTop5": 0.879213081185183,
+        "completeTop1": 0.5236053560466544,
+        "recallTop1": 0.5676721017711555,
+        "recallTop5": 0.9032861796592055,
+        "top5Tokens": 876.2727080697504,
+        "completeTop1At256": 0.5236053560466544,
+        "recallTop1At256": 0.5676721017711555,
+        "top1Tokens": 184.615500116119
+      },
+      "semantic": {
+        "complete512": 0.6543383670556704,
+        "recall512": 0.7535834720115111,
+        "complete1024": 0.7757328089965855,
+        "recall1024": 0.8536622664752611,
+        "completeInOnePassage": 0.8424433103252879,
+        "completeTop5": 0.8368874087534784,
+        "completeTop1": 0.5555019077707923,
+        "recallTop1": 0.6053175232657385,
+        "recallTop5": 0.9075326586548842,
+        "top5Tokens": 1242.1445225805119,
+        "completeTop1At256": 0.358650813423151,
+        "recallTop1At256": 0.43959469405440016,
+        "top1Tokens": 290.0869337062371
+      },
+      "shuffle1": {
+        "complete512": 0.6649013299032945,
+        "recall512": 0.7479966806679269,
+        "complete1024": 0.8027197513608616,
+        "recall1024": 0.854565445803838,
+        "completeInOnePassage": 0.841669177828744,
+        "completeTop5": 0.8336177994017582,
+        "completeTop1": 0.5205914883258187,
+        "recallTop1": 0.5629334080790419,
+        "recallTop5": 0.8816256081259272,
+        "top5Tokens": 1099.5240412373012,
+        "completeTop1At256": 0.378977894446317,
+        "recallTop1At256": 0.44904345441691784,
+        "top1Tokens": 247.67435873520068
+      },
+      "shuffle2": {
+        "complete512": 0.6755020594073271,
+        "recall512": 0.73000365780171,
+        "complete1024": 0.7945564951932236,
+        "recall1024": 0.8496868087403935,
+        "completeInOnePassage": 0.8506696304994196,
+        "completeTop5": 0.8346465667860219,
+        "completeTop1": 0.5312302439984499,
+        "recallTop1": 0.575662400903451,
+        "recallTop5": 0.8781466725087237,
+        "top5Tokens": 1100.2543211832779,
+        "completeTop1At256": 0.36298140529005934,
+        "recallTop1At256": 0.4368130327651568,
+        "top1Tokens": 312.66418464628185
+      },
+      "shuffle3": {
+        "complete512": 0.6639290547609394,
+        "recall512": 0.7394197187934148,
+        "complete1024": 0.7814226824645476,
+        "recall1024": 0.8373236191062594,
+        "completeInOnePassage": 0.8483767716032196,
+        "completeTop5": 0.8350263348899993,
+        "completeTop1": 0.4818560830878653,
+        "recallTop1": 0.5325735878336131,
+        "recallTop5": 0.886662001496902,
+        "top5Tokens": 1106.831138023034,
+        "completeTop1At256": 0.3668240404562204,
+        "recallTop1At256": 0.4428681431857594,
+        "top1Tokens": 253.66676833947207
+      },
+      "shuffled": {
+        "complete512": 0.6681108146905204,
+        "recall512": 0.7391400190876839,
+        "complete1024": 0.792899643006211,
+        "recall1024": 0.8471919578834969,
+        "completeInOnePassage": 0.846905193310461,
+        "completeTop5": 0.8344302336925932,
+        "completeTop1": 0.5112259384707113,
+        "recallTop1": 0.5570564656053687,
+        "recallTop5": 0.8821447607105175,
+        "top5Tokens": 1102.2031668145378,
+        "completeTop1At256": 0.36959444673086556,
+        "recallTop1At256": 0.44290821012261133,
+        "top1Tokens": 271.33510390698484
+      }
+    },
+    "exactMultiple": {
+      "questions": {
+        "faq": 18,
+        "finance": 456,
+        "government": 71,
+        "papers": 79
+      },
+      "domains": {
+        "faq": {
+          "blocks": {
+            "complete512": 0.7777777777777778,
+            "recall512": 0.8321195,
+            "complete1024": 0.8888888888888888,
+            "recall1024": 0.9432306111111111,
+            "completeInOnePassage": 0.7222222222222222,
+            "completeTop5": 0.8888888888888888,
+            "completeTop1": 0.3888888888888889,
+            "recallTop1": 0.48905983333333336,
+            "recallTop5": 0.9432306111111111,
+            "top5Tokens": 757.6666666666666,
+            "completeTop1At256": 0.3888888888888889,
+            "recallTop1At256": 0.48905983333333336,
+            "top1Tokens": 143.33333333333334
+          },
+          "semantic": {
+            "complete512": 0.5555555555555556,
+            "recall512": 0.8627668333333334,
+            "complete1024": 0.6666666666666666,
+            "recall1024": 0.8985667777777778,
+            "completeInOnePassage": 0.6111111111111112,
+            "completeTop5": 0.7222222222222222,
+            "completeTop1": 0.3888888888888889,
+            "recallTop1": 0.5206508888888889,
+            "recallTop5": 0.9541223333333333,
+            "top5Tokens": 1183.6666666666667,
+            "completeTop1At256": 0.2777777777777778,
+            "recallTop1At256": 0.42860294444444447,
+            "top1Tokens": 159.5
+          },
+          "shuffle1": {
+            "complete512": 0.6111111111111112,
+            "recall512": 0.7990771666666666,
+            "complete1024": 0.7777777777777778,
+            "recall1024": 0.8940524444444444,
+            "completeInOnePassage": 0.6666666666666666,
+            "completeTop5": 0.7777777777777778,
+            "completeTop1": 0.3888888888888889,
+            "recallTop1": 0.4905981111111111,
+            "recallTop5": 0.8940524444444444,
+            "top5Tokens": 1143.111111111111,
+            "completeTop1At256": 0.2777777777777778,
+            "recallTop1At256": 0.379487,
+            "top1Tokens": 165.5
+          },
+          "shuffle2": {
+            "complete512": 0.6111111111111112,
+            "recall512": 0.7120729444444445,
+            "complete1024": 0.7222222222222222,
+            "recall1024": 0.8475453333333334,
+            "completeInOnePassage": 0.7777777777777778,
+            "completeTop5": 0.7777777777777778,
+            "completeTop1": 0.6111111111111112,
+            "recallTop1": 0.6402662777777778,
+            "recallTop5": 0.8711143333333333,
+            "top5Tokens": 1124.1666666666667,
+            "completeTop1At256": 0.3333333333333333,
+            "recallTop1At256": 0.42743061111111114,
+            "top1Tokens": 538.1666666666666
+          },
+          "shuffle3": {
+            "complete512": 0.6111111111111112,
+            "recall512": 0.7963108333333333,
+            "complete1024": 0.6666666666666666,
+            "recall1024": 0.8065321111111111,
+            "completeInOnePassage": 0.7222222222222222,
+            "completeTop5": 0.7777777777777778,
+            "completeTop1": 0.3333333333333333,
+            "recallTop1": 0.4135436111111111,
+            "recallTop5": 0.9323827777777778,
+            "top5Tokens": 1165.611111111111,
+            "completeTop1At256": 0.2777777777777778,
+            "recallTop1At256": 0.4096856111111111,
+            "top1Tokens": 224.72222222222223
+          },
+          "shuffled": {
+            "complete512": 0.611111111111111,
+            "recall512": 0.7691536481481481,
+            "complete1024": 0.7222222222222222,
+            "recall1024": 0.8493766296296297,
+            "completeInOnePassage": 0.7222222222222222,
+            "completeTop5": 0.7777777777777778,
+            "completeTop1": 0.4444444444444444,
+            "recallTop1": 0.5148026666666666,
+            "recallTop5": 0.8991831851851851,
+            "top5Tokens": 1144.2962962962963,
+            "completeTop1At256": 0.2962962962962963,
+            "recallTop1At256": 0.4055344074074074,
+            "top1Tokens": 309.46296296296293
+          }
+        },
+        "finance": {
+          "blocks": {
+            "complete512": 0.8881578947368421,
+            "recall512": 0.9377558947368421,
+            "complete1024": 0.9890350877192983,
+            "recall1024": 0.9969941776315789,
+            "completeInOnePassage": 0.875,
+            "completeTop5": 0.993421052631579,
+            "completeTop1": 0.6907894736842105,
+            "recallTop1": 0.7546525548245614,
+            "recallTop5": 0.9985576184210526,
+            "top5Tokens": 844.8179824561404,
+            "completeTop1At256": 0.6907894736842105,
+            "recallTop1At256": 0.7546525548245614,
+            "top1Tokens": 217.45833333333334
+          },
+          "semantic": {
+            "complete512": 0.8508771929824561,
+            "recall512": 0.8960156030701755,
+            "complete1024": 0.993421052631579,
+            "recall1024": 0.9965100153508772,
+            "completeInOnePassage": 0.9473684210526315,
+            "completeTop5": 1,
+            "completeTop1": 0.8574561403508771,
+            "recallTop1": 0.8896147083333333,
+            "recallTop5": 1,
+            "top5Tokens": 876.1622807017544,
+            "completeTop1At256": 0.47149122807017546,
+            "recallTop1At256": 0.5761820986842106,
+            "top1Tokens": 388.16008771929825
+          },
+          "shuffle1": {
+            "complete512": 0.9144736842105263,
+            "recall512": 0.9465901425438596,
+            "complete1024": 0.9978070175438597,
+            "recall1024": 0.9997047916666667,
+            "completeInOnePassage": 0.9232456140350878,
+            "completeTop5": 1,
+            "completeTop1": 0.7412280701754386,
+            "recallTop1": 0.7754361315789474,
+            "recallTop5": 1,
+            "top5Tokens": 857.8377192982456,
+            "completeTop1At256": 0.5263157894736842,
+            "recallTop1At256": 0.6097764956140351,
+            "top1Tokens": 304.56359649122805
+          },
+          "shuffle2": {
+            "complete512": 0.8859649122807017,
+            "recall512": 0.9221935964912281,
+            "complete1024": 0.9978070175438597,
+            "recall1024": 0.9986329451754385,
+            "completeInOnePassage": 0.9232456140350878,
+            "completeTop5": 1,
+            "completeTop1": 0.7412280701754386,
+            "recallTop1": 0.7823283837719298,
+            "recallTop5": 1,
+            "top5Tokens": 864.1162280701755,
+            "completeTop1At256": 0.5285087719298246,
+            "recallTop1At256": 0.6010983048245614,
+            "top1Tokens": 308.31359649122805
+          },
+          "shuffle3": {
+            "complete512": 0.8530701754385965,
+            "recall512": 0.9010437456140351,
+            "complete1024": 0.9912280701754386,
+            "recall1024": 0.9960398464912281,
+            "completeInOnePassage": 0.9342105263157895,
+            "completeTop5": 0.9956140350877193,
+            "completeTop1": 0.7236842105263158,
+            "recallTop1": 0.7574178837719299,
+            "recallTop5": 0.9989720394736842,
+            "top5Tokens": 862.0021929824561,
+            "completeTop1At256": 0.5614035087719298,
+            "recallTop1At256": 0.6331474122807017,
+            "top1Tokens": 297.7938596491228
+          },
+          "shuffled": {
+            "complete512": 0.8845029239766082,
+            "recall512": 0.9232758282163742,
+            "complete1024": 0.9956140350877193,
+            "recall1024": 0.9981258611111111,
+            "completeInOnePassage": 0.9269005847953217,
+            "completeTop5": 0.9985380116959064,
+            "completeTop1": 0.7353801169590644,
+            "recallTop1": 0.771727466374269,
+            "recallTop5": 0.9996573464912281,
+            "top5Tokens": 861.3187134502924,
+            "completeTop1At256": 0.5387426900584795,
+            "recallTop1At256": 0.6146740709064328,
+            "top1Tokens": 303.5570175438597
+          }
+        },
+        "government": {
+          "blocks": {
+            "complete512": 0.9014084507042254,
+            "recall512": 0.9025821596244131,
+            "complete1024": 0.9436619718309859,
+            "recall1024": 0.9436619718309859,
+            "completeInOnePassage": 1,
+            "completeTop5": 0.9436619718309859,
+            "completeTop1": 0.6619718309859155,
+            "recallTop1": 0.6619718309859155,
+            "recallTop5": 0.9436619718309859,
+            "top5Tokens": 916.3896713615023,
+            "completeTop1At256": 0.6619718309859155,
+            "recallTop1At256": 0.6619718309859155,
+            "top1Tokens": 176.50704225352112
+          },
+          "semantic": {
+            "complete512": 0.7793427230046949,
+            "recall512": 0.7889559577464789,
+            "complete1024": 0.8356807511737089,
+            "recall1024": 0.8847529624413145,
+            "completeInOnePassage": 0.9014084507042254,
+            "completeTop5": 0.8497652582159625,
+            "completeTop1": 0.5211267605633803,
+            "recallTop1": 0.522691704225352,
+            "recallTop5": 0.8949251079812207,
+            "top5Tokens": 1421.7699530516431,
+            "completeTop1At256": 0.5211267605633803,
+            "recallTop1At256": 0.522691704225352,
+            "top1Tokens": 259.36619718309856
+          },
+          "shuffle1": {
+            "complete512": 0.7793427230046949,
+            "recall512": 0.7869497652582159,
+            "complete1024": 0.8450704225352113,
+            "recall1024": 0.8693610798122066,
+            "completeInOnePassage": 0.9624413145539906,
+            "completeTop5": 0.8591549295774648,
+            "completeTop1": 0.5774647887323944,
+            "recallTop1": 0.5774647887323944,
+            "recallTop5": 0.8834455868544601,
+            "top5Tokens": 1223.4366197183099,
+            "completeTop1At256": 0.5727699530516431,
+            "recallTop1At256": 0.5727699530516431,
+            "top1Tokens": 205.2300469483568
+          },
+          "shuffle2": {
+            "complete512": 0.8826291079812206,
+            "recall512": 0.8846411784037559,
+            "complete1024": 0.9530516431924883,
+            "recall1024": 0.9530516431924883,
+            "completeInOnePassage": 1,
+            "completeTop5": 0.9671361502347418,
+            "completeTop1": 0.6525821596244131,
+            "recallTop1": 0.6525821596244131,
+            "recallTop5": 0.9671361502347418,
+            "top5Tokens": 1280.924882629108,
+            "completeTop1At256": 0.647887323943662,
+            "recallTop1At256": 0.647887323943662,
+            "top1Tokens": 265.6713615023474
+          },
+          "shuffle3": {
+            "complete512": 0.8873239436619719,
+            "recall512": 0.9086348122065727,
+            "complete1024": 0.9577464788732394,
+            "recall1024": 0.9577464788732394,
+            "completeInOnePassage": 1,
+            "completeTop5": 0.9671361502347418,
+            "completeTop1": 0.7323943661971831,
+            "recallTop1": 0.7323943661971831,
+            "recallTop5": 0.9671361502347418,
+            "top5Tokens": 1232.8075117370893,
+            "completeTop1At256": 0.6901408450704225,
+            "recallTop1At256": 0.6901408450704225,
+            "top1Tokens": 256.49295774647885
+          },
+          "shuffled": {
+            "complete512": 0.8497652582159624,
+            "recall512": 0.8600752519561815,
+            "complete1024": 0.9186228482003129,
+            "recall1024": 0.9267197339593114,
+            "completeInOnePassage": 0.9874804381846636,
+            "completeTop5": 0.9311424100156495,
+            "completeTop1": 0.6541471048513302,
+            "recallTop1": 0.6541471048513302,
+            "recallTop5": 0.9392392957746478,
+            "top5Tokens": 1245.7230046948357,
+            "completeTop1At256": 0.6369327073552425,
+            "recallTop1At256": 0.6369327073552425,
+            "top1Tokens": 242.46478873239437
+          }
+        },
+        "papers": {
+          "blocks": {
+            "complete512": 0.45569620253164556,
+            "recall512": 0.5629725696202532,
+            "complete1024": 0.7088607594936709,
+            "recall1024": 0.7527162911392405,
+            "completeInOnePassage": 0.6708860759493671,
+            "completeTop5": 0.7088607594936709,
+            "completeTop1": 0.22784810126582278,
+            "recallTop1": 0.2792475569620253,
+            "recallTop5": 0.7527162911392405,
+            "top5Tokens": 881.7594936708861,
+            "completeTop1At256": 0.22784810126582278,
+            "recallTop1At256": 0.2792475569620253,
+            "top1Tokens": 168.84810126582278
+          },
+          "semantic": {
+            "complete512": 0.34177215189873417,
+            "recall512": 0.5073180253164556,
+            "complete1024": 0.4430379746835443,
+            "recall1024": 0.608778,
+            "completeInOnePassage": 0.6582278481012658,
+            "completeTop5": 0.5569620253164557,
+            "completeTop1": 0.21518987341772153,
+            "recallTop1": 0.3079112151898734,
+            "recallTop5": 0.7150105316455696,
+            "top5Tokens": 1345.746835443038,
+            "completeTop1At256": 0.13924050632911392,
+            "recallTop1At256": 0.2382766329113924,
+            "top1Tokens": 282.4810126582278
+          },
+          "shuffle1": {
+            "complete512": 0.3291139240506329,
+            "recall512": 0.45909398734177215,
+            "complete1024": 0.4936708860759494,
+            "recall1024": 0.6130020126582278,
+            "completeInOnePassage": 0.6455696202531646,
+            "completeTop5": 0.5949367088607594,
+            "completeTop1": 0.24050632911392406,
+            "recallTop1": 0.3129377721518987,
+            "recallTop5": 0.6932020506329114,
+            "top5Tokens": 1141.9367088607594,
+            "completeTop1At256": 0.10126582278481013,
+            "recallTop1At256": 0.19792351898734178,
+            "top1Tokens": 227
+          },
+          "shuffle2": {
+            "complete512": 0.3670886075949367,
+            "recall512": 0.46908045569620255,
+            "complete1024": 0.5189873417721519,
+            "recall1024": 0.6715115316455696,
+            "completeInOnePassage": 0.6329113924050633,
+            "completeTop5": 0.6075949367088608,
+            "completeTop1": 0.1518987341772152,
+            "recallTop1": 0.2616649240506329,
+            "recallTop5": 0.7242020886075949,
+            "top5Tokens": 1131.0632911392406,
+            "completeTop1At256": 0.06329113924050633,
+            "recallTop1At256": 0.17232881012658227,
+            "top1Tokens": 237.13924050632912
+          },
+          "shuffle3": {
+            "complete512": 0.3670886075949367,
+            "recall512": 0.5031407088607595,
+            "complete1024": 0.4810126582278481,
+            "recall1024": 0.6313092911392405,
+            "completeInOnePassage": 0.620253164556962,
+            "completeTop5": 0.5822784810126582,
+            "completeTop1": 0.21518987341772153,
+            "recallTop1": 0.3220162911392405,
+            "recallTop5": 0.6957855316455697,
+            "top5Tokens": 1050.6962025316457,
+            "completeTop1At256": 0.17721518987341772,
+            "recallTop1At256": 0.2763283670886076,
+            "top1Tokens": 203.08860759493672
+          },
+          "shuffled": {
+            "complete512": 0.35443037974683544,
+            "recall512": 0.47710505063291136,
+            "complete1024": 0.49789029535864976,
+            "recall1024": 0.638607611814346,
+            "completeInOnePassage": 0.6329113924050632,
+            "completeTop5": 0.5949367088607594,
+            "completeTop1": 0.20253164556962025,
+            "recallTop1": 0.29887299578059073,
+            "recallTop5": 0.7043965569620253,
+            "top5Tokens": 1107.8987341772151,
+            "completeTop1At256": 0.11392405063291139,
+            "recallTop1At256": 0.2155268987341772,
+            "top1Tokens": 222.40928270042195
+          }
+        }
+      },
+      "macro": {
+        "blocks": {
+          "complete512": 0.7557600814376227,
+          "recall512": 0.8088575309953772,
+          "complete1024": 0.882611676983211,
+          "recall1024": 0.9091507629282292,
+          "completeInOnePassage": 0.8170270745428974,
+          "completeTop5": 0.8837081682112812,
+          "completeTop1": 0.4923745737062094,
+          "recallTop1": 0.5462329440264588,
+          "recallTop5": 0.9095416231255975,
+          "top5Tokens": 850.1584535387989,
+          "completeTop1At256": 0.4923745737062094,
+          "recallTop1At256": 0.5462329440264588,
+          "top1Tokens": 176.53670254650265
+        },
+        "semantic": {
+          "complete512": 0.6318869058603602,
+          "recall512": 0.7637641048666108,
+          "complete1024": 0.7347016112888747,
+          "recall1024": 0.8471519388924924,
+          "completeInOnePassage": 0.7795289577423085,
+          "completeTop5": 0.7822373764386601,
+          "completeTop1": 0.49566541580521695,
+          "recallTop1": 0.560217129159362,
+          "recallTop5": 0.8910144932400309,
+          "top5Tokens": 1206.8364339657755,
+          "completeTop1At256": 0.35240906818511186,
+          "recallTop1At256": 0.4414383450663499,
+          "top1Tokens": 272.3768243901562
+        },
+        "shuffle1": {
+          "complete512": 0.6585103605942413,
+          "recall512": 0.7479277654526286,
+          "complete1024": 0.7785815259831995,
+          "recall1024": 0.8440300821453863,
+          "completeInOnePassage": 0.7994808038772274,
+          "completeTop5": 0.8079673540540004,
+          "completeTop1": 0.4870220192276615,
+          "recallTop1": 0.5391092008935879,
+          "recallTop5": 0.867675020482954,
+          "top5Tokens": 1091.5805397471065,
+          "completeTop1At256": 0.3695323357719788,
+          "recallTop1At256": 0.439989241913255,
+          "top1Tokens": 225.57341085989623
+        },
+        "shuffle2": {
+          "complete512": 0.6866984347419925,
+          "recall512": 0.7469970437589077,
+          "complete1024": 0.7980170561826805,
+          "recall1024": 0.8676853633367074,
+          "completeInOnePassage": 0.8334836960544822,
+          "completeTop5": 0.838127216180345,
+          "completeTop1": 0.5392050187720445,
+          "recallTop1": 0.5842104363061884,
+          "recallTop5": 0.8906131430439175,
+          "top5Tokens": 1100.0677671262977,
+          "completeTop1At256": 0.39325514211183155,
+          "recallTop1At256": 0.4621862625014792,
+          "top1Tokens": 337.3227162916428
+        },
+        "shuffle3": {
+          "complete512": 0.6796484594516541,
+          "recall512": 0.7772825250036751,
+          "complete1024": 0.7741634684857982,
+          "recall1024": 0.8479069319037048,
+          "completeInOnePassage": 0.8191714782737434,
+          "completeTop5": 0.8307016110282243,
+          "completeTop1": 0.5011504458686384,
+          "recallTop1": 0.5563430380548662,
+          "recallTop5": 0.8985691247829434,
+          "top5Tokens": 1077.7792545905754,
+          "completeTop1At256": 0.42663433037338694,
+          "recallTop1At256": 0.5023255588877107,
+          "top1Tokens": 245.52441180319016
+        },
+        "shuffled": {
+          "complete512": 0.6749524182626293,
+          "recall512": 0.7574024447384038,
+          "complete1024": 0.783587350217226,
+          "recall1024": 0.8532074591285995,
+          "completeInOnePassage": 0.8173786594018176,
+          "completeTop5": 0.8255987270875232,
+          "completeTop1": 0.5091258279561148,
+          "recallTop1": 0.5598875584182141,
+          "recallTop5": 0.8856190961032716,
+          "top5Tokens": 1089.8091871546599,
+          "completeTop1At256": 0.39647393608573245,
+          "recallTop1At256": 0.468167021100815,
+          "top1Tokens": 269.47351298490975
+        }
+      },
+      "comparison": {
+        "deltaPoints": -12.3873,
+        "paired95": [
+          -18.144,
+          -6.898
+        ]
+      }
+    },
+    "layouts": {
+      "blocks": {
+        "documents": 479,
+        "chunks": 4278,
+        "tokens": 761243,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 72,
+          "median": 199,
+          "p90": 249,
+          "p95": 253,
+          "p99": 256,
+          "max": 256
+        },
+        "over256": 0,
+        "over512": 0,
+        "over1024": 0,
+        "over8191": 0,
+        "exactCount": 479,
+        "withinOne": 479,
+        "fewer": 0,
+        "more": 0,
+        "absoluteCountError": 0,
+        "maxCountError": 0,
+        "sameLayout": 479,
+        "nontrivialCutoffs": 0,
+        "cutoffs": {}
+      },
+      "semantic": {
+        "documents": 479,
+        "chunks": 4226,
+        "tokens": 761938,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 7,
+          "median": 87,
+          "p90": 479,
+          "p95": 657,
+          "p99": 1131,
+          "max": 2279
+        },
+        "over256": 1000,
+        "over512": 371,
+        "over1024": 60,
+        "over8191": 0,
+        "exactCount": 301,
+        "withinOne": 436,
+        "fewer": 106,
+        "more": 72,
+        "absoluteCountError": 226,
+        "maxCountError": 3,
+        "sameLayout": 6,
+        "nontrivialCutoffs": 452,
+        "cutoffs": {
+          "min": 0.06419356308480881,
+          "p10": 0.12737602667401177,
+          "median": 0.22835457877972526,
+          "p90": 0.37886158630123146,
+          "p95": 0.41824539201297706,
+          "p99": 0.5057891344011463,
+          "max": 0.7745893241686608
+        }
+      },
+      "shuffle1": {
+        "documents": 479,
+        "chunks": 4226,
+        "tokens": 761902,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 21,
+          "median": 106,
+          "p90": 441,
+          "p95": 592,
+          "p99": 921,
+          "max": 1856
+        },
+        "over256": 973,
+        "over512": 312,
+        "over1024": 33,
+        "over8191": 0,
+        "exactCount": 305,
+        "withinOne": 438,
+        "fewer": 107,
+        "more": 67,
+        "absoluteCountError": 218,
+        "maxCountError": 3,
+        "sameLayout": 7,
+        "nontrivialCutoffs": 453,
+        "cutoffs": {
+          "min": 0.03658431896791116,
+          "p10": 0.1293146525823985,
+          "median": 0.22735321165787353,
+          "p90": 0.37886158630123146,
+          "p95": 0.41824539201297706,
+          "p99": 0.5057891344011463,
+          "max": 0.7745893241686608
+        }
+      },
+      "shuffle2": {
+        "documents": 479,
+        "chunks": 4226,
+        "tokens": 761912,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 22,
+          "median": 109,
+          "p90": 433,
+          "p95": 604,
+          "p99": 930,
+          "max": 1741
+        },
+        "over256": 984,
+        "over512": 308,
+        "over1024": 30,
+        "over8191": 0,
+        "exactCount": 295,
+        "withinOne": 439,
+        "fewer": 112,
+        "more": 72,
+        "absoluteCountError": 230,
+        "maxCountError": 4,
+        "sameLayout": 10,
+        "nontrivialCutoffs": 454,
+        "cutoffs": {
+          "min": 0.06352721790524479,
+          "p10": 0.12816251029112452,
+          "median": 0.22771101187838094,
+          "p90": 0.37886158630123146,
+          "p95": 0.41824539201297706,
+          "p99": 0.5057891344011463,
+          "max": 0.7745893241686608
+        }
+      },
+      "shuffle3": {
+        "documents": 479,
+        "chunks": 4240,
+        "tokens": 761920,
+        "sizeTokens": {
+          "min": 1,
+          "p10": 22,
+          "median": 107,
+          "p90": 437,
+          "p95": 580,
+          "p99": 941,
+          "max": 2126
+        },
+        "over256": 970,
+        "over512": 304,
+        "over1024": 34,
+        "over8191": 0,
+        "exactCount": 304,
+        "withinOne": 446,
+        "fewer": 105,
+        "more": 70,
+        "absoluteCountError": 210,
+        "maxCountError": 3,
+        "sameLayout": 10,
+        "nontrivialCutoffs": 456,
+        "cutoffs": {
+          "min": 0.06352721790524479,
+          "p10": 0.12737602667401177,
+          "median": 0.23085582509466174,
+          "p90": 0.37839971326666133,
+          "p95": 0.4203227828097884,
+          "p99": 0.5057891344011463,
+          "max": 0.7745893241686608
+        }
+      }
+    },
+    "distinctSources": 313,
+    "longSelectionInputs": 0,
+    "comparisons": {
+      "blocks": {
+        "complete512": {
+          "deltaPoints": -10.7896,
+          "paired95": [
+            -15.542,
+            -6.229
+          ]
+        },
+        "complete1024": {
+          "deltaPoints": -10.0483,
+          "paired95": [
+            -17.208,
+            -4.763
+          ]
+        },
+        "completeTop1": {
+          "deltaPoints": 3.1897,
+          "paired95": [
+            0.437,
+            5.747
+          ]
+        },
+        "completeTop5": {
+          "deltaPoints": -4.2326,
+          "paired95": [
+            -9.662,
+            0.282
+          ]
+        },
+        "completeTop1At256": {
+          "deltaPoints": -16.4955,
+          "paired95": [
+            -21.543,
+            -11.414
+          ]
+        }
+      },
+      "shuffled": {
+        "complete512": {
+          "deltaPoints": -1.3772,
+          "paired95": [
+            -5.357,
+            3.655
+          ]
+        },
+        "complete1024": {
+          "deltaPoints": -1.7167,
+          "paired95": [
+            -4.826,
+            0.986
+          ]
+        },
+        "completeTop1": {
+          "deltaPoints": 4.4276,
+          "paired95": [
+            0.699,
+            8.513
+          ]
+        },
+        "completeTop5": {
+          "deltaPoints": 0.2457,
+          "paired95": [
+            -2.833,
+            3.052
+          ]
+        },
+        "completeTop1At256": {
+          "deltaPoints": -1.0944,
+          "paired95": [
+            -3.861,
+            1.858
+          ]
+        }
+      }
+    },
+    "byDomain512": {
+      "faq": {
+        "deltaPoints": -15.3846,
+        "paired95": [
+          -33.333,
+          0.0
+        ]
+      },
+      "finance": {
+        "deltaPoints": -3.75,
+        "paired95": [
+          -10.0,
+          2.689
+        ]
+      },
+      "government": {
+        "deltaPoints": -6.8966,
+        "paired95": [
+          -11.138,
+          -2.862
+        ]
+      },
+      "papers": {
+        "deltaPoints": -17.1271,
+        "paired95": [
+          -23.37,
+          -10.989
+        ]
+      }
+    }
+  },
+  "archiveSHA256": "5ae11a1edbc6264b8e9ef1fa9caebe04f05cb6f60710ae3561f27b3be0c8afff"
+}
