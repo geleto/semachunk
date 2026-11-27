@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { chunkText } from '../src/index.js';
 
-const options = { inputFormat: 'markdown', returnEmbedding: false };
+const options = { inputFormat: 'markdown', chunkingStrategy: 'pack', returnEmbedding: false };
 const length = text => [...text].length;
 
 async function chunks(source, extra = {}) {
@@ -28,16 +28,16 @@ function original(source, output) {
     return output.flatMap(c => c.sourceRanges.map(r => source.slice(r.start, r.end))).join('');
 }
 
-test('explicit Markdown strategies select their algorithm on either side of the automatic size cutoff', async () => {
+test('explicit Markdown strategies keep their distinct boundaries at different sizes', async () => {
     const source = 'Alpha\n\nBeta\n\nOther';
     const asText = rows => rows.map(c => c.text);
     for (const maxChunkSize of [100, 2048]) {
-        assert.deepEqual(asText(await chunks(source, { chunkingStrategy: 'blocks', maxChunkSize })), ['Alpha', 'Beta', 'Other']);
+        assert.deepEqual(asText(await chunks(source, { chunkingStrategy: 'blocks', maxChunkSize })), [source]);
         assert.deepEqual(asText(await chunks(source, { chunkingStrategy: 'pack', maxChunkSize })), [source]);
         const batches = [];
         const embed = texts => { batches.push(texts); return texts.map(s => s === 'Other' ? [0, 1] : [1, 0]); };
-        const rows = await chunkText(source, embed, { ...options, chunkingStrategy: 'semantic', maxChunkSize,
-            combineChunks: false, combineChunksSimilarityThreshold: 0.9 });
+        const rows = await chunkText(source, embed, { ...options, chunkingStrategy: 'semantic-blocks', maxChunkSize,
+            combineChunksSimilarityThreshold: 0.9 });
         assert.deepEqual(asText(rows), ['Alpha\n\nBeta', 'Other']);
         assert.deepEqual(batches, [['Alpha', 'Beta', 'Other']]);
     }
@@ -95,66 +95,28 @@ test('greedy joins count actual separators, recheck hard caps and protect tables
     assert.deepEqual((await chunks(s, { maxChunkSize: s.length - 1 })).map(c => c.text), ['One.', 'Two.']);
     assert.equal((await chunks(s, { maxChunkSize: s.length }))[0].text, s);
     assert.equal((await chunks(s, { maxChunkTokens: 2, countTokens: t => t === s ? 3 : 1 })).length, 2);
-    assert.equal((await chunks(s, { combineChunks: false })).length, 2);
+    assert.deepEqual((await chunks(s, { chunkingStrategy: 'blocks' })).map(c => c.text), [s]);
     const bodies = ['Lead.', '| A |\n|---|\n| 1 |', 'Middle.', '    code', 'End.', '<div>literal</div>'];
     assert.deepEqual((await chunks(bodies.join('\n\n'))).map(c => c.text), [...bodies.slice(0, 4), bodies.slice(4).join('\n\n')]);
     await assert.rejects(chunks('', { locale: 'bad tag' }), RangeError);
 });
 
-test('Markdown uses both capacity limits to choose packing or original-boundary scoring', async () => {
+test('Markdown packing respects character and token limits across sections', async () => {
     const units = ['A', 'B', 'C', 'D', '# Next\nA', 'B', 'C', 'D'];
     const source = units.join('\n\n');
     const greedy = [units.slice(0, 4).join('\n\n'), units.slice(4).join('\n\n')];
-    const scored = ['A\n\nB', 'C\n\nD', '# Next\nA\n\nB', 'C\n\nD'];
     assert.deepEqual((await chunks(source)).map(c => c.text), greedy);
     for (const [maxChunkSize, maxChunkTokens] of [[500, 256], [1024, Infinity], [1024, 256], [1024, 128], [Infinity, 255]]) {
         const rows = await chunks(source, { maxChunkSize, maxChunkTokens, countTokens: length });
         assert.deepEqual(rows.map(c => c.text), greedy);
     }
-
-    const calls = [];
-    function vector(t) {
-        if (t.startsWith('P: ')) return [t.length, 3];
-        return /[AB]$/.test(t) ? [1, 0] : [0, 1];
-    }
-    const embed = texts => { calls.push(texts); return texts.map(vector); };
-    const large = { ...options, maxChunkSize: 1025, maxChunkTokens: 256, countTokens: length };
-    for (const limits of [large, { ...large, maxChunkSize: Infinity }, { ...large, maxChunkTokens: Infinity }]) {
-        const rows = await chunkText(source, embed, limits);
-        assert.deepEqual(rows.map(c => c.text), scored);
-        assert.deepEqual(calls.splice(0), [['A', 'B', 'C', 'D', '# Next\nA']]);
-    }
-    const fallback = { ...large, similarityThreshold: 2 };
-    const score = texts => texts.map(vector);
-    assert.deepEqual((await chunkText(source, score, fallback)).map(c => c.text), scored);
-    assert.deepEqual((await chunkText('A\n\nB', score, fallback)).map(c => c.text), ['A', 'B']);
-    assert.deepEqual((await chunkText('A\n\nB', score, { ...fallback, combineChunksSimilarityThreshold: 0 })).map(c => c.text), ['A\n\nB']);
-    for (const skip of [{ maxPasses: 0 }, { combineChunks: false }, { combineChunksSimilarityThreshold: 2 }]) {
-        assert.deepEqual((await chunkText(source, assert.fail, { ...large, ...skip })).map(c => c.text), units);
-    }
-    for (const fixed of [{ combineChunksSimilarityThreshold: 0 }, { mergeThresholdMode: 'fixed', similarityThreshold: 0 }]) {
-        const rows = await chunkText(source, texts => texts.map(vector), { ...large, ...fixed });
-        assert.deepEqual(rows.map(c => c.text), greedy);
-    }
-    const indexed = await chunkText(source, embed, { ...large, returnEmbedding: true, maxCachedEmbeddings: 0,
-        chunkPrefix: 'P', excludeChunkPrefixInResults: true });
-    assert.deepEqual(calls, [['A', 'B', 'C', 'D', '# Next\nA'], [...new Set(scored.map(t => 'P: ' + t))]]);
-    assert.deepEqual(indexed.map(c => c.text), scored);
-    for (const c of indexed) {
-        assert.equal(c.embeddingText, 'P: ' + c.text);
-        assert.deepEqual(c.embedding, vector(c.embeddingText));
-        const [{ start, end }] = c.sourceRanges;
-        assert.equal(source.slice(start, end), c.text);
-    }
-    assert.notEqual(indexed[1].embedding, indexed[3].embedding);
-    assert.notEqual(indexed[1].sourceRanges[0].start, indexed[3].sourceRanges[0].start);
 });
 
 test('hard splits prefer whole inline links and code, keep whitespace, and advance by code point', async () => {
     const link = '[See. Here](url)', code = '\x60x. Y\x60';
     const s = 'Some words before ' + link + ' and ' + code + '. Next sentence. ' + '🌍'.repeat(30);
     for (const settings of [{ maxChunkSize: 12 }, { maxChunkSize: Infinity, maxChunkTokens: 19, countTokens: length }]) {
-        const rows = await chunks(s, { ...settings, combineChunks: false });
+        const rows = await chunks(s, { ...settings, chunkingStrategy: 'blocks' });
         assert.equal(original(s, rows), s);
         for (const atom of [link, code]) assert.ok(rows.some(c => c.text.includes(atom)));
     }
@@ -191,7 +153,7 @@ test('Markdown sentence boundaries honor the locale and preserve literal UTF-16 
         ['zh', ['他说。', '她答。']],
     ]) {
         const source = expected.join('');
-        const rows = await chunks(source, { locale, maxChunkSize: 1, combineChunks: false });
+        const rows = await chunks(source, { locale, maxChunkSize: 1 });
         assert.deepEqual(rows.map(c => c.text), expected);
         assert.equal(original(source, rows), source);
     }

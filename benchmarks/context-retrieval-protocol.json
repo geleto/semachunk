@@ -1,0 +1,14 @@
+{
+  "model": "text-embedding-3-small",
+  "sentenceCutoffs": [0.25, 0.4, 0.55],
+  "similarMinimum": 0.35,
+  "bridgeMinimum": 0.45,
+  "bridgeMargin": 0.10,
+  "guardMinimum": 0.85,
+  "corpus": "All validation and test stories in FairytaleQA, three complete QMSum transcripts per split with the most queries citing one to three consecutive turns, and two full public board minutes per fold. Original reviewed controls use all software manuals, both full StudentAid pools, paper shard zero in each fold, and every earnings release or 8-K under 90,000 source characters. Preserve original source search scopes. Financial document selection only determines corpus membership.",
+  "fiction": "Primary questions have an annotator answer of at least three words uniquely located in the story and in the cited section(s). Keep alternative phrases. Score all other questions with valid support sections separately using the original section evidence. The second outcome indicates retrieval of the annotated context and is too coarse to grade short answers.",
+  "cuts": "Align production prose leaves in source order. In the sentence-only variant a group continues while consecutive leaf cosines meet the fixed cutoff, without a cap. Preserve atomic code and table leaves and production source ranges. Also compare production hierarchical semantic at 0.40, ordinary blocks at 256 and unlimited, and previously studied heading-aware blocks at 256.",
+  "context": "For each finished core, test independent neighboring passages inside the same document. Include the immediate outside unit on each side irrespective of similarity, the most similar of two units to either side or an owning heading, or an A-C bridge without and with the intervening B. A bridge requires A-C >= 0.45 and at least 0.10 above both other edges. A facet variant selects a neighbor by its best match to one of up to three source units at the corresponding edge. No query or citation participates in context selection.",
+  "retrieval": "Embed the actual enriched text in source order. Cross original or context representations with original or expanded delivery. Also retain the stronger of original and context similarities, and test retaining the original key when the enriched key's cosine to it falls below 0.85. A supplementary source range supplies evidence only when displayed. Rank complete candidate pools without a passage length, count or delivery budget.",
+  "selection": "Select highest development equal-domain first-hit evidence F1 and complete-in-five independently for each structural and semantic family, then compare using the matching confirmation folds. Ties favor simple original ranking and delivery, then ordinary adjacency. Report source-level paired uncertainty, domain coverage, pool exhaustion, reader examples, and question-independent controls. Fiction section-only outcomes are supplementary. Previously used documents and small board samples limit generalization."
+}

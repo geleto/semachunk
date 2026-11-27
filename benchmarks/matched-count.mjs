@@ -53,7 +53,7 @@ function nearestCappedPartition(cutoffs, countAt, target) {
     return best;
 }
 
-export async function scoredTree(doc, encoder, limit=Infinity) {
+export async function scoredTree(doc, encoder, limit=Infinity, separateSections=false) {
     const budget={maxChunkSize:Infinity,fits:tokenBudget(limit,encoder.countTokens,'')};
     const parents=[], edges=[], inputs=new Map();
     function input(s) {
@@ -71,7 +71,7 @@ export async function scoredTree(doc, encoder, limit=Infinity) {
             if (budget.fits && (!budget.fits(a) || !budget.fits(b) || !budget.fits(source.slice(left.start,right.end)))) continue;
             edges.push({right,breakBefore:right.breakBefore,leftInput:input(a),rightInput:input(b)});
         }
-    });
+    },separateSections);
     assert.equal(tree.source,doc.source);
     const texts=[...inputs.keys()];
     const directions=texts.length ? (await encoder.embed(texts)).map(vectorDirection) : [];
@@ -106,7 +106,10 @@ export async function scoredTree(doc, encoder, limit=Infinity) {
         const cutoff=choose(cutoffs,t=>partition(t,order).length,target);
         return {cutoff,rows:partition(cutoff,order).map(tree.render)};
     }
-    return {match,cutoffs,edges:edges.length,longInputs:texts.filter(t=>encoder.countTokens(t)>8191).length};
+    function at(threshold) {
+        return edges.length ? partition(threshold,cosines).map(tree.render) : tree.rows;
+    }
+    return {match,at,headings:tree.headings,cutoffs,edges:edges.length,longInputs:texts.filter(t=>encoder.countTokens(t)>8191).length};
 }
 
 export function layoutHash(byDoc) {

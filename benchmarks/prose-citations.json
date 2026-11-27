@@ -1,0 +1,160 @@
+[
+  {
+    "ids":["ffeb67a61ecd09542b1c53c3e4c3abd4da0496a8"],"keep":true,
+    "reason":"The authors give the same graph definition explicitly in a second location.",
+    "choices":[["We define a concept map as a labeled graph showing concepts as nodes and relationships between them as edges."]]
+  },
+  {
+    "ids":["f4496316ddd35ee2f0ccc6475d73a66abf87b611"],"keep":true,
+    "question":"Which benchmark dataset do the authors use for the entity-relatedness task?",
+    "reason":"The paper evaluates two tasks on different datasets. Specify the task in the question."
+  },
+  {
+    "ids":["f225a9f923e4cdd836dd8fe097848da06ec3e0cc"],"keep":false,
+    "reason":"An example dataset in the introduction does not establish its use in the experiments.",
+    "choices":[["We conduct experiments on the SQuAD dataset BIBREF3."]]
+  },
+  {
+    "ids":["2036afc9513baa2e07fba8c3c4b8e425","8c70d5a5f215350ddff51d41598c2320"],"keep":false,
+    "reason":"The old citation promised next steps. Require the procedure and the sign-in condition.",
+    "choices":[["Once your application has been processed, you can correct your FAFSA form online or on paper.","Making corrections or updates online requires the student to sign in using his or her FSA ID username and password."]]
+  },
+  {
+    "ids":["b5e61c3593901c5aed1c117e4de1e157","31fb6a030ec8b01dda8f58444dc895e4","b20bdaf57fa27abbee22278598512dca","4386d31fd43940ec7974cbb0643a92a6","d6912871dba2012f8d1c592769a495f0","f061c44c2bd78272e4b699f48cd9e3b4","021f07dfc561db4415536f63a0b5f1b2","d3259fa2f969d61aeb04c060f00a9dd7"],"keep":false,
+    "reason":"Eligibility questions require the discharge and means criteria and the service and age/disability alternatives. The two questions asking only about the program retain the overview.",
+    "choices":[["Both of these must be true:","You didn t receive a dishonorable discharge, and","Your yearly family income and net worth meet certain limits set by Congress.",["And at least one of these must be true about your service.","Are getting Social Security Disability Insurance or Supplemental Security Income"]]]
+  },
+  {
+    "ids":["4b6d3093e00fd5274167ecd9d45c151c","cc3a0ee1ef95aa5ed63e74f654269e53","414ecc05f580e4828fbacaf9d32a52fd","6e4c4b8e2ef51e5e27ac832f67ec05ea","62d721f3440bdf296ea704421b953a0a","50cef3d6f133e8988f1f3b9984f98be1"],"keep":false,
+    "reason":"When the number of plates originally issued or missing is unspecified both procedural branches matter.",
+    "choices":[[[ "If two vehicle plates are lost, stolen or destroyed", "to surrender the vehicle registration."],["If one plate (from a set of two plates)", "surrender the registration."]]]
+  },
+  {
+    "ids":["032ec9574501c5213a995bb17ba91c20"],"keep":true,
+    "question":"Where do I start if I want to make a payment on my federal student loan?",
+    "reason":"The earlier question also admitted an interpretation about the legal obligation. The intended target is the payment procedure.",
+    "choices":[["Your student loan servicer handles all billing regarding your student loan. Your servicer can work with you if you need help to make a payment."]]
+  },
+  {
+    "ids":["pnpm-1"],"keep":false,
+    "reason":"Either the concrete disk-space example or the hard-link explanation fully answers whether there are two physical copies.",
+    "choices":[[[ "pnpm creates [hard links] from the global store","where the original files are."]],[[ "So, for example, if you have `foo` in your project as a dependency","So in total `foo` occupies 1MB, not 2MB."]]]
+  },
+  {
+    "ids":["a3baea1288b37e6e7c6c7eaf20453b06","7ccab68e6e52f5815427c533ab0373e9","3023ed4bd95585860b947debaf782b46","212b427fa4cf092a5150ab7114bdd007","f73b0db64e474493571cd6d20e1409aa","acc2717f4f86f742b85ab49223d7d58c"],"keep":false,
+    "reason":"For personal or general eligibility, require the service and disability-rating criteria and the listed service connections. The general introduction remains appropriate for the broad request for help learning about disability.",
+    "choices":[[["Both of these must be true. You:", "called a postservice disability claim)"]]]
+  },
+  {
+    "ids":["6aa87439768c9874aad16a861e8800cd"],"keep":false,
+    "reason":"Who is eligible admits the published criteria or the covered groups with the service-connected condition. The program introduction alone gives neither.",
+    "choices":[[["Both of these must be true. You:", "called a postservice disability claim)"]],["an illness or injury that was caused by or got worse because of your active military service.",["Who s covered?","Qualified dependents"]]]
+  },
+  {
+    "ids":["financebench_id_00606"],"keep":false,
+    "question":"In the fiscal year ended January 28, 2023, did Ulta Beauty’s store payroll and benefits rise or fall as a share of sales?",
+    "reason":"The release labels the year ended in January 2023 fiscal 2022. The relevant category is store payroll and benefits, which moved in the opposite direction from the SG&A rate as a whole.",
+    "choices":[["As a percentage of net sales, SG&A expenses decreased to 23.5% compared to 23.9% in fiscal 2021","deleverage of corporate overhead due to strategic investments and deleverage of store payroll and benefits due to wage investments"]]
+  },
+  {
+    "ids":["cargo-1"],"keep":true,
+    "reason":"The neighboring FAQ also identifies crates.io as primary and explicitly supports downloading from GitHub.",
+    "choices":[[["We think that it’s very important","your package itself."],["That said, we think that [crates.io]","packages in Cargo."]]]
+  },
+  {
+    "ids":["poetry-13"],"keep":false,
+    "reason":"Require both dependency risks and the advice specific to libraries.",
+    "choices":[[["A version constraint without an upper bound","major versions breaking backward compatibility."],["However, when defining an upper bound","fully compatible with your package."],["If your package is used as a library","unnecessary dependency conflicts"]]]
+  },
+  {
+    "ids":["financebench_id_01476"],"keep":false,
+    "reason":"The change from 8% to 9% is stated in both the CEO quotation and fiscal guidance.",
+    "choices":[["core constant currency EPS to increase 9 percent (previously 8 percent)"],["9 percent core constant currency EPS growth (previously 8 percent)"]]
+  },
+  {
+    "ids":["financebench_id_00882"],"keep":false,
+    "reason":"The answer requires both distinct agreements and limits. Currency and swing-line details do not change the total.",
+    "choices":[["On May 26, 2023, PepsiCo entered into a new $4,200,000,000 364 day unsecured revolving credit agreement","On May 26, 2023, PepsiCo entered into a new $4,200,000,000 five year unsecured revolving credit agreement"],["The 2023 364 Day Credit Agreement enables PepsiCo and its borrowing subsidiaries to borrow up to $4,200,000,000","The 2023 Five Year Credit Agreement enables PepsiCo and its borrowing subsidiaries to borrow up to $4,200,000,000"],["On May 26, 2023, PepsiCo entered into a new $4,200,000,000 364 day unsecured revolving credit agreement","The 2023 Five Year Credit Agreement enables PepsiCo and its borrowing subsidiaries to borrow up to $4,200,000,000"],["The 2023 364 Day Credit Agreement enables PepsiCo and its borrowing subsidiaries to borrow up to $4,200,000,000","On May 26, 2023, PepsiCo entered into a new $4,200,000,000 five year unsecured revolving credit agreement"]]
+  },
+  {
+    "ids":["financebench_id_00464"],"keep":false,
+    "reason":"Link the airline cycle to Boeing's demand. A separate heading and unrelated risks add no evidence.",
+    "choices":[["Historically, the airline industry has been cyclical and very competitive",["Significant deterioration in the global economic environment","fewer new orders for aircraft or services"]],["Demand for our commercial aircraft is further influenced by airline profitability","Historically, the airline industry has been cyclical and very competitive"]]
+  },
+  {
+    "ids":["financebench_id_01902"],"keep":true,
+    "question":"Which domestic Best Buy category had the highest comparable sales growth in the second quarter of fiscal 2024?",
+    "reason":"Top line could mean the largest dollar sales. The intended comparison is growth. Accept the domestic comparison table as well as the published category-by-category explanation.",
+    "choices":[[[ "Computing and Mobile Phones | 41 % | 42 % | (6.4)%", "Other | 1 % | 1 % | 2.4 % | 15.6"]]]
+  },
+  {
+    "ids":["808f0ad46ca4eb4ea5492f9e14ca043fe1e206cc"],"keep":true,
+    "reason":"A second dataset description distinguishes all characters from the 327-character dialogue subset.",
+    "choices":[["327 major characters (a subset of the 45,821 characters we have HLA data for)"]]
+  },
+  {
+    "ids":["5913930ce597513299e4b630df5e5153f3618038"],"keep":true,
+    "reason":"The abstract reports how learned sparsity exposes specialization.",
+    "choices":[[["Findings of the quantitative and qualitative analysis of our approach include","helps to uncover different head specializations."]]]
+  },
+  {
+    "ids":["beac555c4aea76c88f19db7cc901fa638765c250"],"keep":true,
+    "reason":"The noun/verb contrast explains what attention captures beyond translation equivalents.",
+    "choices":[[["For instance, attention agrees with traditional alignments","translational equivalent in the case of verbs."]]]
+  },
+  {
+    "ids":["91e326fde8b0a538bc34d419541b5990d8aae14b"],"keep":false,
+    "reason":"Both the training set and alignment data are required. A single alignment source alone is incomplete.",
+    "choices":[["We train both of the systems on the WMT15 German-to-English training data","we use manual alignments provided by RWTH German-English dataset as the hard alignments."],["We train both of the systems on the WMT15 German-to-English training data","human alignments provided by RWTH German-English dataset"]]
+  },
+  {
+    "ids":["132f752169adf6dc5ade3e4ca773c11044985da4"],"keep":true,
+    "reason":"The data and evaluation sections jointly identify the two emotion datasets.",
+    "choices":[["Here we use the tweet dataset created by Wang et al.","the second one is the CrowdFlower dataset annotated for emotions."]]
+  },
+  {
+    "ids":["88ab7811662157680144ed3fdd00939e36552672"],"keep":true,
+    "reason":"The results identify both enhanced knowledge-graph methods together and explicitly contrast them to the baseline.",
+    "choices":[[["Figure FIGREF10 shows that agents utilizing knowledge-graphs","KG-A2C-chained and KG-A2C-Explore both pass the bottleneck"]]]
+  },
+  {
+    "ids":["e838275bb0673fba0d67ac00e4307944a2c17be3"],"keep":false,
+    "reason":"The procedural answer describes measuring distributions on annotated tweets. The figure interpretation confirms this for topics, dialect and gender.",
+    "choices":[[["Given the annotated tweets, we wanted to ascertain the distribution","gender of users using such language."],"Figure FIGREF13 shows the distribution of topics associated with offensive tweets.","Figure FIGREF14 shows that 71% of vulgar tweets were written in EGY","Regarding the gender, Figure FIGREF15 shows that the vast majority of offensive tweets"]]
+  },
+  {
+    "ids":["29923a824c98b3ba85ced964a0e6a2af35758abe"],"keep":false,
+    "reason":"Credit the five empirical translation checks. An unspecified promise of checks is insufficient.",
+    "choices":[["we computed sentence-level BLEU","We manually inspected examples where the source transcript was identical to the translation.","We measured the perplexity of the translations","We computed the ratio of English characters in the translations.","calculate similarity scores between transcripts and translations based on LASER cross-lingual sentence embeddings"]]
+  },
+  {
+    "ids":["54830abe73fef4e629a36866ceeeca10214bd2c8"],"keep":true,
+    "reason":"The discussion gives the source, inference method and outcome directly.",
+    "choices":[[["we evaluated ISWC and WWW conferences articles from DBLP website","the relationship between LDA topics and paper features"]]]
+  },
+  {
+    "ids":["36ae003c7cb2a1bbfa90b89c671bc286bd3b3dfd"],"keep":true,
+    "reason":"Identify the attribute source and who defines the profiles.",
+    "choices":[["We collect HLA data from TV Tropes BIBREF3","These attributes are determined by human viewers and their impressions of the characters, and are correlated with human-like characteristics."]]
+  },
+  {
+    "ids":["1088255980541382a2aa2c0319427702172bbf84"],"keep":true,
+    "reason":"The concise two-sentence definition states both levels and their fusion.",
+    "choices":[[[ "To enable this, we use a bifocal attention mechanism","influences the attention over the values within it."]]]
+  },
+  {
+    "ids":["f5e6f43454332e0521a778db0b769481e23e7682"],"keep":true,
+    "reason":"The methods section names and distinguishes the two pivot baselines.",
+    "choices":[[["This approach is further divided into pivoting and pivot-synthetic.","pivot-target parallel data"]]]
+  },
+  {
+    "ids":["5eda469a8a77f028d0c5f1acd296111085614537"],"keep":false,
+    "reason":"Require the Europarl and MultiUN directions, without unrelated validation details.",
+    "choices":[[["For Europarl corpus, we evaluate on French-English-Spanish","its right side is the target language."],["The three languages are Arabic (Ar), Spanish (Es), and Russian (Ru)","six zero-shot translation direction for evaluation."]]]
+  },
+  {
+    "ids":["a6a48de63c1928238b37c2a01c924b852fe752f8"],"keep":true,
+    "reason":"The two dataset-specific baseline assertions suffice, without general performance commentary.",
+    "choices":[["For the CNN-Dailymail dataset, the Lead-3 model is considered a strong baseline","For the proxy report section of the AMR bank, we consider the Lead-1-AMR model as the baseline."]]
+  }
+]

@@ -1,4 +1,4 @@
-// One cache per chunkText call, shared by sentence, merge and output batches.
+// One cache per chunkText call, shared by boundary scoring and output batches.
 export function createBatchEmbedder(embedBatchCallback, maxEmbeddingBatchSize = Infinity, maxCachedEmbeddings = Infinity) {
     if (maxEmbeddingBatchSize !== Infinity && !(Number.isSafeInteger(maxEmbeddingBatchSize) && maxEmbeddingBatchSize > 0)) {
         throw new RangeError('maxEmbeddingBatchSize must be a positive integer or Infinity.');
@@ -12,19 +12,9 @@ export function createBatchEmbedder(embedBatchCallback, maxEmbeddingBatchSize = 
     const cache = new Map();
     let dimension;
 
-    return async function embedBatch(texts, finalTexts) {
+    return async function embedBatch(texts) {
         const needed = new Set(texts);
         for (const text of needed) if (cache.has(text)) needed.delete(text);
-        // Fill spare slots in the scoring requests with guaranteed output vectors.
-        // Only a scoring cache miss opens a request, and its batch count stays fixed.
-        const remainder = needed.size % maxEmbeddingBatchSize;
-        if (remainder && finalTexts?.length && maxCachedEmbeddings === Infinity) {
-            const capacity = needed.size + (maxEmbeddingBatchSize - remainder);
-            for (const text of finalTexts) {
-                if (!cache.has(text)) needed.add(text);
-                if (needed.size >= capacity) break;
-            }
-        }
         const missing = [...needed];
         for (let offset = 0; offset < missing.length;) {
             const remaining = missing.length - offset;
@@ -40,7 +30,7 @@ export function createBatchEmbedder(embedBatchCallback, maxEmbeddingBatchSize = 
         }
         const result = texts.map(text => cache.get(text));
         // Scoring still receives every vector in this stage. Release older cache
-        // entries between stages, when the merge nodes own the vectors they need.
+        // entries between stages, after the caller has received every requested vector.
         if (cache.size > maxCachedEmbeddings) {
             const oldest = cache.keys();
             while (cache.size > maxCachedEmbeddings) cache.delete(oldest.next().value);

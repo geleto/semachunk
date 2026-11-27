@@ -33,7 +33,7 @@ async function measure(limit) {
         peakAtProviderEntryBytes = Math.max(peakAtProviderEntryBytes, lastProviderEntryBytes);
         providerCalls++; providerTexts += batch.length; singletonCalls += Number(batch.length === 1);
         return batch.map(s => vectors[Number(s[6])]);
-    }, { chunkingStrategy: 'semantic', maxCachedEmbeddings: limit });
+    }, { chunkingStrategy: 'semantic-blocks', maxCachedEmbeddings: limit });
     const texts = chunks.map(c => c.text);
     assert.equal(texts.join(' '), text);
     return { maxCachedEmbeddings: Number.isFinite(limit) ? limit : 'Infinity', chunks: texts.length,
@@ -50,7 +50,7 @@ if (values['cache-limit']) {
 const results = ['Infinity', '256'].map(limit => JSON.parse(execFileSync(process.execPath,
     ['--expose-gc', fileURLToPath(import.meta.url), '--cache-limit', limit], { encoding: 'utf8' })));
 assert.equal(results[0].boundariesSHA256, results[1].boundariesSHA256);
-const report = { startedUTC, node: process.version, sentences, dimensions, results };
+const report = { startedUTC, node: process.version, strategy: 'semantic-blocks', sentences, dimensions, results };
 const out = resolve(values.output ?? fileURLToPath(new URL('./results/cache-' + startedUTC.replace(/[-:.]/g, '') + '.json', import.meta.url)));
 await mkdir(dirname(out), { recursive: true });
 await writeFile(out, JSON.stringify(report, null, 2) + '\n', { flag: 'wx' });

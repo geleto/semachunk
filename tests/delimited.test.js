@@ -13,6 +13,7 @@ test('literal separators respect Unicode code points, newline spellings and exac
     ]) {
         const rows = await chunkText(source, { ...blocks, separator });
         assert.deepEqual(rows.map(r => r.text), expected);
+        assert.deepEqual(await chunkText(source, { separator }), rows);
         for (const { text, sourceRanges: [r] } of rows) assert.equal(source.slice(r.start, r.end), text);
     }
 });
@@ -30,8 +31,8 @@ test('delimiter packing counts actual gaps, overlaps whole records and isolates 
     assert.deepEqual(ranged, [{ text: 'a||b', sourceRanges: [{ start: 1, end: 5, outputStart: 0 }], embeddingText: 'P: a||b' }]);
 });
 
-test('delimiter validation applies before auto or an empty-input shortcut', async () => {
-    for (const options of [{}, { chunkingStrategy: 'auto' }, { ...pack, inputFormat: 'html' },
+test('delimiter validation also applies to empty input', async () => {
+    for (const options of [{ chunkingStrategy: 'semantic-blocks' }, { chunkingStrategy: 'auto' }, { ...pack, inputFormat: 'html' },
         { ...blocks, inputFormat: 'markdown' }, { ...blocks, inputFormat: 'json' }, { ...pack, excludeNonLetterSentences: true },
         { ...blocks, chunkOverlap: 1 }, { ...blocks, locale: '@@' }]) {
         await assert.rejects(chunkText('', { separator: '|', ...options }));

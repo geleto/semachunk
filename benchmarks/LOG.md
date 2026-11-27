@@ -1,5 +1,21 @@
 # Chunking improvements and benchmark results
 
+## 2026-11-27 · Semantic boundaries, weighted neighbors and answer delivery
+
+On 69 fresh documents, using the same sentence-assisted ranking and neighboring-chunk display gave 256-token structural blocks 71.5% complete first hits and uncapped .25 semantic groups 65.3% after citation review. Their top-five coverage was 93.1% and 92.5%. At .40, semantic cores outperformed equal-count, equal-group-size rotations by 11.5 points at rank one. A query-aware reader shortened strict first hits by 24% while retaining aggregate citation coverage in the 56-question audit. [Study and examples](results/2026-11-27-context-mixtures.md)
+
+## 2026-11-27 · Context on uncapped semantic chunks, fiction and meetings
+
+Across 807 primary confirmation questions in seven domains, embedding and displaying both adjacent units raised complete top-five retrieval for strict semantic sentence groups from 43.0% to 66.4%. Showing only the original group reached 46.7% with the same enriched key. Keeping an intervening B outperformed skipping it at the same A–C matches. On fixed 256-token structural passages, equally weighting the whole passage and its best matching sentence raised complete first hits from 45.0% to 51.3% and complete top fives from 81.1% to 84.6%. The corpus adds 46 stories, six spoken meetings and four board records. [Full comparison and reader examples](results/2026-11-27-context-retrieval.md) · [Source registry](results/2026-11-27-context-retrieval-manifest.json)
+
+## 2026-11-27 · Fixed thresholds and heading attachment on revised prose citations
+
+We corrected the grading of 49 questions and compared 72 structural and semantic settings across 1,302 questions. On the 740 confirmation questions, keeping headings with their sections raised the first-hit evidence F1 of 256-token blocks from 29.19 to 32.06. At the development-selected semantic cutoff of .10 it reached 31.87. All eight top-five citations lost when adding those cuts to heading-aware blocks had been split across passages. At .05 just 16 of 187 confirmation documents changed, yielding one additional complete top five. [Study and passage reviews](results/2026-11-27-prose-threshold-study.md) · [Threshold curves](results/2026-11-27-prose-threshold-curves.png) · [Correction decisions](prose-citations.json)
+
+## 2026-11-27 · Prose retrieval and passage quality
+
+We replayed 1,302 questions across 346 documents and inspected the text of successful and unsuccessful hits. Semantic cuts improved topical continuity in every domain. Matching a passage by its best sentence helped research papers, while keeping an FAQ heading with its answer recovered all 76 confirmation citations within five hits. On 271 questions where all methods returned the same citation first, a much shorter passage containing that citation existed for 10 structural, 77 capped semantic and 111 unlimited semantic hits. [Analysis, examples and controls](results/2026-11-27-prose-retrieval.md) · [23 reader assessments](results/2026-11-27-prose-reader-review.json)
+
 ## 2026-11-27 · Document and citation audit
 
 The confirmation comparison covers 790 questions. Five complete hits never exhausted a candidate pool in either fold for any of the three indexes. The smallest confirmation pool had ten passages. Thresholds target each document's structural passage count using only its text. Each method returns all the text of its first five hits. [Source manifest and exclusions](results/2026-11-27-audited-data.json) · [Per-question outcomes](results/2026-11-27-whole-passage-audited-outcomes.jsonl.gz)

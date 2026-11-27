@@ -1,0 +1,8 @@
+{
+  "reason": "Follow-up after the delivery versus indexing comparison. Test whether one locally relevant aspect can identify a complete parent without changing what is displayed.",
+  "parents": ["blocks256", "head256"],
+  "children": ["atoms", "sentence25", "sentence40", "sentence55"],
+  "weights": [0, 0.5, 1],
+  "rule": "A child must be completely contained in the parent's visible nonwhitespace source ranges. Rank the unmodified parent by a convex combination of its own cosine and the highest query cosine to a contained child. Weights refer to the child. If no child fits, use the parent score. Atomic parser units are the non-semantic control. Every treatment uses the same embeddings, candidate parents and delivered text.",
+  "selection": "Select best development equal-domain first-hit evidence F1 and complete-at-five within each child family including the unmodified parent. Ties favor the unmodified parent. Use the same confirmation questions as the preceding experiment and label the follow-up exploratory."
+}

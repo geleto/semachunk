@@ -1,0 +1,665 @@
+{
+  "counts": {
+    "fiction": {
+      "documents": 70,
+      "flaggedDocuments": 0,
+      "flags": 0
+    },
+    "spoken": {
+      "documents": 12,
+      "flaggedDocuments": 0,
+      "flags": 0
+    },
+    "faq": {
+      "documents": 11,
+      "flaggedDocuments": 0,
+      "flags": 0
+    },
+    "finance": {
+      "documents": 10,
+      "flaggedDocuments": 3,
+      "flags": 80
+    },
+    "government": {
+      "documents": 66,
+      "flaggedDocuments": 26,
+      "flags": 100
+    },
+    "papers": {
+      "documents": 34,
+      "flaggedDocuments": 1,
+      "flags": 3
+    },
+    "boards": {
+      "documents": 6,
+      "flaggedDocuments": 2,
+      "flags": 14
+    }
+  },
+  "candidates": [
+    {
+      "key": "finance-confirmation-filing-FOOTLOCKER_2022_8K_dated_2022-08-19",
+      "id": "FOOTLOCKER_2022_8K_dated_2022-08-19",
+      "possibleBreaks": 2,
+      "examples": [
+        [
+          49,
+          " Chairman of the Company reporting to the Foot Locker, Inc. Board",
+          "of Directors (the “Board”) and coordinate with the Lead Independe"
+        ],
+        [
+          154,
+          "f a trade secret that (i) is made (A) in confidence to a federal,",
+          "state, or local government official, either directly or indirectl"
+        ]
+      ]
+    },
+    {
+      "key": "finance-confirmation-filing-JOHNSON_JOHNSON_2022Q4_EARNINGS",
+      "id": "JOHNSON_JOHNSON_2022Q4_EARNINGS",
+      "possibleBreaks": 70,
+      "examples": [
+        [
+          1,
+          " decline of 4.4% to $23.7 Billion primarily driven by unfavorable",
+          "foreign exchange and reduced COVID-19 Vaccine sales vs. prior yea"
+        ],
+        [
+          7,
+          "th of 1.3% to $94.9 Billion primarily driven by strong commercial",
+          "execution partially offset by unfavorable foreign exchange. Opera"
+        ],
+        [
+          13,
+          "results reflect the continued strength and stability of our three",
+          "business segments, despite macroeconomic challenges,” said Joaqui"
+        ]
+      ]
+    },
+    {
+      "key": "finance-confirmation-filing-PEPSICO_2023Q1_EARNINGS",
+      "id": "PEPSICO_2023Q1_EARNINGS",
+      "possibleBreaks": 8,
+      "examples": [
+        [
+          33,
+          " a non-GAAP basis as we cannot predict certain elements which are",
+          "included in reported GAAP results, including the impact of foreig"
+        ],
+        [
+          34,
+          "ncluding the impact of foreign exchange translation and commodity",
+          "mark-to-market net impacts."
+        ],
+        [
+          42,
+          "nues to expect an approximate 2-percentage-point foreign exchange",
+          "translation headwind to impact reported net revenue and core EPS "
+        ]
+      ]
+    },
+    {
+      "key": "government-confirmation-reviewed-studentaid-html",
+      "id": "Preparing for College | Federal Student Aid#1_0",
+      "possibleBreaks": 3,
+      "examples": [
+        [
+          9,
+          "Getting Ready for College It s Easier Than You Think",
+          "share link"
+        ],
+        [
+          16,
+          "Check Out Reasons to Attend a College or Career School",
+          "share link"
+        ],
+        [
+          24,
+          "Checklists to Help You Get Ready Financially and Academically",
+          "share link"
+        ]
+      ]
+    },
+    {
+      "key": "government-confirmation-reviewed-studentaid-html",
+      "id": "Student Loan Deferment | Federal Student Aid#1_0",
+      "possibleBreaks": 4,
+      "examples": [
+        [
+          18,
+          "You may qualify for this deferment if you",
+          "are receiving a means-tested benefit, like welfare (e.g., Tempora"
+        ],
+        [
+          20,
+          "poverty guideline for your family size and state of residence; or",
+          "are serving in the Peace Corps."
+        ],
+        [
+          33,
+          "You may be eligible for this deferment if",
+          "you are on active duty military service in connection with a war,"
+        ]
+      ]
+    },
+    {
+      "key": "government-confirmation-reviewed-studentaid-html",
+      "id": "Getting Out of Default | Federal Student Aid#1_0",
+      "possibleBreaks": 3,
+      "examples": [
+        [
+          14,
+          "habilitate a defaulted Direct Loan or FFEL Program loan, you must",
+          "agree in writing to make nine voluntary, reasonable, and affordab"
+        ],
+        [
+          29,
+          "tudent loan into a new Direct Consolidation Loan, you must either",
+          "agree to repay the new Direct Consolidation Loan under an income-"
+        ],
+        [
+          30,
+          "rect Consolidation Loan under an income-driven repayment plan, or",
+          "make three consecutive, voluntary, on-time, full monthly payments"
+        ]
+      ]
+    },
+    {
+      "key": "government-confirmation-reviewed-studentaid-html",
+      "id": "Student Aid Report | Federal Student Aid#1_0",
+      "possibleBreaks": 1,
+      "examples": [
+        [
+          24,
+          " correction has been processed, you can get a copy of your SAR by",
+          "logging in to fafsa.gov using your FSA ID and selecting the View "
+        ]
+      ]
+    },
+    {
+      "key": "government-confirmation-reviewed-studentaid-html",
+      "id": "Income-Driven Repayment Plans | Federal Student Aid#1_0",
+      "possibleBreaks": 1,
+      "examples": [
+        [
+          66,
+          "you filed a federal income tax return in the past two years, and",
+          "your current income isn t significantly different from the income"
+        ]
+      ]
+    },
+    {
+      "key": "government-confirmation-reviewed-studentaid-html",
+      "id": "Eligibility for Non-U.S. Citizens | Federal Student Aid#1_0",
+      "possibleBreaks": 3,
+      "examples": [
+        [
+          35,
+          " an eligible noncitizen and cannot receive federal student aid if",
+          "you have only a Notice of Approval to Apply for Permanent Residen"
+        ],
+        [
+          36,
+          "ce of Approval to Apply for Permanent Residence (I-171 or I-464),",
+          "you are in the U.S. on an F-1 or F-2 nonimmigrant student visa, o"
+        ],
+        [
+          37,
+          "t visa, or on a J-1 or J-2 nonimmigrant Exchange Visitor Visa, or",
+          "you hold a G series visa (pertaining to international organizatio"
+        ]
+      ]
+    },
+    {
+      "key": "government-confirmation-reviewed-studentaid-html",
+      "id": "Receiving Financial Aid | Federal Student Aid#1_0",
+      "possibleBreaks": 3,
+      "examples": [
+        [
+          21,
+          "r school must pay you directly unless you request that the school",
+          "send your payments directly to your bank account or"
+        ],
+        [
+          22,
+          "send your payments directly to your bank account or",
+          "use the money to pay for education-related charges (e.g., tuition"
+        ],
+        [
+          29,
+          "payment of your financial aid) 10 days before the term begins and",
+          "you will have a credit balance (i.e., money left over) after your"
+        ]
+      ]
+    },
+    {
+      "key": "government-confirmation-reviewed-studentaid-html",
+      "id": "Perkins Loan Cancellation and Discharge | Federal Student Aid#1_0",
+      "possibleBreaks": 3,
+      "examples": [
+        [
+          7,
+          "rs of infants, toddlers, children, or youth with disabilities; or",
+          "teacher in the fields of mathematics, science, foreign languages,"
+        ],
+        [
+          34,
+          "speech and language pathology and audiology,",
+          "physical therapy,"
+        ],
+        [
+          37,
+          "psychological and counseling services, and",
+          "recreational therapy."
+        ]
+      ]
+    },
+    {
+      "key": "government-confirmation-reviewed-studentaid-html",
+      "id": "Student Loan Consolidation | Federal Student Aid#1_0",
+      "possibleBreaks": 1,
+      "examples": [
+        [
+          58,
+          "*You may be able to reconsolidate an existing",
+          "delinquent or defaulted FFEL Consolidation Loan and repay your ne"
+        ]
+      ]
+    },
+    {
+      "key": "government-confirmation-reviewed-studentaid-html",
+      "id": "Extended Plan | Federal Student Aid#1_0",
+      "possibleBreaks": 1,
+      "examples": [
+        [
+          18,
+          "Under this plan, your monthly payments are",
+          "a fixed or graduated amount,"
+        ]
+      ]
+    },
+    {
+      "key": "government-confirmation-reviewed-studentaid-html",
+      "id": "Eligibility Requirements | Federal Student Aid#1_0",
+      "possibleBreaks": 6,
+      "examples": [
+        [
+          3,
+          "Our basic eligibility requirements are that you must",
+          "demonstrate financial need (for most programs);"
+        ],
+        [
+          11,
+          "ree Application for Federal Student Aid (FAFSA) form stating that",
+          "you are not in default on a federal student loan,"
+        ],
+        [
+          12,
+          "you are not in default on a federal student loan,",
+          "you do not owe money on a federal student grant, and"
+        ]
+      ]
+    },
+    {
+      "key": "government-confirmation-reviewed-studentaid-html",
+      "id": "Loans | Federal Student Aid#1_0",
+      "possibleBreaks": 2,
+      "examples": [
+        [
+          36,
+          "Before you receive your loan funds, you will be required to",
+          "complete entrance counseling, a tool to ensure you understand you"
+        ],
+        [
+          37,
+          "l to ensure you understand your obligation to repay the loan; and",
+          "sign a Master Promissory Note, agreeing to the terms of the loan."
+        ]
+      ]
+    },
+    {
+      "key": "government-confirmation-reviewed-studentaid-html",
+      "id": "Borrower Defense to Repayment | Federal Student Aid#1_0",
+      "possibleBreaks": 8,
+      "examples": [
+        [
+          126,
+          "you may be owed (taking money owed to you by the government); and",
+          "litigation (taking legal action against you)."
+        ],
+        [
+          169,
+          " Department of Education (ED) contacted you to make sure you know",
+          "how to determine if you are part of the class,"
+        ],
+        [
+          170,
+          "how to determine if you are part of the class,",
+          "what protections you have,"
+        ]
+      ]
+    },
+    {
+      "key": "government-confirmation-reviewed-studentaid-html",
+      "id": "Financial Aid Eligibility | Federal Student Aid#1_0",
+      "possibleBreaks": 4,
+      "examples": [
+        [
+          20,
+          "Students With a Parent Who Was Killed in Iraq or Afghanistan",
+          "share link"
+        ],
+        [
+          26,
+          "Students With Criminal Convictions",
+          "share link"
+        ],
+        [
+          29,
+          "Students With Intellectual Disabilities",
+          "share link"
+        ]
+      ]
+    },
+    {
+      "key": "government-confirmation-reviewed-studentaid-html",
+      "id": "Total and Permanent Disability Discharge | Federal Student Aid#1_0",
+      "possibleBreaks": 7,
+      "examples": [
+        [
+          18,
+          "has lasted for a continuous period of at least 60 months; or",
+          "can be expected to last for a continuous period of at least 60 mo"
+        ],
+        [
+          35,
+          "manently disabled based on documentation from the VA, Nelnet will",
+          "notify you that your loans and/or TEACH Grant service obligation "
+        ],
+        [
+          36,
+          "ns and/or TEACH Grant service obligation have been discharged and",
+          "instruct your loan holders to return any loan payments received o"
+        ]
+      ]
+    },
+    {
+      "key": "government-development-reviewed-studentaid-html",
+      "id": "Understanding College Costs | Federal Student Aid#1_0",
+      "possibleBreaks": 2,
+      "examples": [
+        [
+          15,
+          "Colleges and career schools may offer discounts on tuition if",
+          "you are a child of an alumnus or alumna (i.e., if your parent wen"
+        ],
+        [
+          20,
+          "your family s main wage earner is unemployed; or",
+          "you or a member of your family works at the school."
+        ]
+      ]
+    },
+    {
+      "key": "government-development-reviewed-studentaid-html",
+      "id": "Parent PLUS Loans | Federal Student Aid#1_0",
+      "possibleBreaks": 2,
+      "examples": [
+        [
+          8,
+          "To receive a parent PLUS loan, you must",
+          "be the biological or adoptive parent (or in some cases, the stepp"
+        ],
+        [
+          10,
+          "it history (unless you meet certain additional requirements); and",
+          "meet the general eligibility requirements for federal student aid"
+        ]
+      ]
+    },
+    {
+      "key": "government-development-reviewed-studentaid-html",
+      "id": "Subsidized and Unsubsidized Loans | Federal Student Aid#1_0",
+      "possibleBreaks": 5,
+      "examples": [
+        [
+          8,
+          "rtment of Education pays the interest on a Direct Subsidized Loan",
+          "while you re in school at least half-time,"
+        ],
+        [
+          9,
+          "while you re in school at least half-time,",
+          "for the first six months after you leave school (referred to as a"
+        ],
+        [
+          10,
+          "nths after you leave school (referred to as a grace period*), and",
+          "during a period of deferment (a postponement of loan payments)."
+        ]
+      ]
+    },
+    {
+      "key": "government-development-reviewed-studentaid-html",
+      "id": "Closed School Discharge | Federal Student Aid#1_0",
+      "possibleBreaks": 6,
+      "examples": [
+        [
+          7,
+          " were on an approved leave of absence when your school closed; or",
+          "your school closed within 120 days after you withdrew."
+        ],
+        [
+          11,
+          "are completing a comparable educational program at another school",
+          "through a teach-out,"
+        ],
+        [
+          13,
+          "c credits or hours earned at the closed school to another school,",
+          "or by any other comparable means."
+        ]
+      ]
+    },
+    {
+      "key": "government-development-reviewed-studentaid-html",
+      "id": "Loan Servicers | Federal Student Aid#1_0",
+      "possibleBreaks": 5,
+      "examples": [
+        [
+          11,
+          "your school s financial aid office directly for information about",
+          "loan status,"
+        ],
+        [
+          13,
+          "for cancelling all or part of your loan or loan disbursement, and",
+          "loan disbursement amounts and timing."
+        ],
+        [
+          19,
+          "drop below half-time enrollment, or",
+          "stop going to school."
+        ]
+      ]
+    },
+    {
+      "key": "government-development-reviewed-studentaid-html",
+      "id": "Teacher Loan Forgiveness | Federal Student Aid#1_0",
+      "possibleBreaks": 13,
+      "examples": [
+        [
+          11,
+          "you completed at least one-half of the academic year; and",
+          "your employer considers you to have fulfilled your contract requi"
+        ],
+        [
+          13,
+          "you were unable to complete the academic year because",
+          "you returned to postsecondary education, on at least a half-time "
+        ],
+        [
+          15,
+          "covered under the Family and Medical Leave Act of 1993 (FMLA); or",
+          "you were called or ordered to active duty status for more than 30"
+        ]
+      ]
+    },
+    {
+      "key": "government-development-reviewed-studentaid-html",
+      "id": "Income-Sensitive Plan | Federal Student Aid#1_0",
+      "possibleBreaks": 2,
+      "examples": [
+        [
+          12,
+          "Under this plan, your monthly payments",
+          "increase or decrease based on your annual income and"
+        ],
+        [
+          13,
+          "increase or decrease based on your annual income and",
+          "are made for a maximum period of 10 years."
+        ]
+      ]
+    },
+    {
+      "key": "government-development-reviewed-studentaid-html",
+      "id": "Understanding Delinquency and Default | Federal Student Aid#1_0",
+      "possibleBreaks": 1,
+      "examples": [
+        [
+          15,
+          " have a poor credit rating, it can be difficult for you to obtain",
+          "credit cards,"
+        ]
+      ]
+    },
+    {
+      "key": "government-development-reviewed-studentaid-html",
+      "id": "Collections | Federal Student Aid#1_0",
+      "possibleBreaks": 9,
+      "examples": [
+        [
+          10,
+          "isleading claims in connection with the collection of a debt; and",
+          "using unfair or unreasonable means to collect or attempt to colle"
+        ],
+        [
+          17,
+          "the William D. Ford Federal Direct Loan (Direct Loan) Program",
+          "the Federal Family Education Loan (FFEL) Program"
+        ],
+        [
+          18,
+          "the Federal Family Education Loan (FFEL) Program",
+          "the Federal Perkins Loan Program"
+        ]
+      ]
+    },
+    {
+      "key": "government-development-reviewed-studentaid-html",
+      "id": "False Certification Discharge | Federal Student Aid#1_0",
+      "possibleBreaks": 3,
+      "examples": [
+        [
+          20,
+          "Yes, some or all of your parent PLUS loan might be discharged if",
+          "the school falsely certified the student s ability to benefit fro"
+        ],
+        [
+          21,
+          "ely certified the student s ability to benefit from its training,",
+          "the student had a disqualifying status at the time the school cer"
+        ],
+        [
+          22,
+          "ol certified your eligibility to receive the parent PLUS loan, or",
+          "the school signed your name on the promissory note or other loan "
+        ]
+      ]
+    },
+    {
+      "key": "government-development-reviewed-studentaid-html",
+      "id": "Loan Repayment Checklist | Federal Student Aid#1_0",
+      "possibleBreaks": 2,
+      "examples": [
+        [
+          22,
+          "set your payment at a percentage of your income,",
+          "will usually have a lower monthly payment than other plans, and"
+        ],
+        [
+          23,
+          "will usually have a lower monthly payment than other plans, and",
+          "can have payments as low as $0 per month."
+        ]
+      ]
+    },
+    {
+      "key": "papers-development-reviewed-0",
+      "id": "2003.08380",
+      "possibleBreaks": 3,
+      "examples": [
+        [
+          13,
+          "one produces “entailment” and the other “contradiction”,",
+          "one produces “entailment” or “contradiction” and the other some o"
+        ],
+        [
+          14,
+          "s “entailment” or “contradiction” and the other some other token,",
+          "both produce some other tokens, and"
+        ],
+        [
+          15,
+          "both produce some other tokens, and",
+          "both produce the same token, either “entailment” or “contradictio"
+        ]
+      ]
+    },
+    {
+      "key": "boards-confirmation",
+      "id": "psf-2012",
+      "possibleBreaks": 8,
+      "examples": [
+        [
+          81,
+          "http://brochure.getpython.info/signup/contact-scout-signup",
+          "and, if you're interested in the project, please consider signing"
+        ],
+        [
+          113,
+          "ever geolocation on mentioned website to point user to \"events in",
+          "your local area.\" (check out integration with grical.org)"
+        ],
+        [
+          115,
+          " (an interface on the site itself; an ability to upload calendars",
+          "or link to external ones; etc.) for local user group admins to in"
+        ]
+      ]
+    },
+    {
+      "key": "boards-fresh",
+      "id": "fed",
+      "possibleBreaks": 6,
+      "examples": [
+        [
+          104,
+          " specific issue of Eligible Securities that may be auctioned; and",
+          "iv. Subject to reasonable limitations on the amount of Eligible S"
+        ],
+        [
+          108,
+          "al for any loan of securities authorized in this paragraph 2; and",
+          "iii. Accept agency securities as collateral only for a loan of ag"
+        ],
+        [
+          145,
+          "Generally directed at countering disorderly market conditions; or",
+          "ii. Undertaken to adjust System balances in light of probable fut"
+        ]
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1792 @@
+{
+  "rankedRetrieval": {
+    "confirmation": {
+      "finance": {
+        "documents": 13,
+        "exactCountDocuments": 9,
+        "methods": {
+          "blocks": {
+            "questions": 25,
+            "complete1": 5,
+            "complete5": 13,
+            "possible1": 17,
+            "possible5": 24,
+            "any5": 16,
+            "medianGoldRank": 4.0,
+            "medianTopSize": 196,
+            "indexed": 6220,
+            "short": 271,
+            "shortHeadingOrNumeric": 0,
+            "over256": 0,
+            "sentence5": 13,
+            "sentenceAndBridge5": 13,
+            "separatedGoldBridges": 0,
+            "commonWins": 2,
+            "commonMedianFirstTokens": 184.5,
+            "commonFirstWithShorterEquivalent": 0,
+            "expandedComplete1": 5,
+            "expandedComplete5": 13,
+            "meanAddedTokensInFive": 0,
+            "meanTokensInFive": 974.64,
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 14,
+                "complete1": 3,
+                "complete5": 9
+              },
+              "oneProseUnit": {
+                "questions": 3,
+                "complete1": 0,
+                "complete5": 2
+              },
+              "multipleProseUnits": {
+                "questions": 21,
+                "complete1": 4,
+                "complete5": 10
+              }
+            }
+          },
+          "semantic512": {
+            "questions": 25,
+            "complete1": 3,
+            "complete5": 11,
+            "possible1": 17,
+            "possible5": 24,
+            "any5": 14,
+            "medianGoldRank": 8.0,
+            "medianTopSize": 277,
+            "indexed": 6220,
+            "short": 1901,
+            "shortHeadingOrNumeric": 103,
+            "over256": 1886,
+            "sentence5": 12,
+            "sentenceAndBridge5": 12,
+            "separatedGoldBridges": 0,
+            "commonWins": 2,
+            "commonMedianFirstTokens": 317.5,
+            "commonFirstWithShorterEquivalent": 1,
+            "expandedComplete1": 3,
+            "expandedComplete5": 11,
+            "meanAddedTokensInFive": 44.44,
+            "meanTokensInFive": 1453.52,
+            "nestedReplacement": {
+              "eligible": 9,
+              "rises": 4,
+              "falls": 2,
+              "entersFive": 1,
+              "leavesFive": 0
+            },
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 14,
+                "complete1": 1,
+                "complete5": 7
+              },
+              "oneProseUnit": {
+                "questions": 3,
+                "complete1": 0,
+                "complete5": 2
+              },
+              "multipleProseUnits": {
+                "questions": 21,
+                "complete1": 2,
+                "complete5": 8
+              }
+            }
+          },
+          "semanticUnlimited": {
+            "questions": 25,
+            "complete1": 5,
+            "complete5": 12,
+            "possible1": 17,
+            "possible5": 24,
+            "any5": 16,
+            "medianGoldRank": 9.5,
+            "medianTopSize": 414,
+            "indexed": 6219,
+            "short": 2479,
+            "shortHeadingOrNumeric": 119,
+            "over256": 1171,
+            "sentence5": 12,
+            "sentenceAndBridge5": 12,
+            "separatedGoldBridges": 0,
+            "commonWins": 2,
+            "commonMedianFirstTokens": 317.5,
+            "commonFirstWithShorterEquivalent": 1,
+            "expandedComplete1": 5,
+            "expandedComplete5": 13,
+            "meanAddedTokensInFive": 70.88,
+            "meanTokensInFive": 2548.44,
+            "nestedReplacement": {
+              "eligible": 10,
+              "rises": 3,
+              "falls": 2,
+              "entersFive": 0,
+              "leavesFive": 0
+            },
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 14,
+                "complete1": 3,
+                "complete5": 6
+              },
+              "oneProseUnit": {
+                "questions": 3,
+                "complete1": 0,
+                "complete5": 2
+              },
+              "multipleProseUnits": {
+                "questions": 21,
+                "complete1": 4,
+                "complete5": 9
+              }
+            }
+          }
+        },
+        "sourcePairs": {
+          "1": {
+            "all": {
+              "pairs": 15493,
+              "meanCosine": 0.5116981995924812
+            },
+            "blocksTogetherUnlimitedApart": {
+              "pairs": 1243,
+              "meanCosine": 0.32558079633325315
+            },
+            "unlimitedTogetherBlocksApart": {
+              "pairs": 1506,
+              "meanCosine": 0.51337782033332
+            }
+          },
+          "4": {
+            "all": {
+              "pairs": 13549,
+              "meanCosine": 0.4259782548742866
+            },
+            "blocksTogetherUnlimitedApart": {
+              "pairs": 1899,
+              "meanCosine": 0.3993537757896856
+            },
+            "unlimitedTogetherBlocksApart": {
+              "pairs": 4341,
+              "meanCosine": 0.4471061002822244
+            }
+          }
+        },
+        "bridgeOpportunities": 1568
+      },
+      "papers": {
+        "documents": 64,
+        "exactCountDocuments": 21,
+        "methods": {
+          "blocks": {
+            "questions": 190,
+            "complete1": 63,
+            "complete5": 121,
+            "possible1": 166,
+            "possible5": 190,
+            "any5": 142,
+            "medianGoldRank": 2.0,
+            "medianTopSize": 188.5,
+            "indexed": 1865,
+            "short": 30,
+            "shortHeadingOrNumeric": 0,
+            "over256": 0,
+            "sentence5": 121,
+            "sentenceAndBridge5": 121,
+            "separatedGoldBridges": 1,
+            "commonWins": 27,
+            "commonMedianFirstTokens": 193,
+            "commonFirstWithShorterEquivalent": 0,
+            "expandedComplete1": 63,
+            "expandedComplete5": 121,
+            "meanAddedTokensInFive": 0,
+            "meanTokensInFive": 888.7526315789473,
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 55,
+                "complete1": 23,
+                "complete5": 38
+              },
+              "oneProseUnit": {
+                "questions": 107,
+                "complete1": 37,
+                "complete5": 73
+              },
+              "multipleProseUnits": {
+                "questions": 81,
+                "complete1": 25,
+                "complete5": 47
+              }
+            }
+          },
+          "semantic512": {
+            "questions": 190,
+            "complete1": 60,
+            "complete5": 131,
+            "possible1": 171,
+            "possible5": 189,
+            "any5": 151,
+            "medianGoldRank": 3.0,
+            "medianTopSize": 222.5,
+            "indexed": 1859,
+            "short": 382,
+            "shortHeadingOrNumeric": 33,
+            "over256": 531,
+            "sentence5": 141,
+            "sentenceAndBridge5": 141,
+            "separatedGoldBridges": 1,
+            "commonWins": 27,
+            "commonMedianFirstTokens": 292,
+            "commonFirstWithShorterEquivalent": 7,
+            "expandedComplete1": 61,
+            "expandedComplete5": 133,
+            "meanAddedTokensInFive": 102.17368421052632,
+            "meanTokensInFive": 1177.6894736842105,
+            "nestedReplacement": {
+              "eligible": 109,
+              "rises": 40,
+              "falls": 22,
+              "entersFive": 8,
+              "leavesFive": 7
+            },
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 55,
+                "complete1": 18,
+                "complete5": 43
+              },
+              "oneProseUnit": {
+                "questions": 107,
+                "complete1": 37,
+                "complete5": 74
+              },
+              "multipleProseUnits": {
+                "questions": 81,
+                "complete1": 22,
+                "complete5": 56
+              }
+            }
+          },
+          "semanticUnlimited": {
+            "questions": 190,
+            "complete1": 53,
+            "complete5": 136,
+            "possible1": 172,
+            "possible5": 189,
+            "any5": 152,
+            "medianGoldRank": 3.0,
+            "medianTopSize": 159.0,
+            "indexed": 1860,
+            "short": 512,
+            "shortHeadingOrNumeric": 40,
+            "over256": 356,
+            "sentence5": 154,
+            "sentenceAndBridge5": 153,
+            "separatedGoldBridges": 0,
+            "commonWins": 27,
+            "commonMedianFirstTokens": 311,
+            "commonFirstWithShorterEquivalent": 10,
+            "expandedComplete1": 54,
+            "expandedComplete5": 139,
+            "meanAddedTokensInFive": 146.60526315789474,
+            "meanTokensInFive": 1477.0473684210526,
+            "nestedReplacement": {
+              "eligible": 113,
+              "rises": 46,
+              "falls": 24,
+              "entersFive": 13,
+              "leavesFive": 6
+            },
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 55,
+                "complete1": 18,
+                "complete5": 43
+              },
+              "oneProseUnit": {
+                "questions": 107,
+                "complete1": 33,
+                "complete5": 78
+              },
+              "multipleProseUnits": {
+                "questions": 81,
+                "complete1": 20,
+                "complete5": 57
+              }
+            }
+          }
+        },
+        "sourcePairs": {
+          "1": {
+            "all": {
+              "pairs": 9407,
+              "meanCosine": 0.44409922388631445
+            },
+            "blocksTogetherUnlimitedApart": {
+              "pairs": 606,
+              "meanCosine": 0.25767803883407475
+            },
+            "unlimitedTogetherBlocksApart": {
+              "pairs": 639,
+              "meanCosine": 0.4258978812545771
+            }
+          },
+          "4": {
+            "all": {
+              "pairs": 9266,
+              "meanCosine": 0.3641966299261509
+            },
+            "blocksTogetherUnlimitedApart": {
+              "pairs": 1005,
+              "meanCosine": 0.3325468308570336
+            },
+            "unlimitedTogetherBlocksApart": {
+              "pairs": 2822,
+              "meanCosine": 0.379331886723458
+            }
+          }
+        },
+        "bridgeOpportunities": 785
+      },
+      "faq": {
+        "documents": 6,
+        "exactCountDocuments": 0,
+        "methods": {
+          "blocks": {
+            "questions": 76,
+            "complete1": 64,
+            "complete5": 74,
+            "possible1": 75,
+            "possible5": 76,
+            "any5": 75,
+            "medianGoldRank": 1.0,
+            "medianTopSize": 187.5,
+            "indexed": 122,
+            "short": 8,
+            "shortHeadingOrNumeric": 0,
+            "over256": 0,
+            "sentence5": 73,
+            "sentenceAndBridge5": 73,
+            "separatedGoldBridges": 0,
+            "commonWins": 50,
+            "commonMedianFirstTokens": 203.5,
+            "commonFirstWithShorterEquivalent": 5,
+            "expandedComplete1": 64,
+            "expandedComplete5": 74,
+            "meanAddedTokensInFive": 0,
+            "meanTokensInFive": 849.5921052631579,
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 0,
+                "complete1": 0,
+                "complete5": 0
+              },
+              "oneProseUnit": {
+                "questions": 12,
+                "complete1": 11,
+                "complete5": 12
+              },
+              "multipleProseUnits": {
+                "questions": 64,
+                "complete1": 53,
+                "complete5": 62
+              }
+            }
+          },
+          "semantic512": {
+            "questions": 76,
+            "complete1": 56,
+            "complete5": 70,
+            "possible1": 68,
+            "possible5": 76,
+            "any5": 73,
+            "medianGoldRank": 1.0,
+            "medianTopSize": 266.0,
+            "indexed": 116,
+            "short": 23,
+            "shortHeadingOrNumeric": 1,
+            "over256": 35,
+            "sentence5": 69,
+            "sentenceAndBridge5": 69,
+            "separatedGoldBridges": 0,
+            "commonWins": 50,
+            "commonMedianFirstTokens": 291.0,
+            "commonFirstWithShorterEquivalent": 18,
+            "expandedComplete1": 62,
+            "expandedComplete5": 72,
+            "meanAddedTokensInFive": 118.82894736842105,
+            "meanTokensInFive": 967.6842105263158,
+            "nestedReplacement": {
+              "eligible": 39,
+              "rises": 4,
+              "falls": 0,
+              "entersFive": 2,
+              "leavesFive": 0
+            },
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 0,
+                "complete1": 0,
+                "complete5": 0
+              },
+              "oneProseUnit": {
+                "questions": 12,
+                "complete1": 9,
+                "complete5": 12
+              },
+              "multipleProseUnits": {
+                "questions": 64,
+                "complete1": 47,
+                "complete5": 58
+              }
+            }
+          },
+          "semanticUnlimited": {
+            "questions": 76,
+            "complete1": 57,
+            "complete5": 68,
+            "possible1": 66,
+            "possible5": 76,
+            "any5": 74,
+            "medianGoldRank": 1.0,
+            "medianTopSize": 352.0,
+            "indexed": 117,
+            "short": 32,
+            "shortHeadingOrNumeric": 1,
+            "over256": 19,
+            "sentence5": 68,
+            "sentenceAndBridge5": 68,
+            "separatedGoldBridges": 0,
+            "commonWins": 50,
+            "commonMedianFirstTokens": 444.0,
+            "commonFirstWithShorterEquivalent": 28,
+            "expandedComplete1": 65,
+            "expandedComplete5": 73,
+            "meanAddedTokensInFive": 215.57894736842104,
+            "meanTokensInFive": 1449.0657894736842,
+            "nestedReplacement": {
+              "eligible": 39,
+              "rises": 4,
+              "falls": 1,
+              "entersFive": 1,
+              "leavesFive": 0
+            },
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 0,
+                "complete1": 0,
+                "complete5": 0
+              },
+              "oneProseUnit": {
+                "questions": 12,
+                "complete1": 8,
+                "complete5": 11
+              },
+              "multipleProseUnits": {
+                "questions": 64,
+                "complete1": 49,
+                "complete5": 57
+              }
+            }
+          }
+        },
+        "sourcePairs": {
+          "1": {
+            "all": {
+              "pairs": 542,
+              "meanCosine": 0.4583051488820697
+            },
+            "blocksTogetherUnlimitedApart": {
+              "pairs": 14,
+              "meanCosine": 0.3344619625381061
+            },
+            "unlimitedTogetherBlocksApart": {
+              "pairs": 24,
+              "meanCosine": 0.46287317884465057
+            }
+          },
+          "4": {
+            "all": {
+              "pairs": 498,
+              "meanCosine": 0.41625755319902935
+            },
+            "blocksTogetherUnlimitedApart": {
+              "pairs": 39,
+              "meanCosine": 0.3397456911893991
+            },
+            "unlimitedTogetherBlocksApart": {
+              "pairs": 116,
+              "meanCosine": 0.4413450276800271
+            }
+          }
+        },
+        "bridgeOpportunities": 77
+      },
+      "government": {
+        "documents": 104,
+        "exactCountDocuments": 28,
+        "methods": {
+          "blocks": {
+            "questions": 449,
+            "complete1": 259,
+            "complete5": 394,
+            "possible1": 439,
+            "possible5": 449,
+            "any5": 397,
+            "medianGoldRank": 1,
+            "medianTopSize": 119,
+            "indexed": 846,
+            "short": 96,
+            "shortHeadingOrNumeric": 0,
+            "over256": 0,
+            "sentence5": 371,
+            "sentenceAndBridge5": 377,
+            "separatedGoldBridges": 0,
+            "commonWins": 192,
+            "commonMedianFirstTokens": 122.0,
+            "commonFirstWithShorterEquivalent": 5,
+            "expandedComplete1": 259,
+            "expandedComplete5": 394,
+            "meanAddedTokensInFive": 0,
+            "meanTokensInFive": 729.5055679287306,
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 102,
+                "complete1": 56,
+                "complete5": 87
+              },
+              "oneProseUnit": {
+                "questions": 229,
+                "complete1": 128,
+                "complete5": 196
+              },
+              "multipleProseUnits": {
+                "questions": 210,
+                "complete1": 124,
+                "complete5": 189
+              }
+            }
+          },
+          "semantic512": {
+            "questions": 449,
+            "complete1": 230,
+            "complete5": 389,
+            "possible1": 420,
+            "possible5": 449,
+            "any5": 396,
+            "medianGoldRank": 1,
+            "medianTopSize": 85,
+            "indexed": 805,
+            "short": 247,
+            "shortHeadingOrNumeric": 7,
+            "over256": 222,
+            "sentence5": 374,
+            "sentenceAndBridge5": 379,
+            "separatedGoldBridges": 0,
+            "commonWins": 192,
+            "commonMedianFirstTokens": 124.5,
+            "commonFirstWithShorterEquivalent": 51,
+            "expandedComplete1": 247,
+            "expandedComplete5": 405,
+            "meanAddedTokensInFive": 86.64142538975501,
+            "meanTokensInFive": 1044.7438752783964,
+            "nestedReplacement": {
+              "eligible": 166,
+              "rises": 39,
+              "falls": 19,
+              "entersFive": 8,
+              "leavesFive": 6
+            },
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 102,
+                "complete1": 53,
+                "complete5": 92
+              },
+              "oneProseUnit": {
+                "questions": 229,
+                "complete1": 112,
+                "complete5": 193
+              },
+              "multipleProseUnits": {
+                "questions": 210,
+                "complete1": 110,
+                "complete5": 188
+              }
+            }
+          },
+          "semanticUnlimited": {
+            "questions": 449,
+            "complete1": 226,
+            "complete5": 378,
+            "possible1": 410,
+            "possible5": 449,
+            "any5": 388,
+            "medianGoldRank": 1,
+            "medianTopSize": 67,
+            "indexed": 841,
+            "short": 324,
+            "shortHeadingOrNumeric": 9,
+            "over256": 176,
+            "sentence5": 371,
+            "sentenceAndBridge5": 377,
+            "separatedGoldBridges": 0,
+            "commonWins": 192,
+            "commonMedianFirstTokens": 169.0,
+            "commonFirstWithShorterEquivalent": 72,
+            "expandedComplete1": 248,
+            "expandedComplete5": 395,
+            "meanAddedTokensInFive": 122.76169265033407,
+            "meanTokensInFive": 1175.6547884187082,
+            "nestedReplacement": {
+              "eligible": 185,
+              "rises": 53,
+              "falls": 20,
+              "entersFive": 16,
+              "leavesFive": 5
+            },
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 102,
+                "complete1": 54,
+                "complete5": 92
+              },
+              "oneProseUnit": {
+                "questions": 229,
+                "complete1": 108,
+                "complete5": 184
+              },
+              "multipleProseUnits": {
+                "questions": 210,
+                "complete1": 114,
+                "complete5": 187
+              }
+            }
+          }
+        },
+        "sourcePairs": {
+          "1": {
+            "all": {
+              "pairs": 4170,
+              "meanCosine": 0.4937617697330902
+            },
+            "blocksTogetherUnlimitedApart": {
+              "pairs": 137,
+              "meanCosine": 0.34701556497572983
+            },
+            "unlimitedTogetherBlocksApart": {
+              "pairs": 214,
+              "meanCosine": 0.43774345033218925
+            }
+          },
+          "4": {
+            "all": {
+              "pairs": 3935,
+              "meanCosine": 0.3976752427095379
+            },
+            "blocksTogetherUnlimitedApart": {
+              "pairs": 348,
+              "meanCosine": 0.37161233288439355
+            },
+            "unlimitedTogetherBlocksApart": {
+              "pairs": 947,
+              "meanCosine": 0.40713276413939065
+            }
+          }
+        },
+        "bridgeOpportunities": 484
+      }
+    },
+    "development": {
+      "finance": {
+        "documents": 9,
+        "exactCountDocuments": 2,
+        "methods": {
+          "blocks": {
+            "questions": 14,
+            "complete1": 2,
+            "complete5": 4,
+            "possible1": 7,
+            "possible5": 14,
+            "any5": 6,
+            "medianGoldRank": 14.5,
+            "medianTopSize": 187.0,
+            "indexed": 5200,
+            "short": 205,
+            "shortHeadingOrNumeric": 13,
+            "over256": 0,
+            "sentence5": 4,
+            "sentenceAndBridge5": 4,
+            "separatedGoldBridges": 0,
+            "commonWins": 0,
+            "commonMedianFirstTokens": null,
+            "commonFirstWithShorterEquivalent": 0,
+            "expandedComplete1": 2,
+            "expandedComplete5": 4,
+            "meanAddedTokensInFive": 0,
+            "meanTokensInFive": 878.8571428571429,
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 3,
+                "complete1": 0,
+                "complete5": 1
+              },
+              "oneProseUnit": {
+                "questions": 1,
+                "complete1": 0,
+                "complete5": 0
+              },
+              "multipleProseUnits": {
+                "questions": 13,
+                "complete1": 2,
+                "complete5": 4
+              }
+            }
+          },
+          "semantic512": {
+            "questions": 14,
+            "complete1": 1,
+            "complete5": 5,
+            "possible1": 8,
+            "possible5": 14,
+            "any5": 6,
+            "medianGoldRank": 13.0,
+            "medianTopSize": 166.0,
+            "indexed": 5200,
+            "short": 1446,
+            "shortHeadingOrNumeric": 108,
+            "over256": 1524,
+            "sentence5": 6,
+            "sentenceAndBridge5": 6,
+            "separatedGoldBridges": 0,
+            "commonWins": 0,
+            "commonMedianFirstTokens": null,
+            "commonFirstWithShorterEquivalent": 0,
+            "expandedComplete1": 1,
+            "expandedComplete5": 5,
+            "meanAddedTokensInFive": 199.78571428571428,
+            "meanTokensInFive": 1073.142857142857,
+            "nestedReplacement": {
+              "eligible": 4,
+              "rises": 2,
+              "falls": 2,
+              "entersFive": 0,
+              "leavesFive": 0
+            },
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 3,
+                "complete1": 0,
+                "complete5": 1
+              },
+              "oneProseUnit": {
+                "questions": 1,
+                "complete1": 0,
+                "complete5": 0
+              },
+              "multipleProseUnits": {
+                "questions": 13,
+                "complete1": 1,
+                "complete5": 5
+              }
+            }
+          },
+          "semanticUnlimited": {
+            "questions": 14,
+            "complete1": 4,
+            "complete5": 7,
+            "possible1": 8,
+            "possible5": 14,
+            "any5": 9,
+            "medianGoldRank": 7.0,
+            "medianTopSize": 185.5,
+            "indexed": 5202,
+            "short": 1944,
+            "shortHeadingOrNumeric": 124,
+            "over256": 911,
+            "sentence5": 8,
+            "sentenceAndBridge5": 9,
+            "separatedGoldBridges": 0,
+            "commonWins": 0,
+            "commonMedianFirstTokens": null,
+            "commonFirstWithShorterEquivalent": 0,
+            "expandedComplete1": 4,
+            "expandedComplete5": 7,
+            "meanAddedTokensInFive": 309,
+            "meanTokensInFive": 1789.9285714285713,
+            "nestedReplacement": {
+              "eligible": 4,
+              "rises": 0,
+              "falls": 3,
+              "entersFive": 0,
+              "leavesFive": 2
+            },
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 3,
+                "complete1": 0,
+                "complete5": 1
+              },
+              "oneProseUnit": {
+                "questions": 1,
+                "complete1": 0,
+                "complete5": 1
+              },
+              "multipleProseUnits": {
+                "questions": 13,
+                "complete1": 4,
+                "complete5": 6
+              }
+            }
+          }
+        },
+        "sourcePairs": {
+          "1": {
+            "all": {
+              "pairs": 13286,
+              "meanCosine": 0.5305601653697489
+            },
+            "blocksTogetherUnlimitedApart": {
+              "pairs": 955,
+              "meanCosine": 0.3243351593652633
+            },
+            "unlimitedTogetherBlocksApart": {
+              "pairs": 1374,
+              "meanCosine": 0.5082071438713712
+            }
+          },
+          "4": {
+            "all": {
+              "pairs": 11693,
+              "meanCosine": 0.43309069660258953
+            },
+            "blocksTogetherUnlimitedApart": {
+              "pairs": 1255,
+              "meanCosine": 0.414914718859521
+            },
+            "unlimitedTogetherBlocksApart": {
+              "pairs": 4239,
+              "meanCosine": 0.45284091045332564
+            }
+          }
+        },
+        "bridgeOpportunities": 1176
+      },
+      "papers": {
+        "documents": 64,
+        "exactCountDocuments": 18,
+        "methods": {
+          "blocks": {
+            "questions": 179,
+            "complete1": 45,
+            "complete5": 125,
+            "possible1": 144,
+            "possible5": 178,
+            "any5": 146,
+            "medianGoldRank": 3,
+            "medianTopSize": 188,
+            "indexed": 2041,
+            "short": 36,
+            "shortHeadingOrNumeric": 2,
+            "over256": 0,
+            "sentence5": 112,
+            "sentenceAndBridge5": 111,
+            "separatedGoldBridges": 0,
+            "commonWins": 28,
+            "commonMedianFirstTokens": 190.0,
+            "commonFirstWithShorterEquivalent": 1,
+            "expandedComplete1": 45,
+            "expandedComplete5": 125,
+            "meanAddedTokensInFive": 0,
+            "meanTokensInFive": 900.9832402234637,
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 40,
+                "complete1": 12,
+                "complete5": 30
+              },
+              "oneProseUnit": {
+                "questions": 85,
+                "complete1": 22,
+                "complete5": 64
+              },
+              "multipleProseUnits": {
+                "questions": 93,
+                "complete1": 22,
+                "complete5": 60
+              }
+            }
+          },
+          "semantic512": {
+            "questions": 179,
+            "complete1": 53,
+            "complete5": 118,
+            "possible1": 149,
+            "possible5": 179,
+            "any5": 140,
+            "medianGoldRank": 3,
+            "medianTopSize": 197,
+            "indexed": 2029,
+            "short": 380,
+            "shortHeadingOrNumeric": 19,
+            "over256": 571,
+            "sentence5": 123,
+            "sentenceAndBridge5": 123,
+            "separatedGoldBridges": 0,
+            "commonWins": 28,
+            "commonMedianFirstTokens": 225.0,
+            "commonFirstWithShorterEquivalent": 8,
+            "expandedComplete1": 53,
+            "expandedComplete5": 121,
+            "meanAddedTokensInFive": 72.73184357541899,
+            "meanTokensInFive": 1192.9217877094973,
+            "nestedReplacement": {
+              "eligible": 87,
+              "rises": 33,
+              "falls": 16,
+              "entersFive": 12,
+              "leavesFive": 4
+            },
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 40,
+                "complete1": 15,
+                "complete5": 30
+              },
+              "oneProseUnit": {
+                "questions": 85,
+                "complete1": 30,
+                "complete5": 63
+              },
+              "multipleProseUnits": {
+                "questions": 93,
+                "complete1": 22,
+                "complete5": 54
+              }
+            }
+          },
+          "semanticUnlimited": {
+            "questions": 179,
+            "complete1": 54,
+            "complete5": 127,
+            "possible1": 153,
+            "possible5": 179,
+            "any5": 145,
+            "medianGoldRank": 3,
+            "medianTopSize": 187,
+            "indexed": 2035,
+            "short": 517,
+            "shortHeadingOrNumeric": 23,
+            "over256": 376,
+            "sentence5": 138,
+            "sentenceAndBridge5": 137,
+            "separatedGoldBridges": 0,
+            "commonWins": 28,
+            "commonMedianFirstTokens": 291.0,
+            "commonFirstWithShorterEquivalent": 11,
+            "expandedComplete1": 55,
+            "expandedComplete5": 129,
+            "meanAddedTokensInFive": 112.17877094972067,
+            "meanTokensInFive": 1512.0837988826815,
+            "nestedReplacement": {
+              "eligible": 96,
+              "rises": 38,
+              "falls": 23,
+              "entersFive": 10,
+              "leavesFive": 9
+            },
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 40,
+                "complete1": 15,
+                "complete5": 31
+              },
+              "oneProseUnit": {
+                "questions": 85,
+                "complete1": 28,
+                "complete5": 65
+              },
+              "multipleProseUnits": {
+                "questions": 93,
+                "complete1": 26,
+                "complete5": 61
+              }
+            }
+          }
+        },
+        "sourcePairs": {
+          "1": {
+            "all": {
+              "pairs": 10449,
+              "meanCosine": 0.44271429269294044
+            },
+            "blocksTogetherUnlimitedApart": {
+              "pairs": 697,
+              "meanCosine": 0.25288462518046945
+            },
+            "unlimitedTogetherBlocksApart": {
+              "pairs": 676,
+              "meanCosine": 0.4251479627509442
+            }
+          },
+          "4": {
+            "all": {
+              "pairs": 10290,
+              "meanCosine": 0.36350543659983203
+            },
+            "blocksTogetherUnlimitedApart": {
+              "pairs": 1198,
+              "meanCosine": 0.34148780761118697
+            },
+            "unlimitedTogetherBlocksApart": {
+              "pairs": 2992,
+              "meanCosine": 0.37801869015021367
+            }
+          }
+        },
+        "bridgeOpportunities": 942
+      },
+      "faq": {
+        "documents": 3,
+        "exactCountDocuments": 1,
+        "methods": {
+          "blocks": {
+            "questions": 22,
+            "complete1": 18,
+            "complete5": 21,
+            "possible1": 21,
+            "possible5": 22,
+            "any5": 21,
+            "medianGoldRank": 1.0,
+            "medianTopSize": 153.0,
+            "indexed": 36,
+            "short": 0,
+            "shortHeadingOrNumeric": 0,
+            "over256": 0,
+            "sentence5": 21,
+            "sentenceAndBridge5": 21,
+            "separatedGoldBridges": 0,
+            "commonWins": 13,
+            "commonMedianFirstTokens": 84,
+            "commonFirstWithShorterEquivalent": 0,
+            "expandedComplete1": 18,
+            "expandedComplete5": 21,
+            "meanAddedTokensInFive": 0,
+            "meanTokensInFive": 752.8181818181819,
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 9,
+                "complete1": 7,
+                "complete5": 9
+              },
+              "oneProseUnit": {
+                "questions": 3,
+                "complete1": 2,
+                "complete5": 3
+              },
+              "multipleProseUnits": {
+                "questions": 19,
+                "complete1": 16,
+                "complete5": 18
+              }
+            }
+          },
+          "semantic512": {
+            "questions": 22,
+            "complete1": 16,
+            "complete5": 22,
+            "possible1": 19,
+            "possible5": 22,
+            "any5": 22,
+            "medianGoldRank": 1.0,
+            "medianTopSize": 78.5,
+            "indexed": 35,
+            "short": 6,
+            "shortHeadingOrNumeric": 0,
+            "over256": 8,
+            "sentence5": 20,
+            "sentenceAndBridge5": 20,
+            "separatedGoldBridges": 0,
+            "commonWins": 13,
+            "commonMedianFirstTokens": 134,
+            "commonFirstWithShorterEquivalent": 2,
+            "expandedComplete1": 18,
+            "expandedComplete5": 22,
+            "meanAddedTokensInFive": 93.45454545454545,
+            "meanTokensInFive": 843.3181818181819,
+            "nestedReplacement": {
+              "eligible": 6,
+              "rises": 1,
+              "falls": 0,
+              "entersFive": 0,
+              "leavesFive": 0
+            },
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 9,
+                "complete1": 7,
+                "complete5": 9
+              },
+              "oneProseUnit": {
+                "questions": 3,
+                "complete1": 3,
+                "complete5": 3
+              },
+              "multipleProseUnits": {
+                "questions": 19,
+                "complete1": 13,
+                "complete5": 19
+              }
+            }
+          },
+          "semanticUnlimited": {
+            "questions": 22,
+            "complete1": 15,
+            "complete5": 22,
+            "possible1": 18,
+            "possible5": 22,
+            "any5": 22,
+            "medianGoldRank": 1.0,
+            "medianTopSize": 78.5,
+            "indexed": 34,
+            "short": 8,
+            "shortHeadingOrNumeric": 0,
+            "over256": 7,
+            "sentence5": 20,
+            "sentenceAndBridge5": 20,
+            "separatedGoldBridges": 0,
+            "commonWins": 13,
+            "commonMedianFirstTokens": 152,
+            "commonFirstWithShorterEquivalent": 3,
+            "expandedComplete1": 18,
+            "expandedComplete5": 22,
+            "meanAddedTokensInFive": 92.27272727272727,
+            "meanTokensInFive": 1020.3181818181819,
+            "nestedReplacement": {
+              "eligible": 5,
+              "rises": 1,
+              "falls": 0,
+              "entersFive": 0,
+              "leavesFive": 0
+            },
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 9,
+                "complete1": 7,
+                "complete5": 9
+              },
+              "oneProseUnit": {
+                "questions": 3,
+                "complete1": 3,
+                "complete5": 3
+              },
+              "multipleProseUnits": {
+                "questions": 19,
+                "complete1": 12,
+                "complete5": 19
+              }
+            }
+          }
+        },
+        "sourcePairs": {
+          "1": {
+            "all": {
+              "pairs": 126,
+              "meanCosine": 0.4263399517725384
+            },
+            "blocksTogetherUnlimitedApart": {
+              "pairs": 2,
+              "meanCosine": 0.3868176341056824
+            },
+            "unlimitedTogetherBlocksApart": {
+              "pairs": 0,
+              "meanCosine": null
+            }
+          },
+          "4": {
+            "all": {
+              "pairs": 117,
+              "meanCosine": 0.3462115996795842
+            },
+            "blocksTogetherUnlimitedApart": {
+              "pairs": 7,
+              "meanCosine": 0.2605182943599565
+            },
+            "unlimitedTogetherBlocksApart": {
+              "pairs": 16,
+              "meanCosine": 0.30533627327531576
+            }
+          }
+        },
+        "bridgeOpportunities": 24
+      },
+      "government": {
+        "documents": 83,
+        "exactCountDocuments": 16,
+        "methods": {
+          "blocks": {
+            "questions": 347,
+            "complete1": 238,
+            "complete5": 327,
+            "possible1": 344,
+            "possible5": 347,
+            "any5": 327,
+            "medianGoldRank": 1,
+            "medianTopSize": 125,
+            "indexed": 594,
+            "short": 68,
+            "shortHeadingOrNumeric": 0,
+            "over256": 0,
+            "sentence5": 298,
+            "sentenceAndBridge5": 299,
+            "separatedGoldBridges": 0,
+            "commonWins": 173,
+            "commonMedianFirstTokens": 62,
+            "commonFirstWithShorterEquivalent": 4,
+            "expandedComplete1": 238,
+            "expandedComplete5": 327,
+            "meanAddedTokensInFive": 0,
+            "meanTokensInFive": 769.6455331412104,
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 70,
+                "complete1": 46,
+                "complete5": 66
+              },
+              "oneProseUnit": {
+                "questions": 235,
+                "complete1": 168,
+                "complete5": 221
+              },
+              "multipleProseUnits": {
+                "questions": 98,
+                "complete1": 63,
+                "complete5": 93
+              }
+            }
+          },
+          "semantic512": {
+            "questions": 347,
+            "complete1": 208,
+            "complete5": 317,
+            "possible1": 337,
+            "possible5": 347,
+            "any5": 322,
+            "medianGoldRank": 1,
+            "medianTopSize": 103,
+            "indexed": 564,
+            "short": 183,
+            "shortHeadingOrNumeric": 5,
+            "over256": 161,
+            "sentence5": 303,
+            "sentenceAndBridge5": 304,
+            "separatedGoldBridges": 0,
+            "commonWins": 173,
+            "commonMedianFirstTokens": 103,
+            "commonFirstWithShorterEquivalent": 33,
+            "expandedComplete1": 227,
+            "expandedComplete5": 325,
+            "meanAddedTokensInFive": 110.18443804034582,
+            "meanTokensInFive": 1108.628242074928,
+            "nestedReplacement": {
+              "eligible": 129,
+              "rises": 26,
+              "falls": 10,
+              "entersFive": 6,
+              "leavesFive": 3
+            },
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 70,
+                "complete1": 42,
+                "complete5": 65
+              },
+              "oneProseUnit": {
+                "questions": 235,
+                "complete1": 149,
+                "complete5": 217
+              },
+              "multipleProseUnits": {
+                "questions": 98,
+                "complete1": 55,
+                "complete5": 87
+              }
+            }
+          },
+          "semanticUnlimited": {
+            "questions": 347,
+            "complete1": 205,
+            "complete5": 318,
+            "possible1": 337,
+            "possible5": 347,
+            "any5": 323,
+            "medianGoldRank": 1,
+            "medianTopSize": 56,
+            "indexed": 560,
+            "short": 216,
+            "shortHeadingOrNumeric": 6,
+            "over256": 128,
+            "sentence5": 307,
+            "sentenceAndBridge5": 308,
+            "separatedGoldBridges": 0,
+            "commonWins": 173,
+            "commonMedianFirstTokens": 82,
+            "commonFirstWithShorterEquivalent": 56,
+            "expandedComplete1": 238,
+            "expandedComplete5": 327,
+            "meanAddedTokensInFive": 161.4985590778098,
+            "meanTokensInFive": 1328.907780979827,
+            "nestedReplacement": {
+              "eligible": 127,
+              "rises": 23,
+              "falls": 11,
+              "entersFive": 5,
+              "leavesFive": 5
+            },
+            "subsets": {
+              "exactDocumentCount": {
+                "questions": 70,
+                "complete1": 37,
+                "complete5": 63
+              },
+              "oneProseUnit": {
+                "questions": 235,
+                "complete1": 139,
+                "complete5": 221
+              },
+              "multipleProseUnits": {
+                "questions": 98,
+                "complete1": 62,
+                "complete5": 84
+              }
+            }
+          }
+        },
+        "sourcePairs": {
+          "1": {
+            "all": {
+              "pairs": 2993,
+              "meanCosine": 0.48792496519647893
+            },
+            "blocksTogetherUnlimitedApart": {
+              "pairs": 88,
+              "meanCosine": 0.3646693503145467
+            },
+            "unlimitedTogetherBlocksApart": {
+              "pairs": 150,
+              "meanCosine": 0.4365478650728862
+            }
+          },
+          "4": {
+            "all": {
+              "pairs": 2882,
+              "meanCosine": 0.4008052489016784
+            },
+            "blocksTogetherUnlimitedApart": {
+              "pairs": 230,
+              "meanCosine": 0.3846798589048178
+            },
+            "unlimitedTogetherBlocksApart": {
+              "pairs": 682,
+              "meanCosine": 0.4027640098361763
+            }
+          }
+        },
+        "bridgeOpportunities": 371
+      }
+    }
+  },
+  "possiblePhysicalWraps": {
+    "AMD_2022_10K": {
+      "candidates": 7,
+      "blocks": {
+        "indexed": 7,
+        "separated": 5
+      },
+      "semantic512": {
+        "indexed": 7,
+        "separated": 2
+      },
+      "semanticUnlimited": {
+        "indexed": 7,
+        "separated": 2
+      }
+    },
+    "BESTBUY_2023_10K": {
+      "candidates": 5,
+      "blocks": {
+        "indexed": 5,
+        "separated": 1
+      },
+      "semantic512": {
+        "indexed": 5,
+        "separated": 1
+      },
+      "semanticUnlimited": {
+        "indexed": 5,
+        "separated": 1
+      }
+    },
+    "BESTBUY_2024Q2_10Q": {
+      "candidates": 4,
+      "blocks": {
+        "indexed": 4,
+        "separated": 0
+      },
+      "semantic512": {
+        "indexed": 4,
+        "separated": 0
+      },
+      "semanticUnlimited": {
+        "indexed": 4,
+        "separated": 0
+      }
+    },
+    "BOEING_2022_10K": {
+      "candidates": 29,
+      "blocks": {
+        "indexed": 29,
+        "separated": 3
+      },
+      "semantic512": {
+        "indexed": 29,
+        "separated": 14
+      },
+      "semanticUnlimited": {
+        "indexed": 29,
+        "separated": 13
+      }
+    },
+    "FOOTLOCKER_2022_8K_dated_2022-08-19": {
+      "candidates": 17,
+      "blocks": {
+        "indexed": 17,
+        "separated": 9
+      },
+      "semantic512": {
+        "indexed": 17,
+        "separated": 7
+      },
+      "semanticUnlimited": {
+        "indexed": 17,
+        "separated": 3
+      }
+    },
+    "JOHNSON_JOHNSON_2022Q4_EARNINGS": {
+      "candidates": 70,
+      "blocks": {
+        "indexed": 70,
+        "separated": 3
+      },
+      "semantic512": {
+        "indexed": 70,
+        "separated": 21
+      },
+      "semanticUnlimited": {
+        "indexed": 70,
+        "separated": 29
+      }
+    },
+    "JOHNSON_JOHNSON_2022_10K": {
+      "candidates": 22,
+      "blocks": {
+        "indexed": 22,
+        "separated": 12
+      },
+      "semantic512": {
+        "indexed": 22,
+        "separated": 12
+      },
+      "semanticUnlimited": {
+        "indexed": 22,
+        "separated": 13
+      }
+    },
+    "JOHNSON_JOHNSON_2023_8K_dated-2023-08-30": {
+      "candidates": 1,
+      "blocks": {
+        "indexed": 1,
+        "separated": 0
+      },
+      "semantic512": {
+        "indexed": 1,
+        "separated": 0
+      },
+      "semanticUnlimited": {
+        "indexed": 1,
+        "separated": 0
+      }
+    },
+    "JPMORGAN_2023Q2_10Q": {
+      "candidates": 8,
+      "blocks": {
+        "indexed": 8,
+        "separated": 6
+      },
+      "semantic512": {
+        "indexed": 8,
+        "separated": 7
+      },
+      "semanticUnlimited": {
+        "indexed": 8,
+        "separated": 8
+      }
+    },
+    "PEPSICO_2022_10K": {
+      "candidates": 2026,
+      "blocks": {
+        "indexed": 2026,
+        "separated": 196
+      },
+      "semantic512": {
+        "indexed": 2026,
+        "separated": 213
+      },
+      "semanticUnlimited": {
+        "indexed": 2026,
+        "separated": 258
+      }
+    },
+    "PEPSICO_2023Q1_EARNINGS": {
+      "candidates": 17,
+      "blocks": {
+        "indexed": 17,
+        "separated": 0
+      },
+      "semantic512": {
+        "indexed": 17,
+        "separated": 2
+      },
+      "semanticUnlimited": {
+        "indexed": 17,
+        "separated": 3
+      }
+    },
+    "PEPSICO_2023_8K_dated-2023-05-05": {
+      "candidates": 0,
+      "blocks": {
+        "indexed": 0,
+        "separated": 0
+      },
+      "semantic512": {
+        "indexed": 0,
+        "separated": 0
+      },
+      "semanticUnlimited": {
+        "indexed": 0,
+        "separated": 0
+      }
+    },
+    "PEPSICO_2023_8K_dated-2023-05-30": {
+      "candidates": 2,
+      "blocks": {
+        "indexed": 2,
+        "separated": 0
+      },
+      "semantic512": {
+        "indexed": 2,
+        "separated": 2
+      },
+      "semanticUnlimited": {
+        "indexed": 2,
+        "separated": 2
+      }
+    },
+    "3M_2023Q2_10Q": {
+      "candidates": 0,
+      "blocks": {
+        "indexed": 0,
+        "separated": 0
+      },
+      "semantic512": {
+        "indexed": 0,
+        "separated": 0
+      },
+      "semanticUnlimited": {
+        "indexed": 0,
+        "separated": 0
+      }
+    },
+    "AMCOR_2022_8K_dated-2022-07-01": {
+      "candidates": 0,
+      "blocks": {
+        "indexed": 0,
+        "separated": 0
+      },
+      "semantic512": {
+        "indexed": 0,
+        "separated": 0
+      },
+      "semanticUnlimited": {
+        "indexed": 0,
+        "separated": 0
+      }
+    },
+    "AMCOR_2023_10K": {
+      "candidates": 21,
+      "blocks": {
+        "indexed": 21,
+        "separated": 6
+      },
+      "semantic512": {
+        "indexed": 21,
+        "separated": 5
+      },
+      "semanticUnlimited": {
+        "indexed": 21,
+        "separated": 6
+      }
+    },
+    "AMERICANEXPRESS_2022_10K": {
+      "candidates": 17,
+      "blocks": {
+        "indexed": 17,
+        "separated": 14
+      },
+      "semantic512": {
+        "indexed": 17,
+        "separated": 15
+      },
+      "semanticUnlimited": {
+        "indexed": 17,
+        "separated": 12
+      }
+    },
+    "CVSHEALTH_2022_10K": {
+      "candidates": 63,
+      "blocks": {
+        "indexed": 63,
+        "separated": 32
+      },
+      "semantic512": {
+        "indexed": 63,
+        "separated": 34
+      },
+      "semanticUnlimited": {
+        "indexed": 63,
+        "separated": 27
+      }
+    },
+    "MGMRESORTS_2022Q4_EARNINGS": {
+      "candidates": 0,
+      "blocks": {
+        "indexed": 0,
+        "separated": 0
+      },
+      "semantic512": {
+        "indexed": 0,
+        "separated": 0
+      },
+      "semanticUnlimited": {
+        "indexed": 0,
+        "separated": 0
+      }
+    },
+    "MGMRESORTS_2022_10K": {
+      "candidates": 46,
+      "blocks": {
+        "indexed": 46,
+        "separated": 21
+      },
+      "semantic512": {
+        "indexed": 46,
+        "separated": 10
+      },
+      "semanticUnlimited": {
+        "indexed": 46,
+        "separated": 6
+      }
+    },
+    "PFIZER_2021_10K": {
+      "candidates": 12,
+      "blocks": {
+        "indexed": 12,
+        "separated": 3
+      },
+      "semantic512": {
+        "indexed": 12,
+        "separated": 4
+      },
+      "semanticUnlimited": {
+        "indexed": 12,
+        "separated": 5
+      }
+    },
+    "ULTABEAUTY_2023Q4_EARNINGS": {
+      "candidates": 0,
+      "blocks": {
+        "indexed": 0,
+        "separated": 0
+      },
+      "semantic512": {
+        "indexed": 0,
+        "separated": 0
+      },
+      "semanticUnlimited": {
+        "indexed": 0,
+        "separated": 0
+      }
+    }
+  },
+  "qasperAnswerStrings": {
+    "confirmation": {
+      "blocks": {
+        "eligible": 111,
+        "allAnswerStrings1": 41,
+        "completeCitation1": 42,
+        "stringsWithoutCitation1": 1,
+        "allAnswerStrings5": 77,
+        "completeCitation5": 75,
+        "stringsWithoutCitation5": 2
+      },
+      "semantic512": {
+        "eligible": 111,
+        "allAnswerStrings1": 40,
+        "completeCitation1": 41,
+        "stringsWithoutCitation1": 1,
+        "allAnswerStrings5": 82,
+        "completeCitation5": 79,
+        "stringsWithoutCitation5": 4
+      },
+      "semanticUnlimited": {
+        "eligible": 111,
+        "allAnswerStrings1": 37,
+        "completeCitation1": 38,
+        "stringsWithoutCitation1": 1,
+        "allAnswerStrings5": 83,
+        "completeCitation5": 83,
+        "stringsWithoutCitation5": 2
+      }
+    },
+    "development": {
+      "blocks": {
+        "eligible": 93,
+        "allAnswerStrings1": 30,
+        "completeCitation1": 28,
+        "stringsWithoutCitation1": 3,
+        "allAnswerStrings5": 70,
+        "completeCitation5": 69,
+        "stringsWithoutCitation5": 3
+      },
+      "semantic512": {
+        "eligible": 93,
+        "allAnswerStrings1": 30,
+        "completeCitation1": 27,
+        "stringsWithoutCitation1": 4,
+        "allAnswerStrings5": 68,
+        "completeCitation5": 64,
+        "stringsWithoutCitation5": 5
+      },
+      "semanticUnlimited": {
+        "eligible": 93,
+        "allAnswerStrings1": 32,
+        "completeCitation1": 28,
+        "stringsWithoutCitation1": 5,
+        "allAnswerStrings5": 69,
+        "completeCitation5": 64,
+        "stringsWithoutCitation5": 6
+      }
+    }
+  }
+}

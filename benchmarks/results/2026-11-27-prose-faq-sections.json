@@ -1,0 +1,1139 @@
+{
+  "development": {
+    "dataSHA256": "6d3d80840a1941bd7446822debaa406f8d03f8ce64f33359b77612ea072d6bd0",
+    "documents": [
+      {
+        "document": "rclone",
+        "headingDepth": 3,
+        "chunks": 19
+      },
+      {
+        "document": "pnpm",
+        "headingDepth": 2,
+        "chunks": 10
+      },
+      {
+        "document": "jellyfin",
+        "headingDepth": 2,
+        "chunks": 9
+      }
+    ],
+    "queries": {
+      "rclone-3": {
+        "firstSource": "rclone",
+        "firstSpan": [
+          149,
+          321
+        ],
+        "firstTokens": 44,
+        "fiveTokens": 879,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "rclone-5": {
+        "firstSource": "rclone",
+        "firstSpan": [
+          323,
+          584
+        ],
+        "firstTokens": 68,
+        "fiveTokens": 321,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "rclone-10": {
+        "firstSource": "rclone",
+        "firstSpan": [
+          739,
+          1203
+        ],
+        "firstTokens": 116,
+        "fiveTokens": 321,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "rclone-15": {
+        "firstSource": "rclone",
+        "firstSpan": [
+          1205,
+          1581
+        ],
+        "firstTokens": 86,
+        "fiveTokens": 604,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "rclone-27": {
+        "firstSource": "rclone",
+        "firstSpan": [
+          2311,
+          3414
+        ],
+        "firstTokens": 237,
+        "fiveTokens": 932,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "rclone-32": {
+        "firstSource": "rclone",
+        "firstSpan": [
+          3416,
+          3533
+        ],
+        "firstTokens": 36,
+        "fiveTokens": 580,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "rclone-34": {
+        "firstSource": "rclone",
+        "firstSpan": [
+          3535,
+          5536
+        ],
+        "firstTokens": 504,
+        "fiveTokens": 1615,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "rclone-87": {
+        "firstSource": "rclone",
+        "firstSpan": [
+          12445,
+          13631
+        ],
+        "firstTokens": 335,
+        "fiveTokens": 1384,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pnpm-1": {
+        "firstSource": "pnpm",
+        "firstSpan": [
+          51,
+          1112
+        ],
+        "firstTokens": 287,
+        "fiveTokens": 1430,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pnpm-6": {
+        "firstSource": "pnpm",
+        "firstSpan": [
+          1114,
+          1545
+        ],
+        "firstTokens": 97,
+        "fiveTokens": 1241,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pnpm-9": {
+        "firstSource": "pnpm",
+        "firstSpan": [
+          1547,
+          1920
+        ],
+        "firstTokens": 80,
+        "fiveTokens": 668,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pnpm-12": {
+        "firstSource": "pnpm",
+        "firstSpan": [
+          1922,
+          2287
+        ],
+        "firstTokens": 83,
+        "fiveTokens": 1204,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pnpm-14": {
+        "firstSource": "pnpm",
+        "firstSpan": [
+          3313,
+          4786
+        ],
+        "firstTokens": 346,
+        "fiveTokens": 1549,
+        "completeRank": 3,
+        "minimumPassages": 1
+      },
+      "pnpm-19": {
+        "firstSource": "pnpm",
+        "firstSpan": [
+          3042,
+          3311
+        ],
+        "firstTokens": 60,
+        "fiveTokens": 667,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pnpm-21": {
+        "firstSource": "pnpm",
+        "firstSpan": [
+          3313,
+          4786
+        ],
+        "firstTokens": 346,
+        "fiveTokens": 1407,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pnpm-31": {
+        "firstSource": "pnpm",
+        "firstSpan": [
+          4788,
+          4920
+        ],
+        "firstTokens": 41,
+        "fiveTokens": 913,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pnpm-33": {
+        "firstSource": "pnpm",
+        "firstSpan": [
+          1547,
+          1920
+        ],
+        "firstTokens": 80,
+        "fiveTokens": 1431,
+        "completeRank": 2,
+        "minimumPassages": 1
+      },
+      "jellyfin-4": {
+        "firstSource": "jellyfin",
+        "firstSpan": [
+          213,
+          1178
+        ],
+        "firstTokens": 206,
+        "fiveTokens": 577,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "jellyfin-6": {
+        "firstSource": "jellyfin",
+        "firstSpan": [
+          2770,
+          2955
+        ],
+        "firstTokens": 42,
+        "fiveTokens": 547,
+        "completeRank": 2,
+        "minimumPassages": 1
+      },
+      "jellyfin-10": {
+        "firstSource": "jellyfin",
+        "firstSpan": [
+          1868,
+          2496
+        ],
+        "firstTokens": 134,
+        "fiveTokens": 577,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "jellyfin-13": {
+        "firstSource": "jellyfin",
+        "firstSpan": [
+          2957,
+          3658
+        ],
+        "firstTokens": 156,
+        "fiveTokens": 499,
+        "completeRank": 5,
+        "minimumPassages": 1
+      },
+      "jellyfin-17": {
+        "firstSource": "jellyfin",
+        "firstSpan": [
+          2957,
+          3658
+        ],
+        "firstTokens": 156,
+        "fiveTokens": 499,
+        "completeRank": 1,
+        "minimumPassages": 1
+      }
+    }
+  },
+  "confirmation": {
+    "dataSHA256": "55552a29c13c73b70487915c690a3e4c8df81c97c3489e8b11a081f63cca3843",
+    "documents": [
+      {
+        "document": "docker",
+        "headingDepth": 3,
+        "chunks": 7
+      },
+      {
+        "document": "pandoc",
+        "headingDepth": 2,
+        "chunks": 15
+      },
+      {
+        "document": "cargo",
+        "headingDepth": 2,
+        "chunks": 15
+      },
+      {
+        "document": "vue",
+        "headingDepth": 2,
+        "chunks": 14
+      },
+      {
+        "document": "poetry",
+        "headingDepth": 3,
+        "chunks": 13
+      },
+      {
+        "document": "ruff",
+        "headingDepth": 2,
+        "chunks": 22
+      }
+    ],
+    "queries": {
+      "docker-1": {
+        "firstSource": "docker",
+        "firstSpan": [
+          429,
+          1351
+        ],
+        "firstTokens": 211,
+        "fiveTokens": 709,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "docker-6": {
+        "firstSource": "docker",
+        "firstSpan": [
+          1353,
+          2390
+        ],
+        "firstTokens": 233,
+        "fiveTokens": 1047,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "docker-10": {
+        "firstSource": "docker",
+        "firstSpan": [
+          2392,
+          4044
+        ],
+        "firstTokens": 420,
+        "fiveTokens": 1137,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "docker-15": {
+        "firstSource": "docker",
+        "firstSpan": [
+          4046,
+          4461
+        ],
+        "firstTokens": 90,
+        "fiveTokens": 807,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "docker-17": {
+        "firstSource": "docker",
+        "firstSpan": [
+          4463,
+          4763
+        ],
+        "firstTokens": 81,
+        "fiveTokens": 656,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "docker-20": {
+        "firstSource": "docker",
+        "firstSpan": [
+          4765,
+          5522
+        ],
+        "firstTokens": 180,
+        "fiveTokens": 931,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pandoc-2": {
+        "firstSource": "pandoc",
+        "firstSpan": [
+          18,
+          316
+        ],
+        "firstTokens": 99,
+        "fiveTokens": 979,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pandoc-7": {
+        "firstSource": "pandoc",
+        "firstSpan": [
+          318,
+          631
+        ],
+        "firstTokens": 93,
+        "fiveTokens": 1030,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pandoc-13": {
+        "firstSource": "pandoc",
+        "firstSpan": [
+          1031,
+          1479
+        ],
+        "firstTokens": 119,
+        "fiveTokens": 1052,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pandoc-18": {
+        "firstSource": "pandoc",
+        "firstSpan": [
+          1481,
+          1892
+        ],
+        "firstTokens": 121,
+        "fiveTokens": 624,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pandoc-28": {
+        "firstSource": "pandoc",
+        "firstSpan": [
+          2042,
+          2939
+        ],
+        "firstTokens": 217,
+        "fiveTokens": 1172,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pandoc-33": {
+        "firstSource": "pandoc",
+        "firstSpan": [
+          2941,
+          3174
+        ],
+        "firstTokens": 63,
+        "fiveTokens": 605,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pandoc-35": {
+        "firstSource": "pandoc",
+        "firstSpan": [
+          3176,
+          4038
+        ],
+        "firstTokens": 229,
+        "fiveTokens": 1281,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pandoc-37": {
+        "firstSource": "pandoc",
+        "firstSpan": [
+          4040,
+          4222
+        ],
+        "firstTokens": 43,
+        "fiveTokens": 979,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pandoc-39": {
+        "firstSource": "pandoc",
+        "firstSpan": [
+          4224,
+          4784
+        ],
+        "firstTokens": 150,
+        "fiveTokens": 1010,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pandoc-45": {
+        "firstSource": "pandoc",
+        "firstSpan": [
+          5053,
+          5744
+        ],
+        "firstTokens": 174,
+        "fiveTokens": 1227,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pandoc-49": {
+        "firstSource": "pandoc",
+        "firstSpan": [
+          5746,
+          7932
+        ],
+        "firstTokens": 641,
+        "fiveTokens": 1153,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pandoc-51": {
+        "firstSource": "pandoc",
+        "firstSpan": [
+          5746,
+          7932
+        ],
+        "firstTokens": 641,
+        "fiveTokens": 952,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pandoc-58": {
+        "firstSource": "pandoc",
+        "firstSpan": [
+          5746,
+          7932
+        ],
+        "firstTokens": 641,
+        "fiveTokens": 1115,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "pandoc-61": {
+        "firstSource": "pandoc",
+        "firstSpan": [
+          5746,
+          7932
+        ],
+        "firstTokens": 641,
+        "fiveTokens": 940,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "cargo-1": {
+        "firstSource": "cargo",
+        "firstSpan": [
+          408,
+          2030
+        ],
+        "firstTokens": 350,
+        "fiveTokens": 1086,
+        "completeRank": 2,
+        "minimumPassages": 1
+      },
+      "cargo-4": {
+        "firstSource": "cargo",
+        "firstSpan": [
+          408,
+          2030
+        ],
+        "firstTokens": 350,
+        "fiveTokens": 1018,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "cargo-13": {
+        "firstSource": "cargo",
+        "firstSpan": [
+          2032,
+          2544
+        ],
+        "firstTokens": 106,
+        "fiveTokens": 1172,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "cargo-17": {
+        "firstSource": "cargo",
+        "firstSpan": [
+          8321,
+          11458
+        ],
+        "firstTokens": 685,
+        "fiveTokens": 1170,
+        "completeRank": 2,
+        "minimumPassages": 1
+      },
+      "cargo-20": {
+        "firstSource": "cargo",
+        "firstSpan": [
+          3106,
+          3593
+        ],
+        "firstTokens": 97,
+        "fiveTokens": 486,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "cargo-24": {
+        "firstSource": "cargo",
+        "firstSpan": [
+          14048,
+          14832
+        ],
+        "firstTokens": 162,
+        "fiveTokens": 1146,
+        "completeRank": 3,
+        "minimumPassages": 1
+      },
+      "cargo-28": {
+        "firstSource": "cargo",
+        "firstSpan": [
+          4005,
+          4291
+        ],
+        "firstTokens": 67,
+        "fiveTokens": 552,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "cargo-32": {
+        "firstSource": "cargo",
+        "firstSpan": [
+          4293,
+          6250
+        ],
+        "firstTokens": 421,
+        "fiveTokens": 1459,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "cargo-46": {
+        "firstSource": "cargo",
+        "firstSpan": [
+          6252,
+          6731
+        ],
+        "firstTokens": 112,
+        "fiveTokens": 1212,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "cargo-49": {
+        "firstSource": "cargo",
+        "firstSpan": [
+          6733,
+          7600
+        ],
+        "firstTokens": 199,
+        "fiveTokens": 796,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "cargo-53": {
+        "firstSource": "cargo",
+        "firstSpan": [
+          7602,
+          8319
+        ],
+        "firstTokens": 159,
+        "fiveTokens": 1135,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "cargo-59": {
+        "firstSource": "cargo",
+        "firstSpan": [
+          8321,
+          11458
+        ],
+        "firstTokens": 685,
+        "fiveTokens": 1958,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "cargo-67": {
+        "firstSource": "cargo",
+        "firstSpan": [
+          11460,
+          14046
+        ],
+        "firstTokens": 565,
+        "fiveTokens": 1251,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "cargo-76": {
+        "firstSource": "cargo",
+        "firstSpan": [
+          14048,
+          14832
+        ],
+        "firstTokens": 162,
+        "fiveTokens": 1479,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "vue-1": {
+        "firstSource": "vue",
+        "firstSpan": [
+          60,
+          736
+        ],
+        "firstTokens": 163,
+        "fiveTokens": 500,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "vue-4": {
+        "firstSource": "vue",
+        "firstSpan": [
+          738,
+          2022
+        ],
+        "firstTokens": 317,
+        "fiveTokens": 1199,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "vue-10": {
+        "firstSource": "vue",
+        "firstSpan": [
+          2024,
+          2968
+        ],
+        "firstTokens": 223,
+        "fiveTokens": 834,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "vue-13": {
+        "firstSource": "vue",
+        "firstSpan": [
+          2970,
+          3138
+        ],
+        "firstTokens": 39,
+        "fiveTokens": 791,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "vue-15": {
+        "firstSource": "vue",
+        "firstSpan": [
+          3140,
+          3498
+        ],
+        "firstTokens": 92,
+        "fiveTokens": 1137,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "vue-17": {
+        "firstSource": "vue",
+        "firstSpan": [
+          3500,
+          3986
+        ],
+        "firstTokens": 111,
+        "fiveTokens": 750,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "vue-20": {
+        "firstSource": "vue",
+        "firstSpan": [
+          3988,
+          5370
+        ],
+        "firstTokens": 289,
+        "fiveTokens": 1037,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "vue-25": {
+        "firstSource": "vue",
+        "firstSpan": [
+          5372,
+          6863
+        ],
+        "firstTokens": 328,
+        "fiveTokens": 1051,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "vue-30": {
+        "firstSource": "vue",
+        "firstSpan": [
+          6865,
+          7645
+        ],
+        "firstTokens": 150,
+        "fiveTokens": 1041,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "vue-38": {
+        "firstSource": "vue",
+        "firstSpan": [
+          8170,
+          9079
+        ],
+        "firstTokens": 173,
+        "fiveTokens": 1079,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "vue-42": {
+        "firstSource": "vue",
+        "firstSpan": [
+          9081,
+          9873
+        ],
+        "firstTokens": 159,
+        "fiveTokens": 1089,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "poetry-2": {
+        "firstSource": "poetry",
+        "firstSpan": [
+          99,
+          1233
+        ],
+        "firstTokens": 241,
+        "fiveTokens": 1152,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "poetry-7": {
+        "firstSource": "poetry",
+        "firstSpan": [
+          1235,
+          2029
+        ],
+        "firstTokens": 177,
+        "fiveTokens": 1974,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "poetry-11": {
+        "firstSource": "poetry",
+        "firstSpan": [
+          2031,
+          2461
+        ],
+        "firstTokens": 89,
+        "fiveTokens": 972,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "poetry-13": {
+        "firstSource": "poetry",
+        "firstSpan": [
+          7610,
+          9228
+        ],
+        "firstTokens": 387,
+        "fiveTokens": 1208,
+        "completeRank": 5,
+        "minimumPassages": 1
+      },
+      "poetry-20": {
+        "firstSource": "poetry",
+        "firstSpan": [
+          3984,
+          6649
+        ],
+        "firstTokens": 631,
+        "fiveTokens": 2825,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "poetry-39": {
+        "firstSource": "poetry",
+        "firstSpan": [
+          6651,
+          6871
+        ],
+        "firstTokens": 59,
+        "fiveTokens": 2224,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "poetry-41": {
+        "firstSource": "poetry",
+        "firstSpan": [
+          6873,
+          7608
+        ],
+        "firstTokens": 148,
+        "fiveTokens": 2027,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "poetry-47": {
+        "firstSource": "poetry",
+        "firstSpan": [
+          7610,
+          9228
+        ],
+        "firstTokens": 387,
+        "fiveTokens": 1211,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "poetry-56": {
+        "firstSource": "poetry",
+        "firstSpan": [
+          9231,
+          9563
+        ],
+        "firstTokens": 77,
+        "fiveTokens": 972,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "poetry-70": {
+        "firstSource": "poetry",
+        "firstSpan": [
+          11385,
+          16602
+        ],
+        "firstTokens": 1390,
+        "fiveTokens": 2192,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "ruff-1": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          7,
+          1174
+        ],
+        "firstTokens": 285,
+        "fiveTokens": 751,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "ruff-5": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          1176,
+          1975
+        ],
+        "firstTokens": 176,
+        "fiveTokens": 2987,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "ruff-10": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          1977,
+          6580
+        ],
+        "firstTokens": 1382,
+        "fiveTokens": 3278,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "ruff-17": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          6582,
+          8313
+        ],
+        "firstTokens": 437,
+        "fiveTokens": 3278,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "ruff-24": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          8315,
+          9184
+        ],
+        "firstTokens": 197,
+        "fiveTokens": 3203,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "ruff-28": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          14561,
+          15647
+        ],
+        "firstTokens": 294,
+        "fiveTokens": 3099,
+        "completeRank": 2,
+        "minimumPassages": 1
+      },
+      "ruff-33": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          12706,
+          12908
+        ],
+        "firstTokens": 53,
+        "fiveTokens": 1705,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "ruff-35": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          12910,
+          13274
+        ],
+        "firstTokens": 96,
+        "fiveTokens": 3203,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "ruff-39": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          13276,
+          14340
+        ],
+        "firstTokens": 321,
+        "fiveTokens": 1749,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "ruff-45": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          14342,
+          14559
+        ],
+        "firstTokens": 56,
+        "fiveTokens": 2213,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "ruff-47": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          14561,
+          15647
+        ],
+        "firstTokens": 294,
+        "fiveTokens": 3367,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "ruff-56": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          15649,
+          20722
+        ],
+        "firstTokens": 1318,
+        "fiveTokens": 2029,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "ruff-86": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          20724,
+          21486
+        ],
+        "firstTokens": 219,
+        "fiveTokens": 1093,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "ruff-91": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          21488,
+          23809
+        ],
+        "firstTokens": 607,
+        "fiveTokens": 3410,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "ruff-109": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          24085,
+          24247
+        ],
+        "firstTokens": 40,
+        "fiveTokens": 640,
+        "completeRank": 2,
+        "minimumPassages": 1
+      },
+      "ruff-111": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          24085,
+          24247
+        ],
+        "firstTokens": 40,
+        "fiveTokens": 1655,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "ruff-113": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          24871,
+          25670
+        ],
+        "firstTokens": 209,
+        "fiveTokens": 663,
+        "completeRank": 2,
+        "minimumPassages": 1
+      },
+      "ruff-120": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          24871,
+          25670
+        ],
+        "firstTokens": 209,
+        "fiveTokens": 1808,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "ruff-126": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          25672,
+          26355
+        ],
+        "firstTokens": 171,
+        "fiveTokens": 3042,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "ruff-129": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          26357,
+          27482
+        ],
+        "firstTokens": 310,
+        "fiveTokens": 1020,
+        "completeRank": 1,
+        "minimumPassages": 1
+      },
+      "ruff-133": {
+        "firstSource": "ruff",
+        "firstSpan": [
+          27484,
+          28972
+        ],
+        "firstTokens": 358,
+        "fiveTokens": 1220,
+        "completeRank": 1,
+        "minimumPassages": 1
+      }
+    }
+  }
+}

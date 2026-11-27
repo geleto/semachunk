@@ -1,0 +1,14 @@
+{
+  "methods": {
+    "all-five": "ordinary/unlimited/0.1",
+    "all-firstF1": "sections/256/0.1",
+    "blocks-five": "ordinary/unlimited/blocks",
+    "blocks-firstF1": "sections/256/blocks",
+    "semantic-five": "ordinary/unlimited/0.1",
+    "semantic-firstF1": "sections/256/0.1"
+  },
+  "fold": "development",
+  "extensionSHA256": "59fd5f8128fa3fd579d95b3a3c5026352345a72a6a339ed8b600889590d3cc62",
+  "protocolSHA256": "457bd6d1cf99b17191536ae789a053fb759af59177e413aa9f7b15810268fec3",
+  "editionSHA256": "72636e684b341bfa68f38958b8239a5ca763eae9e975f816db410dd162f4ad1a"
+}

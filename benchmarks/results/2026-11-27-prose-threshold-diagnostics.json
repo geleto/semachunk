@@ -1,0 +1,824 @@
+{
+  "development": {
+    "papers": {
+      "questions": 179,
+      "docs": 64,
+      "perQuestionOracle": {
+        "ordinary/256/": {
+          "someThresholdCompleteFive": 138,
+          "everyThresholdCompleteFive": 38,
+          "blocksMissSomeSemanticWins": 10,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "ordinary/512/": {
+          "someThresholdCompleteFive": 150,
+          "everyThresholdCompleteFive": 35,
+          "blocksMissSomeSemanticWins": 13,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "ordinary/unlimited/": {
+          "someThresholdCompleteFive": 179,
+          "everyThresholdCompleteFive": 34,
+          "blocksMissSomeSemanticWins": 0,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/256/": {
+          "someThresholdCompleteFive": 133,
+          "everyThresholdCompleteFive": 38,
+          "blocksMissSomeSemanticWins": 10,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/512/": {
+          "someThresholdCompleteFive": 142,
+          "everyThresholdCompleteFive": 36,
+          "blocksMissSomeSemanticWins": 13,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/unlimited/": {
+          "someThresholdCompleteFive": 148,
+          "everyThresholdCompleteFive": 34,
+          "blocksMissSomeSemanticWins": 17,
+          "blocksWinAllSemanticMiss": 0
+        }
+      },
+      "documentsIdenticalToBlocks": {
+        "ordinary/256/-1": 64,
+        "ordinary/256/0": 64,
+        "ordinary/256/0.05": 60,
+        "sections/256/-1": 64,
+        "sections/256/0": 64,
+        "sections/256/0.05": 60,
+        "ordinary/512/-1": 64,
+        "ordinary/512/0": 64,
+        "ordinary/512/0.05": 60,
+        "sections/512/-1": 64,
+        "sections/512/0": 64,
+        "sections/512/0.05": 60,
+        "ordinary/unlimited/-1": 64,
+        "ordinary/unlimited/0": 64,
+        "ordinary/unlimited/0.05": 60,
+        "sections/unlimited/-1": 64,
+        "sections/unlimited/0": 64,
+        "sections/unlimited/0.05": 60
+      },
+      "correctedLabelsAtFixedRanking": {
+        "identicalQueryAndSource": 9,
+        "oldMissNowHit1": 2,
+        "oldHitNowMiss1": 0,
+        "oldMissNowHit5": 3,
+        "oldHitNowMiss5": 0
+      },
+      "heading256Cuts": {
+        "0.05": {
+          "gainedCompleteAtFive": 0,
+          "lostCompleteAtFive": 0,
+          "lossesWithCompletePassageElsewhere": 0,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 0,
+          "lossesWithSomeEvidenceInFive": 0
+        },
+        "0.1": {
+          "gainedCompleteAtFive": 0,
+          "lostCompleteAtFive": 0,
+          "lossesWithCompletePassageElsewhere": 0,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 0,
+          "lossesWithSomeEvidenceInFive": 0
+        },
+        "0.4": {
+          "gainedCompleteAtFive": 3,
+          "lostCompleteAtFive": 54,
+          "lossesWithCompletePassageElsewhere": 32,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 16,
+          "lossesWithSomeEvidenceInFive": 21
+        }
+      },
+      "unchangedCitationProseUnits": {
+        "one": {
+          "questions": 84,
+          "methods": {
+            "blocks": {
+              "completeFirst": 19,
+              "completeFive": 64
+            },
+            "0.05": {
+              "completeFirst": 19,
+              "completeFive": 64
+            },
+            "0.1": {
+              "completeFirst": 19,
+              "completeFive": 64
+            },
+            "0.4": {
+              "completeFirst": 19,
+              "completeFive": 43
+            }
+          }
+        },
+        "twoOrMore": {
+          "questions": 85,
+          "methods": {
+            "blocks": {
+              "completeFirst": 23,
+              "completeFive": 51
+            },
+            "0.05": {
+              "completeFirst": 23,
+              "completeFive": 51
+            },
+            "0.1": {
+              "completeFirst": 23,
+              "completeFive": 51
+            },
+            "0.4": {
+              "completeFirst": 8,
+              "completeFive": 27
+            }
+          }
+        }
+      }
+    },
+    "faq": {
+      "questions": 22,
+      "docs": 3,
+      "perQuestionOracle": {
+        "ordinary/256/": {
+          "someThresholdCompleteFive": 22,
+          "everyThresholdCompleteFive": 5,
+          "blocksMissSomeSemanticWins": 1,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "ordinary/512/": {
+          "someThresholdCompleteFive": 22,
+          "everyThresholdCompleteFive": 5,
+          "blocksMissSomeSemanticWins": 0,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "ordinary/unlimited/": {
+          "someThresholdCompleteFive": 22,
+          "everyThresholdCompleteFive": 5,
+          "blocksMissSomeSemanticWins": 0,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/256/": {
+          "someThresholdCompleteFive": 22,
+          "everyThresholdCompleteFive": 5,
+          "blocksMissSomeSemanticWins": 0,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/512/": {
+          "someThresholdCompleteFive": 22,
+          "everyThresholdCompleteFive": 5,
+          "blocksMissSomeSemanticWins": 0,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/unlimited/": {
+          "someThresholdCompleteFive": 22,
+          "everyThresholdCompleteFive": 5,
+          "blocksMissSomeSemanticWins": 0,
+          "blocksWinAllSemanticMiss": 0
+        }
+      },
+      "documentsIdenticalToBlocks": {
+        "ordinary/256/-1": 3,
+        "ordinary/256/0": 3,
+        "ordinary/256/0.05": 3,
+        "sections/256/-1": 3,
+        "sections/256/0": 3,
+        "sections/256/0.05": 3,
+        "ordinary/512/-1": 3,
+        "ordinary/512/0": 3,
+        "ordinary/512/0.05": 3,
+        "sections/512/-1": 3,
+        "sections/512/0": 3,
+        "sections/512/0.05": 3,
+        "ordinary/unlimited/-1": 3,
+        "ordinary/unlimited/0": 3,
+        "ordinary/unlimited/0.05": 3,
+        "sections/unlimited/-1": 3,
+        "sections/unlimited/0": 3,
+        "sections/unlimited/0.05": 3
+      },
+      "correctedLabelsAtFixedRanking": {
+        "identicalQueryAndSource": 1,
+        "oldMissNowHit1": 0,
+        "oldHitNowMiss1": 0,
+        "oldMissNowHit5": 0,
+        "oldHitNowMiss5": 0
+      },
+      "heading256Cuts": {
+        "0.05": {
+          "gainedCompleteAtFive": 0,
+          "lostCompleteAtFive": 0,
+          "lossesWithCompletePassageElsewhere": 0,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 0,
+          "lossesWithSomeEvidenceInFive": 0
+        },
+        "0.1": {
+          "gainedCompleteAtFive": 0,
+          "lostCompleteAtFive": 0,
+          "lossesWithCompletePassageElsewhere": 0,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 0,
+          "lossesWithSomeEvidenceInFive": 0
+        },
+        "0.4": {
+          "gainedCompleteAtFive": 0,
+          "lostCompleteAtFive": 5,
+          "lossesWithCompletePassageElsewhere": 1,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 3,
+          "lossesWithSomeEvidenceInFive": 4
+        }
+      }
+    },
+    "government": {
+      "questions": 347,
+      "docs": 83,
+      "perQuestionOracle": {
+        "ordinary/256/": {
+          "someThresholdCompleteFive": 330,
+          "everyThresholdCompleteFive": 53,
+          "blocksMissSomeSemanticWins": 3,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "ordinary/512/": {
+          "someThresholdCompleteFive": 333,
+          "everyThresholdCompleteFive": 53,
+          "blocksMissSomeSemanticWins": 2,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "ordinary/unlimited/": {
+          "someThresholdCompleteFive": 347,
+          "everyThresholdCompleteFive": 53,
+          "blocksMissSomeSemanticWins": 2,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/256/": {
+          "someThresholdCompleteFive": 326,
+          "everyThresholdCompleteFive": 192,
+          "blocksMissSomeSemanticWins": 4,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/512/": {
+          "someThresholdCompleteFive": 326,
+          "everyThresholdCompleteFive": 192,
+          "blocksMissSomeSemanticWins": 6,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/unlimited/": {
+          "someThresholdCompleteFive": 326,
+          "everyThresholdCompleteFive": 193,
+          "blocksMissSomeSemanticWins": 6,
+          "blocksWinAllSemanticMiss": 0
+        }
+      },
+      "documentsIdenticalToBlocks": {
+        "ordinary/256/-1": 83,
+        "ordinary/256/0": 83,
+        "ordinary/256/0.05": 83,
+        "sections/256/-1": 83,
+        "sections/256/0": 83,
+        "sections/256/0.05": 83,
+        "ordinary/512/-1": 83,
+        "ordinary/512/0": 83,
+        "ordinary/512/0.05": 81,
+        "sections/512/-1": 83,
+        "sections/512/0": 83,
+        "sections/512/0.05": 82,
+        "ordinary/unlimited/-1": 83,
+        "ordinary/unlimited/0": 83,
+        "ordinary/unlimited/0.05": 80,
+        "sections/unlimited/-1": 83,
+        "sections/unlimited/0": 83,
+        "sections/unlimited/0.05": 82
+      },
+      "correctedLabelsAtFixedRanking": {
+        "identicalQueryAndSource": 7,
+        "oldMissNowHit1": 4,
+        "oldHitNowMiss1": 3,
+        "oldMissNowHit5": 0,
+        "oldHitNowMiss5": 0
+      },
+      "heading256Cuts": {
+        "0.05": {
+          "gainedCompleteAtFive": 0,
+          "lostCompleteAtFive": 0,
+          "lossesWithCompletePassageElsewhere": 0,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 0,
+          "lossesWithSomeEvidenceInFive": 0
+        },
+        "0.1": {
+          "gainedCompleteAtFive": 1,
+          "lostCompleteAtFive": 1,
+          "lossesWithCompletePassageElsewhere": 1,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 0,
+          "lossesWithSomeEvidenceInFive": 0
+        },
+        "0.4": {
+          "gainedCompleteAtFive": 1,
+          "lostCompleteAtFive": 52,
+          "lossesWithCompletePassageElsewhere": 19,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 33,
+          "lossesWithSomeEvidenceInFive": 17
+        }
+      }
+    },
+    "finance": {
+      "questions": 14,
+      "docs": 9,
+      "perQuestionOracle": {
+        "ordinary/256/": {
+          "someThresholdCompleteFive": 4,
+          "everyThresholdCompleteFive": 1,
+          "blocksMissSomeSemanticWins": 0,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "ordinary/512/": {
+          "someThresholdCompleteFive": 6,
+          "everyThresholdCompleteFive": 1,
+          "blocksMissSomeSemanticWins": 1,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "ordinary/unlimited/": {
+          "someThresholdCompleteFive": 11,
+          "everyThresholdCompleteFive": 1,
+          "blocksMissSomeSemanticWins": 2,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/256/": {
+          "someThresholdCompleteFive": 3,
+          "everyThresholdCompleteFive": 1,
+          "blocksMissSomeSemanticWins": 0,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/512/": {
+          "someThresholdCompleteFive": 4,
+          "everyThresholdCompleteFive": 1,
+          "blocksMissSomeSemanticWins": 1,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/unlimited/": {
+          "someThresholdCompleteFive": 6,
+          "everyThresholdCompleteFive": 1,
+          "blocksMissSomeSemanticWins": 1,
+          "blocksWinAllSemanticMiss": 0
+        }
+      },
+      "documentsIdenticalToBlocks": {
+        "ordinary/256/-1": 9,
+        "ordinary/256/0": 6,
+        "ordinary/256/0.05": 6,
+        "sections/256/-1": 9,
+        "sections/256/0": 6,
+        "sections/256/0.05": 6,
+        "ordinary/512/-1": 9,
+        "ordinary/512/0": 6,
+        "ordinary/512/0.05": 6,
+        "sections/512/-1": 9,
+        "sections/512/0": 6,
+        "sections/512/0.05": 6,
+        "ordinary/unlimited/-1": 9,
+        "ordinary/unlimited/0": 6,
+        "ordinary/unlimited/0.05": 6,
+        "sections/unlimited/-1": 9,
+        "sections/unlimited/0": 6,
+        "sections/unlimited/0.05": 6
+      },
+      "correctedLabelsAtFixedRanking": {},
+      "heading256Cuts": {
+        "0.05": {
+          "gainedCompleteAtFive": 0,
+          "lostCompleteAtFive": 0,
+          "lossesWithCompletePassageElsewhere": 0,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 0,
+          "lossesWithSomeEvidenceInFive": 0
+        },
+        "0.1": {
+          "gainedCompleteAtFive": 0,
+          "lostCompleteAtFive": 0,
+          "lossesWithCompletePassageElsewhere": 0,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 0,
+          "lossesWithSomeEvidenceInFive": 0
+        },
+        "0.4": {
+          "gainedCompleteAtFive": 0,
+          "lostCompleteAtFive": 1,
+          "lossesWithCompletePassageElsewhere": 0,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 1,
+          "lossesWithSomeEvidenceInFive": 1
+        }
+      }
+    }
+  },
+  "confirmation": {
+    "papers": {
+      "questions": 190,
+      "docs": 64,
+      "perQuestionOracle": {
+        "ordinary/256/": {
+          "someThresholdCompleteFive": 135,
+          "everyThresholdCompleteFive": 35,
+          "blocksMissSomeSemanticWins": 12,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "ordinary/512/": {
+          "someThresholdCompleteFive": 167,
+          "everyThresholdCompleteFive": 31,
+          "blocksMissSomeSemanticWins": 9,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "ordinary/unlimited/": {
+          "someThresholdCompleteFive": 190,
+          "everyThresholdCompleteFive": 29,
+          "blocksMissSomeSemanticWins": 0,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/256/": {
+          "someThresholdCompleteFive": 135,
+          "everyThresholdCompleteFive": 36,
+          "blocksMissSomeSemanticWins": 13,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/512/": {
+          "someThresholdCompleteFive": 160,
+          "everyThresholdCompleteFive": 32,
+          "blocksMissSomeSemanticWins": 10,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/unlimited/": {
+          "someThresholdCompleteFive": 168,
+          "everyThresholdCompleteFive": 31,
+          "blocksMissSomeSemanticWins": 12,
+          "blocksWinAllSemanticMiss": 0
+        }
+      },
+      "documentsIdenticalToBlocks": {
+        "ordinary/256/-1": 64,
+        "ordinary/256/0": 64,
+        "ordinary/256/0.05": 59,
+        "sections/256/-1": 64,
+        "sections/256/0": 64,
+        "sections/256/0.05": 59,
+        "ordinary/512/-1": 64,
+        "ordinary/512/0": 64,
+        "ordinary/512/0.05": 59,
+        "sections/512/-1": 64,
+        "sections/512/0": 64,
+        "sections/512/0.05": 59,
+        "ordinary/unlimited/-1": 64,
+        "ordinary/unlimited/0": 64,
+        "ordinary/unlimited/0.05": 59,
+        "sections/unlimited/-1": 64,
+        "sections/unlimited/0": 64,
+        "sections/unlimited/0.05": 59
+      },
+      "correctedLabelsAtFixedRanking": {
+        "identicalQueryAndSource": 7,
+        "oldMissNowHit1": 1,
+        "oldHitNowMiss1": 0,
+        "oldMissNowHit5": 2,
+        "oldHitNowMiss5": 0
+      },
+      "heading256Cuts": {
+        "0.05": {
+          "gainedCompleteAtFive": 0,
+          "lostCompleteAtFive": 0,
+          "lossesWithCompletePassageElsewhere": 0,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 0,
+          "lossesWithSomeEvidenceInFive": 0
+        },
+        "0.1": {
+          "gainedCompleteAtFive": 0,
+          "lostCompleteAtFive": 0,
+          "lossesWithCompletePassageElsewhere": 0,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 0,
+          "lossesWithSomeEvidenceInFive": 0
+        },
+        "0.4": {
+          "gainedCompleteAtFive": 6,
+          "lostCompleteAtFive": 43,
+          "lossesWithCompletePassageElsewhere": 22,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 18,
+          "lossesWithSomeEvidenceInFive": 21
+        }
+      },
+      "unchangedCitationProseUnits": {
+        "one": {
+          "questions": 101,
+          "methods": {
+            "blocks": {
+              "completeFirst": 34,
+              "completeFive": 68
+            },
+            "0.05": {
+              "completeFirst": 34,
+              "completeFive": 68
+            },
+            "0.1": {
+              "completeFirst": 33,
+              "completeFive": 68
+            },
+            "0.4": {
+              "completeFirst": 20,
+              "completeFive": 54
+            }
+          }
+        },
+        "twoOrMore": {
+          "questions": 79,
+          "methods": {
+            "blocks": {
+              "completeFirst": 23,
+              "completeFive": 46
+            },
+            "0.05": {
+              "completeFirst": 23,
+              "completeFive": 46
+            },
+            "0.1": {
+              "completeFirst": 23,
+              "completeFive": 46
+            },
+            "0.4": {
+              "completeFirst": 7,
+              "completeFive": 27
+            }
+          }
+        }
+      }
+    },
+    "faq": {
+      "questions": 76,
+      "docs": 6,
+      "perQuestionOracle": {
+        "ordinary/256/": {
+          "someThresholdCompleteFive": 74,
+          "everyThresholdCompleteFive": 36,
+          "blocksMissSomeSemanticWins": 0,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "ordinary/512/": {
+          "someThresholdCompleteFive": 75,
+          "everyThresholdCompleteFive": 35,
+          "blocksMissSomeSemanticWins": 0,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "ordinary/unlimited/": {
+          "someThresholdCompleteFive": 76,
+          "everyThresholdCompleteFive": 35,
+          "blocksMissSomeSemanticWins": 0,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/256/": {
+          "someThresholdCompleteFive": 74,
+          "everyThresholdCompleteFive": 36,
+          "blocksMissSomeSemanticWins": 0,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/512/": {
+          "someThresholdCompleteFive": 75,
+          "everyThresholdCompleteFive": 36,
+          "blocksMissSomeSemanticWins": 0,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/unlimited/": {
+          "someThresholdCompleteFive": 75,
+          "everyThresholdCompleteFive": 36,
+          "blocksMissSomeSemanticWins": 0,
+          "blocksWinAllSemanticMiss": 0
+        }
+      },
+      "documentsIdenticalToBlocks": {
+        "ordinary/256/-1": 6,
+        "ordinary/256/0": 6,
+        "ordinary/256/0.05": 5,
+        "sections/256/-1": 6,
+        "sections/256/0": 6,
+        "sections/256/0.05": 5,
+        "ordinary/512/-1": 6,
+        "ordinary/512/0": 6,
+        "ordinary/512/0.05": 5,
+        "sections/512/-1": 6,
+        "sections/512/0": 6,
+        "sections/512/0.05": 5,
+        "ordinary/unlimited/-1": 6,
+        "ordinary/unlimited/0": 6,
+        "ordinary/unlimited/0.05": 5,
+        "sections/unlimited/-1": 6,
+        "sections/unlimited/0": 6,
+        "sections/unlimited/0.05": 5
+      },
+      "correctedLabelsAtFixedRanking": {
+        "identicalQueryAndSource": 2,
+        "oldMissNowHit1": 1,
+        "oldHitNowMiss1": 0,
+        "oldMissNowHit5": 0,
+        "oldHitNowMiss5": 0
+      },
+      "heading256Cuts": {
+        "0.05": {
+          "gainedCompleteAtFive": 0,
+          "lostCompleteAtFive": 0,
+          "lossesWithCompletePassageElsewhere": 0,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 0,
+          "lossesWithSomeEvidenceInFive": 0
+        },
+        "0.1": {
+          "gainedCompleteAtFive": 0,
+          "lostCompleteAtFive": 1,
+          "lossesWithCompletePassageElsewhere": 0,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 1,
+          "lossesWithSomeEvidenceInFive": 1
+        },
+        "0.4": {
+          "gainedCompleteAtFive": 0,
+          "lostCompleteAtFive": 18,
+          "lossesWithCompletePassageElsewhere": 1,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 17,
+          "lossesWithSomeEvidenceInFive": 17
+        }
+      }
+    },
+    "government": {
+      "questions": 449,
+      "docs": 104,
+      "perQuestionOracle": {
+        "ordinary/256/": {
+          "someThresholdCompleteFive": 398,
+          "everyThresholdCompleteFive": 68,
+          "blocksMissSomeSemanticWins": 12,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "ordinary/512/": {
+          "someThresholdCompleteFive": 424,
+          "everyThresholdCompleteFive": 67,
+          "blocksMissSomeSemanticWins": 7,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "ordinary/unlimited/": {
+          "someThresholdCompleteFive": 440,
+          "everyThresholdCompleteFive": 59,
+          "blocksMissSomeSemanticWins": 5,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/256/": {
+          "someThresholdCompleteFive": 386,
+          "everyThresholdCompleteFive": 160,
+          "blocksMissSomeSemanticWins": 6,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/512/": {
+          "someThresholdCompleteFive": 395,
+          "everyThresholdCompleteFive": 160,
+          "blocksMissSomeSemanticWins": 5,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/unlimited/": {
+          "someThresholdCompleteFive": 396,
+          "everyThresholdCompleteFive": 160,
+          "blocksMissSomeSemanticWins": 5,
+          "blocksWinAllSemanticMiss": 0
+        }
+      },
+      "documentsIdenticalToBlocks": {
+        "ordinary/256/-1": 104,
+        "ordinary/256/0": 104,
+        "ordinary/256/0.05": 95,
+        "sections/256/-1": 104,
+        "sections/256/0": 104,
+        "sections/256/0.05": 95,
+        "ordinary/512/-1": 104,
+        "ordinary/512/0": 104,
+        "ordinary/512/0.05": 95,
+        "sections/512/-1": 104,
+        "sections/512/0": 104,
+        "sections/512/0.05": 95,
+        "ordinary/unlimited/-1": 104,
+        "ordinary/unlimited/0": 104,
+        "ordinary/unlimited/0.05": 94,
+        "sections/unlimited/-1": 104,
+        "sections/unlimited/0": 104,
+        "sections/unlimited/0.05": 95
+      },
+      "correctedLabelsAtFixedRanking": {
+        "identicalQueryAndSource": 16,
+        "oldMissNowHit1": 2,
+        "oldHitNowMiss1": 9,
+        "oldMissNowHit5": 0,
+        "oldHitNowMiss5": 8
+      },
+      "heading256Cuts": {
+        "0.05": {
+          "gainedCompleteAtFive": 1,
+          "lostCompleteAtFive": 0,
+          "lossesWithCompletePassageElsewhere": 0,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 0,
+          "lossesWithSomeEvidenceInFive": 0
+        },
+        "0.1": {
+          "gainedCompleteAtFive": 1,
+          "lostCompleteAtFive": 7,
+          "lossesWithCompletePassageElsewhere": 0,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 7,
+          "lossesWithSomeEvidenceInFive": 7
+        },
+        "0.4": {
+          "gainedCompleteAtFive": 3,
+          "lostCompleteAtFive": 115,
+          "lossesWithCompletePassageElsewhere": 23,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 85,
+          "lossesWithSomeEvidenceInFive": 84
+        }
+      }
+    },
+    "finance": {
+      "questions": 25,
+      "docs": 13,
+      "perQuestionOracle": {
+        "ordinary/256/": {
+          "someThresholdCompleteFive": 15,
+          "everyThresholdCompleteFive": 4,
+          "blocksMissSomeSemanticWins": 0,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "ordinary/512/": {
+          "someThresholdCompleteFive": 16,
+          "everyThresholdCompleteFive": 4,
+          "blocksMissSomeSemanticWins": 1,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "ordinary/unlimited/": {
+          "someThresholdCompleteFive": 19,
+          "everyThresholdCompleteFive": 4,
+          "blocksMissSomeSemanticWins": 3,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/256/": {
+          "someThresholdCompleteFive": 15,
+          "everyThresholdCompleteFive": 4,
+          "blocksMissSomeSemanticWins": 0,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/512/": {
+          "someThresholdCompleteFive": 17,
+          "everyThresholdCompleteFive": 4,
+          "blocksMissSomeSemanticWins": 1,
+          "blocksWinAllSemanticMiss": 0
+        },
+        "sections/unlimited/": {
+          "someThresholdCompleteFive": 19,
+          "everyThresholdCompleteFive": 4,
+          "blocksMissSomeSemanticWins": 0,
+          "blocksWinAllSemanticMiss": 0
+        }
+      },
+      "documentsIdenticalToBlocks": {
+        "ordinary/256/-1": 13,
+        "ordinary/256/0": 13,
+        "ordinary/256/0.05": 12,
+        "sections/256/-1": 13,
+        "sections/256/0": 13,
+        "sections/256/0.05": 12,
+        "ordinary/512/-1": 13,
+        "ordinary/512/0": 13,
+        "ordinary/512/0.05": 12,
+        "sections/512/-1": 13,
+        "sections/512/0": 13,
+        "sections/512/0.05": 12,
+        "ordinary/unlimited/-1": 13,
+        "ordinary/unlimited/0": 13,
+        "ordinary/unlimited/0.05": 12,
+        "sections/unlimited/-1": 13,
+        "sections/unlimited/0": 13,
+        "sections/unlimited/0.05": 12
+      },
+      "correctedLabelsAtFixedRanking": {
+        "identicalQueryAndSource": 2,
+        "oldMissNowHit1": 1,
+        "oldHitNowMiss1": 0,
+        "oldMissNowHit5": 1,
+        "oldHitNowMiss5": 0
+      },
+      "heading256Cuts": {
+        "0.05": {
+          "gainedCompleteAtFive": 0,
+          "lostCompleteAtFive": 0,
+          "lossesWithCompletePassageElsewhere": 0,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 0,
+          "lossesWithSomeEvidenceInFive": 0
+        },
+        "0.1": {
+          "gainedCompleteAtFive": 0,
+          "lostCompleteAtFive": 0,
+          "lossesWithCompletePassageElsewhere": 0,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 0,
+          "lossesWithSomeEvidenceInFive": 0
+        },
+        "0.4": {
+          "gainedCompleteAtFive": 0,
+          "lostCompleteAtFive": 1,
+          "lossesWithCompletePassageElsewhere": 0,
+          "lossesWhereNoSinglePassageStillCoversEvidence": 1,
+          "lossesWithSomeEvidenceInFive": 1
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,465 @@
+{
+  "counts": {
+    "npm": {
+      "lists": 2,
+      "items": 7,
+      "leadLists": 2
+    },
+    "guide": {
+      "lists": 17,
+      "items": 70,
+      "leadLists": 15
+    },
+    "covenant": {
+      "lists": 2,
+      "items": 10,
+      "leadLists": 2
+    }
+  },
+  "rows": [
+    {
+      "document": "npm",
+      "kind": "item",
+      "question": "What does npm ci do to an existing node_modules directory before installation?",
+      "results": {
+        "item": [
+          1,
+          1,
+          1,
+          93
+        ],
+        "itemReturnList": [
+          1,
+          1,
+          0.3292035398230089,
+          472
+        ],
+        "list": [
+          0,
+          1,
+          0,
+          23
+        ],
+        "itemReturnLeadList": [
+          1,
+          1,
+          0.2995169082125604,
+          528
+        ],
+        "leadList": [
+          0,
+          1,
+          0,
+          23
+        ]
+      }
+    },
+    {
+      "document": "npm",
+      "kind": "multiple items",
+      "question": "What lockfile must a project supply for a clean npm install, and what happens if its dependencies disagree with the manifest?",
+      "results": {
+        "item": [
+          0,
+          1,
+          0,
+          56
+        ],
+        "itemReturnList": [
+          0,
+          1,
+          0,
+          92
+        ],
+        "list": [
+          0,
+          1,
+          0,
+          354
+        ],
+        "itemReturnLeadList": [
+          0,
+          1,
+          0,
+          102
+        ],
+        "leadList": [
+          0,
+          1,
+          0,
+          354
+        ]
+      }
+    },
+    {
+      "document": "npm",
+      "kind": "multiple items",
+      "question": "What scope of installation does npm ci allow, and which manifest and lock files does it write?",
+      "results": {
+        "item": [
+          0,
+          0,
+          0,
+          56
+        ],
+        "itemReturnList": [
+          0,
+          0,
+          0,
+          56
+        ],
+        "list": [
+          1,
+          1,
+          0.554364471669219,
+          472
+        ],
+        "itemReturnLeadList": [
+          0,
+          0,
+          0,
+          56
+        ],
+        "leadList": [
+          1,
+          1,
+          0.5105782792665726,
+          528
+        ]
+      }
+    },
+    {
+      "document": "npm",
+      "kind": "other prose",
+      "question": "How can a project preserve the dependency-tree flags its CI clean install needs across machines?",
+      "results": {
+        "item": [
+          1,
+          1,
+          1,
+          354
+        ],
+        "itemReturnList": [
+          1,
+          1,
+          1,
+          354
+        ],
+        "list": [
+          1,
+          1,
+          1,
+          354
+        ],
+        "itemReturnLeadList": [
+          1,
+          1,
+          1,
+          354
+        ],
+        "leadList": [
+          1,
+          1,
+          1,
+          354
+        ]
+      }
+    },
+    {
+      "document": "guide",
+      "kind": "item",
+      "question": "How can an open-source volunteer help community members who would like to speak at conferences?",
+      "results": {
+        "item": [
+          1,
+          1,
+          1,
+          73
+        ],
+        "itemReturnList": [
+          1,
+          1,
+          0.45625,
+          247
+        ],
+        "list": [
+          1,
+          1,
+          0.45625,
+          247
+        ],
+        "itemReturnLeadList": [
+          1,
+          1,
+          0.4207492795389049,
+          274
+        ],
+        "leadList": [
+          1,
+          1,
+          0.4207492795389049,
+          274
+        ]
+      }
+    },
+    {
+      "document": "guide",
+      "kind": "multiple items",
+      "question": "Which project file explains why the software is useful, and which one specifies what contributions are needed?",
+      "results": {
+        "item": [
+          0,
+          0,
+          0.8611955420466059,
+          425
+        ],
+        "itemReturnList": [
+          1,
+          1,
+          0.6478386167146974,
+          1173
+        ],
+        "list": [
+          1,
+          1,
+          0.6478386167146974,
+          1173
+        ],
+        "itemReturnLeadList": [
+          1,
+          1,
+          0.6478386167146974,
+          1173
+        ],
+        "leadList": [
+          1,
+          1,
+          0.6478386167146974,
+          1173
+        ]
+      }
+    },
+    {
+      "document": "guide",
+      "kind": "multiple items",
+      "question": "What two cleanup activities does the open-source guide suggest for duplicate issues and old open issues?",
+      "results": {
+        "item": [
+          0,
+          1,
+          0.770764119601329,
+          116
+        ],
+        "itemReturnList": [
+          1,
+          1,
+          0.8390022675736961,
+          256
+        ],
+        "list": [
+          1,
+          1,
+          0.8390022675736961,
+          256
+        ],
+        "itemReturnLeadList": [
+          1,
+          1,
+          0.7974137931034483,
+          279
+        ],
+        "leadList": [
+          1,
+          1,
+          0.7974137931034483,
+          279
+        ]
+      }
+    },
+    {
+      "document": "guide",
+      "kind": "heading or lead-in",
+      "question": "Under what contributor interest does the guide group linking duplicate issues and asking clarifying questions on newly opened issues?",
+      "results": {
+        "item": [
+          0,
+          0,
+          0.6068376068376068,
+          71
+        ],
+        "itemReturnList": [
+          0,
+          0,
+          0.6682577565632458,
+          256
+        ],
+        "list": [
+          0,
+          0,
+          0.6682577565632458,
+          256
+        ],
+        "itemReturnLeadList": [
+          1,
+          1,
+          0.7375565610859729,
+          279
+        ],
+        "leadList": [
+          0,
+          1,
+          0,
+          483
+        ]
+      }
+    },
+    {
+      "document": "covenant",
+      "kind": "item",
+      "question": "What must a contributor obtain before publishing someone else's private email or physical address?",
+      "results": {
+        "item": [
+          1,
+          1,
+          1,
+          97
+        ],
+        "itemReturnList": [
+          1,
+          1,
+          0.43792325056433407,
+          346
+        ],
+        "list": [
+          0,
+          0,
+          0,
+          98
+        ],
+        "itemReturnLeadList": [
+          1,
+          1,
+          0.40332640332640335,
+          384
+        ],
+        "leadList": [
+          0,
+          1,
+          0,
+          98
+        ]
+      }
+    },
+    {
+      "document": "covenant",
+      "kind": "multiple items",
+      "question": "How should a community member handle constructive feedback and mistakes that affected other people?",
+      "results": {
+        "item": [
+          0,
+          1,
+          0.5077720207253886,
+          49
+        ],
+        "itemReturnList": [
+          1,
+          1,
+          0.6127659574468085,
+          326
+        ],
+        "list": [
+          1,
+          1,
+          0.6127659574468085,
+          326
+        ],
+        "itemReturnLeadList": [
+          1,
+          1,
+          0.5255474452554745,
+          404
+        ],
+        "leadList": [
+          1,
+          1,
+          0.5255474452554745,
+          404
+        ]
+      }
+    },
+    {
+      "document": "covenant",
+      "kind": "heading or lead-in",
+      "question": "How does the Contributor Covenant classify publishing private addresses, and what permission condition does it give?",
+      "results": {
+        "item": [
+          0,
+          0,
+          0,
+          33
+        ],
+        "itemReturnList": [
+          0,
+          0,
+          0,
+          33
+        ],
+        "list": [
+          0,
+          0,
+          0,
+          33
+        ],
+        "itemReturnLeadList": [
+          0,
+          1,
+          0,
+          33
+        ],
+        "leadList": [
+          0,
+          0,
+          0,
+          33
+        ]
+      }
+    },
+    {
+      "document": "covenant",
+      "kind": "other prose",
+      "question": "During a temporary ban, with whom is public or private interaction forbidden, and what further penalty can a breach trigger?",
+      "results": {
+        "item": [
+          1,
+          1,
+          1,
+          300
+        ],
+        "itemReturnList": [
+          1,
+          1,
+          1,
+          300
+        ],
+        "list": [
+          1,
+          1,
+          1,
+          300
+        ],
+        "itemReturnLeadList": [
+          1,
+          1,
+          1,
+          300
+        ],
+        "leadList": [
+          1,
+          1,
+          1,
+          300
+        ]
+      }
+    }
+  ]
+}

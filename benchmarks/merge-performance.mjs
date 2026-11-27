@@ -27,11 +27,11 @@ for (const [label, root] of Object.entries(roots)) {
 }
 
 const cases = [
-    { sentences: 2048, topicLength: 8, cap: 500 },
-    { sentences: 16384, topicLength: 8, cap: 500 },
-    { sentences: 16384, topicLength: 8, cap: 12 },
-    { sentences: 16384, topicLength: 1, cap: 500 },
-    { sentences: 4096, topicLength: 8, cap: 500, dimensions: 384 },
+    { sentences: 2048, topicLength: 8, maxChunkSize: 500 },
+    { sentences: 16384, topicLength: 8, maxChunkSize: 500 },
+    { sentences: 16384, topicLength: 8, maxChunkSize: 250 },
+    { sentences: 16384, topicLength: 1, maxChunkSize: 500 },
+    { sentences: 4096, topicLength: 8, maxChunkSize: 500, dimensions: 384 },
 ];
 const oneHot = Array.from({ length: 8 }, (_, i) => Float32Array.from({ length: 8 }, (_, j) => Number(i === j)));
 const trials = 7;
@@ -47,9 +47,7 @@ for (const item of cases) {
         return 'Subject ' + topic + ' discusses sample ' + String(i).padStart(5, '0') + '.';
     }).join(' ');
     const options = {
-        chunkingStrategy: 'semantic', maxChunkSize: 500, similarityThreshold: 0.5, combineChunksSimilarityThreshold: 0.5,
-        maxMergesPerPass: item.cap, maxUncappedPasses: 100, candiateMergesPercentageCap: 40,
-        uncappedCandidateMerges: 12, returnEmbedding: true
+        chunkingStrategy: 'semantic-blocks', maxChunkSize: item.maxChunkSize, similarityThreshold: 0.5, returnEmbedding: true
     };
     const scores = {};
     for (let trial = 0; trial <= trials; trial++) {
@@ -82,7 +80,7 @@ for (const item of cases) {
     results.push({ ...item, scores });
     console.log(item, Object.fromEntries(Object.entries(scores).map(([label, s]) => [label, s.medianMs])));
 }
-const report = { startedUTC: now, node: process.version, cpu: cpus()[0].model, platform: process.platform, trials,
+const report = { startedUTC: now, node: process.version, strategy: 'semantic-blocks', cpu: cpus()[0].model, platform: process.platform, trials,
     implementationSHA256: sourceHashes, results };
 mkdirSync(dirname(out), { recursive: true });
 writeFileSync(out, JSON.stringify(report, null, 2) + '\n', { flag: 'wx' });

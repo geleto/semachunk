@@ -1,0 +1,11 @@
+{
+  "methods": {
+    "structural-focus": "head256/base",
+    "structural-five": "blocks256/base",
+    "atoms-focus": "blocks256/atoms/0.5",
+    "atoms-five": "blocks256/atoms/0.5",
+    "semantic-focus": "head256/base",
+    "semantic-five": "blocks256/sentence55/0.5"
+  },
+  "protocolSHA256": "dd6287060f4ac8a84610787660269b004abb91de4989992bc25ae83ff1dcdb09"
+}

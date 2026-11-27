@@ -9,7 +9,6 @@ import { scoreAtBudget } from './markdown-rules.mjs';
 import { contrast, paired, summarizeSemantic } from './markdown-decisions.mjs';
 import { evaluate, prepareDataset } from './markdown-evaluation.mjs';
 import { parseMarkdown } from '../src/markdown.js';
-import { mergeOriginalBoundaries } from '../src/markdown-merge.js';
 import { locateChunks, reciprocalRankFusion, summarizeRetrieval } from './retrieval-baselines.mjs';
 import { bm25Ranker, wordCounts } from './rag.mjs';
 import { flattenCorpus } from './semantic-corpora.mjs';
@@ -309,23 +308,4 @@ test('paired resampling keeps all sizes of a question together', () => {
     const result = paired(repeated([2, 0]), repeated([0, 0]), data);
     assert.deepEqual(result.ci95, [result.deltaPer100, result.deltaPer100]);
     assert.ok(Math.abs(result.deltaPer100 - 100 / 6) < 1e-12);
-});
-
-test('the direct original-boundary implementation matches the measured candidate and its actual scoring inputs', async () => {
-    const source = 'A\n\nB\n\nC\n\nD\n\n---\n\nA\n\nB\n\n# Other\nA\n\nB\n\nC';
-    const units = parseMarkdown(source, { maxChunkSize: Infinity });
-    for (const maxPasses of [0, 1, 5]) for (const calibrate of [false, true]) for (const cap of [1, 500]) {
-        const options = { maxPasses, maxMergesPerPass: cap, maxUncappedPasses: 3, candidateMergesPercentageCap: 40,
-            uncappedCandidateMerges: 12, maxChunkSize: 20, fits: s => s !== 'A\n\nB', cutoff: 0.5 };
-        const batches = [];
-        const embed = texts => { batches.push(texts); return texts.map(s => [1, s.length % 3]); };
-        const expected = await combineMarkdown(source, units, embed, { ...options, method: 'fixed', adaptive: calibrate });
-        const expectedCalls = batches.splice(0);
-        const actual = await mergeOriginalBoundaries(source, units, embed, { ...options, combineChunksSimilarityThreshold: options.cutoff, calibrate });
-        assert.deepEqual(actual.map(u => [u.start, u.end]), expected.map(u => [u.start, u.end]));
-        assert.deepEqual(batches, expectedCalls);
-    }
-    const blocked = await mergeOriginalBoundaries(source, units, assert.fail, { maxPasses: 10, maxUncappedPasses: 10,
-        maxMergesPerPass: 2, candidateMergesPercentageCap: 10, uncappedCandidateMerges: 0, maxChunkSize: 5, combineChunksSimilarityThreshold: 0.5 });
-    assert.deepEqual(blocked.map(u => [u.start, u.end]), units.map(u => [u.start, u.end]));
 });

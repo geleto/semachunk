@@ -1,0 +1,234 @@
+{
+  "psf-2009": {
+    "sourceSHA256": "630901cc3dab091d60883544bca72e46b886e6f9c687cff3df9f211a6212e262",
+    "queries": [
+      [
+        "When would the sponsorship contractor actually receive a commission, and how did the rate change above $300,000?",
+        [
+          [
+            [
+              13,
+              "payable upon receipt of sponsorship monies"
+            ],
+            [
+              13,
+              "15% on any receipts above the $300,000 total"
+            ]
+          ]
+        ]
+      ],
+      [
+        "Why had the new content management system stalled, and when would the board return to it?",
+        [
+          [
+            [
+              117,
+              "A. Kuchling: \"Nothing on MatrixMaxx. I'm blocked due to various internal issues (new servers, preparing for this month's 9.3 release, etc.).\""
+            ],
+            [
+              118,
+              "Further discussion on this topic was deferred to the next Board meeting on 12 October 2009."
+            ]
+          ]
+        ]
+      ],
+      [
+        "What was the disposition of the third-quarter community award nominations?",
+        [
+          [
+            [
+              135,
+              "10 PSF Community Award Nominations for 2009 - 3rd Quarter"
+            ],
+            [
+              136,
+              "The Board postponed this agenda item until next months board meeting."
+            ]
+          ]
+        ]
+      ],
+      [
+        "What obstacle delayed sending out the monthly treasurer's report, and who was going to provide it?",
+        [
+          [
+            [
+              138,
+              "The monthly Treasurer's Report will be provided to board members by K. Kaiser as soon as video card issues are resolved."
+            ]
+          ]
+        ]
+      ]
+    ]
+  },
+  "psf-2012": {
+    "sourceSHA256": "1541821d8043825e473901beb23f2c447100d3b613268444284be0185c714b74",
+    "queries": [
+      [
+        "Who can sign contributor agreements, and who signs a contract for an approved project if the board gives no special instructions?",
+        [
+          [
+            [
+              167,
+              "RESOLVED, that the PSF secretary be authorized to sign contributor agreements on behalf of the PSF."
+            ],
+            [
+              169,
+              "RESOLVED, that given no specific instructions on who is to sign contracts required to implement projects approved by the Board of Directors, the Chairman of the PSF is authorized to sign such contracts on behalf of the PSF."
+            ]
+          ]
+        ]
+      ],
+      [
+        "How much did the foundation agree to contribute to the New Zealand conference, and how did the directors vote?",
+        [
+          [
+            [
+              172,
+              "RESOLVED, that the PSF provide NZD 1,000 for the Kiwi PyCon 2012 Conference to be held in New Zealand."
+            ],
+            [
+              173,
+              "Approved, 6-0-0."
+            ]
+          ]
+        ]
+      ],
+      [
+        "What increase did Outreach and Education seek, and why was the decision put off?",
+        [
+          [
+            [
+              175,
+              "Board members discussed and later withdrew a motion to increase the annual budget of the Outreach and Education Committee from the 2011 budget of $5,000 to $10,000 for 2012."
+            ],
+            [
+              176,
+              "However, this motion was temporarily withdrawn due primarily to a need to first finalize the books for PyCon US 2012."
+            ]
+          ]
+        ]
+      ],
+      [
+        "Whom did the board hire to manage PyCon, in what role, and what was the result of the vote?",
+        [
+          [
+            [
+              180,
+              "RESOLVED, that the Foundation hire Ewa Jodlowska as \"PSF Event Coordinator\" as an employee and officer of the foundation focused on the continued management and success of PyCon, at a salary agreed to between herself and the board of directors."
+            ],
+            [
+              181,
+              "Approved, 6-0-0."
+            ]
+          ]
+        ]
+      ]
+    ]
+  },
+  "fed-2020": {
+    "sourceSHA256": "7b9536decd8526d71ea1e95c7c21e3d3199bb7f594fc10277f72d5c1756fd600",
+    "queries": [
+      [
+        "What target range did the dissenting voter favor, and did she also object to the measures supporting credit markets?",
+        [
+          [
+            [
+              117,
+              "President Mester was fully supportive of all of the actions taken to promote the smooth functioning of markets and the flow of credit to households and businesses but voted against the FOMC action because she preferred to reduce the target range for the federal funds rate to 1/2 to 3/4 percent at this meeting."
+            ]
+          ]
+        ]
+      ],
+      [
+        "How did the dollar swap facility's pricing and available terms change?",
+        [
+          [
+            [
+              98,
+              "The pricing on the standing U.S. dollar swap arrangements would be lowered by 25 basis points so that the new rate would be the U.S. dollar OIS rate plus 25 basis points, and U.S. dollars would be offered by foreign central banks with an 84-day maturity, in addition to the 1-week maturity operations."
+            ]
+          ]
+        ]
+      ],
+      [
+        "For how long could primary credit be extended, and what could a borrower do before or at the end of that term?",
+        [
+          [
+            [
+              119,
+              "The Board also approved changes to allow Reserve Banks to extend primary credit loans for as long as 90 days and that could be prepaid or renewed on request."
+            ]
+          ]
+        ]
+      ],
+      [
+        "What reserve ratio did the Board set for transaction deposits above the exemption, and when did that change take effect?",
+        [
+          [
+            [
+              119,
+              "the Board approved a reduction in reserve requirement ratios applicable to net transaction deposits above the exemption threshold to 0 percent effective with the reserve maintenance period beginning on March 26, 2020."
+            ]
+          ]
+        ]
+      ]
+    ]
+  },
+  "fed-2022": {
+    "sourceSHA256": "c5f10beea666f59bbf4438f19bd03627767dab933c35c6833b88a9f720d2414d",
+    "queries": [
+      [
+        "What did the dissenter fear the rate increase would do to the public and to community lenders?",
+        [
+          [
+            [
+              124,
+              "President George dissented because she judged that a large increase in the target range for the federal funds rate would add to uncertainty about policy concurrent with the beginning of balance sheet runoff in ways that could unsettle households and businesses and could also adversely affect the ability of small banks to meet the credit needs of their communities."
+            ]
+          ]
+        ]
+      ],
+      [
+        "Which alternate cast a vote, and did he support the June rate decision?",
+        [
+          [
+            [
+              121,
+              "Voting for this action:"
+            ],
+            [
+              121,
+              "Patrick Harker"
+            ],
+            [
+              123,
+              "Patrick Harker voted as an alternate member at this meeting."
+            ]
+          ]
+        ]
+      ],
+      [
+        "At what rate would overnight reverse repos be offered, what was the counterparty ceiling, and who could lift it temporarily?",
+        [
+          [
+            [
+              111,
+              "Conduct overnight reverse repurchase agreement operations at an offering rate of 1.55 percent and with a per-counterparty limit of $160 billion per day; the per-counterparty limit can be temporarily increased at the discretion of the Chair."
+            ]
+          ]
+        ]
+      ],
+      [
+        "When did this meeting adjourn, and when was the next one scheduled?",
+        [
+          [
+            [
+              126,
+              "It was agreed that the next meeting of the Committee would be held on Tuesday–Wednesday, July 26–27, 2022. The meeting adjourned at 10:45 a.m. on June 15, 2022."
+            ]
+          ]
+        ]
+      ]
+    ]
+  }
+}

@@ -1,0 +1,422 @@
+{
+  "psf": {
+    "sha256": "c5e16061b585958c6e225097997eb542484ad5e45a713dec9540dc6247747244",
+    "queries": [
+      [
+        "Who was receiving the NLTK porting grant, who was to mentor the work, and what was the vote?",
+        [
+          [
+            [
+              29,
+              "$1000 to Mikhail Korobov to assist in finalizing the port of NLTK to Python 3 under Steven Bird's mentorship"
+            ],
+            [
+              30,
+              "Approved, 9-0-0."
+            ]
+          ]
+        ]
+      ],
+      [
+        "What requirement did Python conferences have to meet to receive PSF sponsorship, and how was the motion decided?",
+        [
+          [
+            [
+              35,
+              "only sponsor conferences that have or agree to create and publish a Code of Conduct/Anti Harassment guide"
+            ],
+            [
+              36,
+              "Approved, 9-0-1."
+            ]
+          ]
+        ]
+      ],
+      [
+        "How did the board change PyCon 2013's budget, and did that change go to a vote?",
+        [
+          [
+            [
+              38,
+              "approved (without vote) that PyCon 2013's Financial Budget will be increased from $45,000 to $80,000"
+            ]
+          ]
+        ]
+      ],
+      [
+        "Who closed the meeting and at what time in both time zones?",
+        [
+          [
+            [
+              40,
+              "Van Lindberg adjourned the meeting at 19:00 CEST/ 13:00 EDT"
+            ]
+          ]
+        ]
+      ],
+      [
+        "How did directors vote on the November 7 minutes?",
+        [
+          [
+            [
+              8,
+              "The November 7, 2012 Board meeting minutes were voted on and approved."
+            ],
+            [
+              10,
+              "Approved, 7-0-2."
+            ]
+          ]
+        ]
+      ]
+    ]
+  },
+  "fed": {
+    "sha256": "71ae01f32aba346930bd25c50630dc49f08df776ec4966068d4a81095222893a",
+    "queries": [
+      [
+        "Which Reserve Bank was chosen to execute SOMA transactions, and was the choice unanimous?",
+        [
+          [
+            [
+              85,
+              "By unanimous vote, the Federal Reserve Bank of New York was selected to execute transactions for the System Open Market Account"
+            ]
+          ]
+        ]
+      ],
+      [
+        "Who were the manager and deputy manager chosen for SOMA, and whose agreement was required?",
+        [
+          [
+            [
+              86,
+              "Simon Potter and Lorie K. Logan"
+            ],
+            [
+              86,
+              "these selections were subject to their being satisfactory to the Federal Reserve Bank of New York"
+            ]
+          ]
+        ]
+      ],
+      [
+        "Which small-value operations were explicitly brought under the readiness-testing cap and how high was that cap?",
+        [
+          [
+            [
+              88,
+              "small value tests for rollovers and maturities are included in the $5 billion limit"
+            ]
+          ]
+        ]
+      ],
+      [
+        "What two administered interest rates did the Board leave in place for the end of January?",
+        [
+          [
+            [
+              303,
+              "interest rates on required and excess reserve balances unchanged at 2.40 percent"
+            ],
+            [
+              303,
+              "primary credit rate at the existing level of 3.00 percent"
+            ]
+          ]
+        ]
+      ],
+      [
+        "How did the January statement revise its description of growth and what evidence prompted the change?",
+        [
+          [
+            [
+              292,
+              "from \"strong\" to \"solid,\" consistent with incoming information that suggested that the pace of expansion of the U.S. economy had moderated somewhat since late last year"
+            ]
+          ]
+        ]
+      ]
+    ]
+  },
+  "letter77": {
+    "sha256": "ef4c39cbca16040bb824764eca719cd934ec62380e1b9c61396e2f483d07d9e0",
+    "queries": [
+      [
+        "How large were 1977 operating earnings in dollars and per share?",
+        [
+          [
+            [
+              1,
+              "Operating earnings in 1977 of $21,904,000, or $22.54 per share"
+            ]
+          ]
+        ]
+      ],
+      [
+        "Which division came in well below forecast and which business beat even optimistic expectations?",
+        [
+          [
+            [
+              2,
+              "Textile operations came in well below forecast"
+            ],
+            [
+              2,
+              "insurance operations, led again by the truly outstanding results of Phil Liesche’s managerial group at National Indemnity Company, were even better than our optimistic expectations"
+            ]
+          ]
+        ]
+      ],
+      [
+        "What did management consider a better measure of its performance, and what was the 1977 result?",
+        [
+          [
+            [
+              4,
+              "return on equity capital"
+            ],
+            [
+              4,
+              "our operating earnings on beginning equity capital amounted to 19%"
+            ]
+          ]
+        ]
+      ],
+      [
+        "What two headwinds made it hard to repeat 1977's percentage return the following year?",
+        [
+          [
+            [
+              5,
+              "Beginning equity capital is up 23% from a year ago, and we expect the trend of insurance underwriting profit margins to turn down well before the end of the year."
+            ]
+          ]
+        ]
+      ],
+      [
+        "How did premium volume change between the insurance acquisition year and 1977, and did Berkshire issue shares for that growth?",
+        [
+          [
+            [
+              10,
+              "In that year their premium volume amounted to $22 million. In 1977 our aggregate insurance premium volume was $151 million. No additional shares of Berkshire Hathaway stock have been issued to achieve any of this growth."
+            ]
+          ]
+        ]
+      ]
+    ]
+  },
+  "letter83": {
+    "sha256": "3d74da78af60d748df810860af64100a52c8031f572e9f9411e42ab5afbd69a9",
+    "queries": [
+      [
+        "Which acquisition did the chairman identify as the high point of 1983?",
+        [
+          [
+            [
+              16,
+              "the acquisition of a majority interest in Nebraska Furniture Mart"
+            ]
+          ]
+        ]
+      ],
+      [
+        "How did Rose Blumkin fare in the Fair Trade lawsuits, and what benefit did she get from them?",
+        [
+          [
+            [
+              23,
+              "She not only won all the cases, but received invaluable publicity."
+            ]
+          ]
+        ]
+      ],
+      [
+        "What time horizon does management recommend for judging performance, and what comparison should trigger concern?",
+        [
+          [
+            [
+              30,
+              "not less than a five-year test"
+            ],
+            [
+              30,
+              "if the five-year average annual gain falls much below the return on equity earned over the period by American industry in aggregate"
+            ]
+          ]
+        ]
+      ],
+      [
+        "What are the two reasons Berkshire gave for intrinsic value exceeding book value?",
+        [
+          [
+            [
+              37,
+              "other stocks we own be carried at the lower of aggregate cost or market"
+            ],
+            [
+              38,
+              "businesses that possess economic Goodwill (which is properly includable in intrinsic business value) far larger than the accounting Goodwill"
+            ]
+          ]
+        ]
+      ],
+      [
+        "What costs and revenue does the insurance combined ratio compare, and where does profit turn into loss?",
+        [
+          [
+            [
+              91,
+              "total insurance costs (losses incurred plus expenses) compared to revenue from premiums"
+            ],
+            [
+              91,
+              "a ratio below 100 indicates an underwriting profit and one above 100 indicates a loss"
+            ]
+          ]
+        ]
+      ]
+    ]
+  },
+  "prettier": {
+    "sha256": "4916fb1cd9628b10ef28d5e3e10b7afc775bc8451966ee504b3fb367e6067dc3",
+    "queries": [
+      [
+        "How does the formatter select a quote style, and what is the default when either style needs the same number of escapes?",
+        [
+          [
+            [
+              5,
+              "Prettier chooses the one which results in the fewest number of escapes."
+            ],
+            [
+              5,
+              "In case of a tie or the string not containing any quotes, Prettier defaults to double quotes"
+            ]
+          ]
+        ]
+      ],
+      [
+        "Why does the formatter allow different quote preferences for JavaScript and JSX?",
+        [
+          [
+            [
+              6,
+              "JSX takes its roots from HTML, where the dominant use of quotes for attributes is double quotes."
+            ],
+            [
+              6,
+              "A separate option allows using single quotes for JS and double quotes for \"HTML\" (JSX)."
+            ]
+          ]
+        ]
+      ],
+      [
+        "Which correctness guarantee does the formatter make about the output program?",
+        [
+          [
+            [
+              3,
+              "output valid code that has the exact same behavior as before formatting"
+            ]
+          ]
+        ]
+      ],
+      [
+        "If I add and then remove an object property, why can the formatting still change?",
+        [
+          [
+            [
+              30,
+              "Once an object literal becomes multiline, Prettier won’t collapse it back."
+            ]
+          ]
+        ]
+      ],
+      [
+        "How are decorators printed on a class?",
+        [
+          [
+            [
+              35,
+              "classes. We don’t think it ever makes sense to inline the decorators for them, so they are always moved to their own line."
+            ]
+          ]
+        ]
+      ]
+    ]
+  },
+  "go": {
+    "sha256": "df2ca902ebe7bd8c547ec47f7d25f5f18f80062e577468ace384e9e74f690419",
+    "queries": [
+      [
+        "Which Go release introduced type parameters and what language feature did that enable?",
+        [
+          [
+            [
+              null,
+              "The Go 1.18 release added type parameters to the language. This permits a form of polymorphic or generic programming."
+            ]
+          ]
+        ]
+      ],
+      [
+        "How much stack does a new goroutine get and what happens if it runs out?",
+        [
+          [
+            [
+              null,
+              "A newly minted goroutine is given a few kilobytes"
+            ],
+            [
+              null,
+              "the run-time grows (and shrinks) the memory for storing the stack automatically"
+            ]
+          ]
+        ]
+      ],
+      [
+        "When is it safe for several goroutines to use a map at the same time without synchronizing?",
+        [
+          [
+            [
+              null,
+              "As long as all goroutines are only reading"
+            ],
+            [
+              null,
+              "not changing the map by assigning to elements or doing deletions, it is safe for them to access the map concurrently without synchronization."
+            ]
+          ]
+        ]
+      ],
+      [
+        "Why didn't Go require acquiring a mutex for every map operation?",
+        [
+          [
+            [
+              null,
+              "the typical use of maps did not require safe access from multiple goroutines"
+            ],
+            [
+              null,
+              "requiring that all map operations grab a mutex would slow down most programs and add safety to few"
+            ]
+          ]
+        ]
+      ],
+      [
+        "What must an existing type do to satisfy an interface in Go?",
+        [
+          [
+            [
+              null,
+              "A Go type implements an interface by implementing the methods of that interface, nothing more."
+            ]
+          ]
+        ]
+      ]
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "methods": {
+    "blocks-five": "blocksInf/base",
+    "blocks-focus": "head256/skip/embed/core",
+    "semantic-five": "sentence25/adjacent/dual/expanded",
+    "semantic-focus": "sentence55/adjacent/embed/expanded",
+    "sentence-five": "sentence25/adjacent/dual/expanded",
+    "sentence-focus": "sentence55/adjacent/embed/expanded",
+    "bare-blocks-five": "blocksInf/base",
+    "bare-blocks-focus": "head256/base",
+    "bare-semantic-five": "sentence25/base",
+    "bare-semantic-focus": "tree40/base",
+    "embedding-only-blocks-five": "blocksInf/base",
+    "embedding-only-blocks-focus": "head256/skip/embed/core",
+    "embedding-only-semantic-five": "sentence25/facets/dual/core",
+    "embedding-only-semantic-focus": "tree40/skip/guard/core"
+  },
+  "protocolSHA256": "1cf993f022987e8651f5cafc8f1e179b0f81f6cde54288448ef97c29b1a01bc6",
+  "shards": {
+    "fiction-development": "11d8453e1c4a8cc7ce02a7bc444690682399c27635bf80792c5341a940019347",
+    "spoken-development": "323262abfb78604eaab294ef94ac7cc90c612d32b14e8a10b51e8fe60d419f9e",
+    "faq-development-reviewed": "57709db1b669bf175ca60b271a3a9c1eaaf2947da3ae0da51b61f18f94dbeec4",
+    "finance-development-filing-AMCOR_2022_8K_dated-2022-07-01": "1adc9e7f173aeb09b2401ee0053227d1cbb7a2cef78c44054c3bead0f6eafdcb",
+    "finance-development-filing-MGMRESORTS_2022Q4_EARNINGS": "8a6f30a15b6b137a6213ede79663bcabb927e41f7bd60b3bed9dce2737d66f34",
+    "finance-development-filing-ULTABEAUTY_2023Q4_EARNINGS": "f4ae94993e78b2d225577c5651cce7d653569d76232db1523afcf617a9e1b65e",
+    "government-development-reviewed-studentaid-html": "4f9143ea83ac110b22d10361e11be23bce10e6998ab79a059c34e204fbfb04d9",
+    "papers-development-reviewed-0": "cebf46fbf4216ccb60be4dfab313b346bb2615eb06a9c301c761f01d168e2ef7",
+    "boards-development": "4b292c519764b5cc5f781175903271a8b24e5840264b0c4d4659280a64df6657"
+  }
+}

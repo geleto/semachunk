@@ -1,0 +1,17 @@
+{
+  "model": "text-embedding-3-small",
+  "dimension": 1536,
+  "semanticCutoffs": [0.25, 0.40, 0.55],
+  "controls": ["blocks256", "head256", "blocksInf"],
+  "neighbors": ["sentence", "chunk"],
+  "boundaries": ["allow", "trim", "drop", "linked"],
+  "reuseWeight": [0.15, 0.30, 0.50],
+  "jointWeight": [0.15, 0.30, 0.50],
+  "bridgeMinimum": [0.35, 0.45, 0.55],
+  "bridgeMargin": [0.05, 0.10, 0.20],
+  "selection": "Development only. Select best semantic and finite structural configuration by equal-domain complete at five, then complete first, then focus. Also select by complete first and by focus, with the other metrics reported. Reused confirmation is exploratory. Fresh sources are evaluated only after writing the development selections.",
+  "scoring": "Full candidate pool, stable order for exact ties, whole passages. Complete at five is the union of the first five hits against one complete reference alternative in the right document. Complete first and first-hit nonwhitespace citation F1 are separate endpoints. Coarse story section labels are separate. Report source-paired intervals, per domain, and distinguish blind answer sufficiency from citation overlap.",
+  "reader": "Hash-first stratified sample of up to 8 primary questions per domain from fresh documents. Compare a gold-blind query-aware choice among four source windows with cosine selection and unconditional delivery on shared rankings. Separately judge first-hit sufficiency and unnecessary material with a second model using reference evidence. Corpus and methods frozen before fresh scoring.",
+  "bridge": "Compare the two edges and center of contiguous triples, including or omitting the middle in the auxiliary key. Evaluate basis-dependent positive coordinate saliency against cosine and a rotated-coordinate control. Rank and delivery can be changed independently.",
+  "size": "No semantic size or count target. Whole published documents and complete results. 256-token structural control and uncapped structural coverage ceiling. Long embedding inputs are encoded in token-weighted segments without cropping displayed content."
+}

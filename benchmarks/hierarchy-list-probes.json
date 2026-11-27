@@ -1,0 +1,35 @@
+[
+  {
+    "id": "npm",
+    "url": "https://raw.githubusercontent.com/npm/cli/a3041941586b6fb8ed7403fe3c24d81138a96005/docs/lib/content/commands/npm-ci.md",
+    "hash": "38dc55a7bb2b278755fcfb87ac49f8a886ba44f88459c1fcaa309ced1e1c6793",
+    "questions": [
+      ["item", "What does npm ci do to an existing node_modules directory before installation?", [[26,27]]],
+      ["multiple items", "What lockfile must a project supply for a clean npm install, and what happens if its dependencies disagree with the manifest?", [[20,21],[22,23]]],
+      ["multiple items", "What scope of installation does npm ci allow, and which manifest and lock files does it write?", [[24,25],[28,29]]],
+      ["other prose", "How can a project preserve the dependency-tree flags its CI clean install needs across machines?", [[31,37]]]
+    ]
+  },
+  {
+    "id": "guide",
+    "url": "https://raw.githubusercontent.com/github/opensource.guide/e7ac98e94600c5eea834f9a026c000d26b28df24/_articles/how-to-contribute.md",
+    "hash": "9436dbc27bc66de52e7c2cf28aea8a346364c4eff08923d3a32a215ba0e6dc6f",
+    "questions": [
+      ["item", "How can an open-source volunteer help community members who would like to speak at conferences?", [[79,79]]],
+      ["multiple items", "Which project file explains why the software is useful, and which one specifies what contributions are needed?", [[176,176],[177,177]]],
+      ["multiple items", "What two cleanup activities does the open-source guide suggest for duplicate issues and old open issues?", [[106,106],[107,107]]],
+      ["heading or lead-in", "Under what contributor interest does the guide group linking duplicate issues and asking clarifying questions on newly opened issues?", [[104,104],[106,106],[108,108]]]
+    ]
+  },
+  {
+    "id": "covenant",
+    "url": "https://raw.githubusercontent.com/ContributorCovenant/contributor_covenant/8d00b9180c88cc0ea63ee291c3a10b96d0f05c31/content/version/2/1/code_of_conduct.md",
+    "hash": "c1d88617e6d856a1c8de43e8dab307fd47500b07ec2047efcd5bd692e7dd5080",
+    "questions": [
+      ["item", "What must a contributor obtain before publishing someone else's private email or physical address?", [[30,30]]],
+      ["multiple items", "How should a community member handle constructive feedback and mistakes that affected other people?", [[21,21],[22,22]]],
+      ["heading or lead-in", "How does the Contributor Covenant classify publishing private addresses, and what permission condition does it give?", [[25,25],[30,30]]],
+      ["other prose", "During a temporary ban, with whom is public or private interaction forbidden, and what further penalty can a breach trigger?", [[69,69]]]
+    ]
+  }
+]

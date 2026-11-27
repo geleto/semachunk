@@ -123,7 +123,7 @@ export async function cachedVectors(texts, countTokens, request, directory, reco
             if (error.code !== 'ENOENT') throw error;
             const response = await request(input);
             bytes = responseBytes(response, input.length);
-            precomputation.apiRequests++;
+            precomputation.apiRequests += response.batchRequests ?? 1;
             precomputation.apiInputs += input.length;
             precomputation.apiInputTokens += response.usage.prompt_tokens;
             const tmp = path + '.' + randomUUID();
@@ -152,6 +152,25 @@ export async function cachedVectors(texts, countTokens, request, directory, reco
     return { matrix, textsSHA256: sha256(JSON.stringify(texts)), vectorsSHA256, precomputation };
 }
 
+// The provider may count more tokens than the local tokenizer. Split a rejected
+// batch at input boundaries, preserving the texts, vector indices and billed usage.
+export async function sendEmbeddingBatch(send, input) {
+    try {
+        return await send(input);
+    } catch (error) {
+        const aggregateLimit = error instanceof OpenAI.APIError && error.status === 400 &&
+            /tokens? per request|maximum.{0,10}tokens per request/iu.test(error.error?.message ?? '');
+        if (!aggregateLimit || input.length < 2) throw error;
+        const middle = Math.ceil(input.length / 2);
+        const left = await sendEmbeddingBatch(send, input.slice(0, middle));
+        const right = await sendEmbeddingBatch(send, input.slice(middle));
+        if (left.model !== right.model) throw new Error('Embedding subrequests returned different models.');
+        return {model:left.model, batchRequests:(left.batchRequests ?? 1) + (right.batchRequests ?? 1),
+            usage:{prompt_tokens:left.usage.prompt_tokens + right.usage.prompt_tokens},
+            data:[...left.data, ...right.data.map(row => ({...row,index:row.index + middle}))]};
+    }
+}
+
 export function openEncoder(envFile, directory = vectorDirectory, concurrency = 1, maxNewTokens = Infinity) {
     const tokenizer = openTokenizer();
     let client;
@@ -163,7 +182,9 @@ export function openEncoder(envFile, directory = vectorDirectory, concurrency = 
         }
         client ??= new OpenAI({ apiKey: await apiKey(envFile), baseURL: 'https://api.openai.com/v1', logLevel: 'off', maxRetries: 5 });
         try {
-            return await client.embeddings.create({ input, model, dimensions: dimension, encoding_format: 'base64' });
+            return await sendEmbeddingBatch(batch => client.embeddings.create({
+                input:batch, model, dimensions:dimension, encoding_format:'base64'
+            }), input);
         } catch (error) {
             // Authentication errors can echo part of a credential in the server's message.
             if (error instanceof OpenAI.APIError) throw new Error('OpenAI embeddings request failed (HTTP ' + (error.status ?? 'connection error') + ').');

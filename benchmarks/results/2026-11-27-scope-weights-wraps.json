@@ -1,0 +1,203 @@
+{
+  "corpus": {
+    "fiction": {
+      "sources": 70,
+      "paragraphs": 273,
+      "trials": 819,
+      "identical": 819
+    },
+    "spoken": {
+      "sources": 12,
+      "paragraphs": 48,
+      "trials": 144,
+      "identical": 144
+    },
+    "faq": {
+      "sources": 11,
+      "paragraphs": 42,
+      "trials": 126,
+      "identical": 126
+    },
+    "finance": {
+      "sources": 10,
+      "paragraphs": 37,
+      "trials": 111,
+      "identical": 110
+    },
+    "government": {
+      "sources": 64,
+      "paragraphs": 244,
+      "trials": 732,
+      "identical": 728
+    },
+    "papers": {
+      "sources": 34,
+      "paragraphs": 136,
+      "trials": 408,
+      "identical": 408
+    },
+    "boards": {
+      "sources": 6,
+      "paragraphs": 24,
+      "trials": 72,
+      "identical": 72
+    }
+  },
+  "controls": {
+    "text": {
+      "ordinary": [
+        "The harbor team checked the replacement pump before the night watch began.",
+        "The chief recorded the result."
+      ],
+      "blank": [
+        "The harbor team checked the replacement pump",
+        "before the night watch began."
+      ],
+      "list": [
+        "- Check the replacement pump",
+        "- Record the result"
+      ]
+    },
+    "markdown": {
+      "ordinary": [
+        "The harbor team checked the replacement pump before the night watch began.",
+        "The chief recorded the result."
+      ],
+      "blank": [
+        "The harbor team checked the replacement pump",
+        "before the night watch began."
+      ],
+      "hard": [
+        "The crew checked the pump",
+        "before the night watch."
+      ],
+      "table": [
+        "| Team | Result | |---|---| | Harbor | Ready |"
+      ],
+      "code": [
+        "~~~js function check() { return true; } ~~~"
+      ]
+    },
+    "html": {
+      "ordinary": [
+        "The harbor team checked the replacement pump before the night watch began.",
+        "The chief recorded the result."
+      ],
+      "blank": [
+        "The harbor team checked the replacement pump",
+        "before the night watch began."
+      ]
+    }
+  },
+  "examples": [
+    {
+      "id": "Benefits Planner | Social Security Credits and Benefit Eligibility | SSA#2_0",
+      "format": "text",
+      "width": 72,
+      "input": "To be eligible for disability benefits , you must meet a recent work test and a duration work test. The number of credits necessary to meet the recent work test depends on your age. The rules are as follows : Before age 24 - You may qualify if you have 6 credits earned in the 3-year period ending when your disability starts. Age 24 to 31 In general , you may qualify if you have credit for working half the time between age 21 and the time you become disabled. As a general example , if you become disabled at age 27 , you would need 3 years of work 12 credits out of the past 6 years between ages 21 and 27. Age 31 or older - In general , you must have at least 20 credits in the 10-year period immediately before you become disabled. The following table shows how many years of work credits you need to meet the duration of work test based on your age when your disability began. For the duration of work test , your work does not have to fall within a certain period. The table only provides an estimate of how many work credits you need. It does not cover all situations. If you are statutorily blind , you must only meet the duration of work test. When statutory blindness is involved , there is not a recent work test requirement. NOTE : This table is an estimate only and does not cover all situations",
+      "before": [
+        "To be eligible for disability benefits , you must meet a recent work test and a duration work test.",
+        "The number of credits necessary to meet the recent work test depends on your age.",
+        "The rules are as follows : Before age 24 - You may qualify if you have 6 credits earned in the 3-year period ending when your disability starts.",
+        "Age 24 to 31 In general , you may qualify if you have credit for working half the time between age 21 and the time you become disabled.",
+        "As a general example , if you become disabled at age 27 , you would need 3 years of work 12 credits out of the past 6 years between ages 21 and 27.",
+        "Age 31 or older - In general , you must have at least 20 credits in the 10-year period immediately before you become disabled.",
+        "The following table shows how many years of work credits you need to meet the duration of work test based on your age when your disability began.",
+        "For the duration of work test , your work does not have to fall within a certain period.",
+        "The table only provides an estimate of how many work credits you need.",
+        "It does not cover all situations.",
+        "If you are statutorily blind , you must only meet the duration of work test.",
+        "When statutory blindness is involved , there is not a recent work test requirement.",
+        "NOTE : This table is an estimate only and does not cover all situations"
+      ],
+      "after": [
+        "To be eligible for disability benefits , you must meet a recent work test and a duration work test.",
+        "The number of credits necessary to meet the recent work test depends on your age.",
+        "The rules are as follows : Before age 24 - You may qualify if you have 6 credits earned in the 3-year period ending when your disability starts.",
+        "Age 24 to 31 In general , you may qualify if you have credit for working half the time between age 21 and the time you become disabled.",
+        "As a general example , if you become disabled at age 27 , you would need 3 years of work 12 credits out of the past 6 years between ages 21 and 27.",
+        "Age 31 or older",
+        "- In general , you must have at least 20 credits in the 10-year period immediately before you become disabled.",
+        "The following table shows how many years of work credits you need to meet the duration of work test based on your age when your disability began.",
+        "For the duration of work test , your work does not have to fall within a certain period.",
+        "The table only provides an estimate of how many work credits you need.",
+        "It does not cover all situations.",
+        "If you are statutorily blind , you must only meet the duration of work test.",
+        "When statutory blindness is involved , there is not a recent work test requirement.",
+        "NOTE : This table is an estimate only and does not cover all situations"
+      ]
+    },
+    {
+      "id": "Health Needs And Conditions | Veterans Affairs#1_0",
+      "format": "text",
+      "width": 60,
+      "input": "Yes. We re committed to serving the health needs of Veterans with LGBT and related identities and providing care in a sensitive, safe environment at all VA health facilities. For more information , you can download these fact sheets : Transgender male health care PDF Transgender female health care PDF Male Veterans : Gay and bisexual health care PDF Female Veterans : Lesbian and bisexual health care PDF You can also find out more about LGBT programs at VA medical centers across the nation. View VA medical center LGBT program websites Read about our approach to recognizing same - sex marriage",
+      "before": [
+        "Yes.",
+        "We re committed to serving the health needs of Veterans with LGBT and related identities and providing care in a sensitive, safe environment at all VA health facilities.",
+        "For more information , you can download these fact sheets : Transgender male health care PDF Transgender female health care PDF Male Veterans : Gay and bisexual health care PDF Female Veterans : Lesbian and bisexual health care PDF You can also find out more about LGBT programs at VA medical centers across the nation.",
+        "View VA medical center LGBT program websites Read about our approach to recognizing same - sex marriage"
+      ],
+      "after": [
+        "Yes.",
+        "We re committed to serving the health needs of Veterans with LGBT and related identities and providing care in a sensitive, safe environment at all VA health facilities.",
+        "For more information , you can download these fact sheets : Transgender male health care PDF Transgender female health care PDF Male Veterans : Gay and bisexual health care PDF Female Veterans : Lesbian and bisexual health care PDF You can also find out more about LGBT programs at VA medical centers across the nation.",
+        "View VA medical center LGBT program websites Read about our approach to recognizing same",
+        "- sex marriage"
+      ]
+    },
+    {
+      "id": "Commercial vehicle registration fees, vehicle use taxes and supplemental fees#3_0",
+      "format": "text",
+      "width": 60,
+      "input": "All passenger vehicle original registrations and renewals Vehicle use tax - $80 for 2 years $40 / year Livery and for - hire vehicles in these registration classes - $400 for 1 year 3 Livery OML Bus (OMR) Taxi OMT Supplemental MCTD fee - $50 for two years $25 per year Note : The New York City Taxi and Limousine Commission regulates all \" TC \" vehicle plates. All registrants for \" TC \" vehicle plates must pay the vehicle use tax.",
+      "before": [
+        "All passenger vehicle original registrations and renewals Vehicle use tax - $80 for 2 years $40 / year Livery and for - hire vehicles in these registration classes - $400 for 1 year 3 Livery OML Bus (OMR) Taxi OMT Supplemental MCTD fee - $50 for two years $25 per year Note : The New York City Taxi and Limousine Commission regulates all \" TC \" vehicle plates.",
+        "All registrants for \" TC \" vehicle plates must pay the vehicle use tax."
+      ],
+      "after": [
+        "All passenger vehicle original registrations and renewals Vehicle use tax - $80 for 2 years $40 / year Livery and for",
+        "- hire vehicles in these registration classes - $400 for 1 year 3 Livery OML Bus (OMR) Taxi OMT Supplemental MCTD fee - $50 for two years $25 per year Note : The New York City Taxi and Limousine Commission regulates all \" TC \" vehicle plates.",
+        "All registrants for \" TC \" vehicle plates must pay the vehicle use tax."
+      ]
+    },
+    {
+      "id": "Driver license and learner permit fees and refunds#3_0",
+      "format": "text",
+      "width": 60,
+      "input": "You can receive a partial refund of the 8-year driver license fee if you qualify. The maximum amount you can receive is 50% four years of the original 8-year driver license fee. The partial refund does not include any application or document fees. You can qualify for a partial refund if your driver license was valid for 8 years when it was issued is surrendered to us or to another state during the first 4 years of the 8-year period when you surrendered it was not suspended or revoked was not exchanged for a non - driver ID card To apply for a refund you must apply no later than 51 months after the date your driver license was issued complete a Request for Refund of Fee Paid for Motor Vehicle Registrations and Driver Licenses [3] MV-215 attach the driver license to form MV-215 if you did not already surrender your driver license if you exchanged your NYS driver license for a driver license in another state , attach a photocopy of your out - of - state driver license to form MV-215 mail the required form and documents to the address listed on the form allow up to 12 weeks for the refund to be processed",
+      "before": [
+        "You can receive a partial refund of the 8-year driver license fee if you qualify.",
+        "The maximum amount you can receive is 50% four years of the original 8-year driver license fee.",
+        "The partial refund does not include any application or document fees.",
+        "You can qualify for a partial refund if your driver license was valid for 8 years when it was issued is surrendered to us or to another state during the first 4 years of the 8-year period when you surrendered it was not suspended or revoked was not exchanged for a non - driver ID card To apply for a refund you must apply no later than 51 months after the date your driver license was issued complete a Request for Refund of Fee Paid for Motor Vehicle Registrations and Driver Licenses [3] MV-215 attach the driver license to form MV-215 if you did not already surrender your driver license if you exchanged your NYS driver license for a driver license in another state , attach a photocopy of your out - of - state driver license to form MV-215 mail the required form and documents to the address listed on the form allow up to 12 weeks for the refund to be processed"
+      ],
+      "after": [
+        "You can receive a partial refund of the 8-year driver license fee if you qualify.",
+        "The maximum amount you can receive is 50% four years of the original 8-year driver license fee.",
+        "The partial refund does not include any application or document fees.",
+        "You can qualify for a partial refund if your driver license was valid for 8 years when it was issued is surrendered to us or to another state during the first 4 years of the 8-year period when you surrendered it was not suspended or revoked was not exchanged for a non",
+        "- driver ID card To apply for a refund you must apply no later than 51 months after the date your driver license was issued complete a Request for Refund of Fee Paid for Motor Vehicle Registrations and Driver Licenses [3] MV-215 attach the driver license to form MV-215 if you did not already surrender your driver license if you exchanged your NYS driver license for a driver license in another state , attach a photocopy of your out - of - state driver license to form MV-215 mail the required form and documents to the address listed on the form allow up to 12 weeks for the refund to be processed"
+      ]
+    },
+    {
+      "id": "letter77",
+      "format": "text",
+      "width": 72,
+      "input": "We select our marketable equity securities in much the same way we would evaluate a business for acquisition in its entirety. We want the business to be (1) one that we can understand, (2) with favorable long-term prospects, (3) operated by honest and competent people, and (4) available at a very attractive price. We ordinarily make no attempt to buy equities for anticipated favorable stock price behavior in the short term. In fact, if their business experience continues to satisfy us, we welcome lower market prices of stocks we own as an opportunity to acquire even more of a good thing at a better price.",
+      "before": [
+        "We select our marketable equity securities in much the same way we would evaluate a business for acquisition in its entirety.",
+        "We want the business to be (1) one that we can understand, (2) with favorable long-term prospects, (3) operated by honest and competent people, and (4) available at a very attractive price.",
+        "We ordinarily make no attempt to buy equities for anticipated favorable stock price behavior in the short term.",
+        "In fact, if their business experience continues to satisfy us, we welcome lower market prices of stocks we own as an opportunity to acquire even more of a good thing at a better price."
+      ],
+      "after": [
+        "We select our marketable equity securities in much the same way we would evaluate a business for acquisition in its entirety.",
+        "We want the business to be (1) one that we can understand, (2) with favorable long-term prospects, (3) operated by honest and competent people, and",
+        "(4) available at a very attractive price.",
+        "We ordinarily make no attempt to buy equities for anticipated favorable stock price behavior in the short term.",
+        "In fact, if their business experience continues to satisfy us, we welcome lower market prices of stocks we own as an opportunity to acquire even more of a good thing at a better price."
+      ]
+    }
+  ]
+}

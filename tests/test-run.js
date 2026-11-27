@@ -42,7 +42,7 @@ console.log('Starting chunking...');
 async function runTest() {
 	try {
 		// 1. Verify Initial State
-		const initialSentences = await chunkText(testText, mockBatchEmbed, { combineChunks: false, returnEmbedding: false });
+		const initialSentences = await chunkText(testText, mockBatchEmbed, { chunkingStrategy: 'pack', maxChunkSize: 0, returnEmbedding: false });
 		console.log(`Initial sentences: ${initialSentences.length}`);
 		if (initialSentences.length !== 7) {
 			throw new Error(`Expected 7 initial sentences, found ${initialSentences.length}`);
@@ -50,7 +50,7 @@ async function runTest() {
 
 		// 2. Run Chunking
 		const chunks = await chunkText(testText, mockBatchEmbed, {
-			similarityThreshold: 0.5
+			chunkingStrategy: 'semantic-blocks', similarityThreshold: 0.5
 		});
 
 		console.log('Generated chunks:', chunks.length);

@@ -1,0 +1,1323 @@
+{
+  "fictionAudit": {
+    "development": {
+      "documents": 23,
+      "questions": 1025,
+      "primary": 538,
+      "changed": 13,
+      "changedPrimary": 298
+    },
+    "confirmation": {
+      "documents": 23,
+      "questions": 1007,
+      "primary": 515,
+      "changed": 16,
+      "changedPrimary": 433
+    }
+  },
+  "sets": {
+    "fiction-development": {
+      "domain": "fiction",
+      "fold": "development",
+      "pool": "document",
+      "sha256": "bafdd0a21b423d49dc79799a66eac7655d909f0bb0a729480090dda1dfda8b49",
+      "source": "https://codeload.github.com/neuhai/FairytaleQA_Dataset/zip/5aa19180c83713f41ee30c9f1dd99afc2d65aeac",
+      "documents": [
+        {
+          "id": "assipattle-and-the-mester-stoorworm",
+          "sha256": "c8bffbbafa05b6e88af686cb28b5527072a1384a26379a8e7a2ca981f6b30cc5",
+          "questions": 85
+        },
+        {
+          "id": "bamboo-cutter-moon-child",
+          "sha256": "c45a00b9ac3281ac66927a83ee6d6a76649b8653315c8f8e1909b18d50962532",
+          "questions": 61
+        },
+        {
+          "id": "black-arts",
+          "sha256": "2e763cf566a6136ef3b344a214fda95b00fd143420ed0a5b88b055056fc15997",
+          "questions": 30
+        },
+        {
+          "id": "charcol-nils-troll-woman",
+          "sha256": "0d49447a7476c2ed8725e77d0816c07f3bee3e65788fd8b6c72bb7574bd6f86f",
+          "questions": 14
+        },
+        {
+          "id": "finn-the-giant-and-the-minister-of-lund",
+          "sha256": "bceb78e7a280bdf66844a70d6a309fa6939d3bdc26e7b66f79d1609c32237e46",
+          "questions": 17
+        },
+        {
+          "id": "helge-hal-in-blue-hill",
+          "sha256": "08afd2a0a46a6d8308f14f78241c8ee6e173b399b97dfa7ec2ac1ea8e7d3541c",
+          "questions": 62
+        },
+        {
+          "id": "kari-woodencoat",
+          "sha256": "50989e3d3843bfdb8b361297437e9eccfe8fa9585cd9b7eb8441c4fdc25efe13",
+          "questions": 100
+        },
+        {
+          "id": "little-boy-blue",
+          "sha256": "6279e3eed3307e6b14d5ccb5cc8dccaa4354b1842deb73b4f31b538b87542bbb",
+          "questions": 26
+        },
+        {
+          "id": "magic-apples",
+          "sha256": "b74b7c6078fca97b0ba64472f430f1c46b8e6cda5f37651bad68db29510bb56a",
+          "questions": 29
+        },
+        {
+          "id": "old-dschang",
+          "sha256": "5d47ae74514c1fbaa75b46933e409ed8aba4f0f8e9eaa66c3611270993dbe3a0",
+          "questions": 21
+        },
+        {
+          "id": "peerifool",
+          "sha256": "17ebe75231eb7eae24deaf0836fe50ae4ccefc4a2b0fd63015a8d21468836f00",
+          "questions": 90
+        },
+        {
+          "id": "prince-hyacinth-and-thedear-little-princess",
+          "sha256": "b0a056003cf31db95b7be0c84917661224ee6b00ef1ec95e702b11587c4561a5",
+          "questions": 20
+        },
+        {
+          "id": "the-battle-of-the-birds",
+          "sha256": "7825d7be5d7c03ff6196513c6cefb01ae80f4fd500a19d2b38ad75630049da80",
+          "questions": 89
+        },
+        {
+          "id": "the-bird-lover",
+          "sha256": "6fb7b933821e4e9aabea34189a7f676d7b4efe3e77423e7ee852bb2a54037a10",
+          "questions": 36
+        },
+        {
+          "id": "the-corpse-watchers",
+          "sha256": "26db7987b48c5789b599a5707286337b8a089600b54f8ae07cb221137a609a10",
+          "questions": 51
+        },
+        {
+          "id": "the-favorite-of-fortune-and-the-child-of-ill-luck",
+          "sha256": "b09981f10c8838df50745981a68582ecfa5cf517480b07852ea0a7de31c2f891",
+          "questions": 14
+        },
+        {
+          "id": "the-four-gifts",
+          "sha256": "910013719e642f079d93b66cf6e9a4784d7a32d82b23b3f733775cecb3f32b5c",
+          "questions": 88
+        },
+        {
+          "id": "the-king-of-the-ants",
+          "sha256": "c0565e82d4619ac51aeb3df840d0835fbf2ae057a837d93ba7887d984ff7fb34",
+          "questions": 13
+        },
+        {
+          "id": "the-lady-of-the-moon",
+          "sha256": "39dfca7849493358376abdab6a79ef2d583849ac682bd745b3d742462a1b15a9",
+          "questions": 20
+        },
+        {
+          "id": "the-page-boy-and-the-silver-goblet",
+          "sha256": "a4b9ac3f4a531b99ded1f3637c68fcf063dcd41533530118e25e4897a4f7d338",
+          "questions": 47
+        },
+        {
+          "id": "the-selfish-giant",
+          "sha256": "b1e56c33209da05cf6b7e56a0f228aa119770a55bb68e9178243dd6e8f42c04c",
+          "questions": 22
+        },
+        {
+          "id": "tongue-cut-sparrow",
+          "sha256": "84e14c305e232bef8630407ffc60e71209e60594cb919daf7dd9b12447c771b5",
+          "questions": 70
+        },
+        {
+          "id": "why-dog-and-cat-are-enemies",
+          "sha256": "6e23def9c41a5df2f973ca9988afd5bdf003c9250dc99eba917ba72b2ba2bf5e",
+          "questions": 20
+        }
+      ]
+    },
+    "fiction-confirmation": {
+      "domain": "fiction",
+      "fold": "confirmation",
+      "pool": "document",
+      "sha256": "806332a966a4bb9d122eb5b53f437fe56ff6d58475fc262ff26e53b6dc6d2a35",
+      "source": "https://codeload.github.com/neuhai/FairytaleQA_Dataset/zip/5aa19180c83713f41ee30c9f1dd99afc2d65aeac",
+      "documents": [
+        {
+          "id": "alleleiraugh-or-the-many-furred-creature",
+          "sha256": "654c8a760856b260738f48e3b5f2d741925afc7d12b7d87092d3ed3d1105a417",
+          "questions": 72
+        },
+        {
+          "id": "enchanted-wreath",
+          "sha256": "96e7503968553e3aa4d2984d742890c65b3448f3e20b2081a71377ef7cc59f4b",
+          "questions": 24
+        },
+        {
+          "id": "four-shilling-piece",
+          "sha256": "aabd2eab039e950ff5da41a8b6c1e5527816a141cf4b775ba2f5b1f0befdf548",
+          "questions": 26
+        },
+        {
+          "id": "fox-and-wolf",
+          "sha256": "265668d693819836296b653548d717cb4bac26f37890e519b3e17507c7d9bf7a",
+          "questions": 14
+        },
+        {
+          "id": "golden-goose",
+          "sha256": "c03381fe7a401ffcb3ed4e166f24107a350ecb16520c10b668b63f714a7018ad",
+          "questions": 22
+        },
+        {
+          "id": "happy-hunter-skillful-fisher",
+          "sha256": "743137fddb7ad3862e3b682875dbd4e3eeac666c472a917d1d3f4ea2d8fe8625",
+          "questions": 105
+        },
+        {
+          "id": "hat-of-huldres",
+          "sha256": "ecfaa614e9fcf108dc4e0e45bf4493f0167df316ee66259d4da9c839b5c5b2d6",
+          "questions": 12
+        },
+        {
+          "id": "how-an-old-man-lost-his-wen",
+          "sha256": "72bba484cdf82aa1660bf7c0a5a1f624aa2db230822299196c5b23b430389268",
+          "questions": 50
+        },
+        {
+          "id": "how-molo-stole-the-lovely-rose-red",
+          "sha256": "a6cd2c2c4960e73c17e87095a3ef09ca817b9f880e663c3c7d9420f82a00cc4b",
+          "questions": 22
+        },
+        {
+          "id": "jelly-fish-and-monkey",
+          "sha256": "5f7437ba2850676ff010072689e6369b180953518fe9e5b88ce1b1f48d30b415",
+          "questions": 59
+        },
+        {
+          "id": "lucky-andrew",
+          "sha256": "6db82167e63f88b4c63f693e6250ebbd7c0fb666a6848aba624ac1d080dbed4a",
+          "questions": 72
+        },
+        {
+          "id": "old-hop-giant",
+          "sha256": "3f8e835acd8fb83472757aa414480341ea25a7749f34c94fdf34a7da00d3a635",
+          "questions": 15
+        },
+        {
+          "id": "self-did-it",
+          "sha256": "d2f56c473d21323b607a445f253be35d239ac245d39133598f96438b27ca98d8",
+          "questions": 15
+        },
+        {
+          "id": "sleeping-beauty-in-the-wood",
+          "sha256": "e4c7ebeb75032c5589f5225a4261c29d8fe7e784606c7e4d2cde9dde62f403d5",
+          "questions": 17
+        },
+        {
+          "id": "the-dwarfie-stone",
+          "sha256": "6d07701682693cb51397f7a00f3a13ab0d64fb1be649ed65c74621baafa1c6f0",
+          "questions": 107
+        },
+        {
+          "id": "the-enchanted-deer",
+          "sha256": "2a1a20e6ee42b373b840fa74f946217a49e70c3d9becd136554039262fff5f13",
+          "questions": 60
+        },
+        {
+          "id": "the-false-prince-and-the-true",
+          "sha256": "638daa360563aa9c1fac5467d51f686eff5127c8b00e5a4d5674688b9c8de1eb",
+          "questions": 64
+        },
+        {
+          "id": "the-flower-queens-daughter",
+          "sha256": "8d2bab9b2fcf0405dfe50f0326f414d578a77f0cf771adb0ce1830331a6b1e88",
+          "questions": 20
+        },
+        {
+          "id": "the-miserly-farmer",
+          "sha256": "0bb75141d95ada8e7b42834a3705117426ff551f8d46190d2b9bc035e5cd4223",
+          "questions": 20
+        },
+        {
+          "id": "the-sea-king-gift",
+          "sha256": "87352b9149944c052714d500ed4ec1a967e36d58650a2cfba8451cd747d4e9c9",
+          "questions": 70
+        },
+        {
+          "id": "the-wee-bannock",
+          "sha256": "9f39006fc5ec7500b8baa6477765bb8c5812f1a08bc4467e3d27d86b8fa4d599",
+          "questions": 50
+        },
+        {
+          "id": "three-princesses-in-whiteland",
+          "sha256": "02e4d039073adcbbaad68bf15eb1de0ca776c63d34647bdda434603c4c69876a",
+          "questions": 35
+        },
+        {
+          "id": "whippety-stourie",
+          "sha256": "04845ae55e48ec997845f71f6d4c3bdee369488495a3c203918b046bd53a0ecf",
+          "questions": 56
+        }
+      ]
+    },
+    "fiction-fresh": {
+      "domain": "fiction",
+      "fold": "fresh",
+      "pool": "document",
+      "sha256": "b19188c01567eb2a44b9d781c8976af8e2681058b0c0bfc19015dea8d6070043",
+      "source": "https://codeload.github.com/neuhai/FairytaleQA_Dataset/zip/5aa19180c83713f41ee30c9f1dd99afc2d65aeac",
+      "documents": [
+        {
+          "id": "a-fish-story",
+          "sha256": "941bcd27c74b77ef61816350807c2ce4a02b3a5d01ac853c9ff473fae8297306",
+          "questions": 16
+        },
+        {
+          "id": "storm-magic",
+          "sha256": "a85e40b8968c0d55444e522be28bc5bff30d0f906df0f429d083d8f95d328a88",
+          "questions": 46
+        },
+        {
+          "id": "story-of-prince-yamato-take",
+          "sha256": "cfbc94bbf8ef670d281fe23da126e6feead7020dcc74967f0af455eadbd8e0d9",
+          "questions": 100
+        },
+        {
+          "id": "chronicle-of-pancake",
+          "sha256": "af766841f6b834f25a9260d8f1313273b2a313b0847b5aeb9a5cf6fa3f153b7c",
+          "questions": 19
+        },
+        {
+          "id": "money-box",
+          "sha256": "94ae0576060cb92c0063e84fb4210c815c2827ccf88e354161a82dbcb6ec8765",
+          "questions": 19
+        },
+        {
+          "id": "rose-of-evening",
+          "sha256": "518aa08cc561d1b05f81cb73faac6cf6374e52f7917c88c5bc54d1b0f7068215",
+          "questions": 31
+        },
+        {
+          "id": "habetrot-the-spinstress",
+          "sha256": "a2f4c15f11d85745eeab5644574ad169b812ac038e0f97d733b7e00488c96e38",
+          "questions": 67
+        },
+        {
+          "id": "the-boy-who-set-a-snare-for-the-sun",
+          "sha256": "2f66130b91891b71421f78adca24008ebf5e4c2942ad4b7471e02caf618f7ee4",
+          "questions": 23
+        },
+        {
+          "id": "farther-south-than-south-and-farther-north-than-north-and-in-great-hill-of-gold",
+          "sha256": "74778bcce708768f79bfbf60218437f40824a6f8411a56907b0d8648732a942f",
+          "questions": 34
+        },
+        {
+          "id": "the-pie-and-the-patty-pan",
+          "sha256": "235ad018034f520f849d1fceb5eb9935faca32a33eb651639b7fd3c07f28369e",
+          "questions": 24
+        },
+        {
+          "id": "how-the-river-gods-wedding-was-broken-off",
+          "sha256": "a5731aec51a550810df8f59cd03fe5e59be41798b7d0a5100119fa68ac96a8ad",
+          "questions": 17
+        },
+        {
+          "id": "two-maidens",
+          "sha256": "6dec58a8adf1294aaffc0abbb0174e8dfd6cac53d43354d5d07eaddb9c5425f2",
+          "questions": 12
+        },
+        {
+          "id": "morraha",
+          "sha256": "8cc87f7b3094bd240a114dd446318348ea2e0dd97cd9fbbf17238fffe19ce3d4",
+          "questions": 129
+        },
+        {
+          "id": "the-fox-and-the-wolf",
+          "sha256": "a8d6fcbdc928baad3b3ce7fdd55f6693e2f3e10314dafe97da93ce4e4b4fb608",
+          "questions": 52
+        },
+        {
+          "id": "the-winter-spirit-and-his-visitor",
+          "sha256": "87fc6a617bacc3262c92660d5e233e5f2343cfedc601f40b008ac4203e325ee9",
+          "questions": 24
+        },
+        {
+          "id": "red-shoes",
+          "sha256": "0a5da1ae6064e6ebc6e70cf5fcd34edf6c4b138c5fd2904dbe5d163bcf83eeb9",
+          "questions": 30
+        },
+        {
+          "id": "twelve-brothers",
+          "sha256": "d23f50b4a94851dd377a65e4d43cc9d24e56e1eb97621b5905539a804a314771",
+          "questions": 19
+        },
+        {
+          "id": "the-war-of-the-wolf-and-the-fox",
+          "sha256": "2b5436e26047ed1130a7c39e2e60e10f37cd55c1b8d91a231d72478091e690a5",
+          "questions": 17
+        },
+        {
+          "id": "east-of-sun-and-west-of-moon",
+          "sha256": "5b047c8a5900eb81836b4c731a8d79a1aca99fb31aff0d02d24071af011225d2",
+          "questions": 84
+        },
+        {
+          "id": "the-elfin-knight",
+          "sha256": "ca326f02c38cb6aeecf69c85b88086acdf7d83b00da80fe15919b60f6f3b4309",
+          "questions": 81
+        },
+        {
+          "id": "girl-and-snake",
+          "sha256": "3421dfa38058e2900bc394e355533728486a63c316ea2589d7886a3657fd5909",
+          "questions": 13
+        },
+        {
+          "id": "the-winning-of-olwen",
+          "sha256": "d588a71d62a46288c5a850fa0b9da27fd661c974747decfb16f37a9a6cfdec22",
+          "questions": 100
+        },
+        {
+          "id": "werewolf",
+          "sha256": "f6475e7af49d9f3af4a67be8217967ddd3f46d6bea086ac850ea3f53d3d8f2a7",
+          "questions": 54
+        },
+        {
+          "id": "sheem-the-forsaken-boy",
+          "sha256": "973e887b30cfecc803645d5ebb58ec50e7c08cae4700b2dc3f82680a3b4cc92f",
+          "questions": 52
+        }
+      ]
+    },
+    "spoken-development": {
+      "domain": "spoken",
+      "fold": "development",
+      "pool": "document",
+      "sha256": "323262abfb78604eaab294ef94ac7cc90c612d32b14e8a10b51e8fe60d419f9e",
+      "source": "https://raw.githubusercontent.com/Yale-LILY/QMSum/83d7768c1f2b4dfeb091385d3dc7e239b8e5bb7e/data/ALL/jsonl/train.jsonl",
+      "documents": [
+        {
+          "id": "qmsum-train-70",
+          "sha256": "8d2270b533c70a504cd2a2ed84966e1ed577f500d41da687c0d03a96e73898e2",
+          "questions": 8
+        },
+        {
+          "id": "qmsum-train-88",
+          "sha256": "a3293199b71edab8a61acedc45a35ea4d8e9ae75dd7c4c95b14010542b0d0302",
+          "questions": 8
+        },
+        {
+          "id": "qmsum-train-43",
+          "sha256": "38f4510c03031ec41533c852cb839317b882dcca8fc48a1834b0882931762011",
+          "questions": 7
+        }
+      ]
+    },
+    "spoken-confirmation": {
+      "domain": "spoken",
+      "fold": "confirmation",
+      "pool": "document",
+      "sha256": "158def2ee77462fa440694829c296ba8dd2bea4971a8c9ea52e33da2494d7b21",
+      "source": "https://raw.githubusercontent.com/Yale-LILY/QMSum/83d7768c1f2b4dfeb091385d3dc7e239b8e5bb7e/data/ALL/jsonl/test.jsonl",
+      "documents": [
+        {
+          "id": "qmsum-test-13",
+          "sha256": "1e94751eeca1f172006621c9ca36344695eefcbbc2d178d0a2743f9850b41d25",
+          "questions": 5
+        },
+        {
+          "id": "qmsum-test-14",
+          "sha256": "757537fd6f573599526c98b785ab105c0bc13a565111ffb439ab224afb356fe4",
+          "questions": 5
+        },
+        {
+          "id": "qmsum-test-0",
+          "sha256": "b6396f066eb4ef0c7eabe3fbf0c92dae36a970926aed166a8a5ee39f1f532133",
+          "questions": 4
+        }
+      ]
+    },
+    "spoken-fresh": {
+      "domain": "spoken",
+      "fold": "fresh",
+      "pool": "document",
+      "sha256": "b5bebb75871fa84864d68e2347f411a5f44eaf4f5f2d5afe50b443252aa07c1f",
+      "source": "https://raw.githubusercontent.com/Yale-LILY/QMSum/83d7768c1f2b4dfeb091385d3dc7e239b8e5bb7e/data/ALL/jsonl/val.jsonl",
+      "documents": [
+        {
+          "id": "qmsum-val-22",
+          "sha256": "9fcebfd5987ffca9fd6975e32098717868a8d6818c3c71a50be744e45063b2df",
+          "questions": 5
+        },
+        {
+          "id": "qmsum-val-14",
+          "sha256": "92382dcb296c34dd0508f99228b0303507cb955f1253f0a754e1b3ab50c63f6f",
+          "questions": 4
+        },
+        {
+          "id": "qmsum-val-11",
+          "sha256": "cc3c33e1e28a8d79cf1725f9835c72f865c5d0f38d23a2d7c253fb9af791c9a5",
+          "questions": 3
+        },
+        {
+          "id": "qmsum-val-31",
+          "sha256": "256af4b3a2d45a83ad3d5316a715be5ca5186df772bfcd5e2b3643e4894546e6",
+          "questions": 1
+        },
+        {
+          "id": "qmsum-val-0",
+          "sha256": "1ac6e7e4b3ccde773110c654347bfaeb94eaf701cef1ce53988e6eaa288199c6",
+          "questions": 0
+        },
+        {
+          "id": "qmsum-val-1",
+          "sha256": "22e4b1aae6f53fb8c52eb762427ee8edaa0a0a95603206dcfb111a269b8fecf9",
+          "questions": 0
+        }
+      ]
+    },
+    "faq-confirmation-reviewed": {
+      "domain": "faq",
+      "fold": "confirmation",
+      "pool": "collection",
+      "sha256": "91284aed22b24cd18e1c6d26a0705f1cc790bc216ca55a810fcb3f062068703d",
+      "source": "72636e684b341bfa68f38958b8239a5ca763eae9e975f816db410dd162f4ad1a",
+      "documents": [
+        {
+          "id": "docker",
+          "sha256": "0e35d69a20a1b76e867cddadde50384d669d5e9907b1f30f81aaf342ec7b67a7",
+          "questions": 6
+        },
+        {
+          "id": "pandoc",
+          "sha256": "1a152cee7a23655321e27f61ebdcdb4ce3adee82c00b68f76d76927aefb0619b",
+          "questions": 14
+        },
+        {
+          "id": "cargo",
+          "sha256": "3eb4789075309b9ce93537d62b0b929aa5a2234d608e2e6133c4b7b5874bbcce",
+          "questions": 14
+        },
+        {
+          "id": "vue",
+          "sha256": "cab87e4c557c665d01db7084dcd3b6965fc88b5f3bfff7af43b597327567e894",
+          "questions": 11
+        },
+        {
+          "id": "poetry",
+          "sha256": "8e79e17fa877e0bbab5b411bd56e729af7868e6ea97f7804af05980973eef277",
+          "questions": 10
+        },
+        {
+          "id": "ruff",
+          "sha256": "c79548b4c7674018bcfa5078e4cf45eec3ee7da6fac2440bfa592316af256f6f",
+          "questions": 21
+        }
+      ]
+    },
+    "finance-confirmation-filing-FOOTLOCKER_2022_8K_dated_2022-08-19": {
+      "domain": "finance",
+      "fold": "confirmation",
+      "pool": "document",
+      "sha256": "8cf38dc8bb98534a71550dd52f94aec31d6c832c063036f30d71658daddb679a",
+      "source": "72636e684b341bfa68f38958b8239a5ca763eae9e975f816db410dd162f4ad1a",
+      "documents": [
+        {
+          "id": "FOOTLOCKER_2022_8K_dated_2022-08-19",
+          "sha256": "e31c70647b4248898483f8c7073c453d8a246a4198c381d7d1353b6c851bdbf2",
+          "questions": 1
+        }
+      ]
+    },
+    "finance-confirmation-filing-JOHNSON_JOHNSON_2022Q4_EARNINGS": {
+      "domain": "finance",
+      "fold": "confirmation",
+      "pool": "document",
+      "sha256": "c5549800c7b9cef436ac192aa1d382f3709ed4c02ce5f8a53688155171931702",
+      "source": "72636e684b341bfa68f38958b8239a5ca763eae9e975f816db410dd162f4ad1a",
+      "documents": [
+        {
+          "id": "JOHNSON_JOHNSON_2022Q4_EARNINGS",
+          "sha256": "d6b70344be7ef2e20135f9374ca8aa5ee742112a9ecb6d0ce64642be66981274",
+          "questions": 1
+        }
+      ]
+    },
+    "finance-confirmation-filing-JOHNSON_JOHNSON_2023_8K_dated-2023-08-30": {
+      "domain": "finance",
+      "fold": "confirmation",
+      "pool": "document",
+      "sha256": "816e9cf501ff94409536f908e816fe312506e2395865f770ff6e143f4b4a6845",
+      "source": "72636e684b341bfa68f38958b8239a5ca763eae9e975f816db410dd162f4ad1a",
+      "documents": [
+        {
+          "id": "JOHNSON_JOHNSON_2023_8K_dated-2023-08-30",
+          "sha256": "b77cd7e4a79f5dceb61d7eca57aa5481713006490c1996a38658f71d4123cc35",
+          "questions": 3
+        }
+      ]
+    },
+    "finance-confirmation-filing-PEPSICO_2023Q1_EARNINGS": {
+      "domain": "finance",
+      "fold": "confirmation",
+      "pool": "document",
+      "sha256": "f75864ae52c04699c0fd09a8767c0b800c101c342cc86ce0038cfba1e44da195",
+      "source": "72636e684b341bfa68f38958b8239a5ca763eae9e975f816db410dd162f4ad1a",
+      "documents": [
+        {
+          "id": "PEPSICO_2023Q1_EARNINGS",
+          "sha256": "e4a19f898c7b3c072e32147edd5e8c51d5be786b8f5016846ca146f435e6220f",
+          "questions": 2
+        }
+      ]
+    },
+    "finance-confirmation-filing-PEPSICO_2023_8K_dated-2023-05-05": {
+      "domain": "finance",
+      "fold": "confirmation",
+      "pool": "document",
+      "sha256": "24e00f8cb77b90c1d2ea583130a8f68f0051e450ceecad5695c38184bddf2406",
+      "source": "72636e684b341bfa68f38958b8239a5ca763eae9e975f816db410dd162f4ad1a",
+      "documents": [
+        {
+          "id": "PEPSICO_2023_8K_dated-2023-05-05",
+          "sha256": "adc35c6ffdb2d1de3825027a3c089d69a76f5efd5ce8cb8914bc9517483f6d5a",
+          "questions": 1
+        }
+      ]
+    },
+    "government-confirmation-reviewed-studentaid-html": {
+      "domain": "government",
+      "fold": "confirmation",
+      "pool": "collection",
+      "sha256": "00df27dec89718961bd8be07fb1ab7dbfd977f1a94b05aab625ecebdc02fae0a",
+      "source": "72636e684b341bfa68f38958b8239a5ca763eae9e975f816db410dd162f4ad1a",
+      "documents": [
+        {
+          "id": "Preparing for College | Federal Student Aid#1_0",
+          "sha256": "7c8ece8d43d840f8222c4ab96f3c61f1131fe771e3d6b79ba97cdca5ff911543",
+          "questions": 3
+        },
+        {
+          "id": "Student Loan Deferment | Federal Student Aid#1_0",
+          "sha256": "6e0a5c2fe34932a1a2ee9d75cd7eaa0a7d13132189a789b2fcfae6af5e61faa3",
+          "questions": 15
+        },
+        {
+          "id": "How to Review and Correct Your FAFSA® Application | Federal Student Aid#1_0",
+          "sha256": "be9ba4490318fa246e6e3299a319f8522a6682b9eb5b1b3278f5ca995d4d853a",
+          "questions": 2
+        },
+        {
+          "id": "Student Loan Forbearance | Federal Student Aid#1_0",
+          "sha256": "4aa59b7862bd613a1e2a8e947319d66b870718bb0b825f14749d291cc6c25db3",
+          "questions": 8
+        },
+        {
+          "id": "Getting Out of Default | Federal Student Aid#1_0",
+          "sha256": "63806f9544c456b4aa7200c697a2e86e519e8b772d2258f464b90d43f54f6e46",
+          "questions": 7
+        },
+        {
+          "id": "Dependency Status | Federal Student Aid#1_0",
+          "sha256": "076badce3cc25a37af05a6cade7b52df3ebc0aa14f4f0a0dfa1681bd16b32e0b",
+          "questions": 6
+        },
+        {
+          "id": "Student Aid Report | Federal Student Aid#1_0",
+          "sha256": "4366d489331a566512bd2514a87c9a9b5ca8eeb18622fc922b31067c6d0139c7",
+          "questions": 10
+        },
+        {
+          "id": "Income-Driven Repayment Plans | Federal Student Aid#1_0",
+          "sha256": "74e32e6333c17b6e5a40dda596c05745359b26da4d5a2972de8855f2c53fb1d0",
+          "questions": 5
+        },
+        {
+          "id": "Grants | Federal Student Aid#1_0",
+          "sha256": "f7cbf53145122cd4c5875bf2d54565c2596eb7a90af7ad61611f89c0a75b6546",
+          "questions": 0
+        },
+        {
+          "id": "Eligibility for Non-U.S. Citizens | Federal Student Aid#1_0",
+          "sha256": "ed81f3c74b58b9cabbfb2f52a3cb7357ad66a9599fdcb4648dad2b6d76380921",
+          "questions": 14
+        },
+        {
+          "id": "Accepting Aid | Federal Student Aid#1_0",
+          "sha256": "95e4a94e3db979e29f1d3d7e10404f4383efcabc5e3f180c27b07e66f9b4d3d2",
+          "questions": 9
+        },
+        {
+          "id": "Receiving Financial Aid | Federal Student Aid#1_0",
+          "sha256": "7f833d0fde736528ed1825bd5ca2e47aa7c8c36d5aee18613ac21f0e9458f81d",
+          "questions": 4
+        },
+        {
+          "id": "Perkins Loan Cancellation and Discharge | Federal Student Aid#1_0",
+          "sha256": "bb49a38cb3523746b08bbc3857fe0a370ef4df32cb7e72be5d46d859ba4d316b",
+          "questions": 1
+        },
+        {
+          "id": "Student Loan Consolidation | Federal Student Aid#1_0",
+          "sha256": "bb07e860169c66eff4897aae87e15cb06c549d8770ac9b6033e568cf20f4de1f",
+          "questions": 0
+        },
+        {
+          "id": "Extended Plan | Federal Student Aid#1_0",
+          "sha256": "2d0be7049e714e3e8d2d1a866b5ffc6b4d14fc130972b44950c7ace74fb960a9",
+          "questions": 10
+        },
+        {
+          "id": "Eligibility Requirements | Federal Student Aid#1_0",
+          "sha256": "fcbb1d53674a1141f52fb9a7e00510048fbf7ba639a9b17fb8ed3ce06f86ca7e",
+          "questions": 11
+        },
+        {
+          "id": "Loans | Federal Student Aid#1_0",
+          "sha256": "f9a5eca5c7969dacb18fee06eb8467a0880ee1ebe8ff6bd55252c7607a673665",
+          "questions": 10
+        },
+        {
+          "id": "Make a Student Loan Payment | Federal Student Aid#1_0",
+          "sha256": "712a88df2b3c60c85388c1eeb5791346901af437ff518b0419f32338b6bdd671",
+          "questions": 9
+        },
+        {
+          "id": "Aid for Military Families | Federal Student Aid#1_0",
+          "sha256": "35af376d8e7d5ecdb648f82c930ab19d0aa481c3b7a67d3e767c781c0478ca76",
+          "questions": 2
+        },
+        {
+          "id": "Listing Colleges on the FAFSA® Form | Federal Student Aid#1_0",
+          "sha256": "1d7d85d07de2b6431221aae899d01e362a5cf05458d8ad3ec53d8251f7373324",
+          "questions": 4
+        },
+        {
+          "id": "Borrower Defense to Repayment | Federal Student Aid#1_0",
+          "sha256": "872396ad4c90ed273a4762a339492f0b475557f93f3fa2f64d3cecc423be95c6",
+          "questions": 10
+        },
+        {
+          "id": "Filling Out the FAFSA® Form | Federal Student Aid#1_0",
+          "sha256": "9c52a9a5aca88b30a4e8430b1d2b0086941f7c4038bb8e7386c39787be70d409",
+          "questions": 0
+        },
+        {
+          "id": "Tax Benefits for Higher Education | Federal Student Aid#1_0",
+          "sha256": "4b2302deee8f0a0db9083cd59dcd598b59d70ab722b38acb6f816be9b111afe6",
+          "questions": 10
+        },
+        {
+          "id": "Financial Aid Eligibility | Federal Student Aid#1_0",
+          "sha256": "31dca18bfb5fd257bcaea50eca3eeb9c76084a441c90af9b516b3e06946636b2",
+          "questions": 2
+        },
+        {
+          "id": "Questions and Answers About FAFSA® Completion Data | Federal Student Aid#1_0",
+          "sha256": "eed51f1deb3715a96f7e1e4c0ccdc485ad429c231bf51c5d8de93643b9cce18b",
+          "questions": 2
+        },
+        {
+          "id": "Reporting Parent Information | Federal Student Aid#1_0",
+          "sha256": "ee364eb468b977cbf2680dba5b8a06b986a8b7f0e6369b0714b3910691f92adc",
+          "questions": 0
+        },
+        {
+          "id": "Total and Permanent Disability Discharge | Federal Student Aid#1_0",
+          "sha256": "cf7a6798ef73c6a663a579a13686213b82ae6c1178ba1e96b9b55f0872b71e37",
+          "questions": 4
+        }
+      ]
+    },
+    "papers-confirmation-reviewed-0": {
+      "domain": "papers",
+      "fold": "confirmation",
+      "pool": "document",
+      "sha256": "94d3155de78f415b0425b55b25945eb33d5a7cd2406c9db5829b751ea0be8d6d",
+      "source": "72636e684b341bfa68f38958b8239a5ca763eae9e975f816db410dd162f4ad1a",
+      "documents": [
+        {
+          "id": "1704.04452",
+          "sha256": "0138442cc733b9f84dd2a0f5d90a781488a93a3dcd044f0b8a02912e2a1629e1",
+          "questions": 5
+        },
+        {
+          "id": "1910.06036",
+          "sha256": "083e27c45dfdb8c55ac92f8bfe2c2da4a9f9d0fd650654e9916f37e0f78de5d7",
+          "questions": 3
+        },
+        {
+          "id": "1810.08699",
+          "sha256": "6c751c4513410907f230076d6b10cc6f1aa6e16bbcb0369a14ea4416b0c0d4ae",
+          "questions": 3
+        },
+        {
+          "id": "1908.09246",
+          "sha256": "fa59be25eb5f5322271f763d00345de72998a860ad44980575cff07d3319d3a3",
+          "questions": 4
+        },
+        {
+          "id": "2001.07786",
+          "sha256": "e2e182902b479b962bae0711f307ba099c7b5b35bccc8d94f70a17524488822c",
+          "questions": 2
+        },
+        {
+          "id": "1911.07555",
+          "sha256": "77ab05bf055eea5df9c12392ff299ebed981577fb289789c463ff9f089aab085",
+          "questions": 6
+        },
+        {
+          "id": "1605.06083",
+          "sha256": "602f3afea9ab86bb3715925e91838433a2f456692d781eea12bb99eaf924ccbe",
+          "questions": 3
+        },
+        {
+          "id": "1910.14537",
+          "sha256": "caebb227faf6802f6f55474c16e5e896b33ca56a218ee1c8db4eda627e55b93f",
+          "questions": 2
+        }
+      ]
+    },
+    "faq-development-reviewed": {
+      "domain": "faq",
+      "fold": "development",
+      "pool": "collection",
+      "sha256": "57709db1b669bf175ca60b271a3a9c1eaaf2947da3ae0da51b61f18f94dbeec4",
+      "source": "72636e684b341bfa68f38958b8239a5ca763eae9e975f816db410dd162f4ad1a",
+      "documents": [
+        {
+          "id": "rclone",
+          "sha256": "fdec4c8b90e9dbf142d892aaa873e92e7551f78066776f4dc6a4e9ef9b0bd3f3",
+          "questions": 8
+        },
+        {
+          "id": "pnpm",
+          "sha256": "7b1c81de882b3ef5878ea8041a823baa32122ee999993b91c8d130150743fde0",
+          "questions": 9
+        },
+        {
+          "id": "jellyfin",
+          "sha256": "3531b2f9ff3dbcbd9d93767109013c0f9e491fd5f3c84fe2c709c0bbfe7e3338",
+          "questions": 5
+        }
+      ]
+    },
+    "finance-development-filing-AMCOR_2022_8K_dated-2022-07-01": {
+      "domain": "finance",
+      "fold": "development",
+      "pool": "document",
+      "sha256": "1adc9e7f173aeb09b2401ee0053227d1cbb7a2cef78c44054c3bead0f6eafdcb",
+      "source": "72636e684b341bfa68f38958b8239a5ca763eae9e975f816db410dd162f4ad1a",
+      "documents": [
+        {
+          "id": "AMCOR_2022_8K_dated-2022-07-01",
+          "sha256": "c2f8b9701e56e4cca1e4be8b953fe49d6c72215fb0afed34d14879839890cd0f",
+          "questions": 1
+        }
+      ]
+    },
+    "finance-development-filing-MGMRESORTS_2022Q4_EARNINGS": {
+      "domain": "finance",
+      "fold": "development",
+      "pool": "document",
+      "sha256": "8a6f30a15b6b137a6213ede79663bcabb927e41f7bd60b3bed9dce2737d66f34",
+      "source": "72636e684b341bfa68f38958b8239a5ca763eae9e975f816db410dd162f4ad1a",
+      "documents": [
+        {
+          "id": "MGMRESORTS_2022Q4_EARNINGS",
+          "sha256": "a69945d342e758e0888ebbaa47cbc389b02b084f965a8a90c65f5c6cc502b0ab",
+          "questions": 1
+        }
+      ]
+    },
+    "finance-development-filing-ULTABEAUTY_2023Q4_EARNINGS": {
+      "domain": "finance",
+      "fold": "development",
+      "pool": "document",
+      "sha256": "f4ae94993e78b2d225577c5651cce7d653569d76232db1523afcf617a9e1b65e",
+      "source": "72636e684b341bfa68f38958b8239a5ca763eae9e975f816db410dd162f4ad1a",
+      "documents": [
+        {
+          "id": "ULTABEAUTY_2023Q4_EARNINGS",
+          "sha256": "15115d19272f55ac423d38f75bce3471bd72b0da03fc0b40aa46a63e291d285e",
+          "questions": 4
+        }
+      ]
+    },
+    "government-development-reviewed-studentaid-html": {
+      "domain": "government",
+      "fold": "development",
+      "pool": "collection",
+      "sha256": "4f9143ea83ac110b22d10361e11be23bce10e6998ab79a059c34e204fbfb04d9",
+      "source": "72636e684b341bfa68f38958b8239a5ca763eae9e975f816db410dd162f4ad1a",
+      "documents": [
+        {
+          "id": "Understanding College Costs | Federal Student Aid#1_0",
+          "sha256": "7e66fb39b20f6093d9b061f7e8eaf25642be7422bfce1ffb0089fcdbdc437f27",
+          "questions": 0
+        },
+        {
+          "id": "Parent PLUS Loans | Federal Student Aid#1_0",
+          "sha256": "ad1f1266339ebc4e34275a8c3f023fed003a7d6e03af11cee0613a9ec73c7192",
+          "questions": 13
+        },
+        {
+          "id": "IT Standards Library | Federal Student Aid#1_0",
+          "sha256": "098de3389b02e549cbcd0de4f1effb49d9cc88609b51f45db0cc2c8fa80c09a5",
+          "questions": 8
+        },
+        {
+          "id": "Contracting Information | Federal Student Aid#1_0",
+          "sha256": "30a4c07fe82b8afce0da7fb8379e26af522ea20548475552aaa75329edc8d1d2",
+          "questions": 8
+        },
+        {
+          "id": "Subsidized and Unsubsidized Loans | Federal Student Aid#1_0",
+          "sha256": "92210c9d4bbb687984a85f1847e7da67781fc0b7a19cfd91f012bf0bc6adbd6c",
+          "questions": 9
+        },
+        {
+          "id": "Closed School Discharge | Federal Student Aid#1_0",
+          "sha256": "23af8601e5c652ce774925ac2e48f870cb0919226594b35065fe82075cf102f1",
+          "questions": 0
+        },
+        {
+          "id": "Eligibility for Students with Criminal Convictions | Federal Student Aid#1_0",
+          "sha256": "4db4f9f7dc753389423ea606b0a4ed3f4b3ef81fd5f8eb96630dd6cdc6aea2e3",
+          "questions": 9
+        },
+        {
+          "id": "Aidan | The FSA Virtual Assistant | Federal Student Aid#1_0",
+          "sha256": "f3717e2a64c1b1f9bfbfb532e6e2c22d6cf82e990337fafa64af606a2fff583d",
+          "questions": 5
+        },
+        {
+          "id": "Loan Servicers | Federal Student Aid#1_0",
+          "sha256": "b1897d509f39c78653df8deedae1d4c2ed584db4f6ffad30af48450cfe5d4447",
+          "questions": 0
+        },
+        {
+          "id": "Unpaid Refund Discharge | Federal Student Aid#1_0",
+          "sha256": "7eb3a8049608bb9e9752a4ec9080813810c646160fb7e7b0a2f477086f8d74e4",
+          "questions": 0
+        },
+        {
+          "id": "Loan Simulator | Federal Student Aid#1_0",
+          "sha256": "390904ee7372e4f182e56f5fc408a32da0820d715212d90c16233c63e84129b3",
+          "questions": 2
+        },
+        {
+          "id": "Teacher Loan Forgiveness | Federal Student Aid#1_0",
+          "sha256": "25259a3691a549320ede540cb1aa225040ce7344fd92f0f137bc9d3c9cb9e2a1",
+          "questions": 9
+        },
+        {
+          "id": "How to Correct or Update Your FAFSA® Application | Federal Student Aid#1_0",
+          "sha256": "f3a38f5ee7238f15b7f74ce714440e7c9fd7853dad168a75cea8bba64945df04",
+          "questions": 7
+        },
+        {
+          "id": "Link to Us | Federal Student Aid#1_0",
+          "sha256": "2564603adf305f3984e7719a3e187d21f8ac881b73fb4f768082711987629bee",
+          "questions": 8
+        },
+        {
+          "id": "Income-Sensitive Plan | Federal Student Aid#1_0",
+          "sha256": "dbfcbb956af1f10946d44c3f53217438b1394d228faf73c6c6a4bcfaabb00f2b",
+          "questions": 10
+        },
+        {
+          "id": "Get Temporary Relief | Federal Student Aid#1_0",
+          "sha256": "0fd66ad65e1d28ca43385fab71674e8fa718eade122a435ac92389e07f2b7256",
+          "questions": 9
+        },
+        {
+          "id": "Regaining Eligibility | Federal Student Aid#1_0",
+          "sha256": "3e7eaef4873e18aad0b398aae7b2c4f59aa2118aa1cf586673766c2b5d08a34e",
+          "questions": 8
+        },
+        {
+          "id": "Understanding Delinquency and Default | Federal Student Aid#1_0",
+          "sha256": "76d36fd4042e7aacd52d6c8e956ded31131989f72ffde8b95d8b195b2eec7f6b",
+          "questions": 9
+        },
+        {
+          "id": "Staying Eligible | Federal Student Aid#1_0",
+          "sha256": "00bce9d88ddb670f57d518278d8ef9b3df51968093dc46f13249676508fcaac8",
+          "questions": 6
+        },
+        {
+          "id": "Lower or Suspend Student Loan Payments | Federal Student Aid#1_0",
+          "sha256": "652e363e29ec5df34fca757e76ba10c0cbf80bfbf1e5f46e62586b8348af1452",
+          "questions": 9
+        },
+        {
+          "id": "Collections | Federal Student Aid#1_0",
+          "sha256": "55ecb772e01543a3c0998b5e4547db25a0b7cb7d5976313f050b6fba098586b3",
+          "questions": 4
+        },
+        {
+          "id": "False Certification Discharge | Federal Student Aid#1_0",
+          "sha256": "2dad070deac80a08ed7e0c8b3d77eab5f8b63c280831e589b362b7fb650f2845",
+          "questions": 0
+        },
+        {
+          "id": "Choosing a School | Federal Student Aid#1_0",
+          "sha256": "7d273603003481ee89d64d14e753c484a0df414f691d2e3f20d4fb075c6265c6",
+          "questions": 0
+        },
+        {
+          "id": "Loan Repayment Checklist | Federal Student Aid#1_0",
+          "sha256": "d7d6c5bf45f57701122893dbf045ff166a5daafcbaeda4f1a8632436bf61fc1d",
+          "questions": 7
+        }
+      ]
+    },
+    "papers-development-reviewed-0": {
+      "domain": "papers",
+      "fold": "development",
+      "pool": "document",
+      "sha256": "cebf46fbf4216ccb60be4dfab313b346bb2615eb06a9c301c761f01d168e2ef7",
+      "source": "72636e684b341bfa68f38958b8239a5ca763eae9e975f816db410dd162f4ad1a",
+      "documents": [
+        {
+          "id": "1811.12254",
+          "sha256": "d21df7954cd3a66a3e531ecd3d24144135713cd398363a6f455d7c2a7ed43b72",
+          "questions": 0
+        },
+        {
+          "id": "1903.07406",
+          "sha256": "df05d921708d738a74ccfdcb0c8bda17ba079b1898e2a1c451ce598dd98c91df",
+          "questions": 0
+        },
+        {
+          "id": "1610.07809",
+          "sha256": "b2b89815c5e7b4db3d3a11356f5858a719743195b5bc7d1f15ad21d520cca510",
+          "questions": 3
+        },
+        {
+          "id": "1610.00956",
+          "sha256": "b3b836c2e566663d5a47d884f243c157457baf30f0b145e3900cf0eade7a8350",
+          "questions": 3
+        },
+        {
+          "id": "1806.04511",
+          "sha256": "6fcaaea257edf1d87797aa2af40cf66121acedc1d06b10a97aca27ac9e49cfd4",
+          "questions": 6
+        },
+        {
+          "id": "1909.06162",
+          "sha256": "017986824c0926993f5f4a474b20a35974859015161563af8789a08ab7917729",
+          "questions": 2
+        },
+        {
+          "id": "2003.08380",
+          "sha256": "942229b68fd39701562ba15604f4c6e1bf9d80f4af4d98405ec0311079e52ad5",
+          "questions": 1
+        },
+        {
+          "id": "2002.01320",
+          "sha256": "4b27dbbe0a08fbed8a7d3ef70e20a283569b00e5d28efe0bb7f857cdcd067e5f",
+          "questions": 6
+        }
+      ]
+    },
+    "boards-development": {
+      "domain": "boards",
+      "fold": "development",
+      "pool": "document",
+      "sha256": "4b292c519764b5cc5f781175903271a8b24e5840264b0c4d4659280a64df6657",
+      "source": {
+        "psf-2009": "https://www.python.org/psf/records/board/minutes/2009-09-14/",
+        "fed-2020": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20200315.htm"
+      },
+      "documents": [
+        {
+          "id": "psf-2009",
+          "sha256": "630901cc3dab091d60883544bca72e46b886e6f9c687cff3df9f211a6212e262",
+          "questions": 4
+        },
+        {
+          "id": "fed-2020",
+          "sha256": "7b9536decd8526d71ea1e95c7c21e3d3199bb7f594fc10277f72d5c1756fd600",
+          "questions": 4
+        }
+      ]
+    },
+    "boards-confirmation": {
+      "domain": "boards",
+      "fold": "confirmation",
+      "pool": "document",
+      "sha256": "930663d867237c87ef9bf1c3614d97cdd212ec06583ca2976007d73b0b27f4d1",
+      "source": {
+        "psf-2012": "https://www.python.org/psf/records/board/minutes/2012-03-26/",
+        "fed-2022": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220615.htm"
+      },
+      "documents": [
+        {
+          "id": "psf-2012",
+          "sha256": "1541821d8043825e473901beb23f2c447100d3b613268444284be0185c714b74",
+          "questions": 4
+        },
+        {
+          "id": "fed-2022",
+          "sha256": "c5f10beea666f59bbf4438f19bd03627767dab933c35c6833b88a9f720d2414d",
+          "questions": 4
+        }
+      ]
+    },
+    "papers-fresh": {
+      "domain": "papers",
+      "fold": "fresh",
+      "pool": "document",
+      "sha256": "52467de05444fc751a4984676c014363f135c254390725299bbdfc06aca0857e",
+      "source": "https://qasper-dataset.s3.us-west-2.amazonaws.com/qasper-test-and-evaluator-v0.3.tgz",
+      "documents": [
+        {
+          "id": "1910.03177",
+          "sha256": "b33b3d955788a0e48f5ef7a33bea35b8560862e20b2aa7927a137c14c858767a",
+          "questions": 1
+        },
+        {
+          "id": "1602.03483",
+          "sha256": "5903cf642e2351a6f7a883e606d253c30193c7d48aadcf08ad21ea16f91e633d",
+          "questions": 4
+        },
+        {
+          "id": "1901.03253",
+          "sha256": "77be748074492c1c2161c1044955fb17de8ad6cfd488e6ddc3794f960599e6fb",
+          "questions": 4
+        },
+        {
+          "id": "1804.05253",
+          "sha256": "bfe22fc6433ac71e99971eb6221f7c24ef8d8d183c30076c0dcd27018c9bcaec",
+          "questions": 4
+        },
+        {
+          "id": "1909.01720",
+          "sha256": "66b99a7bb069314916a244fe50a4760a9c6b75d234f4a1ca4f06dc9fa8b8394c",
+          "questions": 3
+        },
+        {
+          "id": "1911.05652",
+          "sha256": "93c18a3ae2191572559f7d6afaf276613e3440c3c09d4d9c50705be3ee0ef4bb",
+          "questions": 5
+        },
+        {
+          "id": "1908.09355",
+          "sha256": "0674abf693357d2ee6b002636614a3e4a8fc43a53e060eda4b2f8fe69a1c24fb",
+          "questions": 2
+        },
+        {
+          "id": "1707.07568",
+          "sha256": "a2c11949a2e273df106dd032dd985c8978a0926c0a0522e2b4e6677c877ac53d",
+          "questions": 6
+        },
+        {
+          "id": "1912.06905",
+          "sha256": "ca976e8172c9765731d9493bf7b575a50ce9a35dfb61437b80264b3b44268c74",
+          "questions": 2
+        },
+        {
+          "id": "1909.00786",
+          "sha256": "5141874ccb0e7b26fdc9e98cb9f8129139938d5b0d251e87d25bec2fc5a5df3c",
+          "questions": 2
+        },
+        {
+          "id": "1809.02208",
+          "sha256": "2a5c4996494e6c0e308fb8ef0ff859ebbb4fc3dc98f6fab52ab0db0a792a2b1f",
+          "questions": 2
+        },
+        {
+          "id": "1909.06502",
+          "sha256": "7658a763b73189d3f406ca9620862b64b2aa83539faf0c2dc88382edbef18a5a",
+          "questions": 1
+        },
+        {
+          "id": "1707.06875",
+          "sha256": "752c5a92132dcb544c0cd85ac625209694ea60ce573aa1fe804d196440127e32",
+          "questions": 2
+        },
+        {
+          "id": "1909.12208",
+          "sha256": "01951ef788ddecebf70f3aa189669c8dea272abf4a6c30958befdf893347c891",
+          "questions": 2
+        },
+        {
+          "id": "1809.08899",
+          "sha256": "92c3e4c68fa218e05819b412f67dde2ec51a05ad11833eebc72e2f2c0cdd347e",
+          "questions": 7
+        },
+        {
+          "id": "1907.05338",
+          "sha256": "370a19a9a1072fe5efca3035897052853cdc2d4ec68f6d7fe6c0d30334c2f265",
+          "questions": 3
+        },
+        {
+          "id": "1903.04329",
+          "sha256": "1e6f98a0d2e2c8e796e2420bd9b2b0b09dcc34f509bba0d62b37965f2d5820f3",
+          "questions": 4
+        },
+        {
+          "id": "1803.07828",
+          "sha256": "3cc16305d67d120f1d5e0a95f1f832459deb915cfba8859bdcc460aa8c0900cc",
+          "questions": 2
+        }
+      ]
+    },
+    "government-fresh": {
+      "domain": "government",
+      "fold": "fresh",
+      "pool": "collection",
+      "sha256": "76593b27c4a67cfc57b08f9c5d9b6dc56db07b0deebbb285c98df9d82c5ab1e6",
+      "source": "https://raw.githubusercontent.com/doc2dial/doc2dial.github.io/30fa02bacefca711cc4503f118cc50365225e9b9/file/doc2dial_v1.0.1.zip",
+      "documents": [
+        {
+          "id": "Benefits Planner: Retirement | You Can Apply For Retirement Benefits Or Medicare | Social Security Administration#2_0",
+          "sha256": "ca74d24392b5cfac3d56e742b2a3dcbedb2f30b064aebe193f63974011e1d214",
+          "questions": 0
+        },
+        {
+          "id": "Supplemental Security Income (SSI) Benefits | Social Security Administration#2_0",
+          "sha256": "2a4080fb2167aca14e19d738d0a7e63a098a48a25552412ef38d8912296baac8",
+          "questions": 1
+        },
+        {
+          "id": "Learn what documents you will need to get a Social Security Card | Social Security Administration#15_0",
+          "sha256": "97411b3eb402a70bdeb842d82525ae96cae92d39c858689b1f1d747981fa13d1",
+          "questions": 1
+        },
+        {
+          "id": "Benefits Planner | Social Security Credits and Benefit Eligibility | SSA#2_0",
+          "sha256": "316d97aeba3ace5647266fc4d09b09b7aacde31e9e605601d75119da822215ef",
+          "questions": 1
+        },
+        {
+          "id": "Benefits Planner: Disability | Approval Process | Social Security Administration#2_0",
+          "sha256": "f2ef95852043e8fcc396f78b21f4cf1e62f38ad816a2f5b794b09919670f286b",
+          "questions": 1
+        },
+        {
+          "id": "How To Apply For VA Voc Rehab And Employment | Veterans Affairs#1_0",
+          "sha256": "218f041eca106de3af1dfc75f53bff237965c37fa8035c6af4409a342ff7aa51",
+          "questions": 1
+        },
+        {
+          "id": "Disability Housing Grants For Veterans | Veterans Affairs#1_0",
+          "sha256": "7be744a7cccfaaf0c7d26ab1a6727e2b8963d31773ed80023f28cd7bb13c8348",
+          "questions": 1
+        },
+        {
+          "id": "Family Group Life Insurance (FSGLI) | Veterans Affairs#1_0",
+          "sha256": "2f33b538d2b064b489ffb2d799e5975e7e5f2eb68e7b81c29a03bce87aa2251c",
+          "questions": 1
+        },
+        {
+          "id": "Health Needs And Conditions | Veterans Affairs#1_0",
+          "sha256": "14a8f9b74e7c4bd325c008afbc58a49e664ee89d89c1b124f4a81a31bfbb0a95",
+          "questions": 2
+        },
+        {
+          "id": "Change Your GI Bill School Or Program | Veterans Affairs#1_0",
+          "sha256": "d08ca319d20332ea1fe30a99a07e02b2c758bf4a4c3ab815ed9f7a6a5d469882",
+          "questions": 0
+        },
+        {
+          "id": "Resources for non US citizens#3_0",
+          "sha256": "f74283b5db0b6e455b0a27aab4f01f657d9537a9fe07c2191f9a23305900dd89",
+          "questions": 1
+        },
+        {
+          "id": "The Graduated License Law and Restrictions for Drivers under 18#1_0",
+          "sha256": "e845ba3c760da769e3d8a9d370b4987ddf59d5173e76ff01b8a4e5d8a23d1bda",
+          "questions": 1
+        },
+        {
+          "id": "Pay suspension termination fee#1_0",
+          "sha256": "6e78c27a50f32a88060ba0b5d3587db60d44c3045fe4e184d898322f36818eda",
+          "questions": 1
+        },
+        {
+          "id": "Commercial vehicle registration fees, vehicle use taxes and supplemental fees#3_0",
+          "sha256": "e2079c86d861276029f09a40b86fc3bfeb0c1573b3800af95d77574a0aa55835",
+          "questions": 1
+        },
+        {
+          "id": "Driver license and learner permit fees and refunds#3_0",
+          "sha256": "5853c7d5d1cc73e37ab60f130a51564a7747907fa43e07260d2c2631649d5510",
+          "questions": 1
+        }
+      ]
+    },
+    "boards-fresh": {
+      "domain": "boards",
+      "fold": "fresh",
+      "pool": "document",
+      "sha256": "3c0216f15701f8a6496f1d7b877983b3d702acec2758d6bf6532f73b4dd655af",
+      "source": {
+        "psf": "https://www.python.org/psf/records/board/minutes/2012-11-21/",
+        "fed": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20190130.htm"
+      },
+      "documents": [
+        {
+          "id": "psf",
+          "sha256": "5ed0418cb8444a5874790819cc79828386ff0c0863144f1dfede4959a23e33cc",
+          "questions": 5
+        },
+        {
+          "id": "fed",
+          "sha256": "c70a11d313b792c0cabd691327fdb1bb700c483a833fef374bac22a12f414677",
+          "questions": 5
+        }
+      ]
+    },
+    "finance-fresh": {
+      "domain": "finance",
+      "fold": "fresh",
+      "pool": "document",
+      "sha256": "c9b10f7ff1ec6c8298108e3e2ce1865130ee2e860756f0d73c8747541754417d",
+      "source": {
+        "letter77": "https://www.berkshirehathaway.com/letters/1977.html",
+        "letter83": "https://www.berkshirehathaway.com/letters/1983.html"
+      },
+      "documents": [
+        {
+          "id": "letter77",
+          "sha256": "1443457e3bcf0cb549dde1b8951fee2aa05ed01eb440e1a6d83b7de8c47095c2",
+          "questions": 5
+        },
+        {
+          "id": "letter83",
+          "sha256": "a919f4dbfad958f4975a47ed3090f9cf7f159797ecff94aee7c1349d792055a1",
+          "questions": 5
+        }
+      ]
+    },
+    "faq-fresh": {
+      "domain": "faq",
+      "fold": "fresh",
+      "pool": "collection",
+      "sha256": "2ace3a2d4ae5d818a3d403eb9b58dd815e2f69c1d32b85f6e588a3cfbd712975",
+      "source": {
+        "prettier": "https://raw.githubusercontent.com/prettier/prettier/497303f63199c530521bb029c274334a2b4ff844/docs/rationale.md",
+        "go": "https://raw.githubusercontent.com/golang/website/f9824da7097d4b1780b46fbda5409788a7b5679c/_content/doc/faq.md"
+      },
+      "documents": [
+        {
+          "id": "prettier",
+          "sha256": "5aba59d6b91a01691eabc373847eee1abd6bf4d14523fbaeca63feb833dac488",
+          "questions": 5
+        },
+        {
+          "id": "go",
+          "sha256": "43d06df73dd9fb8a9933f7cd81ce92c24dfa1ef1f0f0f4f99b3482980e9d03ba",
+          "questions": 5
+        }
+      ]
+    }
+  }
+}

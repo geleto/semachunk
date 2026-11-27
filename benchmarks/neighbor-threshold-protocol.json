@@ -1,0 +1,25 @@
+{
+  "cutoffs": [0, 0.10, 0.15, 0.20, 0.25, 0.30, 0.40, 0.50, 0.55, 0.65, 0.75],
+  "weights": {
+    "core": [0],
+    "chunk": [0.10, 0.15, 0.25, 0.30, 0.36, 0.45, 0.50, 0.55, 0.70],
+    "sentence": [0.15, 0.30, 0.36, 0.50, 0.70],
+    "visible": [0.15, 0.30, 0.50],
+    "cross": [0.15, 0.30],
+    "bestSide": [0.15, 0.30, 0.50],
+    "dual": [0.30, 0.50],
+    "short": [0.30, 0.50],
+    "bridge": [0.30],
+    "joint": [0.30, 0.60, 1],
+    "three": [0.30]
+  },
+  "parentMethods": ["core", "chunk", "sentence", "joint"],
+  "parentShares": [0.25, 0.50, 0.75, 1],
+  "radiusControl": "At .15, .40, .55 and .75 cross ranking with display. Apply zero context, a 30% normalized immediate-chunk blend, or a 30% normalized blend of visible adjacent chunks up to distance four, weighted by inverse distance. Independently show up to one, two or four chunks on each side, inside the same authored section and the 512-token cap. Keep the structural layout fixed. Compare standalone semantic and combined retrieval; also pair wide-context ranking with narrow delivery.",
+  "budgetControl": "After observing recovery at radius four on development and confirmation, add a fixed-budget diagnostic at .15 and .55. On each side offer whole adjacent chunks until their core token counts reach 512 or the source ends. The production section clipping and exact 512-token renderer then choose the visible text. Cross one-hop versus budget display with bare core, 30% immediate chunk mix, 30% inverse-distance mixture of all contributing chunks, the actual re-embedded budget passage, and a normalized 50/50 mix of the core and that passage. This is an exploratory follow-up, with frozen settings on all six search conditions.",
+  "geometry": "Use the production hierarchical splitters, with cross-paragraph joins enabled for semantic candidates. Structural cores use 256 tokens, semantic cores up to 512, upper branches 256, and displayed passages up to 512. For ranking comparisons at a given cutoff each candidate has identical displayed text. The parent experiment always ranks and returns the same structural passages.",
+  "retrieval": "Score the whole core and its best strictly contained paragraph 50/50. The core supplies the base when there is no such paragraph. Give the nearest eligible enclosing section 15% if available. In the combined index, apply the experimental embedding only to semantic candidates. Preserve source/layout/chunk tie order and the public 75% overlap suppression. Return up to five complete passages.",
+  "methods": "Normalize mixtures of unit embeddings before query cosine. The two neighbors share the stated total weight. Compare full eligible adjacent chunks, the visible portion of each neighbor, nearest complete visible sentence on each side, whole adjacent chunks across boundaries, the better one-sided blend for this question, the better of the core and blended key, and a weight scaled down for cores above 64 tokens. A bridge doubles the chunk share from .30 to .60 if the two neighbors have cosine at least .45 and exceed both center-to-neighbor cosines by .10. Joint uses an independent embedding of the literal displayed window. Three uses .49 core, .21 neighbor mean and .30 joint. Parent blends the structural score with the best complete semantic core contained in it, falling back to the structural score when none fits.",
+  "selection": "Scan every listed weight and cutoff on 758 development questions in seven domains, for pure semantic and the combined index. For parent retrieval scan all four parent shares for core alone, 30% chunk and sentence neighbors, and 100% joint. Freeze the two coverage endpoints' equally weighted choice for each family and for its strict subgroup (cutoff at least .40), plus separate first-hit and top-five champions. Within 0.35 percentage points on the target prefer the simpler method, then smaller weight and greater citation F1.",
+  "validation": "Compare frozen candidates and identical-geometry controls on the 807-question confirmation set, the 484-question replication in original and shared pools, and the 468-question set in known-source and shared pools. These source-disjoint datasets have been used in earlier research. Across all cutoffs also report unweighted cores, the fixed 30% chunk blend, the 36% sentence blend, and the fixed parent probe. Report first and five complete-evidence rates, first-hit F1 and passage length, matched source-paired intervals, and the difference of the .55 versus .15 neighbor effects. Compare the combined index to existing and previously tuned structural blocks. Search scopes on the same documents share questions."
+}

@@ -42,9 +42,10 @@ test('structured, flat and token-limited plans use the same annotated source coo
     const data = await prepare([{ title: 'list', text, raw }], [
         { id: 'q', text: 'Which item?', pool: [0], references: [[[0, ref, ref + 11]]] },
     ], chunkText, { offsets: wordOffsets, countTokens: s => wordOffsets(s).length + 2 }, {
-        flat: { flatInput: true }, limited: { maxChunkTokens: 256 },
+        flat: { flatInput: true }, limited: { maxChunkTokens: 256 }, hierarchy: { chunkingStrategy: 'semantic-blocks' },
     });
     for (const value of ['Terms', '- Second item', text]) assert.ok(data.vocab.texts.includes(value));
+    assert.ok(data.vocab.texts.includes('Terms\n\n- First item'));
     assert.deepEqual(data.gold, [[new Set([5, 6])]]);
 });
 

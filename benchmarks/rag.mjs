@@ -3,6 +3,7 @@ import { costs, denseRanker, internCandidates, measure, qualityPlans, sentencePl
 import { alignPlain } from './delivered-context.mjs';
 import { packSentences } from '../src/packing.js';
 import { tokenBudget } from '../src/token-limit.js';
+import { parseTextTree } from '../src/sentences.js';
 import { modelInputTokens } from './encoder.mjs';
 
 export const budgets = [256, 512, 1024];
@@ -12,11 +13,31 @@ export const windowPlan = { tokens: 128, overlap: 32 };
 
 export function ragPlans() {
     const grid = qualityPlans();
-    const selected = ['sentences', 'blocks-500', 'pack-500', 'semantic-500', 'merge-250-0.5', 'merge-500-0.3', 'merge-500-0.5', 'merge-500-0.7'];
-    const base = grid['merge-500-0.5'];
-    return { 'default': {}, ...Object.fromEntries(selected.map(name => [name, grid[name]])),
-        'flat-merge-500-0.5': { ...base, flatInput: true }, 'merge-500-document': grid['merge-500-document'],
-        'merge-500-token-256': { ...base, maxChunkTokens: 256 }, 'merge-500-two-passes': { ...base, maxPasses: 2 } };
+    const selected = ['default', 'sentences', 'blocks-500', 'pack-500', 'semantic-blocks-500',
+        'semantic-blocks-250-0.5', 'semantic-blocks-500-0.3', 'semantic-blocks-500-0.5',
+        'semantic-blocks-500-0.7', 'semantic-blocks-500-document'];
+    return { ...Object.fromEntries(selected.map(name => [name, grid[name]])),
+        'flat-semantic-blocks-500': { ...grid['semantic-blocks-500'], flatInput: true } };
+}
+
+// Freeze the possible sentence spans in the parser's spelling, including blank lines.
+// The scored chunks must be looked up in the same vector matrix as the structural baseline.
+async function internTreeSpans(raw, maxSize, vocab) {
+    const tree = await parseTextTree(raw, {inputFormat: 'text'});
+    const pending = [...tree.roots].reverse(), leaves = [];
+    while (pending.length) {
+        const node = pending.pop(), children = tree.children(node);
+        if (children?.length) {
+            for (let i = children.length - 1; i >= 0; i--) pending.push(children[i]);
+        } else if (node.end > node.start) {
+            leaves.push(node);
+        }
+    }
+    for (let i = 0; i < leaves.length; i++) {
+        for (let j = i; j < leaves.length && (j === i || leaves[j].end - leaves[i].start <= maxSize); j++) {
+            vocab.intern(tree.source.slice(leaves[i].start, leaves[j].end));
+        }
+    }
 }
 
 export function tokenSpan(source, a, b) {
@@ -26,6 +47,7 @@ export function tokenSpan(source, a, b) {
 export async function prepare(docs, questions, chunkText, encoder, plans) {
     const vocab = vocabulary(), sources = [], windows = [], aligned = [];
     const needFlat = Object.values(plans).some(plan => plan.flatInput);
+    const treePlans = Object.values(plans).filter(p => p.chunkingStrategy === 'semantic-blocks' && !p.flatInput);
     const cappedPlans = Object.values(plans).filter(plan => Number.isFinite(plan.maxChunkTokens));
     let base = 0;
     for (const [d, original] of docs.entries()) {
@@ -35,6 +57,7 @@ export async function prepare(docs, questions, chunkText, encoder, plans) {
         const doc = { ...alignDocument(original, parts), raw, flat, parts };
         aligned.push(doc);
         internCandidates(parts, 500, vocab);
+        if (treePlans.length) await internTreeSpans(raw, Math.max(...treePlans.map(p => p.maxChunkSize ?? 500)), vocab);
         for (const plan of Object.values(plans)) {
             if (!plan.pack && (plan.chunkingStrategy ?? 'blocks') === 'blocks') {
                 (await split(chunkText, raw, { ...plan, countTokens: encoder.countTokens })).forEach(vocab.intern);
@@ -229,7 +252,7 @@ export async function evaluateRag(task, chunkText, encoder, plans, { sample, pai
         pools.get(key)[1].push(i);
     });
     const all = task === 'hotpotqa' && [[docs.map((_, d) => d), questions.map((_, i) => i)]];
-    const exampleName = plans['default'] ? 'default' : 'merge-500-0.5';
+    const exampleName = plans['default'] ? 'default' : 'semantic-blocks-500';
     const examples = plans[exampleName] ? examineExamples(task, questions, sources, gold) : new Map();
     const pooled = new Map([...examples.keys()].map(i => [i, {}]));
     const scores = {};

@@ -1,0 +1,202 @@
+diff --git a/config.js b/config.js
+--- a/config.js
++++ b/config.js
+@@ -17,7 +17,14 @@
+     SIMILARITY_THRESHOLD: 0.5,
+     SEMANTIC_BLOCKS_SIMILARITY_THRESHOLD: 0.15,
+     EXCLUDE_NON_LETTER_SENTENCES: false,
++    // Iterative Optimization
++    COMBINE_CHUNKS_SIMILARITY_THRESHOLD: 0.05,
+     MERGE_THRESHOLD_MODE: 'fixed',
++    MAX_PASSES: Infinity,
++    MAX_UNCAPPED_PASSES: 100,
++    MAX_MERGES_PER_PASS: 500, // Absolute limit
++    MAX_MERGES_PER_PASS_PERCENTAGE: 40, // 40% of valid candidates
++    UNCAPPED_CANDIDATE_MERGES: 12, // Soft-minimum number of merges per pass (overrides percentage cap)
+ 
+     // Output
+     RETURN_EMBEDDING: true,
+diff --git a/src/index.js b/src/index.js
+--- a/src/index.js
++++ b/src/index.js
+@@ -1,21 +1,28 @@
+ import { parseText, sentenceLocale } from './sentences.js';
+ import { copyEmbedding, createBatchEmbedder } from './embeddings.js';
++import { mergeChunks } from './merge.js';
+ import { chunkDelimited, packSentences } from './packing.js';
+ import { DEFAULT_CONFIG } from '../config.js';
+-import { tokenBudget } from './token-limit.js';
++import { sentenceTokenLimit, tokenBudget } from './token-limit.js';
+ import { sliceView } from './citations.js';
+ import { documentNodes, finishDocument, orderedSectionRanges } from './document.js';
+ export { getChunkContext } from './document.js';
+ export { createDocumentIndex } from './document-index.js';
+ 
++function defaultSimilarityThreshold(strategy, inputFormat, mode) {
++	if (mode === 'document') return DEFAULT_CONFIG.SIMILARITY_THRESHOLD;
++	if (strategy === 'semantic-blocks') return DEFAULT_CONFIG.SEMANTIC_BLOCKS_SIMILARITY_THRESHOLD;
++	return inputFormat === 'markdown' ? DEFAULT_CONFIG.SIMILARITY_THRESHOLD : DEFAULT_CONFIG.COMBINE_CHUNKS_SIMILARITY_THRESHOLD;
++}
++
+ function defaultCharacterTarget(format) {
+ 	if (format === 'json') return DEFAULT_CONFIG.JSON_MAX_CHUNK_SIZE;
+ 	return format === 'markdown' ? DEFAULT_CONFIG.MARKDOWN_MAX_CHUNK_SIZE : DEFAULT_CONFIG.MAX_CHUNK_SIZE;
+ }
+ 
+ function validateStrategy(strategy, inputFormat, chunkOverlap) {
+-	if (!['blocks', 'pack', 'semantic-blocks'].includes(strategy)) {
+-		throw new TypeError("chunkingStrategy must be 'blocks', 'pack' or 'semantic-blocks'.");
++	if (!['blocks', 'pack', 'semantic', 'semantic-blocks'].includes(strategy)) {
++		throw new TypeError("chunkingStrategy must be 'blocks', 'pack', 'semantic' or 'semantic-blocks'.");
+ 	}
+ 	if (!Number.isSafeInteger(chunkOverlap) || chunkOverlap < 0) {
+ 		throw new RangeError('chunkOverlap must be a nonnegative safe integer.');
+@@ -93,25 +100,33 @@
+ 		countTokens,
+ 		maxEmbeddingBatchSize = DEFAULT_CONFIG.MAX_EMBEDDING_BATCH_SIZE,
+ 		maxCachedEmbeddings = DEFAULT_CONFIG.MAX_CACHED_EMBEDDINGS,
+-		mergeThresholdMode = DEFAULT_CONFIG.MERGE_THRESHOLD_MODE,
+-		similarityThreshold = mergeThresholdMode === 'document' ? DEFAULT_CONFIG.SIMILARITY_THRESHOLD : DEFAULT_CONFIG.SEMANTIC_BLOCKS_SIMILARITY_THRESHOLD,
++		mergeThresholdMode = inputFormat === 'markdown' && strategy !== 'semantic-blocks' ? 'document' : DEFAULT_CONFIG.MERGE_THRESHOLD_MODE,
++		similarityThreshold = defaultSimilarityThreshold(strategy, inputFormat, mergeThresholdMode),
+ 		excludeNonLetterSentences = DEFAULT_CONFIG.EXCLUDE_NON_LETTER_SENTENCES,
+ 		combineChunksSimilarityThreshold = similarityThreshold,
++		maxPasses = DEFAULT_CONFIG.MAX_PASSES,
++		maxUncappedPasses = DEFAULT_CONFIG.MAX_UNCAPPED_PASSES,
+ 		returnEmbedding = embedBatchCallback != null && DEFAULT_CONFIG.RETURN_EMBEDDING,
+ 		chunkPrefix = DEFAULT_CONFIG.CHUNK_PREFIX,
+-		excludeChunkPrefixInResults = DEFAULT_CONFIG.EXCLUDE_CHUNK_PREFIX_IN_RESULTS
++		excludeChunkPrefixInResults = DEFAULT_CONFIG.EXCLUDE_CHUNK_PREFIX_IN_RESULTS,
++		maxMergesPerPass = DEFAULT_CONFIG.MAX_MERGES_PER_PASS,
++		candiateMergesPercentageCap = DEFAULT_CONFIG.MAX_MERGES_PER_PASS_PERCENTAGE,
++		candidateMergesPercentageCap = candiateMergesPercentageCap,
++		uncappedCandidateMerges = DEFAULT_CONFIG.UNCAPPED_CANDIDATE_MERGES
+ 	} = options ?? {};
+ 
+ 	if (typeof text !== 'string') {
+ 		throw new TypeError('Input must be a string');
+ 	}
+ 	validateStrategy(strategy, inputFormat, chunkOverlap);
+-	const usesSimilarity = strategy === 'semantic-blocks';
++	const usesSimilarity = strategy === 'semantic' || strategy === 'semantic-blocks';
+ 	for (const [name, value] of Object.entries({ similarityThreshold, combineChunksSimilarityThreshold })) {
+ 		if (!Number.isFinite(value)) throw new RangeError(`${name} must be finite.`);
+ 	}
+-	if (maxChunkSize !== Infinity && !(Number.isSafeInteger(maxChunkSize) && maxChunkSize >= 0)) {
+-		throw new RangeError('maxChunkSize must be a nonnegative safe integer or Infinity.');
++	for (const [name, value] of Object.entries({ maxChunkSize, maxPasses, maxUncappedPasses, maxMergesPerPass, uncappedCandidateMerges })) {
++		if (value !== Infinity && !(Number.isSafeInteger(value) && value >= 0)) {
++			throw new RangeError(`${name} must be a nonnegative safe integer or Infinity.`);
++		}
+ 	}
+ 	if (mergeThresholdMode !== 'fixed' && mergeThresholdMode !== 'document') {
+ 		throw new TypeError("mergeThresholdMode must be 'fixed' or 'document'.");
+@@ -121,6 +136,9 @@
+ 	}
+ 	if ((maxChunkTokens !== Infinity || countTokens !== undefined) && typeof countTokens !== 'function') {
+ 		throw new TypeError('A finite maxChunkTokens requires a countTokens function.');
++	}
++	if (!Number.isFinite(candidateMergesPercentageCap) || candidateMergesPercentageCap < 0 || candidateMergesPercentageCap > 100) {
++		throw new RangeError('candidateMergesPercentageCap (legacy candiateMergesPercentageCap) must be between 0 and 100.');
+ 	}
+ 	if (separator !== undefined) {
+ 		if (typeof separator !== 'string' || !separator.length) throw new TypeError('separator must be a nonempty string.');
+@@ -131,7 +149,7 @@
+ 	}
+ 	const embedBatch = createBatchEmbedder(embedBatchCallback, maxEmbeddingBatchSize, maxCachedEmbeddings);
+ 	if (!embedBatch && (usesSimilarity || returnEmbedding)) {
+-		throw new TypeError("An embedding callback is required for 'semantic-blocks' or returnEmbedding: true.");
++		throw new TypeError("An embedding callback is required for semantic strategies or returnEmbedding: true.");
+ 	}
+ 	if (logging) await _printVersion();
+ 	const prefix = chunkPrefix?.trim() ? chunkPrefix + ': ' : '';
+@@ -141,9 +159,10 @@
+ 		tokenBudget(capture.structuralLimit,capture.characterCeiling === undefined ? countTokens : text=>text.length,prefix);
+ 	const fitsOverlap = chunkOverlap > 0 && (maxChunkTokens === Infinity
+ 		? text => text.length <= chunkOverlap : tokenBudget(chunkOverlap, countTokens, ''));
+-	const parsing = {
+-		strategy, fits, fitsStructure, locale, excludeNonLetterSentences, maxChunkSize,
+-		joinParagraphs:options?.joinParagraphs, combineChunksSimilarityThreshold,
++	const parsing = { strategy, fits, fitsStructure, locale, excludeNonLetterSentences, maxChunkSize, joinParagraphs:options?.joinParagraphs };
++	const priority = {
++		maxChunkSize, maxPasses, maxUncappedPasses, maxMergesPerPass, candidateMergesPercentageCap,
++		uncappedCandidateMerges, combineChunksSimilarityThreshold,
+ 		calibrate: mergeThresholdMode === 'document' && options?.combineChunksSimilarityThreshold === undefined
+ 	};
+ 	let output;
+@@ -167,9 +186,9 @@
+ 		output = chunkJsonRecords(text, maxChunkSize, fits, locale, parser, capture, fitsStructure);
+ 	} else if (inputFormat === 'markdown') {
+ 		const { chunkMarkdown } = await import('./markdown-merge.js');
+-		output = await chunkMarkdown(text, embedBatch, { ...parsing, fitsOverlap }, capture);
++		output = await chunkMarkdown(text, embedBatch, { ...priority, ...parsing, fitsOverlap }, capture);
+ 	} else {
+-		let chunks = await parseText(text, { ...parsing, inputFormat }, embedBatch, capture);
++		let chunks = await parseText(text, { ...parsing, ...priority, inputFormat }, embedBatch, capture);
+ 		if (chunks.length === 0) return [];
+ 		if (logging) console.log('Initial chunks', chunks.map(chunk => chunk.slice(0, 50)));
+ 
+@@ -178,6 +197,26 @@
+ 			if (capture) capture.chunks = [];
+ 			chunks = packSentences(chunks, maxChunkSize, fits, fitsOverlap,
+ 				flat && ((a,b)=>capture.chunks.push(sliceView(flat,a,b))));
++		}
++		else if (strategy === 'semantic') {
++			const tokenLimit = sentenceTokenLimit(chunks, fits);
++			if (chunks.length > 1) {
++				chunks = await mergeChunks(chunks, embedBatch, {
++					...priority, tokenLimit, logging,
++					finalEmbeddingText: returnEmbedding && maxCachedEmbeddings === Infinity ? text => prefix + text : undefined
++				});
++				if (logging) console.log('Combined chunks', chunks.map(chunk => chunk.slice(0, 100)));
++			}
++			if (tokenLimit?.oversized.size) chunks = chunks.flatMap(text => tokenLimit.oversized.get(text) ?? [text]);
++			if (flat) {
++				let offset = 0;
++				capture.chunks = chunks.map(text => {
++					const start = flat.text.indexOf(text,offset);
++					if (start < 0 || /\S/u.test(flat.text.slice(offset,start))) throw new Error('Semantic passage lost its source position.');
++					offset = start+text.length;
++					return sliceView(flat,start,offset);
++				});
++			}
+ 		}
+ 		output = capture?.chunks ?? chunks.map(text => ({ text }));
+ 	}
+diff --git a/src/sentences.js b/src/sentences.js
+--- a/src/sentences.js
++++ b/src/sentences.js
+@@ -194,7 +194,7 @@
+ export async function parseText(text, options, embed, capture) {
+     const { inputFormat, excludeNonLetterSentences, strategy } = options;
+     if (inputFormat !== 'text' && inputFormat !== 'html') throw new TypeError("inputFormat must be 'text', 'html', 'markdown' or 'json'.");
+-    if (strategy === 'pack') {
++    if (strategy !== 'blocks' && strategy !== 'semantic-blocks') {
+         const locale = sentenceLocale(options.locale);
+         const body = inputFormat === 'html' ? await htmlToText(text) : text;
+         if (!capture) return splitSentences(body, locale, excludeNonLetterSentences);
+diff --git a/src/markdown-merge.js b/src/markdown-merge.js
+--- a/src/markdown-merge.js
++++ b/src/markdown-merge.js
+@@ -1,10 +1,19 @@
+-import { markdownResult, markdownText, parseMarkdown } from './markdown.js';
++import { loadMarkdownParser, markdownResult, markdownText } from './markdown-units.js';
++import { chunkHierarchy } from './semantic-blocks.js';
+ import { mergeLimit } from './merge.js';
+ import { packedRanges } from './packing.js';
+ import { directionCosine, documentMergeThreshold, SimilarityStatistics, vectorDirection } from './similarity.js';
+ 
+-export async function chunkMarkdown(source, embed, options) {
++export async function chunkMarkdown(source, embed, options, capture) {
+     const { strategy, maxChunkSize, fits, fitsOverlap } = options;
++    const { parseMarkdown, parseMarkdownTree } = await loadMarkdownParser();
++    if (strategy === 'blocks' || strategy === 'semantic-blocks') {
++        const tree = parseMarkdownTree(source, options);
++        capture?.tree?.(tree);
++        const { roots, children, splitLeaf, renderUnits } = tree;
++        return renderUnits(await chunkHierarchy(source, roots, { ...options, children, splitLeaf }, embed));
++    }
++    if (capture?.tree) capture.tree(parseMarkdownTree(source, options));
+     let units = parseMarkdown(source, options);
+     if (strategy === 'pack') units = packMarkdown(source, units, maxChunkSize, fits, fitsOverlap);
+     else if (strategy === 'semantic') units = await mergeOriginalBoundaries(source, units, embed, options);

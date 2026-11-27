@@ -1,14 +1,13 @@
 import { markdownText } from '../src/markdown.js';
-import { fitsMarkdownJoin, mergePass, packMarkdown } from '../src/markdown-merge.js';
+import { fitsMarkdownJoin, packMarkdown } from '../src/markdown-merge.js';
 import { directionCosine, documentMergeThreshold, SimilarityStatistics, vectorDirection } from '../src/similarity.js';
-import { DEFAULT_CONFIG as defaults } from '../config.js';
 
 // All experiments share the production section, source-gap and budget check.
 // The comparison uses a stable sorted list of live boundaries each pass.
 export async function combineMarkdown(source, units, embed, options, initialScores = []) {
-    const { method, maxChunkSize, fits, leadIn, maxPasses = Infinity, maxUncappedPasses = defaults.MAX_UNCAPPED_PASSES,
-        maxMergesPerPass = defaults.MAX_MERGES_PER_PASS, candidateMergesPercentageCap = defaults.MAX_MERGES_PER_PASS_PERCENTAGE,
-        uncappedCandidateMerges = defaults.UNCAPPED_CANDIDATE_MERGES } = options;
+    const { method, maxChunkSize, fits, leadIn, maxPasses = Infinity, maxUncappedPasses = 100,
+        maxMergesPerPass = 500, candidateMergesPercentageCap = 40,
+        uncappedCandidateMerges = 12 } = options;
     if (method === 'pack' && !leadIn) return packMarkdown(source, units, maxChunkSize, fits);
     let live = units.map((u, i) => ({ ...u, first: i, last: i }));
     function eligible(a, b) {
@@ -69,4 +68,30 @@ export async function combineMarkdown(source, units, embed, options, initialScor
         if (!merged.capped) uncapped++;
     }
     return live;
+}
+
+// Live edges are in source order, so a stable sort breaks cosine ties by
+// occurrence. A pass is capped only when it defers another disjoint pair.
+function mergePass(live, edges, cutoff, options) {
+    const candidates = edges.filter(e => e.score >= cutoff).sort((a, b) => b.score - a.score);
+    const percent = Math.floor(candidates.length * options.candidateMergesPercentageCap / 100 + 1e-9);
+    const cap = Math.min(options.maxMergesPerPass, Math.max(options.uncappedCandidateMerges, percent));
+    if (!candidates.length || !cap) return null;
+    const selected = new Set();
+    let capped = false;
+    for (const { i } of candidates) {
+        if (selected.has(i - 1) || selected.has(i + 1)) continue;
+        if (selected.size === cap) { capped = true; break; }
+        selected.add(i);
+    }
+    const next = [];
+    for (let i = 0; i < live.length; i++) {
+        const left = live[i];
+        if (selected.has(i)) {
+            const right = live[i + 1];
+            next.push({ ...left, end: right.end, last: right.last, kind: right.kind });
+            i++;
+        } else next.push(left);
+    }
+    return { next, capped };
 }

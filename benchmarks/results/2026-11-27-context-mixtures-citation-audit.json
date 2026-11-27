@@ -1,0 +1,195 @@
+{
+  "1333848d61e359b78c9d42740497b4c3": {
+    "document": "Family Group Life Insurance (FSGLI) | Veterans Affairs#1_0",
+    "question": "How much will my service member pay for dependent coverage?",
+    "reason": "The question asks for the cost. The age condition is additional information.",
+    "references": [
+      [
+        [
+          4205,
+          4213
+        ],
+        [
+          4214,
+          4364
+        ]
+      ],
+      [
+        [
+          4205,
+          4213
+        ]
+      ],
+      [
+        [
+          4214,
+          4254
+        ]
+      ]
+    ]
+  },
+  "ebb4db9c24aa36db9954dd65ea079a798df80558": {
+    "document": "1908.09355",
+    "question": "What of the two strategies works best?",
+    "reason": "The direct comparison answers which strategy performed better. The broader paper annotation is also valid.",
+    "references": [
+      [
+        [
+          22359,
+          23013
+        ]
+      ],
+      [
+        [
+          22683,
+          22730
+        ]
+      ]
+    ]
+  },
+  "qmsum-val-22/9": {
+    "document": "qmsum-val-22",
+    "question": "Had HEFCW done any assessment of the effect of underfunding research?",
+    "reason": "Blaney answers the yes/no question and explains reliance on external assessment in one turn.",
+    "references": [
+      [
+        [
+          48670,
+          48776
+        ],
+        [
+          48795,
+          48972
+        ]
+      ],
+      [
+        [
+          48795,
+          48972
+        ]
+      ]
+    ]
+  },
+  "qmsum-val-22/11": {
+    "document": "qmsum-val-22",
+    "question": "What was the impact of the loss of funds to leave the European Union and what would be the solutions accordingly?",
+    "reason": "The published range ends at the question. Blaney gives his response in the next turn.",
+    "references": [
+      [
+        [
+          51820,
+          53666
+        ]
+      ]
+    ]
+  },
+  "qmsum-val-14/5": {
+    "document": "qmsum-val-14",
+    "question": "Summarize Kirsty Williams' opinion on the current geographic spread of provision when discussing the decision of not accrediting the University of South Wales with the ability to deliver teacher training.",
+    "reason": "Williams gives her geographic assessment and the part-time route in her answer.",
+    "references": [
+      [
+        [
+          19581,
+          20234
+        ],
+        [
+          20256,
+          21070
+        ]
+      ],
+      [
+        [
+          20256,
+          21070
+        ]
+      ]
+    ]
+  },
+  "qmsum-val-14/7": {
+    "document": "qmsum-val-14",
+    "question": "How did Kirsty Williams respond to university mergers?",
+    "reason": "Published turn 89 is an interjection by Hefin David. Williams states her merger policy in turn 78.",
+    "references": [
+      [
+        [
+          34295,
+          34810
+        ]
+      ]
+    ]
+  },
+  "qmsum-val-11/1": {
+    "document": "qmsum-val-11",
+    "question": "What were the two lessons that can be learned from early implementer areas?",
+    "reason": "The minister states both lessons in his response.",
+    "references": [
+      [
+        [
+          873,
+          996
+        ],
+        [
+          1021,
+          2712
+        ]
+      ],
+      [
+        [
+          1021,
+          2712
+        ]
+      ]
+    ]
+  },
+  "qmsum-val-11/5": {
+    "document": "qmsum-val-11",
+    "question": "What did Huw Irranca-Davies think about the capacity in the next several years to deliver the product when talking about childcare offer?",
+    "reason": "The minister gives his capacity judgment and reasoning in his response.",
+    "references": [
+      [
+        [
+          11266,
+          11503
+        ],
+        [
+          11528,
+          13203
+        ]
+      ],
+      [
+        [
+          11528,
+          13203
+        ]
+      ]
+    ]
+  },
+  "qmsum-val-31/6": {
+    "document": "qmsum-val-31",
+    "question": "What did Bains say about the arts, culture, and tourism industry?",
+    "reason": "Bains gives the funding amount and purpose in his own turn. The surrounding Nater questions are optional.",
+    "references": [
+      [
+        [
+          77080,
+          77858
+        ],
+        [
+          77880,
+          78285
+        ],
+        [
+          78303,
+          78708
+        ]
+      ],
+      [
+        [
+          77880,
+          78285
+        ]
+      ]
+    ]
+  }
+}

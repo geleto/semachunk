@@ -16,7 +16,7 @@ export function* packedRanges(count, canAppend, fitsOverlap) {
     if (first < count) yield [first, count - 1];
 }
 
-export function packSentences(sentences, maxChunkSize, fits, fitsOverlap) {
+export function packSentences(sentences, maxChunkSize, fits, fitsOverlap, record) {
     const limit = sentenceTokenLimit(sentences, fits);
     const canJoin = createJoinCheck(maxChunkSize, limit);
     const source = sentences.join(' '), starts = [0];
@@ -25,8 +25,20 @@ export function packSentences(sentences, maxChunkSize, fits, fitsOverlap) {
     const ranges = packedRanges(sentences.length,
         (first, next) => canJoin(span(first, next - 1), sentences[next]),
         fitsOverlap && ((first, last) => fitsOverlap(span(first, last))));
-    const chunks = Array.from(ranges, ([first, last]) => span(first, last));
-    return limit?.oversized.size ? chunks.flatMap(text => limit.oversized.get(text) ?? [text]) : chunks;
+    const chunks = [];
+    for (const [first,last] of ranges) {
+        const body = span(first,last);
+        let offset = 0;
+        for (const part of limit?.oversized.get(body) ?? [body]) {
+            chunks.push(part);
+            if (record) {
+                const start = body.indexOf(part,offset);
+                record(starts[first]+start,starts[first]+start+part.length);
+                offset = start+part.length;
+            }
+        }
+    }
+    return chunks;
 }
 
 function forEachDelimiterEnd(text, delimiter, emit) {

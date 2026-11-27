@@ -3,7 +3,8 @@ import { mkdtemp, readdir, rm, rmdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { cachedVectors, dimension, embeddingBatches, model, openReplay, openTokenizer } from './encoder.mjs';
+import OpenAI from 'openai';
+import { cachedVectors, dimension, embeddingBatches, model, openReplay, openTokenizer, sendEmbeddingBatch } from './encoder.mjs';
 import { retrieval } from './quality.mjs';
 import { prepare } from './rag.mjs';
 import { chunkText } from '../src/index.js';
@@ -16,6 +17,21 @@ test('embedding batches respect per-input and total token limits and balance the
     assert.equal(batches.at(-1).end, long.length);
     assert.ok(batches.every(({ start, end }) => (end - start) * 8192 <= 300_000));
     for (const n of [0, 8193]) assert.throws(() => embeddingBatches([1, n], n => n), RangeError);
+});
+
+test('a provider aggregate limit splits requests without splitting texts or reordering vectors', async () => {
+    const limit = new OpenAI.BadRequestError(400, {message:'Maximum tokens per request exceeded'}, '', new Headers());
+    const inputs = ['aaa','bb','c','dddd','ee'];
+    const send = async batch => {
+        if (batch.length>2) throw limit;
+        return {model,usage:{prompt_tokens:batch.reduce((n,s)=>n+s.length,0)},
+            data:batch.map((s,index)=>({index,embedding:s})).reverse()};
+    };
+    const result = await sendEmbeddingBatch(send,inputs);
+    assert.equal(result.batchRequests,3);
+    assert.equal(result.usage.prompt_tokens,12);
+    assert.deepEqual(result.data.toSorted((a,b)=>a.index-b.index).map(r=>r.embedding),inputs);
+    await assert.rejects(sendEmbeddingBatch(async()=>{throw limit;},['a']), e=>e===limit);
 });
 
 test('a retry uses completed batches and restores provider row order, then replays offline', async t => {

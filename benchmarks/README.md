@@ -2,6 +2,62 @@
 
 The quality suite scores short-answer retrieval and editorial boundaries. The RAG suite searches complete contracts, research papers and collections of related and distracting passages. The Node performance suite measures batching and library time on large documents. Each run writes a new JSON file under `benchmarks/results/`. [Results and change log](LOG.md)
 
+### Replaying results for the retired flat strategy
+
+Historical studies label the flat priority merger `semantic` and the hierarchical splitter `semantic-blocks`. The measured results and cached scores keep those names. To regenerate flat-strategy indexes or run the historical comparisons, prepare a **separate checkout** of this revision. In that checkout, the following commands restore the flat implementation from Git and its integration with the citable document API. [Replay patch](baselines/2026-11-27-flat-semantic.patch)
+
+```sh
+git restore --source=24318fe -- src/merge.js src/embeddings.js src/markdown-merge.js benchmarks/chunking.mjs benchmarks/quality.mjs benchmarks/rag.mjs benchmarks/merge-performance.mjs benchmarks/cache-memory.mjs
+git apply --ignore-space-change benchmarks/baselines/2026-11-27-flat-semantic.patch
+```
+
+## Compare semantic sentence groups, contextual embeddings and partial matching
+
+The context study uses 140 complete documents, including 46 narrative stories, six spoken meetings and four board meetings. It ranks original or context-enriched keys and scores only the source ranges actually displayed. The follow-up ranks identical structural passages by their own text and a contained sentence or semantic group. [Study, results and reader examples](results/2026-11-27-context-retrieval.md) · [Source manifest](results/2026-11-27-context-retrieval-manifest.json)
+
+Prepare the reviewed prose corpus and its initial fixed-threshold indexes using the commands below. The context data script also fetches pinned narrative and spoken-meeting data and the four public board records. Use Node, Python with NumPy, and the configured benchmark embedding provider. Each index checkpoints complete documents under `benchmarks/.cache/context-retrieval`. The parent experiment reuses all embeddings.
+
+```powershell
+python benchmarks/context-retrieval-data.py --legacy-fiction
+$contextShards = node benchmarks/context-retrieval-index.mjs list
+foreach ($shard in $contextShards) {
+    node benchmarks/context-retrieval-index.mjs $shard
+    if ($LASTEXITCODE) { throw "Index failed for $shard" }
+    python benchmarks/context-retrieval-score.py $shard
+    if ($LASTEXITCODE) { throw "Scoring failed for $shard" }
+}
+python benchmarks/context-retrieval-report.py select
+python benchmarks/context-retrieval-report.py report
+node benchmarks/context-parent-atoms.mjs
+foreach ($shard in $contextShards) {
+    python benchmarks/context-retrieval-score.py $shard --parent
+    if ($LASTEXITCODE) { throw "Parent scoring failed for $shard" }
+}
+python benchmarks/context-retrieval-report.py select-parent
+python benchmarks/context-retrieval-report.py report-parent
+python benchmarks/context-retrieval-report.py inspect psf-2012/2 sentence55/base sentence55/adjacent/embed/expanded
+```
+
+## Compare fixed thresholds on the reviewed prose corpus
+
+Use the revised prose edition for new comparisons of papers, manuals, government pages and text questions on financial filings. It contains 1,302 questions, corrected reference alternatives, four clarified questions and two repaired source conversions. The earlier published results remain reproducible from their pinned input hashes. [Study findings](results/2026-11-27-prose-threshold-study.md) · [Review decisions](prose-citations.json) · [Revised source manifest](results/2026-11-27-prose-reviewed-data.json)
+
+After preparing the audited corpus described below, these commands regenerate the fixed-threshold study. The local index cache stores the full text and source ranges of every passage. `inspect` prints all five whole hits for a question and method. The two selection commands use only development questions.
+
+```sh
+node benchmarks/prose-reviewed-data.mjs
+node benchmarks/prose-threshold-index.mjs
+node benchmarks/prose-threshold-score.mjs
+python benchmarks/prose-threshold-report.py select
+node benchmarks/prose-threshold-index.mjs --low
+node benchmarks/prose-threshold-score.mjs --low
+python benchmarks/prose-threshold-report.py select-low
+python benchmarks/prose-threshold-report.py report
+python benchmarks/prose-threshold-report.py inspect vue-30 ordinary/256/blocks sections/256/0.4
+```
+
+Add a shard prefix such as `faq-development` to either Node index or score command to run a subset. The optional `plot` action of the report uses Matplotlib. [Experiment protocol and deferred post-chunk context comparison](prose-threshold-protocol.json) · [Low-cutoff extension](prose-low-threshold-protocol.json)
+
 ## Compare three limits with whole-passage retrieval
 
 The three indexes use `blocks` at 256 tokens and `semantic-blocks` at 512 tokens and unlimited size. Both semantic thresholds target each document's structural passage count. The main measure is whether the first five dense hits together cover a complete citation. Every hit is returned in full. The report also records first-hit coverage and the actual tokens returned. Government questions contribute one observation averaged across the three formats. Each of the four domains receives equal weight. [Protocol](whole-passage-audited-protocol.json) · [Results](results/2026-11-27-whole-passage-audited.json)
@@ -145,9 +201,9 @@ Exact boundary precision, recall and F1 pool counts across articles in each spli
 
 ### Settings, costs and repeatability
 
-- The priority-merge grid crosses maximum sizes of 250, 500 and 1,000 UTF-16 code units with cosine cutoffs of 0.3, 0.4, 0.5, 0.6, 0.7 and a per-document cutoff. Each task selects its own setting on calibration, maximizing answer hits or exact boundary F1. Ties favor fewer indexed chunks, then the first setting in the listed grid order. Held-out results are reported for every setting.
+- The semantic-blocks grid crosses maximum sizes of 250, 500 and 1,000 UTF-16 code units with the default cutoff, fixed cutoffs of 0.3, 0.4, 0.5, 0.6, 0.7 and a per-document cutoff. Each task selects its own setting on calibration, maximizing answer hits or exact boundary F1. Ties favor fewer indexed chunks, then the first setting in the listed grid order. Held-out results are reported for every setting.
 - The suite also measures the public default, individual sentences, and explicit block, packing and semantic layouts at all three sizes.
-- To compare the current flat-text defaults, run `node benchmarks/run.mjs quality --methods semantic-500 semantic-blocks-500 --new-tokens 0`. This uses the 500-character setting on the same sentence-normalized inputs for both strategies. The cutoff sweep also records the earlier fixed 0.05 setting.
+- To compare structural and semantic boundaries on the same sentence-normalized inputs, run `node benchmarks/run.mjs quality --methods blocks-500 semantic-blocks-500 --new-tokens 0`.
 - All methods use `text-embedding-3-small` at its full 1,536 dimensions. The runner precomputes the union of contiguous chunks up to the largest candidate size, individual long sentences and queries. It sends up to 256 inputs per request, checks the 8,192-token input limit and the 300,000-token request limit, and preserves the provider's row indices. [OpenAI embeddings](https://developers.openai.com/api/docs/guides/embeddings) · [API limits](https://developers.openai.com/api/reference/resources/embeddings/methods/create)
 - The runner imports the checkout's `chunkText` directly. Costs count its actual provider calls, input texts and single-item calls, including final indexing. Greedy packing makes one indexing call per document. Offline precomputation and query encoding are excluded from these counts.
 - Each report records the embedding model, tokenizer, dimensions, sample IDs and hashes of the ordered inputs and vector bytes. Per-dataset `precomputation` records successful live requests, inputs, API-reported input tokens and batches read from cache. Compare vector hashes when reproducing a run. Older reports record their original model and token budgets.
@@ -159,7 +215,7 @@ The [semantic-blocks dataset audit](LOG.md#2026-11-26--dataset-audit-for-semanti
 
 To compare a single `semantic-blocks` cutoff across document types, run `node benchmarks/semantic-blocks-cutoffs.mjs cutoffs.json`. It tests fixed cosines of 0, 0.05, 0.15, 0.3 and 0.5 and a cutoff calculated per document. Each retrieval dataset has equal weight in the calibration score. The seven datasets are CUAD, QASPER, FinQA, HotpotQA, QMSum, FriendsQA and SQuAD. The score averages HotpotQA's two search pools within the dataset. QMSum measures the fraction of annotated evidence delivered, and the other datasets measure complete evidence or answer hits. WikiSection measures editorial boundary F1 separately. The report includes independent results for every setting and a further check on four document datasets at the public character targets. The runner reuses cached embeddings and saves a checkpoint after each dataset.
 
-To compare the two semantic strategies on the same annotated questions, run `node benchmarks/semantic-blocks-study.mjs`. The default uses the QASPER confirmation sample as Markdown, 256-token chunks, and up to five passages sharing 512 or 1,024 delivered tokens. It runs the public `semantic`, `semantic-blocks` and `blocks` strategies. The report includes complete-evidence hits, paired gains and losses, document-group confidence intervals and cold indexing tokens. Use `--task cuad` or `--task finqa` for contracts or financial reports, `--format text` for the plain-text parser and `--chars 500` for a character target. It reuses cached vectors by default. `--new-tokens N` permits up to N new provider input tokens. `--output file.json` saves the result.
+To reproduce the historical comparison between the flat and hierarchical semantic strategies, use the [flat-strategy replay checkout](#replaying-results-for-the-retired-flat-strategy) and run `node benchmarks/semantic-blocks-study.mjs`. The default uses the QASPER confirmation sample as Markdown, 256-token chunks, and up to five passages sharing 512 or 1,024 delivered tokens. The comparison runs the former `semantic` strategy alongside `semantic-blocks` and `blocks`. The report includes complete-evidence hits, paired gains and losses, document-group confidence intervals and cold indexing tokens. Use `--task cuad` or `--task finqa` for contracts or financial reports, `--format text` for the plain-text parser and `--chars 500` for a character target. It reuses cached vectors by default. `--new-tokens N` permits up to N new provider input tokens. `--output file.json` saves the result.
 
 After `npm ci`, run
 
@@ -169,7 +225,7 @@ npm run benchmark:rag
 
 To run one dataset, use `npm run benchmark:rag -- --task cuad` with a task name of `cuad`, `qasper` or `hotpotqa`. The three pinned data files total about 72 MB. CUAD and HotpotQA use checksummed JSON mirrors of the original splits. A cache from the ZIP/Parquet loader needs one download per changed dataset. The sample IDs, texts and gold evidence are identical. Each report records sample IDs, lengths in `cl100k_base` tokens, exclusions, indexing costs and source ranges for example queries.
 
-Use `--methods default merge-500-0.5 merge-500-document` to compare the checkout's default, the previous 0.5 cutoff and document calibration alongside the token window. For an older implementation, select settings it supports. Include `flat-merge-500-0.5` to compare its normal input with a flattened control on a shared vector matrix.
+Use `--methods default semantic-blocks-500 semantic-blocks-500-document` to compare blocks with fixed and document-calibrated hierarchical semantic cuts alongside the token window. Include `flat-semantic-blocks-500` to compare the same splitter on a flattened control.
 
 | Task | What the retriever can search | What constitutes complete evidence |
 |---|---|---|
@@ -334,6 +390,64 @@ npm run benchmark:merge -- --compare ../semachunk-reference --output benchmarks/
 ```
 
 This benchmark runs the public API on 2,048 and 16,384 unique sentences with eight-dimensional vectors and on 4,096 sentences with dense 384-dimensional vectors. One workload changes topic every eight sentences and another changes topic at every sentence. Deterministic topic vectors make provider latency negligible. Each case records seven timed runs after warm-up, their median, provider call and input counts, and a checksum of the output boundaries. With a reference checkout, the runner alternates implementation order. Run it on an idle machine and compare medians for each workload.
+
+### Uncapped semantic groups and neighbor weighting
+
+The [study](results/2026-11-27-context-mixtures.md) compares structural blocks, semantic hierarchy and adjacent-sentence groups on whole source documents. Run from the repository root with the reviewed source collections from the preceding studies, Node dependencies, Python with NumPy, and the benchmark's embedding credentials. The blind reader uses the same provider account. Source assets and restartable per-document indexes live under `benchmarks/.cache`. The result archives retain the development selections, the full macro sweep, per-question outcomes for the finalists, citation corrections, and the independent reader assessments.
+
+```powershell
+$env:OPENBLAS_NUM_THREADS = "1"
+python benchmarks/mixture-data.py
+python benchmarks/mixture-data.py --curated
+python benchmarks/mixture-run.py index --jobs 2
+python benchmarks/mixture-run.py score --fold development
+python benchmarks/mixture-analysis.py freeze
+python benchmarks/mixture-run.py score --fold confirmation
+python benchmarks/mixture-run.py score --fold fresh
+python benchmarks/mixture-analysis.py freeze --check
+python benchmarks/mixture-analysis.py summarize
+python benchmarks/mixture-run.py trace --fold fresh
+python benchmarks/mixture-reader.py --grounded
+python benchmarks/mixture-placebo.py
+python benchmarks/mixture-audit.py
+python benchmarks/mixture-run.py audit --fold fresh
+python benchmarks/mixture-reader.py --grounded --audited
+python benchmarks/mixture-findings.py
+python benchmarks/mixture-verify.py
+```
+
+The historical context-retrieval command uses `--legacy-fiction` to reproduce the earlier importer. The new study verifies the corrected story text against the published historical hashes. Embedding replay, immutable source checksums, frozen model snapshots for the readers and cached prompt responses support repeated scoring. Live model requests can still vary on a cold cache.
+
+### Paragraph and section boundaries and finer weights
+
+The [follow-up](results/2026-11-27-scope-weights.md) uses the preceding study's full mixture indexes and audited replication citations. From the repository root run the commands below with NumPy available. Generating the chart additionally uses Matplotlib. The boundary experiment embeds newly formed passages on cache misses.
+
+```powershell
+$env:OPENBLAS_NUM_THREADS = "1"
+python benchmarks/scope-weights-source.py
+node benchmarks/scope-weights-wrap.mjs
+python benchmarks/scope-weights.py weights --jobs 4
+python benchmarks/scope-weights.py scopes --jobs 3
+python benchmarks/scope-weights-report.py
+python benchmarks/scope-weights-report.py verify
+python benchmarks/scope-weights-report.py plot
+```
+
+The query follow-up runs two SQLite vector searches, checks which passages can contain complete answers, and tests joins between adjacent paragraphs in the same section. It includes a pooled search across all 69 replication documents. [Results and reproduction commands](results/2026-11-27-query-parents.md)
+
+The hierarchy follow-up compares paragraph, sentence and multilevel retrieval keys, counts distinct stored vectors, randomizes cuts at sentence ends, and tests list and section context. [Results and reproduction commands](results/2026-11-27-hierarchy-probes.md)
+
+The document retrieval follow-up scores complete paragraphs, enclosing multi-paragraph sections and whole documents. It also runs the public parser, index and citation renderer on all replication sources. [Results and reproduction commands](results/2026-11-27-document-routing.md)
+
+The bounded passage study tests hard ceilings on complete reading passages, including neighboring text. It measures whole-source coverage, compares neighbor scoring weights and counts the vectors required for paragraph, individual sentence and grouped sentence keys. [Results and reproduction commands](results/2026-11-27-bounded-passages.md)
+
+The structural-limit study sizes upper tree branches separately from within-paragraph merges. It selects compact defaults on development and compares all four strategies and the combined index on identical questions and reading limits. [Mode comparison and reproduction commands](results/2026-11-27-structural-limits.md)
+
+The paragraph ranking study retunes both hierarchical strategies and tests whether neighboring paragraphs improve retrieval. It compares single and combined indexes on 58 new documents and measures how often a second layout finds evidence missed by the first. [Scores, example hits and reproduction commands](results/2026-11-27-paragraph-ranking.md)
+
+The neighbor threshold study crosses hierarchical split cutoffs with vector weighting, joint re-embedding, retrieval through a structural parent, and the number of neighboring chunks a reader sees. [Results and reproduction](results/2026-11-27-neighbor-threshold.md)
+
+The passage placement study sweeps 16 cutoffs with a 512-token reading budget and compares semantic centres with equally many evenly spaced centres. [Cutoff curves and matched placement results](results/2026-11-27-passage-placement.md)
 
 ## Measure embedding cache memory
 

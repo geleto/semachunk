@@ -35,11 +35,8 @@ test('JSON descends into oversized containers and preserves uncapped long scalar
     const blocks = await chunkText(text, json);
     assert.deepEqual(blocks.map(c => c.jsonPointer), ['/0/name', '/0/body', '/1']);
     assert.equal(blocks[1].text, '"body":' + JSON.stringify(body));
-    for (const combineChunks of [true, false]) {
-        assert.deepEqual(await chunkText(text, () => { throw new Error('unexpected embedding'); },
-            { ...json, combineChunks, returnEmbedding: false }), blocks);
-    }
-    for (const options of [{ chunkingStrategy: 'semantic' }, { chunkingStrategy: 'pack' },
+    assert.deepEqual(await chunkText(text, assert.fail, { ...json, chunkingStrategy: 'blocks', returnEmbedding: false }), blocks);
+    for (const options of [{ chunkingStrategy: 'semantic-blocks' }, { chunkingStrategy: 'pack' },
         { chunkOverlap: 1 }, { excludeNonLetterSentences: true }]) {
         await assert.rejects(chunkText(text, { ...json, ...options }), /JSON|overlap/i);
     }

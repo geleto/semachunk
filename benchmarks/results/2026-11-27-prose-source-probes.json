@@ -1,0 +1,176 @@
+{
+  "PEPSICO_2023Q1_EARNINGS": {
+    "originalTarget": 64,
+    "sourceEdits": 13,
+    "ablations": {
+      "financebench_id_01474": {
+        "semantic512": {
+          "original": {
+            "score": 0.5328625440597534,
+            "rank": 19
+          },
+          "addDatelineToTarget": {
+            "score": 0.6984524726867676,
+            "rank": 2
+          },
+          "addDatelineToAll": {
+            "score": 0.6984524726867676,
+            "rank": 5
+          },
+          "replaceWithStructural": {
+            "score": 0.6469331979751587,
+            "rank": 2
+          }
+        },
+        "semanticUnlimited": {
+          "original": {
+            "score": 0.5328625440597534,
+            "rank": 18
+          },
+          "addDatelineToTarget": {
+            "score": 0.6984524726867676,
+            "rank": 2
+          },
+          "addDatelineToAll": {
+            "score": 0.6984524726867676,
+            "rank": 5
+          },
+          "replaceWithStructural": {
+            "score": 0.6469331979751587,
+            "rank": 3
+          }
+        }
+      },
+      "financebench_id_01476": {
+        "semantic512": {
+          "original": {
+            "score": 0.5490491390228271,
+            "rank": 14
+          },
+          "addDatelineToTarget": {
+            "score": 0.6621518135070801,
+            "rank": 2
+          },
+          "addDatelineToAll": {
+            "score": 0.6621518135070801,
+            "rank": 5
+          },
+          "replaceWithStructural": {
+            "score": 0.6440123319625854,
+            "rank": 2
+          }
+        },
+        "semanticUnlimited": {
+          "original": {
+            "score": 0.5490491390228271,
+            "rank": 16
+          },
+          "addDatelineToTarget": {
+            "score": 0.6621518135070801,
+            "rank": 2
+          },
+          "addDatelineToAll": {
+            "score": 0.6621518135070801,
+            "rank": 5
+          },
+          "replaceWithStructural": {
+            "score": 0.6440123319625854,
+            "rank": 2
+          }
+        }
+      }
+    },
+    "reflow": {
+      "blocks": {
+        "count": 64,
+        "outcomes": {
+          "financebench_id_01474": {
+            "prefix": 2,
+            "minPassages": 1,
+            "topTokens": 152,
+            "topSimilarity": 0.6972652673721313
+          },
+          "financebench_id_01476": {
+            "prefix": 2,
+            "minPassages": 1,
+            "topTokens": 152,
+            "topSimilarity": 0.6881785988807678
+          }
+        }
+      },
+      "semantic512": {
+        "count": 64,
+        "outcomes": {
+          "financebench_id_01474": {
+            "prefix": 1,
+            "minPassages": 1,
+            "topTokens": 481,
+            "topSimilarity": 0.6615042090415955
+          },
+          "financebench_id_01476": {
+            "prefix": 1,
+            "minPassages": 1,
+            "topTokens": 481,
+            "topSimilarity": 0.6518736481666565
+          }
+        }
+      },
+      "semanticUnlimited": {
+        "count": 64,
+        "outcomes": {
+          "financebench_id_01474": {
+            "prefix": 1,
+            "minPassages": 1,
+            "topTokens": 481,
+            "topSimilarity": 0.6615042090415955
+          },
+          "financebench_id_01476": {
+            "prefix": 1,
+            "minPassages": 1,
+            "topTokens": 481,
+            "topSimilarity": 0.6518736481666565
+          }
+        }
+      }
+    }
+  },
+  "JOHNSON_JOHNSON_2022Q4_EARNINGS": {
+    "originalTarget": 143,
+    "sourceEdits": 2,
+    "reflow": {
+      "blocks": {
+        "count": 142,
+        "outcomes": {
+          "financebench_id_00651": {
+            "prefix": 6,
+            "minPassages": 2,
+            "topTokens": 180,
+            "topSimilarity": 0.6983418464660645
+          }
+        }
+      },
+      "semantic512": {
+        "count": 142,
+        "outcomes": {
+          "financebench_id_00651": {
+            "prefix": 8,
+            "minPassages": 2,
+            "topTokens": 119,
+            "topSimilarity": 0.6898509860038757
+          }
+        }
+      },
+      "semanticUnlimited": {
+        "count": 143,
+        "outcomes": {
+          "financebench_id_00651": {
+            "prefix": 7,
+            "minPassages": 2,
+            "topTokens": 119,
+            "topSimilarity": 0.6898509860038757
+          }
+        }
+      }
+    }
+  }
+}

@@ -85,7 +85,7 @@ export async function evaluateQuality(task, chunkText, encoder, plans) {
         }
     }
     const objective = task === 'squad' ? 'hits' : 'f1';
-    const calibrationSelection = Object.keys(plans).filter(name => name.startsWith('merge-')).sort((a, b) => {
+    const calibrationSelection = Object.keys(plans).filter(name => name.startsWith('semantic-blocks-')).sort((a, b) => {
         const x = scores[a].calibration, y = scores[b].calibration;
         return y[objective] - x[objective] || x.chunks - y.chunks;
     })[0];

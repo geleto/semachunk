@@ -11,6 +11,17 @@ const examples = {
     markdown:'## Engines\n\nPears ripen. Engine runs.\n\nEngines need oil.'
 };
 
+test('authored heading boundaries survive a fitting document and preserve Setext source spans', async () => {
+    const raw='First entry\n===========\n\nFirst answer.\n\n## Second entry\n\nSecond answer.';
+    const budget={maxChunkSize:Infinity};
+    for (const method of ['blocks','0.15']) {
+        const result=await treeLayout(raw,'markdown',budget,method,async texts=>texts.map(()=>[1]),undefined,true);
+        assert.equal(result.headings.length,2);
+        assert.equal(raw.slice(result.headings[0].start,result.headings[0].end),'First entry\n===========');
+        assert.deepEqual(result.rows.map(r=>r.text),['First entry\n===========\n\nFirst answer.','## Second entry\n\nSecond answer.']);
+    }
+});
+
 test('benchmark controls replay the public structural and fixed-cutoff layouts and Markdown citations', async () => {
     for (const [format,source] of Object.entries(examples)) {
         for (const [method,strategy] of [['0.15','semantic-blocks'],['blocks','blocks']]) {

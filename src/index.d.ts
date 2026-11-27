@@ -1,12 +1,12 @@
-export type ChunkingStrategy = 'auto' | 'blocks' | 'pack' | 'semantic';
+export type ChunkingStrategy = 'blocks' | 'pack' | 'semantic-blocks';
 
 export interface ChunkingOptions {
 	logging?: boolean;
 	/** Split literal text (default), extracted HTML text, Markdown sections or JSON records. */
 	inputFormat?: 'text' | 'html' | 'markdown' | 'json';
-	/** Select natural blocks, greedy packing, or similarity merging. By default 'auto' packs when no embedding callback is supplied. */
+	/** Defaults to 'blocks'. 'semantic-blocks' scores sibling boundaries throughout the parser tree. */
 	chunkingStrategy?: ChunkingStrategy;
-	/** Literal record delimiter for plain text with explicit 'blocks' or 'pack'. LF and CRLF match each other. */
+	/** Literal record delimiter for plain text with 'blocks' or 'pack'. LF and CRLF match each other. */
 	separator?: string | undefined;
 	/** Maximum trailing text to repeat in packed chunks, in tokens with a finite maxChunkTokens or UTF-16 units otherwise. Defaults to 0. */
 	chunkOverlap?: number;
@@ -22,27 +22,13 @@ export interface ChunkingOptions {
 	maxEmbeddingBatchSize?: number;
 	/** Maximum cached vectors retained between stages. Evicted texts may be embedded again. Default Infinity. */
 	maxCachedEmbeddings?: number;
-	/** Base cosine cutoff. Defaults to 0.05 for fixed text/HTML merging and 0.5 for document calibration or Markdown. */
+	/** Cosine cutoff for semantic-blocks. Defaults to 0.15 in fixed mode and 0.5 as the fallback in document mode. */
 	similarityThreshold?: number;
 	excludeNonLetterSentences?: boolean;
-	/** In 'auto', false returns initial Markdown units or individual text/HTML sentences. Explicit strategies take precedence. */
-	combineChunks?: boolean;
-	/** Sets a fixed priority merge cutoff, overriding similarityThreshold and document calibration. */
+	/** Sets a fixed cutoff for semantic-blocks, overriding similarityThreshold and document calibration. */
 	combineChunksSimilarityThreshold?: number;
-	/** Calibrate the priority cutoff from original eligible neighbors. Defaults to 'document' for Markdown and 'fixed' for text and HTML. */
+	/** Use a fixed cutoff (default) or calibrate from eligible sibling boundaries in the document. */
 	mergeThresholdMode?: 'fixed' | 'document';
-	/** Limit all priority merge rounds, including capped rounds. Default Infinity. */
-	maxPasses?: number;
-	/** Maximum uncapped passes. Nonnegative safe integer or Infinity. */
-	maxUncappedPasses?: number;
-	/** Absolute per-pass merge limit. Nonnegative safe integer or Infinity. */
-	maxMergesPerPass?: number;
-	/** Percentage from 0 through 100. Fractional percentages are supported. */
-	candidateMergesPercentageCap?: number;
-	/** @deprecated Use candidateMergesPercentageCap. */
-	candiateMergesPercentageCap?: number;
-	/** Per-pass soft minimum before the absolute limit. Nonnegative safe integer or Infinity. */
-	uncappedCandidateMerges?: number;
 	/** Include output vectors. Defaults to true with an embedding callback and false without one. */
 	returnEmbedding?: boolean;
 	chunkPrefix?: string;
@@ -50,6 +36,124 @@ export interface ChunkingOptions {
 }
 
 export type Embedding = readonly number[] | (ArrayBufferView & ArrayLike<number>);
+
+export type DocumentFormat = 'text' | 'markdown' | 'html' | 'json';
+export type DocumentNodeType = 'document' | 'article' | 'section' | 'heading' | 'paragraph' |
+    'line' | 'sentence' | 'list' | 'listItem' | 'blockquote' | 'footnoteDefinition' | 'code' |
+    'html' | 'table' | 'record' | 'array' | 'object' | 'string' | 'number' | 'boolean' | 'null';
+export interface Citation {
+    /** Half-open UTF-16 span in the original input. */
+    start: number;
+    end: number;
+    /** Corresponding half-open UTF-16 span in the displayed text. */
+    outputStart: number;
+    outputEnd: number;
+}
+export interface CitedText {
+    text: string;
+    sourceId?: string;
+    citations: Citation[];
+}
+export interface DocumentNode extends CitedText {
+    id: number;
+    parentId: number | null;
+    type: DocumentNodeType;
+    headingPath: string[];
+    /** Node ID of the authored heading or list lead-in. */
+    introducedBy?: number;
+    jsonPointer?: string;
+    record?: boolean;
+    /** An additional source-outline entry available for retrieval. */
+    retrievalOnly?: true;
+}
+export type DocumentChunk<V extends Embedding = number[], F extends DocumentFormat = DocumentFormat> =
+    CitedText & Chunk<V> & {embeddingText?: string; sizeLimitExceeded?:true} &
+    (F extends 'markdown' ? MarkdownChunk<V> : F extends 'json' ? JsonChunk<V> : {});
+export interface ChunkedDocument<V extends Embedding = number[], F extends DocumentFormat = DocumentFormat> {
+    sourceId?: string;
+    format: F;
+    /** Older snapshots can omit sizing metadata. */
+    sizeUnit?: 'characters' | 'tokens';
+    maxPassageSize?: number;
+    maxStructuralSize?: number;
+    nodes: DocumentNode[];
+    chunks: (DocumentChunk<V,F> & {nodeIds:number[], parentId:number})[];
+}
+export type DocumentOptions<V extends Embedding = number[], F extends DocumentFormat = DocumentFormat> =
+    Omit<ChunkingOptions,'inputFormat' | 'chunkingStrategy' | 'countTokens' | 'maxChunkTokens'> & {
+        sourceId?: string;
+        format?: F;
+        strategy?: ChunkingStrategy;
+        embedBatch?: EmbedBatchCallback<V>;
+        /** Rejoin cuts exactly between adjacent sibling paragraphs under the same parent. Defaults to true for semantic-blocks. */
+        joinParagraphs?: boolean;
+        /** Hard limit on the core plus its displayed neighbors. Defaults to 512 tokens or 2,048 UTF-16 units. */
+        maxPassageSize?: number;
+        /** Limit on whole branches, cross-block runs and directly returned sections or documents. Defaults to 256 tokens or 1,024 UTF-16 units. */
+        maxStructuralSize?: number;
+    } & ({sizeUnit?:'characters', countTokens?:never} | {sizeUnit:'tokens', countTokens:(text:string)=>number}) &
+    ({includeHierarchy:true,
+        /** Original UTF-16 source intervals for section retrieval. Requires includeHierarchy. */
+        sectionRanges?: readonly {start:number, end:number, headingPath?: readonly string[]}[];
+    } | {includeHierarchy?:boolean, sectionRanges?:never});
+
+export function chunkDocument<V extends Embedding = number[], F extends DocumentFormat = 'text'>(
+    text:string, options:DocumentOptions<V,F> & {includeHierarchy:true}
+):Promise<ChunkedDocument<V,F>>;
+export function chunkDocument<V extends Embedding = number[], F extends DocumentFormat = 'text'>(
+    text:string, options?:DocumentOptions<V,F> & {includeHierarchy?:false}
+):Promise<DocumentChunk<V,F>[]>;
+export function chunkDocument<V extends Embedding = number[], F extends DocumentFormat = DocumentFormat>(
+    text:string, options:DocumentOptions<V,F>
+):Promise<ChunkedDocument<V,F> | DocumentChunk<V,F>[]>;
+
+export interface ReadingPassage extends CitedText {
+    /** Recoverable source headings and list lead-ins associated with the core. */
+    introductions:DocumentNode[];
+}
+export function getChunkContext(doc:ChunkedDocument<Embedding>, chunkIndex:number,
+    options?:{neighbors?:0|1,countTokens?:(text:string)=>number}):ReadingPassage;
+export interface DocumentSearchOptions {
+    limit?:number;
+    /** Include up to one adjacent passage on either side inside the authored section. Default 1. */
+    neighbors?:0|1;
+    /** Suppress windows sharing at least 75% of the shorter source span. Default true. */
+    distinct?:boolean;
+    useContainedSections?:boolean;
+    sectionWeight?:number;
+    documentWeight?:number;
+}
+export interface DocumentSearchHit<V extends Embedding = Embedding> {
+    sourceId?:string;
+    documentIndex:number;
+    chunkIndex:number;
+    score:number;
+    match:DocumentNode | SentenceGroup | DocumentChunk<V>;
+    chunk:DocumentChunk<V>;
+    context:ReadingPassage;
+}
+export interface SentenceGroup extends CitedText {
+    type:'sentenceGroup';
+    nodeIds:number[];
+    headingPath:string[];
+}
+export interface DocumentIndex<V extends Embedding = Embedding> {
+    stats:{documents:number, layouts:number, chunks:number, uniqueEmbeddings:number};
+    search(query:string | Embedding, options?:DocumentSearchOptions):Promise<DocumentSearchHit<V>[]>;
+    searchNodes(query:string | Embedding, options?:{types?:readonly DocumentNodeType[],limit?:number,includeOversized?:boolean}):
+        Promise<{node:DocumentNode,sourceId?:string,documentIndex:number,score:number}[]>;
+    searchNodes(query:string | Embedding, options:{types:readonly ['sentenceGroup'],limit?:number,includeOversized?:boolean}):
+        Promise<{node:SentenceGroup,sourceId?:string,documentIndex:number,score:number}[]>;
+    searchNodes(query:string | Embedding, options:{types:readonly (DocumentNodeType|'sentenceGroup')[],limit?:number,includeOversized?:boolean}):
+        Promise<{node:DocumentNode|SentenceGroup,sourceId?:string,documentIndex:number,score:number}[]>;
+}
+export function createDocumentIndex<V extends Embedding = Embedding>(
+    documents:readonly ChunkedDocument<V>[], embedBatch:EmbedBatchCallback<Embedding>,
+    options?:{detailTypes?:readonly DocumentNodeType[],includeSections?:boolean,includeDocuments?:boolean,
+        maxEmbeddingBatchSize?:number,countTokens?:(text:string)=>number,
+        /** Opt in to complete adjacent sentences within one paragraph and chunk. Defaults to at most three per group. */
+        sentenceGrouping?:{maxSentences?:number,minSimilarity?:number}}
+):Promise<DocumentIndex<V>>;
 
 export interface Chunk<Vector extends Embedding = number[]> {
 	text: string;

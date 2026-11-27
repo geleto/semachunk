@@ -1,0 +1,10 @@
+{
+  "model": "text-embedding-3-small",
+  "thresholds": [0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.55, 0.7],
+  "limits": [256, 512, "unlimited"],
+  "sectionModes": ["ordinary", "sections"],
+  "selection": "Maximize development macro-average complete citation in five whole hits, equal weighting of the four domains. Select a second nominee independently by first-hit evidence F1. Ties favor simpler ordinary layouts, structural controls, and protocol order. Freeze both nominees before the confirmation analysis. No token or passage-count constraint in selection.",
+  "evaluation": "Every natural-language query in the audited prose trace, native HTML once per government page, full original candidate pools. Record top one, top five, whether the pool was exhausted, first-hit evidence F1, best available supporting rank and coverage, and whole passage lengths. Also compare semantic settings to blocks with the same cap and heading rule. Re-examined folds are descriptive.",
+  "headings": "At explicit headings start a new section, keeping each section eligible for the normal structural or semantic cuts inside it. Attach an emitted standalone heading to its first following body from that section. This last attachment may exceed the nominal cap. Preserve original source offsets.",
+  "laterContextExperiment": "For finished chunks, score neighboring source sentences and the owning heading against the original chunk. Include an A-C skip over an unrelated B, contiguous neighbors as a control, query-independent selection, original source order and separate citation ranges. Compare no enrichment, retrieval key only, delivery only, and both. Cross ordinary and stricter split thresholds with no embedding drift guard and a cosine guard between original and enriched vectors. Check full answers, conditions, irrelevant or misleading additions, redundant hits and document-level pool exhaustion. No cutoff has been selected for this experiment."
+}

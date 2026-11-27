@@ -1,0 +1,12 @@
+{
+  "passageCaps": [512, 768, 1024],
+  "largestDefaultPassage": 768,
+  "structuralCores": [192, 256, 384],
+  "flatSemanticCores": [256, 512, 768],
+  "semanticTreeCores": [512, 768, 1024],
+  "upperTargets": [192, 256, 384, 512, null],
+  "sectionWeights": [0, 0.15],
+  "selection": "Use development only. For each eligible passage ceiling find the best combined blocks-256 and semantic-blocks mean of complete first and complete within five. Require a finite upper target below the semantic core and compare candidates with the same paragraph ranking. Select the smallest ceiling within one percentage point of the best eligible ceiling. At that ceiling, among candidates within one point of best, take the smallest 95th-percentile first hit, then the smallest mean first hit, then the smaller upper limit. Compare 1,024 tokens and the former 2,048-token result as controls. Score all four strategies and the combined layout on the same queries. Select each flat mode's core on development at the selected reading ceiling by the same size tie-break. Keep blocks at 256 for the combined layout and report structural core alternatives. Use the existing 15% optional section weighting for this size selection, and report paragraph-only ranking separately.",
+  "ranking": "One embedding per distinct core, complete paragraph and eligible enclosing section. Rank the full pool. Neighbors contribute zero ranking weight. Return up to one whole or partial neighbor on either side inside the original section and enforce the reading ceiling on the complete cited hit. Suppress a later same-source hit overlapping 75% of the shorter window.",
+  "metrics": "Equal domain weights. Complete evidence in the first hit and across five hits, first-hit citation F1, mean and 95th-percentile first-hit tokens, mean total tokens of five, and near-whole-source incidence. Report long-source and shared multi-document results. Confidence intervals resample sources within domains."
+}

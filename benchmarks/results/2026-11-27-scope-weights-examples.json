@@ -1,0 +1,362 @@
+[
+  {
+    "domain": "fiction",
+    "id": "girl-and-snake/4",
+    "question": "Who laid in the bed?",
+    "gain": 1,
+    "old": {
+      "core": [
+        "girl-and-snake",
+        30
+      ],
+      "atom": [
+        "girl-and-snake",
+        17
+      ],
+      "whole": 0.33923596143722534,
+      "best": 0.5129948258399963,
+      "combined": 0.42611539363861084,
+      "sentence": "Come, and lie down in the bed if you choose!",
+      "parentLength": 804
+    },
+    "new": {
+      "core": [
+        "girl-and-snake",
+        29
+      ],
+      "atom": [
+        "girl-and-snake",
+        6
+      ],
+      "whole": 0.33585065603256226,
+      "best": 0.5263402462005615,
+      "combined": 0.4310954511165619,
+      "sentence": "Come and lie down in the bed, if you choose!",
+      "parentLength": 748
+    }
+  },
+  {
+    "domain": "fiction",
+    "id": "east-of-sun-and-west-of-moon/46",
+    "question": "What did the maiden do when she saw the old woman?",
+    "gain": -1,
+    "old": {
+      "core": [
+        "east-of-sun-and-west-of-moon",
+        262
+      ],
+      "atom": [
+        "east-of-sun-and-west-of-moon",
+        106
+      ],
+      "whole": 0.5249298214912415,
+      "best": 0.5020111799240112,
+      "combined": 0.5134705305099487,
+      "sentence": "\"Yes, I am that maiden,\" she replied.",
+      "parentLength": 812
+    },
+    "new": {
+      "core": [
+        "east-of-sun-and-west-of-moon",
+        265
+      ],
+      "atom": [
+        "east-of-sun-and-west-of-moon",
+        126
+      ],
+      "whole": 0.4501306116580963,
+      "best": 0.6359025835990906,
+      "combined": 0.5430166125297546,
+      "sentence": "asked the old woman.",
+      "parentLength": 976
+    }
+  },
+  {
+    "domain": "spoken",
+    "id": "qmsum-val-22/7",
+    "question": "What was Bethan Owen's comment towards the high-risk category?",
+    "gain": 1,
+    "old": {
+      "core": [
+        "qmsum-val-22",
+        505
+      ],
+      "atom": [
+        "qmsum-val-22",
+        272
+      ],
+      "whole": 0.5451582074165344,
+      "best": 0.5294245481491089,
+      "combined": 0.537291407585144,
+      "sentence": "So, to answer my question: are we likely to see more in the high-risk category or not?",
+      "parentLength": 736
+    },
+    "new": {
+      "core": [
+        "qmsum-val-22",
+        506
+      ],
+      "atom": [
+        "qmsum-val-22",
+        279
+      ],
+      "whole": 0.5238998532295227,
+      "best": 0.5620201826095581,
+      "combined": 0.5429600477218628,
+      "sentence": "Sian Gwenllian AM: Just in the interest of transparency, are you able to tell us which universities are in which categories of risk?",
+      "parentLength": 1001
+    }
+  },
+  {
+    "domain": "spoken",
+    "id": "qmsum-val-14/7",
+    "question": "How did Kirsty Williams respond to university mergers?",
+    "gain": -1,
+    "old": {
+      "core": [
+        "qmsum-val-14",
+        728
+      ],
+      "atom": [
+        "qmsum-val-14",
+        278
+      ],
+      "whole": 0.6035258769989014,
+      "best": 0.5229368209838867,
+      "combined": 0.563231348991394,
+      "sentence": "Kirsty Williams AM: Well, again, what HEFCW are interested in is a sustainable HE sector that is strong but, as I said, I do not have a burning desire or a set policy to try and pursue mergers.",
+      "parentLength": 913
+    },
+    "new": {
+      "core": [
+        "qmsum-val-14",
+        730
+      ],
+      "atom": [
+        "qmsum-val-14",
+        288
+      ],
+      "whole": 0.579166829586029,
+      "best": 0.5642790794372559,
+      "combined": 0.5717229843139648,
+      "sentence": "Kirsty Williams AM: As I said, Hefin, I have no formal policy for reconfiguration or mergers.",
+      "parentLength": 905
+    }
+  },
+  {
+    "domain": "papers",
+    "id": "ec2045e0da92989642a5b5f2b1130c8bd765bcc5",
+    "question": "Did they use The Onion as their dataset?",
+    "gain": 1,
+    "old": {
+      "core": [
+        "1901.03253",
+        278
+      ],
+      "atom": [
+        "1901.03253",
+        5
+      ],
+      "whole": 0.4202623963356018,
+      "best": 0.41416385769844055,
+      "combined": 0.4172131419181824,
+      "sentence": "Starting from the observation that satirical news headlines tend to resemble serious news headlines, we build and analyze a corpus of satirical headlines paired with nearly identical but serious headlines. ",
+      "parentLength": 1296
+    },
+    "new": {
+      "core": [
+        "1901.03253",
+        294
+      ],
+      "atom": [
+        "1901.03253",
+        91
+      ],
+      "whole": 0.3918963670730591,
+      "best": 0.526351809501648,
+      "combined": 0.4591240882873535,
+      "sentence": "Our satirical corpus consists of 9,159 headlines published by the wellknown satirical newspaper The Onion; our serious corpus, of 9,000 headlines drawn from 9 major news websites.",
+      "parentLength": 993
+    }
+  },
+  {
+    "domain": "papers",
+    "id": "79258cea30cd6c0662df4bb712bf667589498a1f",
+    "question": "What method did the highest scoring team use?",
+    "gain": -1,
+    "old": {
+      "core": [
+        "1707.07568",
+        143
+      ],
+      "atom": [
+        "1707.07568",
+        91
+      ],
+      "whole": 0.3164784908294678,
+      "best": 0.41872894763946533,
+      "combined": 0.36760371923446655,
+      "sentence": "In the rest of the section we provide a short overview for the approaches used by each system and discuss the achieved scores.",
+      "parentLength": 1192
+    },
+    "new": {
+      "core": [
+        "1707.07568",
+        146
+      ],
+      "atom": [
+        "1707.07568",
+        113
+      ],
+      "whole": 0.3077103793621063,
+      "best": 0.5091671347618103,
+      "combined": 0.4084387421607971,
+      "sentence": "For example, the Lattice team achieved the highest precision score.",
+      "parentLength": 1165
+    }
+  },
+  {
+    "domain": "government",
+    "id": "47d8822063e3d1b654b289f45d412789",
+    "question": "How do the county taxes work? how are they used?",
+    "gain": -1,
+    "old": {
+      "core": [
+        "Commercial vehicle registration fees, vehicle use taxes and supplemental fees#3_0",
+        28
+      ],
+      "atom": [
+        "Commercial vehicle registration fees, vehicle use taxes and supplemental fees#3_0",
+        9
+      ],
+      "whole": 0.432386577129364,
+      "best": 0.5347871780395508,
+      "combined": 0.4835868775844574,
+      "sentence": "The DMV collects the taxes for the city and the counties.",
+      "parentLength": 798
+    },
+    "new": {
+      "core": [
+        "Commercial vehicle registration fees, vehicle use taxes and supplemental fees#3_0",
+        27
+      ],
+      "atom": [
+        "Commercial vehicle registration fees, vehicle use taxes and supplemental fees#3_0",
+        7
+      ],
+      "whole": 0.39262545108795166,
+      "best": 0.6233322024345398,
+      "combined": 0.5079787969589233,
+      "sentence": "County use taxes and supplemental fees",
+      "parentLength": 700
+    }
+  },
+  {
+    "domain": "finance",
+    "id": "letter83/2",
+    "question": "How did Rose Blumkin fare in the Fair Trade lawsuits, and what benefit did she get from them?",
+    "gain": 1,
+    "old": {
+      "core": [
+        "letter83",
+        591
+      ],
+      "atom": [
+        "letter83",
+        87
+      ],
+      "whole": 0.4317651391029358,
+      "best": 0.36766210198402405,
+      "combined": 0.3997136354446411,
+      "sentence": "Louie Blumkin, Mrs. B’s son, has been President of Nebraska Furniture Mart for many years and is widely regarded as the shrewdest buyer of furniture and appliances in the country.",
+      "parentLength": 589
+    },
+    "new": {
+      "core": [
+        "letter83",
+        589
+      ],
+      "atom": [
+        "letter83",
+        68
+      ],
+      "whole": 0.3898269236087799,
+      "best": 0.5050705075263977,
+      "combined": 0.44744873046875,
+      "sentence": "Mrs. B was then hauled into court for violation of Fair Trade laws.",
+      "parentLength": 878
+    }
+  },
+  {
+    "domain": "faq",
+    "id": "go/1",
+    "question": "Which Go release introduced type parameters and what language feature did that enable?",
+    "gain": 1,
+    "old": {
+      "core": [
+        "go",
+        812
+      ],
+      "atom": [
+        "go",
+        505
+      ],
+      "whole": 0.6324753761291504,
+      "best": 0.6384336352348328,
+      "combined": 0.635454535484314,
+      "sentence": "## Type Parameters {#Type_Parameters}\n\n### Why does Go have type parameters? {#why_generics}\n\nType parameters permit what is known as generic programming, in which functions and data structures are defined in terms of types that are specified later, when those functions and data structures are used. ",
+      "parentLength": 1293
+    },
+    "new": {
+      "core": [
+        "go",
+        755
+      ],
+      "atom": [
+        "go",
+        116
+      ],
+      "whole": 0.6092079877853394,
+      "best": 0.697579026222229,
+      "combined": 0.6533935070037842,
+      "sentence": "### When did Go get generic types? {#generics}\n\nThe Go 1.18 release added type parameters to the language. ",
+      "parentLength": 975
+    }
+  },
+  {
+    "domain": "faq",
+    "id": "prettier/3",
+    "question": "Which correctness guarantee does the formatter make about the output program?",
+    "gain": -1,
+    "old": {
+      "core": [
+        "prettier",
+        145
+      ],
+      "atom": [
+        "prettier",
+        3
+      ],
+      "whole": 0.4694099426269531,
+      "best": 0.4083576202392578,
+      "combined": 0.43888378143310547,
+      "sentence": "Please report any code where Prettier fails to follow these correctness rules — that’s a bug which needs to be fixed!",
+      "parentLength": 1116
+    },
+    "new": {
+      "core": [
+        "go",
+        842
+      ],
+      "atom": [
+        "go",
+        718
+      ],
+      "whole": 0.4625844657421112,
+      "best": 0.46552175283432007,
+      "combined": 0.46405309438705444,
+      "sentence": "More important&mdash;much more important&mdash;the advantages of a single, programmatically mandated format for all Go programs greatly outweigh any perceived disadvantages of the particular style. ",
+      "parentLength": 693
+    }
+  }
+]

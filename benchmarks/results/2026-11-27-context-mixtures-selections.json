@@ -1,0 +1,46 @@
+{
+  "rule": "Development only. Select best semantic and finite structural configuration by equal-domain complete at five, then complete first, then focus. Also select by complete first and by focus, with the other metrics reported. Reused confirmation is exploratory. Fresh sources are evaluated only after writing the development selections.",
+  "development": 3609,
+  "methods": {
+    "structural": {
+      "five": "blocks256/chunk/allow/child50/both",
+      "fiveSimple": "blocks256/chunk/allow/child50/both",
+      "first": "blocks256/chunk/allow/child50/both",
+      "firstSimple": "blocks256/chunk/allow/child50/both",
+      "focus": "blocks256/child50",
+      "focusSimple": "blocks256/child50"
+    },
+    "semantic": {
+      "five": "sent25/chunk/allow/child50/both",
+      "fiveSimple": "sent25/chunk/allow/child50/both",
+      "first": "sent25/chunk/allow/child50/both",
+      "firstSimple": "sent25/chunk/allow/child50/both",
+      "focus": "tree55/chunk/drop/centroidHybrid/both",
+      "focusSimple": "tree55/sentence/drop/m15j50/both"
+    },
+    "flat": {
+      "five": "sent25/chunk/allow/child50/both",
+      "fiveSimple": "sent25/chunk/allow/child50/both",
+      "first": "sent25/chunk/allow/child50/both",
+      "firstSimple": "sent25/chunk/allow/child50/both",
+      "focus": "sent55/chunk/drop/centroidHybrid/both",
+      "focusSimple": "sent55/chunk/drop/centroidHybrid/both"
+    },
+    "tree": {
+      "five": "tree25/chunk/allow/dual/diverse",
+      "fiveSimple": "tree25/chunk/allow/child50/both",
+      "first": "tree25/chunk/allow/child50/both",
+      "firstSimple": "tree25/chunk/allow/child50/both",
+      "focus": "tree55/chunk/drop/centroidHybrid/both",
+      "focusSimple": "tree55/sentence/drop/m15j50/both"
+    },
+    "strict": {
+      "five": "sent55/chunk/allow/centroid/both",
+      "fiveSimple": "sent55/sentence/allow/centroid/both",
+      "first": "sent55/chunk/drop/centroidHybrid/both",
+      "firstSimple": "sent55/chunk/drop/centroidHybrid/both",
+      "focus": "sent55/chunk/drop/centroidHybrid/both",
+      "focusSimple": "sent55/chunk/drop/centroidHybrid/both"
+    }
+  }
+}

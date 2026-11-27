@@ -1,0 +1,856 @@
+{
+  "base": "2026-11-27-audited-data.json",
+  "corrections": "../prose-citations.json",
+  "correctionSHA256": "72636e684b341bfa68f38958b8239a5ca763eae9e975f816db410dd162f4ad1a",
+  "sets": {
+    "faq-confirmation-reviewed": {
+      "baseSHA256": "55552a29c13c73b70487915c690a3e4c8df81c97c3489e8b11a081f63cca3843",
+      "sha256": "2b1b53d3bf657478c27d6ac96f505b3dc35169638c14202685fe42d1414570fb",
+      "pool": "collection",
+      "sources": [
+        "docker",
+        "pandoc",
+        "cargo",
+        "vue",
+        "poetry",
+        "ruff"
+      ],
+      "questions": 76,
+      "revised": [
+        "cargo-1",
+        "poetry-13"
+      ]
+    },
+    "finance-confirmation-filing-AMD_2022_10K": {
+      "baseSHA256": "eee729824cb97209e7d73125d1b701ecfa3d8bf4fd55a03222d9094787496f48",
+      "sha256": "faf6f154c6522c59b38da72a09c87ab421191286db6255320d60e1dff3b37d10",
+      "pool": "document",
+      "sources": [
+        "AMD_2022_10K"
+      ],
+      "questions": 4,
+      "revised": []
+    },
+    "finance-confirmation-filing-BESTBUY_2023_10K": {
+      "baseSHA256": "a14bfee2013ebac4ba6e2a88765a7621d941b1b5295ae2eee6eaf03b3081d1ca",
+      "sha256": "330714797b3e0c390cf41f810f9a585f285d6a8352c8d0c92d355211e0bbc73b",
+      "pool": "document",
+      "sources": [
+        "BESTBUY_2023_10K"
+      ],
+      "questions": 1,
+      "revised": []
+    },
+    "finance-confirmation-filing-BESTBUY_2024Q2_10Q": {
+      "baseSHA256": "b623e0a182859e8729f3b0fdcabeba5493e9bf74c16cbc85564e4eaf84ab4ed4",
+      "sha256": "796ce53743c561f4e75ce1993c215a429ba1fdfcaf00aae3f5eef221ef849d5d",
+      "pool": "document",
+      "sources": [
+        "BESTBUY_2024Q2_10Q"
+      ],
+      "questions": 1,
+      "revised": [
+        "financebench_id_01902"
+      ]
+    },
+    "finance-confirmation-filing-BOEING_2022_10K": {
+      "baseSHA256": "71528d51c85d38a48941a203a7f67f2cf43b26ffd6fe9491179e6485e1b907e9",
+      "sha256": "2565b83916c220b6a8b941bddb54bc2ed36778cdf21cc5918accd9f370717c97",
+      "pool": "document",
+      "sources": [
+        "BOEING_2022_10K"
+      ],
+      "questions": 4,
+      "revised": [
+        "financebench_id_00464"
+      ]
+    },
+    "finance-confirmation-filing-FOOTLOCKER_2022_8K_dated_2022-08-19": {
+      "baseSHA256": "5eea6e60764843539f9ac758b84bb655c4f0c840049f3a54575bd03aca175e7e",
+      "sha256": "5eea6e60764843539f9ac758b84bb655c4f0c840049f3a54575bd03aca175e7e",
+      "pool": "document",
+      "sources": [
+        "FOOTLOCKER_2022_8K_dated_2022-08-19"
+      ],
+      "questions": 1,
+      "revised": []
+    },
+    "finance-confirmation-filing-JOHNSON_JOHNSON_2022Q4_EARNINGS": {
+      "baseSHA256": "f7f59a55ffa2c832333ca35cd428ec82057fcf4600fc4b2d9f2de5a40f7da78d",
+      "sha256": "c1cd4706a3678ec5cd507f253fbbcc988d5a03aefc179990036534e53b48dd92",
+      "pool": "document",
+      "sources": [
+        "JOHNSON_JOHNSON_2022Q4_EARNINGS"
+      ],
+      "questions": 1,
+      "revised": []
+    },
+    "finance-confirmation-filing-JOHNSON_JOHNSON_2022_10K": {
+      "baseSHA256": "7788362439c63f1f5a3a6b1c5b7d75804e703da21577135c4fefd56fcc605a7f",
+      "sha256": "192bc65a9101468694db04dc2523c937fdedff6400eba4204cf5b90f0dee93a2",
+      "pool": "document",
+      "sources": [
+        "JOHNSON_JOHNSON_2022_10K"
+      ],
+      "questions": 2,
+      "revised": []
+    },
+    "finance-confirmation-filing-JOHNSON_JOHNSON_2023_8K_dated-2023-08-30": {
+      "baseSHA256": "c97db56ca6ff088a2c25f444d369eeebd3d7c07a3117cb455db03ab63a07fd52",
+      "sha256": "c97db56ca6ff088a2c25f444d369eeebd3d7c07a3117cb455db03ab63a07fd52",
+      "pool": "document",
+      "sources": [
+        "JOHNSON_JOHNSON_2023_8K_dated-2023-08-30"
+      ],
+      "questions": 3,
+      "revised": []
+    },
+    "finance-confirmation-filing-JPMORGAN_2023Q2_10Q": {
+      "baseSHA256": "89cc13175b8d9108284d2ed8ab3d36267fbd5f40d7b929681d423a114239e726",
+      "sha256": "89cc13175b8d9108284d2ed8ab3d36267fbd5f40d7b929681d423a114239e726",
+      "pool": "document",
+      "sources": [
+        "JPMORGAN_2023Q2_10Q"
+      ],
+      "questions": 1,
+      "revised": []
+    },
+    "finance-confirmation-filing-PEPSICO_2022_10K": {
+      "baseSHA256": "9b5864492f86173b79193148565876927d9ffe98eca04df2c9389940affa5866",
+      "sha256": "ea1898fd1e2fac63ace43c052d8678382a04b66764c8ac9f91c71fbcd5610c6e",
+      "pool": "document",
+      "sources": [
+        "PEPSICO_2022_10K"
+      ],
+      "questions": 2,
+      "revised": []
+    },
+    "finance-confirmation-filing-PEPSICO_2023Q1_EARNINGS": {
+      "baseSHA256": "704ce08a8cb945470e24f620957bfbed7c11422952fe0ec1da5f691996b0acf1",
+      "sha256": "e44650ebf8876ffd52782302bb37060dd0f3cba378f7be32821b385228bfc7f5",
+      "pool": "document",
+      "sources": [
+        "PEPSICO_2023Q1_EARNINGS"
+      ],
+      "questions": 2,
+      "revised": [
+        "financebench_id_01476"
+      ]
+    },
+    "finance-confirmation-filing-PEPSICO_2023_8K_dated-2023-05-05": {
+      "baseSHA256": "76108ceb8a7c9319eb4010f8f190ba9be9f1163429a38ab4cf82c4bf0f197f9c",
+      "sha256": "76108ceb8a7c9319eb4010f8f190ba9be9f1163429a38ab4cf82c4bf0f197f9c",
+      "pool": "document",
+      "sources": [
+        "PEPSICO_2023_8K_dated-2023-05-05"
+      ],
+      "questions": 1,
+      "revised": []
+    },
+    "finance-confirmation-filing-PEPSICO_2023_8K_dated-2023-05-30": {
+      "baseSHA256": "60f0160781b1a0a4551632d178cd1957f85960c5e8b33b28ea8f046f2f255708",
+      "sha256": "3872fda55f557828c4ebd68f3e6279543198ccd1389e83946ee2b5f66f03a643",
+      "pool": "document",
+      "sources": [
+        "PEPSICO_2023_8K_dated-2023-05-30"
+      ],
+      "questions": 2,
+      "revised": [
+        "financebench_id_00882"
+      ]
+    },
+    "government-confirmation-reviewed-dmv-html": {
+      "baseSHA256": "58671b1f9d5c07c1e47978cdb6fa7d700d7c358df071fdf78ef2bdb56aeea140",
+      "sha256": "01c732f316d2f20159fc03c553ca357bc8886c0fdb3a96543756a1dd62e708c4",
+      "pool": "collection",
+      "sources": [
+        "Registrations#3_0",
+        "Refunds and transfer credits for surrendered plates#3_0",
+        "Appeal a TVB ticket conviction#1_0",
+        "Top 5 DMV Mistakes and How to Avoid Them#3_0",
+        "Surrender (return or turn in) your plates to the DMV#3_0",
+        "DIAL-IN search accounts#3_0",
+        "About complaints and charges for repair and body shops#3_0",
+        "Schedule and take a road test#1_0",
+        "About the NYS Driver Point System#3_0",
+        "Open an inspection station#1_0",
+        "Insurance lapses#3_0",
+        "How to replace a registration#1_0",
+        "Respond to DMV insurance letters and orders#3_0",
+        "Moving to NY#3_0",
+        "Get an Accident Report#1_0",
+        "Register a snowmobile#1_0",
+        "Pay insurance lapse civil penalty#1_0",
+        "Lost, stolen, or destroyed plates#3_0",
+        "NY State Adventure License FAQs#3_0",
+        "Driver license and learner permit fees and refunds#3_0",
+        "How to renew a registration#1_0",
+        "Restore license after revocation#1_0",
+        "In-transit vehicle permits (temporary registrations)#3_0",
+        "Let the Buyer be Aware#3_0",
+        "If a family member has died#3_0"
+      ],
+      "questions": 92,
+      "revised": [
+        "4b6d3093e00fd5274167ecd9d45c151c",
+        "cc3a0ee1ef95aa5ed63e74f654269e53",
+        "414ecc05f580e4828fbacaf9d32a52fd",
+        "6e4c4b8e2ef51e5e27ac832f67ec05ea",
+        "62d721f3440bdf296ea704421b953a0a",
+        "50cef3d6f133e8988f1f3b9984f98be1"
+      ]
+    },
+    "government-confirmation-reviewed-ssa-html": {
+      "baseSHA256": "133275db11264563890ecc88a52c118c76b47928423495ba9ec32e9a5789afc5",
+      "sha256": "133275db11264563890ecc88a52c118c76b47928423495ba9ec32e9a5789afc5",
+      "pool": "collection",
+      "sources": [
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#3_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#4_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#7_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#10_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#11_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#14_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#17_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#19_0",
+        "Learn what documents you will need to get a Social Security Card | Social Security Administration#20_0",
+        "How To Apply For Social Security Disability Benefits#1_0",
+        "How To Apply For Social Security Disability Benefits#3_0",
+        "Benefits Planner: Disability | Social Security Administration#1_0",
+        "my Social Security | Create an Account | Social Security Administratio#1_0",
+        "my Social Security | Create an Account | Social Security Administratio#2_0",
+        "Benefits Planner: Retirement | You Can Apply For Retirement Benefits Or Medicare | Social Security Administration#2_0",
+        "Medicare Benefits | Social Security Administration#2_0",
+        "Learn About Retirement Benefits | SSA#1_0",
+        "Benefits Planner | Social Security Credits and Benefit Eligibility | SSA#1_0",
+        "Apply for Retirement Benefits | SSA#1_0"
+      ],
+      "questions": 83,
+      "revised": []
+    },
+    "government-confirmation-reviewed-studentaid-html": {
+      "baseSHA256": "0a617716a08fc88bbeef0b68c45937acb8bf6ff1b4f42f5d12a76776b3dffb7f",
+      "sha256": "394147cc47a938021c37a6a04700fc259823a3034dbe0aa24374705e6191a75b",
+      "pool": "collection",
+      "sources": [
+        "Preparing for College | Federal Student Aid#1_0",
+        "Student Loan Deferment | Federal Student Aid#1_0",
+        "How to Review and Correct Your FAFSA® Application | Federal Student Aid#1_0",
+        "Student Loan Forbearance | Federal Student Aid#1_0",
+        "Getting Out of Default | Federal Student Aid#1_0",
+        "Dependency Status | Federal Student Aid#1_0",
+        "Student Aid Report | Federal Student Aid#1_0",
+        "Income-Driven Repayment Plans | Federal Student Aid#1_0",
+        "Grants | Federal Student Aid#1_0",
+        "Eligibility for Non-U.S. Citizens | Federal Student Aid#1_0",
+        "Accepting Aid | Federal Student Aid#1_0",
+        "Receiving Financial Aid | Federal Student Aid#1_0",
+        "Perkins Loan Cancellation and Discharge | Federal Student Aid#1_0",
+        "Student Loan Consolidation | Federal Student Aid#1_0",
+        "Extended Plan | Federal Student Aid#1_0",
+        "Eligibility Requirements | Federal Student Aid#1_0",
+        "Loans | Federal Student Aid#1_0",
+        "Make a Student Loan Payment | Federal Student Aid#1_0",
+        "Aid for Military Families | Federal Student Aid#1_0",
+        "Listing Colleges on the FAFSA® Form | Federal Student Aid#1_0",
+        "Borrower Defense to Repayment | Federal Student Aid#1_0",
+        "Filling Out the FAFSA® Form | Federal Student Aid#1_0",
+        "Tax Benefits for Higher Education | Federal Student Aid#1_0",
+        "Financial Aid Eligibility | Federal Student Aid#1_0",
+        "Questions and Answers About FAFSA® Completion Data | Federal Student Aid#1_0",
+        "Reporting Parent Information | Federal Student Aid#1_0",
+        "Total and Permanent Disability Discharge | Federal Student Aid#1_0"
+      ],
+      "questions": 158,
+      "revised": [
+        "8c70d5a5f215350ddff51d41598c2320",
+        "2036afc9513baa2e07fba8c3c4b8e425",
+        "032ec9574501c5213a995bb17ba91c20"
+      ]
+    },
+    "government-confirmation-reviewed-va-html": {
+      "baseSHA256": "dd7d2cba8aa5acbd0fe1995cc76970eecf60557687097c106d22e89127c95991",
+      "sha256": "fb98ac13943f126bd0b64abdb32ec62f1ce61c8b258951ca74e95455f7591d0e",
+      "pool": "collection",
+      "sources": [
+        "Request Your Military Service Records | Veterans Affairs#1_0",
+        "VA Clothing Allowance | Veterans Affairs#1_0",
+        "Exposure To Specific Environmental Hazards | Veterans Affairs#1_0",
+        "How To Apply For The GI Bill | Veterans Affairs#1_0",
+        "Change Your GI Bill School Or Program | Veterans Affairs#1_0",
+        "Check Your VA Claim Or Appeal Status | Veterans Affairs#1_0",
+        "VA Housing Assistance | Veterans Affairs#1_0",
+        "VA Housing Assistance | Veterans Affairs#2_0",
+        "Aid And Attendance Benefits And Housebound Allowance | VA.gov#1_0",
+        "Employment Benefits For Dependent Family Members | Veterans Affairs#1_0",
+        "Get Your VA Medical Records Online | Veterans Affairs#1_0",
+        "Eligibility For VA Health Care | Veterans Affairs#1_0",
+        "Your Health Care Costs | Veterans Affairs#1_0",
+        "Educational And Career Counseling (VA Chapter 36) | Veterans Affairs#1_0",
+        "VA Pension Benefits | Veterans Affairs#1_0",
+        "VA Pension Benefits | Veterans Affairs#2_0",
+        "Family Group Life Insurance (FSGLI) | Veterans Affairs#1_0",
+        "Eligibility For Veterans Pension | Veterans Affairs#1_0",
+        "Yellow Ribbon Program | Veterans Affairs#1_0",
+        "About VA Insurance Options And Eligibility | Veterans Affairs#1_0",
+        "Frequently asked questions about decision reviews | Veterans Affairs#1_0",
+        "Montgomery GI Bill Active Duty (MGIB-AD) | Veterans Affairs#1_0",
+        "Get A Veteran Health Identification Card (VHIC) | Veterans Affairs#1_0",
+        "Types Of Veteran ID Cards | Veterans Affairs#1_0",
+        "Request a Higher-Level Review | Veterans Affairs#1_0",
+        "Temporary Disability Rating After Surgery Or Cast | Veterans Affairs#1_0",
+        "VA Survivors Pension | Veterans Affairs#1_0",
+        "File a Supplemental Claim with new evidence | Veterans Affairs#1_0",
+        "Mustard Gas Or Lewisite Exposure | Veterans Affairs#1_0",
+        "Veteran Suicide Prevention | Veterans Affairs#1_0",
+        "GI Bill Eligibility | Veterans Affairs#1_0",
+        "Schedule A Burial For A Veteran Or Family Member | Veterans Affairs#1_0",
+        "Your VA Primary Care Provider | Veterans Affairs#1_0"
+      ],
+      "questions": 116,
+      "revised": [
+        "b5e61c3593901c5aed1c117e4de1e157",
+        "31fb6a030ec8b01dda8f58444dc895e4",
+        "b20bdaf57fa27abbee22278598512dca",
+        "4386d31fd43940ec7974cbb0643a92a6",
+        "d6912871dba2012f8d1c592769a495f0",
+        "f061c44c2bd78272e4b699f48cd9e3b4",
+        "021f07dfc561db4415536f63a0b5f1b2",
+        "d3259fa2f969d61aeb04c060f00a9dd7"
+      ]
+    },
+    "papers-confirmation-reviewed-0": {
+      "baseSHA256": "73691deec30c19b87c49ef530a8f18310aefafe6f302c9173a8151c58da9c496",
+      "sha256": "902fe81244a26d57b17170eb9dff19a36716d4e54543d40ab6708e035a369571",
+      "pool": "document",
+      "sources": [
+        "1704.04452",
+        "1910.06036",
+        "1810.08699",
+        "1908.09246",
+        "2001.07786",
+        "1911.07555",
+        "1605.06083",
+        "1910.14537"
+      ],
+      "questions": 28,
+      "revised": [
+        "ffeb67a61ecd09542b1c53c3e4c3abd4da0496a8",
+        "f225a9f923e4cdd836dd8fe097848da06ec3e0cc"
+      ]
+    },
+    "papers-confirmation-reviewed-1": {
+      "baseSHA256": "dc03b4c0e9bb250ce1a35412663235d1777d9159765ec5d1699e19796bfe67cf",
+      "sha256": "dc03b4c0e9bb250ce1a35412663235d1777d9159765ec5d1699e19796bfe67cf",
+      "pool": "document",
+      "sources": [
+        "1908.08345",
+        "2002.12612",
+        "1911.03059",
+        "1912.08960",
+        "1707.03569",
+        "1810.04428",
+        "1606.03676",
+        "1806.00738"
+      ],
+      "questions": 23,
+      "revised": []
+    },
+    "papers-confirmation-reviewed-2": {
+      "baseSHA256": "d3dc7358d8a48b42735c9ce8f5d11ade0eadd624366bee80616fbddb1466b191",
+      "sha256": "318f5fe3d78a144ef520b5a878fb493d55209cf63e54ead479648843da0d45aa",
+      "pool": "document",
+      "sources": [
+        "1911.01371",
+        "1909.05359",
+        "1906.07662",
+        "1812.06864",
+        "1810.04635",
+        "1811.05711",
+        "1805.01445",
+        "1909.00015"
+      ],
+      "questions": 17,
+      "revised": [
+        "5913930ce597513299e4b630df5e5153f3618038"
+      ]
+    },
+    "papers-confirmation-reviewed-3": {
+      "baseSHA256": "df4e00e90adc0f02e60fc0d32c5e39ff4a9516d2bb1cbbf2ec471d32b16e9746",
+      "sha256": "eb950dea36a5bcb262d100a732e1efddea65cfbf795c1c7c78e1e64a6f76f05e",
+      "pool": "document",
+      "sources": [
+        "1910.14599",
+        "1710.03348",
+        "1809.09194",
+        "1906.01040",
+        "1803.05223",
+        "1804.00720",
+        "1605.03481",
+        "2004.03354"
+      ],
+      "questions": 19,
+      "revised": [
+        "beac555c4aea76c88f19db7cc901fa638765c250",
+        "91e326fde8b0a538bc34d419541b5990d8aae14b"
+      ]
+    },
+    "papers-confirmation-reviewed-4": {
+      "baseSHA256": "afefb3be05d2e1b10c88be65b13d92c2597a9e7809f57e977a7493220c4d7a5d",
+      "sha256": "3007cf8cdd4b2f034ff30c95c92fab13570dc304d99f6eb04e040b554c2622d1",
+      "pool": "document",
+      "sources": [
+        "1909.11687",
+        "1702.03856",
+        "1702.03342",
+        "2002.11910",
+        "1906.10225",
+        "1908.04042",
+        "2004.01853",
+        "1712.05608"
+      ],
+      "questions": 22,
+      "revised": [
+        "f4496316ddd35ee2f0ccc6475d73a66abf87b611"
+      ]
+    },
+    "papers-confirmation-reviewed-5": {
+      "baseSHA256": "04de0b36ff171b7f7bc30a4aaaf860eb9ee3524409809af8c3991e987124d0c8",
+      "sha256": "04de0b36ff171b7f7bc30a4aaaf860eb9ee3524409809af8c3991e987124d0c8",
+      "pool": "document",
+      "sources": [
+        "1810.12091",
+        "1904.10503",
+        "1809.04267",
+        "1912.06262",
+        "1708.06185",
+        "1909.00105",
+        "1903.11283",
+        "1809.02286"
+      ],
+      "questions": 18,
+      "revised": []
+    },
+    "papers-confirmation-reviewed-6": {
+      "baseSHA256": "4e3c5b04efb6996117e3d8924a134e1f2d84a2684426e5e07037d0e3147cdeae",
+      "sha256": "1f1257d44c2d29d66d93fdd9c303e0edf507771fe9b09ac5d2117715a4783ac4",
+      "pool": "document",
+      "sources": [
+        "1806.11432",
+        "2003.11563",
+        "1911.06964",
+        "1908.10084",
+        "1601.02403",
+        "1912.00667",
+        "1907.09369",
+        "1809.06537"
+      ],
+      "questions": 30,
+      "revised": [
+        "132f752169adf6dc5ade3e4ca773c11044985da4"
+      ]
+    },
+    "papers-confirmation-reviewed-7": {
+      "baseSHA256": "90af149334d95f169bc50ff55db0ecf1853906c751d9fec19c17bd2b50c0a13c",
+      "sha256": "4be6e2c67f4e8d55e078e4a907939cc1ef060aca9e563193fe64cc97741f6367",
+      "pool": "document",
+      "sources": [
+        "1904.04358",
+        "1611.03599",
+        "1706.01875",
+        "2002.08795",
+        "1806.05513",
+        "2003.04642",
+        "2002.04181",
+        "2002.03407"
+      ],
+      "questions": 33,
+      "revised": [
+        "88ab7811662157680144ed3fdd00939e36552672"
+      ]
+    },
+    "faq-development-reviewed": {
+      "baseSHA256": "6d3d80840a1941bd7446822debaa406f8d03f8ce64f33359b77612ea072d6bd0",
+      "sha256": "860c355ca497d138e8e01eb136b500e5a773e285d3235827acf480644f46c660",
+      "pool": "collection",
+      "sources": [
+        "rclone",
+        "pnpm",
+        "jellyfin"
+      ],
+      "questions": 22,
+      "revised": [
+        "pnpm-1"
+      ]
+    },
+    "finance-development-filing-3M_2023Q2_10Q": {
+      "baseSHA256": "e497a4c64cbe5eca8d89ed388c5598f0db8e82307c786ac26cec52a55c65eeab",
+      "sha256": "7450aaafb9d38a9f64d54d8f8f8d08d6b1fcc169a64ee181b020aaeb8052e96e",
+      "pool": "document",
+      "sources": [
+        "3M_2023Q2_10Q"
+      ],
+      "questions": 1,
+      "revised": []
+    },
+    "finance-development-filing-AMCOR_2022_8K_dated-2022-07-01": {
+      "baseSHA256": "606f46981143df049c145f0f48d0e5deebb60e40745fab60a94137572951fa0f",
+      "sha256": "606f46981143df049c145f0f48d0e5deebb60e40745fab60a94137572951fa0f",
+      "pool": "document",
+      "sources": [
+        "AMCOR_2022_8K_dated-2022-07-01"
+      ],
+      "questions": 1,
+      "revised": []
+    },
+    "finance-development-filing-AMCOR_2023_10K": {
+      "baseSHA256": "e76e2abe7f8ef13d50fafcf618bf0bcb5d629ea0e419a85ff5140702b776fdae",
+      "sha256": "904d040c1df606c0149d437502e1b4396cb7e3235dee56b87c4b69e2e07b2ca1",
+      "pool": "document",
+      "sources": [
+        "AMCOR_2023_10K"
+      ],
+      "questions": 2,
+      "revised": []
+    },
+    "finance-development-filing-AMERICANEXPRESS_2022_10K": {
+      "baseSHA256": "38ae0e50c7690f2ad5a4b90b2c4a04ec4bafc2c211d2f83764223245e23ba540",
+      "sha256": "aae37c557608db0ab93276006b70c75b4d324a2a75b39ff15f15d879171d7a03",
+      "pool": "document",
+      "sources": [
+        "AMERICANEXPRESS_2022_10K"
+      ],
+      "questions": 1,
+      "revised": []
+    },
+    "finance-development-filing-CVSHEALTH_2022_10K": {
+      "baseSHA256": "27d0e7d3184ba39d7fdfb78d4817bcea236f2f305d5c0c5502a7f5cbba729136",
+      "sha256": "bf6524d6f6afaf6838f2c5a5ec380710175e69766af7ab9a3cf2da2b0a7d4062",
+      "pool": "document",
+      "sources": [
+        "CVSHEALTH_2022_10K"
+      ],
+      "questions": 2,
+      "revised": []
+    },
+    "finance-development-filing-MGMRESORTS_2022Q4_EARNINGS": {
+      "baseSHA256": "a321d37c700e1e1e8d6a3dae44d753e79b86abc23db2857b4b03effda7422a7e",
+      "sha256": "e979a3a36c15e965b073b579addf47bfbb837cade75e931018d079274431bbd5",
+      "pool": "document",
+      "sources": [
+        "MGMRESORTS_2022Q4_EARNINGS"
+      ],
+      "questions": 1,
+      "revised": []
+    },
+    "finance-development-filing-MGMRESORTS_2022_10K": {
+      "baseSHA256": "0e2272678cef388851c1378f98866bd47eaf6590f04e2b981387a1fc41871e72",
+      "sha256": "0e2272678cef388851c1378f98866bd47eaf6590f04e2b981387a1fc41871e72",
+      "pool": "document",
+      "sources": [
+        "MGMRESORTS_2022_10K"
+      ],
+      "questions": 1,
+      "revised": []
+    },
+    "finance-development-filing-PFIZER_2021_10K": {
+      "baseSHA256": "31177e70ca2be377933f005d1ff4f3151f6d5657165d5174e3e6157b29b2dd63",
+      "sha256": "22fa49eeabf58089a9eb7c2ce7280d1635453b8c04c2f8db2fe9928c2197a442",
+      "pool": "document",
+      "sources": [
+        "PFIZER_2021_10K"
+      ],
+      "questions": 1,
+      "revised": []
+    },
+    "finance-development-filing-ULTABEAUTY_2023Q4_EARNINGS": {
+      "baseSHA256": "da585996ce9142790084c6827526617f38cf62dd07e2a4f76d817d54844545f7",
+      "sha256": "57c38d89625f098f9ec6e91ff76f912c46d0c720bca7cb468d8346df4b3b7f70",
+      "pool": "document",
+      "sources": [
+        "ULTABEAUTY_2023Q4_EARNINGS"
+      ],
+      "questions": 4,
+      "revised": [
+        "financebench_id_00606"
+      ]
+    },
+    "government-development-reviewed-dmv-html": {
+      "baseSHA256": "4f0d295e6ee1c7fba89a26d4653a702d70afb657b7cbeb8895d47c047b5bab53",
+      "sha256": "4f0d295e6ee1c7fba89a26d4653a702d70afb657b7cbeb8895d47c047b5bab53",
+      "pool": "collection",
+      "sources": [
+        "Commercial vehicle registration fees, vehicle use taxes and supplemental fees#3_0",
+        "New York State Insurance Requirements#3_0",
+        "Replace license or permit#1_0",
+        "How insurance premium reduction works#3_0",
+        "Passenger vehicle registration fees, use taxes and supplemental fees#3_0",
+        "Temporary surrender of vehicle plates (store plates for a season)#3_0",
+        "Escort driver certification#1_0",
+        "File a Freedom of Information Law (FOIL) request#1_0",
+        "Get a motorcycle license#1_0",
+        "Escrow accounts#3_0",
+        "Get a  hazardous materials (HazMat) endorsement#3_0",
+        "Order picture and professional plates#1_0",
+        "Learn about picture and professional plates#3_0",
+        "Resources for non US citizens#3_0",
+        "Information about transaction entries#3_0",
+        "Medical Certification Requirements#3_0",
+        "Federal REAL ID#3_0",
+        "About complaints and charges for dealer and transporter businesses#3_0",
+        "Change name on title after lease buyout#3_0",
+        "Get a driver license#1_0",
+        "Automatic license and registration extension for military personnel#3_0",
+        "NYS Adventure License and Adventure Custom Plates#3_0",
+        "Sharing your information#3_0",
+        "Learn about personalized plates#3_0",
+        "Leandra's Law & ignition interlock devices#3_0"
+      ],
+      "questions": 114,
+      "revised": []
+    },
+    "government-development-reviewed-ssa-html": {
+      "baseSHA256": "36c5c7935af9be6ec277ac38398a6d82940a11918db303ec07114930a9d2a1c9",
+      "sha256": "36c5c7935af9be6ec277ac38398a6d82940a11918db303ec07114930a9d2a1c9",
+      "pool": "collection",
+      "sources": [
+        "Benefits Planner: Survivors | Planning For Your Survivors | Social Security Administration#2_0",
+        "Benefits Planner: Disability | How You Apply | Social Security Administration#1_0",
+        "Disability Benefits | Social Security Administration#1_0",
+        "Benefits Planner: Retirement | Government Pension Offset (GPO) Calculator | Social Security Administration#2_0",
+        "Benefits Planner: Disability | Approval Process | Social Security Administration#2_0",
+        "Direct Deposit | Social Security Administration#2_0",
+        "Explore The Benefits You May Be Due#2_0",
+        "Benefits Planner: Disability | How You Qualify | Social Security Administration#2_0",
+        "Benefits for People with Disabilities#1_0",
+        "Benefits Planner: Retirement | Medicare Premiums | SSA#2_0"
+      ],
+      "questions": 29,
+      "revised": []
+    },
+    "government-development-reviewed-studentaid-html": {
+      "baseSHA256": "14a23f707c1a43fa2358bb42b3840ac595cd4ff5ac2df37d8c1619e9654a4b5c",
+      "sha256": "14a23f707c1a43fa2358bb42b3840ac595cd4ff5ac2df37d8c1619e9654a4b5c",
+      "pool": "collection",
+      "sources": [
+        "Understanding College Costs | Federal Student Aid#1_0",
+        "Parent PLUS Loans | Federal Student Aid#1_0",
+        "IT Standards Library | Federal Student Aid#1_0",
+        "Contracting Information | Federal Student Aid#1_0",
+        "Subsidized and Unsubsidized Loans | Federal Student Aid#1_0",
+        "Closed School Discharge | Federal Student Aid#1_0",
+        "Eligibility for Students with Criminal Convictions | Federal Student Aid#1_0",
+        "Aidan | The FSA Virtual Assistant | Federal Student Aid#1_0",
+        "Loan Servicers | Federal Student Aid#1_0",
+        "Unpaid Refund Discharge | Federal Student Aid#1_0",
+        "Loan Simulator | Federal Student Aid#1_0",
+        "Teacher Loan Forgiveness | Federal Student Aid#1_0",
+        "How to Correct or Update Your FAFSA® Application | Federal Student Aid#1_0",
+        "Link to Us | Federal Student Aid#1_0",
+        "Income-Sensitive Plan | Federal Student Aid#1_0",
+        "Get Temporary Relief | Federal Student Aid#1_0",
+        "Regaining Eligibility | Federal Student Aid#1_0",
+        "Understanding Delinquency and Default | Federal Student Aid#1_0",
+        "Staying Eligible | Federal Student Aid#1_0",
+        "Lower or Suspend Student Loan Payments | Federal Student Aid#1_0",
+        "Collections | Federal Student Aid#1_0",
+        "False Certification Discharge | Federal Student Aid#1_0",
+        "Choosing a School | Federal Student Aid#1_0",
+        "Loan Repayment Checklist | Federal Student Aid#1_0"
+      ],
+      "questions": 140,
+      "revised": []
+    },
+    "government-development-reviewed-va-html": {
+      "baseSHA256": "f1ba10c5bed6ba3f37f9e887c6c3a986b2874863e155ba2716d083a912818c1a",
+      "sha256": "1a9a37805fdac33ff2db84bfff7113da4fdd40fa2e2086c5981317aed2c1310d",
+      "pool": "collection",
+      "sources": [
+        "Multiple party or contested claims | Veterans Affairs#1_0",
+        "About VA Disability Ratings | Veterans Affairs#1_0",
+        "Change Your VA Direct Deposit Information | Veterans Affairs#1_0",
+        "VA decision reviews and appeals | Veterans Affairs#1_0",
+        "Substance Use Treatment For Veterans | Veterans Affairs#1_0",
+        "VA Mental Health Services | Veterans Affairs#1_0",
+        "Careers And Employment | Veterans Affairs#2_0",
+        "Agent Orange Exposure | Veterans Affairs#1_0",
+        "VA Education Benefits | Veterans Affairs#1_0",
+        "VA Education Benefits | Veterans Affairs#2_0",
+        "VA Life Insurance | Veterans Affairs#1_0",
+        "VA Life Insurance | Veterans Affairs#2_0",
+        "Request a Board Appeal | Veterans Affairs#1_0",
+        "Ionizing Radiation Exposure | Veterans Affairs#1_0",
+        "Eligibility For VA Disability Benefits | Veterans Affairs#1_0",
+        "View Your VA Payment History | Veterans Affairs#1_0",
+        "Add Dependents To Your VA Disability Benefits | Veterans Affairs#1_0",
+        "VA claim exam (C&P exam) | Veterans Affairs#1_0",
+        "Pre-Need Eligibility For Burial In A VA Cemetery | Veterans Affairs#1_0",
+        "VA Title 38 U.S.C. 1151 Claims | Veterans Affairs#1_0",
+        "PTSD Treatment | Veterans Affairs#1_0",
+        "Undergraduate And Graduate Degrees | Veterans Affairs#1_0",
+        "How To Apply For VA Health Care | Veterans Affairs#1_0",
+        "Fiduciary claims | Veterans Affairs#1_0"
+      ],
+      "questions": 64,
+      "revised": [
+        "a3baea1288b37e6e7c6c7eaf20453b06",
+        "7ccab68e6e52f5815427c533ab0373e9",
+        "3023ed4bd95585860b947debaf782b46",
+        "212b427fa4cf092a5150ab7114bdd007",
+        "f73b0db64e474493571cd6d20e1409aa",
+        "acc2717f4f86f742b85ab49223d7d58c",
+        "6aa87439768c9874aad16a861e8800cd"
+      ]
+    },
+    "papers-development-reviewed-0": {
+      "baseSHA256": "56b75f2fa17b844cdd974dad6c0f823b7136b3941ae45cc91016897e7dc3bb9e",
+      "sha256": "afe466be98bfd7471adaf2351c942178a1da88270ca5fc16b474025d9a36ee6c",
+      "pool": "document",
+      "sources": [
+        "1811.12254",
+        "1903.07406",
+        "1610.07809",
+        "1610.00956",
+        "1806.04511",
+        "1909.06162",
+        "2003.08380",
+        "2002.01320"
+      ],
+      "questions": 21,
+      "revised": [
+        "29923a824c98b3ba85ced964a0e6a2af35758abe"
+      ]
+    },
+    "papers-development-reviewed-1": {
+      "baseSHA256": "2c47facde82b915c046a084083825c093246c102f270da8f1ad9364812e0233b",
+      "sha256": "2c47facde82b915c046a084083825c093246c102f270da8f1ad9364812e0233b",
+      "pool": "document",
+      "sources": [
+        "1912.01852",
+        "1809.03449",
+        "2003.03014",
+        "2003.11645",
+        "1910.14076",
+        "1911.02855",
+        "1906.01081",
+        "1909.00175"
+      ],
+      "questions": 20,
+      "revised": []
+    },
+    "papers-development-reviewed-2": {
+      "baseSHA256": "79a780443a6de08e84eb9fe7da6ca32a4c95a67ccfa48ff6d117100b2fbd1ad7",
+      "sha256": "148b8cd1c93fba137c1161ad79af6a5e8ecf90eee635023f0156d3150375dc49",
+      "pool": "document",
+      "sources": [
+        "1706.00139",
+        "1910.12795",
+        "1903.03530",
+        "1909.10012",
+        "1908.06941",
+        "1808.09029",
+        "2004.02192",
+        "1811.00383"
+      ],
+      "questions": 23,
+      "revised": [
+        "e838275bb0673fba0d67ac00e4307944a2c17be3"
+      ]
+    },
+    "papers-development-reviewed-3": {
+      "baseSHA256": "05c3b6c275746adfdadb893aa4a6c0bc1aa02ba12c51d21aa1540cad002f697f",
+      "sha256": "752d58b2b7a47ae58bdb10d2f16b09388c4c81985fe6ada9db540825959e4d02",
+      "pool": "document",
+      "sources": [
+        "1701.08229",
+        "1912.00903",
+        "2001.08868",
+        "1909.09551",
+        "1909.00326",
+        "1908.01294",
+        "1811.08603",
+        "1808.10245"
+      ],
+      "questions": 22,
+      "revised": [
+        "54830abe73fef4e629a36866ceeeca10214bd2c8"
+      ]
+    },
+    "papers-development-reviewed-4": {
+      "baseSHA256": "6f834a4f96561740d542ec56e6242a947f22edaabf3968cfc3572f039cba5010",
+      "sha256": "6f834a4f96561740d542ec56e6242a947f22edaabf3968cfc3572f039cba5010",
+      "pool": "document",
+      "sources": [
+        "1908.07195",
+        "1707.05236",
+        "1908.06267",
+        "1705.01265",
+        "1911.03343",
+        "1912.08904",
+        "1907.06292",
+        "1609.00425"
+      ],
+      "questions": 22,
+      "revised": []
+    },
+    "papers-development-reviewed-5": {
+      "baseSHA256": "fd4c9762badd6c9cb1226c53cd47c922d65242cbfbf4bf3daba2b91dab604e71",
+      "sha256": "2721d12acc5edfed2ac99c7421b12e298c3b89d044f6fb39c34f5ddcf3396ad7",
+      "pool": "document",
+      "sources": [
+        "1609.00559",
+        "2003.03106",
+        "2004.04721",
+        "1910.08293",
+        "1907.01468",
+        "1705.04153",
+        "1611.08661",
+        "1910.09982"
+      ],
+      "questions": 25,
+      "revised": [
+        "808f0ad46ca4eb4ea5492f9e14ca043fe1e206cc",
+        "36ae003c7cb2a1bbfa90b89c671bc286bd3b3dfd"
+      ]
+    },
+    "papers-development-reviewed-6": {
+      "baseSHA256": "d3e81921ff846ef435536bf08a2b5d70f1d1c65d8ee7b8e424d9b6f2c9696e8c",
+      "sha256": "d3e81921ff846ef435536bf08a2b5d70f1d1c65d8ee7b8e424d9b6f2c9696e8c",
+      "pool": "document",
+      "sources": [
+        "1709.07814",
+        "1709.05036",
+        "1802.00396",
+        "1909.04002",
+        "2003.11562",
+        "1909.00512",
+        "1703.10344",
+        "1906.00790"
+      ],
+      "questions": 19,
+      "revised": []
+    },
+    "papers-development-reviewed-7": {
+      "baseSHA256": "0d3921c6e66daffae68ddbbd645c315e70c41b7af1ab5d44c7159bd539b3c8fc",
+      "sha256": "65e74a2ae77d3a11e42f6c3e1b804c6b815ad6be22ec29c97784915522fa1735",
+      "pool": "document",
+      "sources": [
+        "1804.07789",
+        "1805.10824",
+        "1912.01214",
+        "1608.08188",
+        "1802.08636",
+        "1909.02304",
+        "1908.07245",
+        "1706.01678"
+      ],
+      "questions": 27,
+      "revised": [
+        "1088255980541382a2aa2c0319427702172bbf84",
+        "f5e6f43454332e0521a778db0b769481e23e7682",
+        "5eda469a8a77f028d0c5f1acd296111085614537",
+        "a6a48de63c1928238b37c2a01c924b852fe752f8"
+      ]
+    }
+  }
+}

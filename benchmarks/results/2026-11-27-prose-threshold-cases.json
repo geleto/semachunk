@@ -1,0 +1,2148 @@
+{
+  "pnpm-1": {
+    "domain": "faq",
+    "fold": "development",
+    "question": "Am I paying twice in disk space for pnpm dependencies that show up in both my project and its store?",
+    "source": "pnpm",
+    "ideal": "Either explain the hard links or show that a project and its store share the same physical megabyte.",
+    "shortestCompleteTokens": 60,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.734895,
+        "tokens": 158,
+        "firstSimilarity": 0.586098,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "pnpm",
+        "textSHA256": "ce494160797aa41ba6e4a3e02ee4931fdaa7140932ea9a1e775172f5d4334157"
+      },
+      "sections/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.734895,
+        "tokens": 158,
+        "firstSimilarity": 0.586098,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "pnpm",
+        "textSHA256": "ce494160797aa41ba6e4a3e02ee4931fdaa7140932ea9a1e775172f5d4334157"
+      },
+      "sections/256/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.734895,
+        "tokens": 158,
+        "firstSimilarity": 0.586098,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "pnpm",
+        "textSHA256": "ce494160797aa41ba6e4a3e02ee4931fdaa7140932ea9a1e775172f5d4334157"
+      },
+      "sections/256/0.4": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 1,
+        "tokens": 99,
+        "firstSimilarity": 0.577353,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "pnpm",
+        "textSHA256": "34ab179024b6668c9c1e71473d417c098b1049ae37d95e348a89edd8f7863898"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.734895,
+        "tokens": 158,
+        "firstSimilarity": 0.586098,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "pnpm",
+        "textSHA256": "ce494160797aa41ba6e4a3e02ee4931fdaa7140932ea9a1e775172f5d4334157"
+      }
+    }
+  },
+  "financebench_id_00606": {
+    "domain": "finance",
+    "fold": "development",
+    "question": "In the fiscal year ended January 28, 2023, did Ulta Beauty’s store payroll and benefits rise or fall as a share of sales?",
+    "source": "ULTABEAUTY_2023Q4_EARNINGS",
+    "ideal": "Identify the reported fiscal period and distinguish the higher payroll rate from the lower overall SG&A rate.",
+    "shortestCompleteTokens": 100,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 92,
+        "firstSimilarity": 0.673117,
+        "firstCompletePassageRank": 16,
+        "completePrefix": 16,
+        "source": "ULTABEAUTY_2023Q4_EARNINGS",
+        "textSHA256": "543bd1e906b30d3ea131a8a7b54cbf75c72a9a3ebaa77035cbb385a820dd08ab"
+      },
+      "sections/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 92,
+        "firstSimilarity": 0.673117,
+        "firstCompletePassageRank": 16,
+        "completePrefix": 16,
+        "source": "ULTABEAUTY_2023Q4_EARNINGS",
+        "textSHA256": "543bd1e906b30d3ea131a8a7b54cbf75c72a9a3ebaa77035cbb385a820dd08ab"
+      },
+      "sections/256/0.1": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 92,
+        "firstSimilarity": 0.673117,
+        "firstCompletePassageRank": 16,
+        "completePrefix": 16,
+        "source": "ULTABEAUTY_2023Q4_EARNINGS",
+        "textSHA256": "543bd1e906b30d3ea131a8a7b54cbf75c72a9a3ebaa77035cbb385a820dd08ab"
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 92,
+        "firstSimilarity": 0.673117,
+        "firstCompletePassageRank": 15,
+        "completePrefix": 15,
+        "source": "ULTABEAUTY_2023Q4_EARNINGS",
+        "textSHA256": "543bd1e906b30d3ea131a8a7b54cbf75c72a9a3ebaa77035cbb385a820dd08ab"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 1234,
+        "firstSimilarity": 0.67798,
+        "firstCompletePassageRank": 4,
+        "completePrefix": 4,
+        "source": "ULTABEAUTY_2023Q4_EARNINGS",
+        "textSHA256": "df300b693d16622df64661de6c07d00484f04f8e6c2baac1573992d6afcb948b"
+      }
+    }
+  },
+  "6aa87439768c9874aad16a861e8800cd": {
+    "domain": "government",
+    "fold": "development",
+    "question": "Hi I would like to know who is eligible for VA disability benefits?",
+    "source": "Eligibility For VA Disability Benefits | Veterans Affairs#1_0",
+    "ideal": "Give the actual qualifying conditions or identify the covered groups and service connection.",
+    "shortestCompleteTokens": 181,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.689968,
+        "tokens": 247,
+        "firstSimilarity": 0.725734,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "Eligibility For VA Disability Benefits | Veterans Affairs#1_0",
+        "textSHA256": "ab2c875db9a78b90f3adff02bc0f3c2321b530662a94d65ab2eb8b7d3eb1aeef"
+      },
+      "sections/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0.398964,
+        "tokens": 54,
+        "firstSimilarity": 0.711282,
+        "firstCompletePassageRank": 2,
+        "completePrefix": 2,
+        "source": "Eligibility For VA Disability Benefits | Veterans Affairs#1_0",
+        "textSHA256": "1cfcce92c2a7e73e93005f5d58d7ee5d2fde89c8d66729fa21bab1d76a065d6e"
+      },
+      "sections/256/0.1": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0.398964,
+        "tokens": 54,
+        "firstSimilarity": 0.711282,
+        "firstCompletePassageRank": 2,
+        "completePrefix": 2,
+        "source": "Eligibility For VA Disability Benefits | Veterans Affairs#1_0",
+        "textSHA256": "1cfcce92c2a7e73e93005f5d58d7ee5d2fde89c8d66729fa21bab1d76a065d6e"
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 51,
+        "firstSimilarity": 0.7429,
+        "firstCompletePassageRank": null,
+        "completePrefix": 301,
+        "source": "Eligibility For VA Disability Benefits | Veterans Affairs#1_0",
+        "textSHA256": "23efe5eed0d81ca331fce59acdd298dea1426850819f85e09bc851f0368446eb"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 34,
+        "firstSimilarity": 0.689476,
+        "firstCompletePassageRank": 3,
+        "completePrefix": 3,
+        "source": "Ionizing Radiation Exposure | Veterans Affairs#1_0",
+        "textSHA256": "dcb2a11f7c022620061f4b943a31b322e2e6c3d787db4ef397ef3c22533cabbb"
+      }
+    }
+  },
+  "6844683935d0d8f588fa06530f5068bf3e1ed0c0": {
+    "domain": "papers",
+    "fold": "development",
+    "question": "Why are statistics from finite corpora unreliable?",
+    "source": "1908.06941",
+    "ideal": "Keep the missing word-context pair with its consequence for PMI. The pronoun alone has no antecedent.",
+    "shortestCompleteTokens": 34,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.504087,
+        "tokens": 153,
+        "firstSimilarity": 0.379859,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1908.06941",
+        "textSHA256": "3ab8f82e95efc2c0d9b45c93ff12e6854c1c29540bb512f17bde842273170e82"
+      },
+      "sections/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.504087,
+        "tokens": 153,
+        "firstSimilarity": 0.379859,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1908.06941",
+        "textSHA256": "3ab8f82e95efc2c0d9b45c93ff12e6854c1c29540bb512f17bde842273170e82"
+      },
+      "sections/256/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.504087,
+        "tokens": 153,
+        "firstSimilarity": 0.379859,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1908.06941",
+        "textSHA256": "3ab8f82e95efc2c0d9b45c93ff12e6854c1c29540bb512f17bde842273170e82"
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0.531746,
+        "tokens": 15,
+        "firstSimilarity": 0.750881,
+        "firstCompletePassageRank": 3,
+        "completePrefix": 3,
+        "source": "1908.06941",
+        "textSHA256": "1b797ed358eab42092929a879dd4d2cfa3fbd7632e3535fa535f5296f1de4887"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.02743,
+        "tokens": 3797,
+        "firstSimilarity": 0.31479,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1908.06941",
+        "textSHA256": "ad812fccd4a617170bdd809798a83e9c787c1a5e7249fd0a6274906debe09b56"
+      }
+    }
+  },
+  "docker-15": {
+    "domain": "faq",
+    "fold": "confirmation",
+    "question": "How do I isolate two deployments of the same Docker Compose project on one machine?",
+    "source": "docker",
+    "ideal": "Stop after the project-name instructions. Both candidate passages include an extra FAQ.",
+    "shortestCompleteTokens": 90,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.667396,
+        "tokens": 171,
+        "firstSimilarity": 0.536041,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "docker",
+        "textSHA256": "0c9a1e76a43c3bf1c8f45f62c58c2b45c122b1911a38b7d11c980490f5742bab",
+        "priorExactPassageReview": "Gives the project-name mechanism, flag and environment variable, then adds an unrelated JSON example."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.918675,
+        "tokens": 90,
+        "firstSimilarity": 0.607055,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "docker",
+        "textSHA256": "89caec058f076104909d6da515c392dea0179a15631265dc92f4afe4322ca5e8"
+      },
+      "sections/256/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.918675,
+        "tokens": 90,
+        "firstSimilarity": 0.607055,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "docker",
+        "textSHA256": "89caec058f076104909d6da515c392dea0179a15631265dc92f4afe4322ca5e8"
+      },
+      "sections/256/0.4": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.918675,
+        "tokens": 90,
+        "firstSimilarity": 0.607055,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "docker",
+        "textSHA256": "89caec058f076104909d6da515c392dea0179a15631265dc92f4afe4322ca5e8"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.133538,
+        "tokens": 1216,
+        "firstSimilarity": 0.470764,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "docker",
+        "textSHA256": "7034b9d7866efc9f0e9ec3876282c1a1e2b669b605fe5d4ccba5bb32f5cbc990"
+      }
+    }
+  },
+  "pandoc-51": {
+    "domain": "faq",
+    "fold": "confirmation",
+    "question": "What is the ConTeXt command in the Pandoc FAQ for generating an archival PDF?",
+    "source": "pandoc",
+    "ideal": "Keep the PDF/A heading and the ConTeXt invocation together.",
+    "shortestCompleteTokens": 224,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.187683,
+        "tokens": 224,
+        "firstSimilarity": 0.643517,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "pandoc",
+        "textSHA256": "217ddaecdb408842f3095663dee26413c427d0a59be1d539851c981bf5766d65",
+        "priorExactPassageReview": "Starts at the right PDF/A heading and gives the exact command. The two other engines are optional here."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.187683,
+        "tokens": 224,
+        "firstSimilarity": 0.643517,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "pandoc",
+        "textSHA256": "217ddaecdb408842f3095663dee26413c427d0a59be1d539851c981bf5766d65",
+        "priorExactPassageReview": "Starts at the right PDF/A heading and gives the exact command. The two other engines are optional here."
+      },
+      "sections/256/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.187683,
+        "tokens": 224,
+        "firstSimilarity": 0.643517,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "pandoc",
+        "textSHA256": "217ddaecdb408842f3095663dee26413c427d0a59be1d539851c981bf5766d65",
+        "priorExactPassageReview": "Starts at the right PDF/A heading and gives the exact command. The two other engines are optional here."
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0.496124,
+        "tokens": 20,
+        "firstSimilarity": 0.705242,
+        "firstCompletePassageRank": null,
+        "completePrefix": 4,
+        "source": "pandoc",
+        "textSHA256": "c66b170b8ce9ef2173d15920458604919543740e5eca901940c5a9abb6432a39"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.047285,
+        "tokens": 890,
+        "firstSimilarity": 0.553047,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "pandoc",
+        "textSHA256": "c669db429c0d79ad8c6099e4332b5b27cff2373b4fb56db0dc5af8d8f6db0bbc"
+      }
+    }
+  },
+  "cargo-1": {
+    "domain": "faq",
+    "fold": "confirmation",
+    "question": "Which registry does Cargo use, and can a crate still depend directly on a Git repository?",
+    "source": "cargo",
+    "ideal": "Keep both halves of the answer. The neighboring FAQ is also a defensible citation.",
+    "shortestCompleteTokens": 75,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.651276,
+        "tokens": 138,
+        "firstSimilarity": 0.657628,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "cargo",
+        "textSHA256": "9efeced68a82bad3b80c0fc37ba5460e82b63a27c767622f4417f9c735de9e19",
+        "priorExactPassageReview": "Substantively answers both parts with crates.io and support for GitHub downloads, although less directly."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.651276,
+        "tokens": 138,
+        "firstSimilarity": 0.657628,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "cargo",
+        "textSHA256": "9efeced68a82bad3b80c0fc37ba5460e82b63a27c767622f4417f9c735de9e19",
+        "priorExactPassageReview": "Substantively answers both parts with crates.io and support for GitHub downloads, although less directly."
+      },
+      "sections/256/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.651276,
+        "tokens": 138,
+        "firstSimilarity": 0.657628,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "cargo",
+        "textSHA256": "9efeced68a82bad3b80c0fc37ba5460e82b63a27c767622f4417f9c735de9e19",
+        "priorExactPassageReview": "Substantively answers both parts with crates.io and support for GitHub downloads, although less directly."
+      },
+      "sections/256/0.4": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.914676,
+        "tokens": 75,
+        "firstSimilarity": 0.624905,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "cargo",
+        "textSHA256": "6f641f6e77aa14b4ec96e815cc0c6e60d9575d31829ccfc5417b7a955cfff191"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.651276,
+        "tokens": 138,
+        "firstSimilarity": 0.657628,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "cargo",
+        "textSHA256": "9efeced68a82bad3b80c0fc37ba5460e82b63a27c767622f4417f9c735de9e19",
+        "priorExactPassageReview": "Substantively answers both parts with crates.io and support for GitHub downloads, although less directly."
+      }
+    }
+  },
+  "vue-4": {
+    "domain": "faq",
+    "fold": "confirmation",
+    "question": "My app must run in Internet Explorer 11. How does that affect the choice between Vue 2 and Vue 3?",
+    "source": "vue",
+    "ideal": "Use the browser compatibility subsection or the IE11 bullet with its Vue 2 context.",
+    "shortestCompleteTokens": 252,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.794595,
+        "tokens": 252,
+        "firstSimilarity": 0.683801,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "vue",
+        "textSHA256": "1cc8c1b4498bb19a367cdd9e55fc0339e3b086983f83b5f9ffd03069b3578d65",
+        "priorExactPassageReview": "Contains the IE11 condition and version choice. Most of the general API comparison is optional."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.794595,
+        "tokens": 252,
+        "firstSimilarity": 0.683801,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "vue",
+        "textSHA256": "1cc8c1b4498bb19a367cdd9e55fc0339e3b086983f83b5f9ffd03069b3578d65",
+        "priorExactPassageReview": "Contains the IE11 condition and version choice. Most of the general API comparison is optional."
+      },
+      "sections/256/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.794595,
+        "tokens": 252,
+        "firstSimilarity": 0.683801,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "vue",
+        "textSHA256": "1cc8c1b4498bb19a367cdd9e55fc0339e3b086983f83b5f9ffd03069b3578d65",
+        "priorExactPassageReview": "Contains the IE11 condition and version choice. Most of the general API comparison is optional."
+      },
+      "sections/256/0.4": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.794595,
+        "tokens": 252,
+        "firstSimilarity": 0.683801,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "vue",
+        "textSHA256": "1cc8c1b4498bb19a367cdd9e55fc0339e3b086983f83b5f9ffd03069b3578d65",
+        "priorExactPassageReview": "Contains the IE11 condition and version choice. Most of the general API comparison is optional."
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.14094,
+        "tokens": 2018,
+        "firstSimilarity": 0.565373,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "vue",
+        "textSHA256": "6bbda7ed27438cb2631427c37528921d0099409f5d367a72b8e7ee6ea79da5e0"
+      }
+    }
+  },
+  "vue-30": {
+    "domain": "faq",
+    "fold": "confirmation",
+    "question": "Which Vue features let a large team develop screens separately and reuse complex logic?",
+    "source": "vue",
+    "ideal": "Name Single-File Components and the Composition API, with what each enables.",
+    "shortestCompleteTokens": 66,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.544643,
+        "tokens": 187,
+        "firstSimilarity": 0.61984,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "vue",
+        "textSHA256": "d423da863a0efbc016cdde0211e0d9198de3fa6505ce952e097a2641ca381bd0"
+      },
+      "sections/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.619919,
+        "tokens": 150,
+        "firstSimilarity": 0.674004,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "vue",
+        "textSHA256": "a568f9110220f32ac111a1eba2b1e05c11fd4258de097f56ef8b5fb114ed8059"
+      },
+      "sections/256/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.619919,
+        "tokens": 150,
+        "firstSimilarity": 0.674004,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "vue",
+        "textSHA256": "a568f9110220f32ac111a1eba2b1e05c11fd4258de097f56ef8b5fb114ed8059"
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 24,
+        "firstSimilarity": 0.651194,
+        "firstCompletePassageRank": 17,
+        "completePrefix": 17,
+        "source": "vue",
+        "textSHA256": "dfefaaf94c8db9e204833525d77439061979d091434d4153eab7985087654fe2"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 137,
+        "firstSimilarity": 0.546822,
+        "firstCompletePassageRank": 2,
+        "completePrefix": 2,
+        "source": "vue",
+        "textSHA256": "ae18fbef58a7d7f29c5365dcee718127065edcf4888d95d7b5e28b9eecb9679d"
+      }
+    }
+  },
+  "poetry-13": {
+    "domain": "faq",
+    "fold": "confirmation",
+    "question": "What risks do I take by setting or omitting a maximum dependency version for a Poetry library?",
+    "source": "poetry",
+    "ideal": "Keep the unbounded-constraints FAQ through the library recommendation. The material before that FAQ can go.",
+    "shortestCompleteTokens": 313,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 167,
+        "firstSimilarity": 0.645854,
+        "firstCompletePassageRank": null,
+        "completePrefix": 8,
+        "source": "poetry",
+        "textSHA256": "e9b621c81dddaa95801cbf9629e880a31eb610914af012f950df564d7f11d750",
+        "priorExactPassageReview": "Gives a Python-version locking workaround rather than the maintenance tradeoff."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 167,
+        "firstSimilarity": 0.645854,
+        "firstCompletePassageRank": null,
+        "completePrefix": 8,
+        "source": "poetry",
+        "textSHA256": "e9b621c81dddaa95801cbf9629e880a31eb610914af012f950df564d7f11d750",
+        "priorExactPassageReview": "Gives a Python-version locking workaround rather than the maintenance tradeoff."
+      },
+      "sections/256/0.1": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 167,
+        "firstSimilarity": 0.645854,
+        "firstCompletePassageRank": null,
+        "completePrefix": 8,
+        "source": "poetry",
+        "textSHA256": "e9b621c81dddaa95801cbf9629e880a31eb610914af012f950df564d7f11d750",
+        "priorExactPassageReview": "Gives a Python-version locking workaround rather than the maintenance tradeoff."
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 238,
+        "firstSimilarity": 0.601217,
+        "firstCompletePassageRank": null,
+        "completePrefix": 15,
+        "source": "poetry",
+        "textSHA256": "5d36348df5d9252883293eb5d05bb8703c8e6242fc1f00b87d69dbd39c3612c1"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.060791,
+        "tokens": 3928,
+        "firstSimilarity": 0.557237,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "poetry",
+        "textSHA256": "9ed7109f971b466b7f7f21432049f64b2034a9478c6c2e9cfebc0e4169d9d925"
+      }
+    }
+  },
+  "ruff-111": {
+    "domain": "faq",
+    "fold": "confirmation",
+    "question": "How do I see the effective Ruff settings for one specific Python file?",
+    "source": "ruff",
+    "ideal": "The question heading plus the single command is sufficient.",
+    "shortestCompleteTokens": 40,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.372506,
+        "tokens": 96,
+        "firstSimilarity": 0.556568,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "ruff",
+        "textSHA256": "0fc6562506c944e31cec961621d831d082fda8d0c863fb0d5b25004ee2e707c6",
+        "priorExactPassageReview": "Contains the exact command, preceded by an independent preview-mode FAQ."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.770642,
+        "tokens": 40,
+        "firstSimilarity": 0.720705,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "ruff",
+        "textSHA256": "9c445c79ad1f2a9886a0f0fa5411b25dd0cb3aa2e6263fb925c9c89758c19404",
+        "priorExactPassageReview": "One heading and one executable command identify the file argument and settings flag."
+      },
+      "sections/256/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.770642,
+        "tokens": 40,
+        "firstSimilarity": 0.720705,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "ruff",
+        "textSHA256": "9c445c79ad1f2a9886a0f0fa5411b25dd0cb3aa2e6263fb925c9c89758c19404",
+        "priorExactPassageReview": "One heading and one executable command identify the file argument and settings flag."
+      },
+      "sections/256/0.4": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.770642,
+        "tokens": 40,
+        "firstSimilarity": 0.720705,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "ruff",
+        "textSHA256": "9c445c79ad1f2a9886a0f0fa5411b25dd0cb3aa2e6263fb925c9c89758c19404",
+        "priorExactPassageReview": "One heading and one executable command identify the file argument and settings flag."
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.037325,
+        "tokens": 1329,
+        "firstSimilarity": 0.528694,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "ruff",
+        "textSHA256": "9e1e5bb3af285ed21758f42072c6b40519922acbfebc9e15516cc0caa20d750a"
+      }
+    }
+  },
+  "financebench_id_01198": {
+    "domain": "finance",
+    "fold": "confirmation",
+    "question": "What drove revenue change as of the FY22 for AMD?",
+    "source": "AMD_2022_10K",
+    "ideal": "Use the revenue explanation and its offset, with the reporting period.",
+    "shortestCompleteTokens": 146,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 243,
+        "firstSimilarity": 0.660685,
+        "firstCompletePassageRank": 3,
+        "completePrefix": 3,
+        "source": "AMD_2022_10K",
+        "textSHA256": "1f9a93779b2b798a59df3b57b7bde8043b474af4ea998c7e7a37c152d46157f8",
+        "priorExactPassageReview": "Names acquisitions and describes strategy, but does not give the set of revenue drivers."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 243,
+        "firstSimilarity": 0.660685,
+        "firstCompletePassageRank": 4,
+        "completePrefix": 4,
+        "source": "AMD_2022_10K",
+        "textSHA256": "1f9a93779b2b798a59df3b57b7bde8043b474af4ea998c7e7a37c152d46157f8",
+        "priorExactPassageReview": "Names acquisitions and describes strategy, but does not give the set of revenue drivers."
+      },
+      "sections/256/0.1": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 243,
+        "firstSimilarity": 0.660685,
+        "firstCompletePassageRank": 4,
+        "completePrefix": 4,
+        "source": "AMD_2022_10K",
+        "textSHA256": "1f9a93779b2b798a59df3b57b7bde8043b474af4ea998c7e7a37c152d46157f8",
+        "priorExactPassageReview": "Names acquisitions and describes strategy, but does not give the set of revenue drivers."
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 243,
+        "firstSimilarity": 0.660685,
+        "firstCompletePassageRank": 3,
+        "completePrefix": 3,
+        "source": "AMD_2022_10K",
+        "textSHA256": "1f9a93779b2b798a59df3b57b7bde8043b474af4ea998c7e7a37c152d46157f8",
+        "priorExactPassageReview": "Names acquisitions and describes strategy, but does not give the set of revenue drivers."
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 2207,
+        "firstSimilarity": 0.649413,
+        "firstCompletePassageRank": 2,
+        "completePrefix": 2,
+        "source": "AMD_2022_10K",
+        "textSHA256": "624b0eed56bf23d4ccf7d893f6cf58782df1835c616c751bf7e064a13552a598"
+      }
+    }
+  },
+  "financebench_id_01091": {
+    "domain": "finance",
+    "fold": "confirmation",
+    "question": "Has Boeing reported any materially important ongoing legal battles from FY2022?",
+    "source": "BOEING_2022_10K",
+    "ideal": "For the short question use the specific case and its status. A request for all disputes would justify the additional arbitration.",
+    "shortestCompleteTokens": 223,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.414336,
+        "tokens": 223,
+        "firstSimilarity": 0.614203,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "BOEING_2022_10K",
+        "textSHA256": "faf2eae95be32744eb8e94e6a4ef30bf908070ad7b11b98b0e33cf42f9eb583e",
+        "priorExactPassageReview": "Answers the yes/no question with the crashes, proceedings, settlements and status of remaining cases."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.414336,
+        "tokens": 223,
+        "firstSimilarity": 0.614203,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "BOEING_2022_10K",
+        "textSHA256": "faf2eae95be32744eb8e94e6a4ef30bf908070ad7b11b98b0e33cf42f9eb583e",
+        "priorExactPassageReview": "Answers the yes/no question with the crashes, proceedings, settlements and status of remaining cases."
+      },
+      "sections/256/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.414336,
+        "tokens": 223,
+        "firstSimilarity": 0.614203,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "BOEING_2022_10K",
+        "textSHA256": "faf2eae95be32744eb8e94e6a4ef30bf908070ad7b11b98b0e33cf42f9eb583e",
+        "priorExactPassageReview": "Answers the yes/no question with the crashes, proceedings, settlements and status of remaining cases."
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 34,
+        "firstSimilarity": 0.621201,
+        "firstCompletePassageRank": null,
+        "completePrefix": 66,
+        "source": "BOEING_2022_10K",
+        "textSHA256": "1afe441a2b76eb49e81bdc0a93956d6ed19f7cbf4aa60d450322a76700863a03"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 3386,
+        "firstSimilarity": 0.643394,
+        "firstCompletePassageRank": 23,
+        "completePrefix": 23,
+        "source": "BOEING_2022_10K",
+        "textSHA256": "e28c977f3d34eabb1f8d74b1f73594f68192ad512238a2fb37ce5b7db4fd2012"
+      }
+    }
+  },
+  "financebench_id_01490": {
+    "domain": "finance",
+    "fold": "confirmation",
+    "question": "What is the amount of the gain accruing to JnJ as a result of the separation of its Consumer Health business segment, as of August 30, 2023?",
+    "source": "JOHNSON_JOHNSON_2023_8K_dated-2023-08-30",
+    "ideal": "Keep the transaction and accounting gain together. Distinguish the gain from cash proceeds.",
+    "shortestCompleteTokens": 100,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.83693,
+        "tokens": 100,
+        "firstSimilarity": 0.709,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "JOHNSON_JOHNSON_2023_8K_dated-2023-08-30",
+        "textSHA256": "146e50acf664b116ae0eed952ab078714721116da7653512717f0b347a64c7b2",
+        "priorExactPassageReview": "Clearly identifies the separation, the approximate $20 billion gain and the quarter."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.83693,
+        "tokens": 100,
+        "firstSimilarity": 0.709,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "JOHNSON_JOHNSON_2023_8K_dated-2023-08-30",
+        "textSHA256": "146e50acf664b116ae0eed952ab078714721116da7653512717f0b347a64c7b2",
+        "priorExactPassageReview": "Clearly identifies the separation, the approximate $20 billion gain and the quarter."
+      },
+      "sections/256/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.83693,
+        "tokens": 100,
+        "firstSimilarity": 0.709,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "JOHNSON_JOHNSON_2023_8K_dated-2023-08-30",
+        "textSHA256": "146e50acf664b116ae0eed952ab078714721116da7653512717f0b347a64c7b2",
+        "priorExactPassageReview": "Clearly identifies the separation, the approximate $20 billion gain and the quarter."
+      },
+      "sections/256/0.4": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.83693,
+        "tokens": 100,
+        "firstSimilarity": 0.709,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "JOHNSON_JOHNSON_2023_8K_dated-2023-08-30",
+        "textSHA256": "146e50acf664b116ae0eed952ab078714721116da7653512717f0b347a64c7b2",
+        "priorExactPassageReview": "Clearly identifies the separation, the approximate $20 billion gain and the quarter."
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.065362,
+        "tokens": 2676,
+        "firstSimilarity": 0.658459,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "JOHNSON_JOHNSON_2023_8K_dated-2023-08-30",
+        "textSHA256": "c3a8ec65bbaf975cd2ffc95369edfb38112463db10de94ccae6f9566d000991b"
+      }
+    }
+  },
+  "financebench_id_02049": {
+    "domain": "finance",
+    "fold": "confirmation",
+    "question": "Looking at VaR, did the risk that JPM faced in the second fiscal quarter of 2023 decrease compared to the same period in the prior year?",
+    "source": "JPMORGAN_2023Q2_10Q",
+    "ideal": "Retain the period labels and the year-over-year change. This text-labeled question is rendered as two columns.",
+    "shortestCompleteTokens": 131,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.736111,
+        "tokens": 146,
+        "firstSimilarity": 0.672043,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "JPMORGAN_2023Q2_10Q",
+        "textSHA256": "b8425fcc5ea22ad3b1ee7fe0db2517b3118f96aca2eda13ecc35d30ace9888d4",
+        "priorExactPassageReview": "The year-over-year column gives the decrease and amount. The adjacent quarter-over-quarter column helps avoid confusing two comparisons."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.736111,
+        "tokens": 146,
+        "firstSimilarity": 0.672043,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "JPMORGAN_2023Q2_10Q",
+        "textSHA256": "b8425fcc5ea22ad3b1ee7fe0db2517b3118f96aca2eda13ecc35d30ace9888d4",
+        "priorExactPassageReview": "The year-over-year column gives the decrease and amount. The adjacent quarter-over-quarter column helps avoid confusing two comparisons."
+      },
+      "sections/256/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.736111,
+        "tokens": 146,
+        "firstSimilarity": 0.672043,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "JPMORGAN_2023Q2_10Q",
+        "textSHA256": "b8425fcc5ea22ad3b1ee7fe0db2517b3118f96aca2eda13ecc35d30ace9888d4",
+        "priorExactPassageReview": "The year-over-year column gives the decrease and amount. The adjacent quarter-over-quarter column helps avoid confusing two comparisons."
+      },
+      "sections/256/0.4": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.736111,
+        "tokens": 146,
+        "firstSimilarity": 0.672043,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "JPMORGAN_2023Q2_10Q",
+        "textSHA256": "b8425fcc5ea22ad3b1ee7fe0db2517b3118f96aca2eda13ecc35d30ace9888d4",
+        "priorExactPassageReview": "The year-over-year column gives the decrease and amount. The adjacent quarter-over-quarter column helps avoid confusing two comparisons."
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.075355,
+        "tokens": 2381,
+        "firstSimilarity": 0.670692,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "JPMORGAN_2023Q2_10Q",
+        "textSHA256": "ae2b355510b390c129490aa395d4456a633168457b905049359a9349bc0e515b"
+      }
+    }
+  },
+  "financebench_id_01474": {
+    "domain": "finance",
+    "fold": "confirmation",
+    "question": "As of FY2023Q1, why did Pepsico raise full year guidance for FY2023?",
+    "source": "PEPSICO_2023Q1_EARNINGS",
+    "ideal": "Use the dateline and complete CEO quotation. This preserves the retrieval cues and gives a clean citation boundary.",
+    "shortestCompleteTokens": 244,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 152,
+        "firstSimilarity": 0.697265,
+        "firstCompletePassageRank": 2,
+        "completePrefix": 2,
+        "source": "PEPSICO_2023Q1_EARNINGS",
+        "textSHA256": "c8dd36136428a6e97a05eed23333707e35feba81459e0aa31c7078d501aa4385"
+      },
+      "sections/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 152,
+        "firstSimilarity": 0.697265,
+        "firstCompletePassageRank": 2,
+        "completePrefix": 2,
+        "source": "PEPSICO_2023Q1_EARNINGS",
+        "textSHA256": "c8dd36136428a6e97a05eed23333707e35feba81459e0aa31c7078d501aa4385"
+      },
+      "sections/256/0.1": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 152,
+        "firstSimilarity": 0.697265,
+        "firstCompletePassageRank": 2,
+        "completePrefix": 2,
+        "source": "PEPSICO_2023Q1_EARNINGS",
+        "textSHA256": "c8dd36136428a6e97a05eed23333707e35feba81459e0aa31c7078d501aa4385"
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 152,
+        "firstSimilarity": 0.697265,
+        "firstCompletePassageRank": 2,
+        "completePrefix": 2,
+        "source": "PEPSICO_2023Q1_EARNINGS",
+        "textSHA256": "c8dd36136428a6e97a05eed23333707e35feba81459e0aa31c7078d501aa4385"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 864,
+        "firstSimilarity": 0.69425,
+        "firstCompletePassageRank": 3,
+        "completePrefix": 3,
+        "source": "PEPSICO_2023Q1_EARNINGS",
+        "textSHA256": "37c29c85b6f4b913c7ad539193626613b126ac4cd558fce0595570681aea6790"
+      }
+    }
+  },
+  "financebench_id_01476": {
+    "domain": "finance",
+    "fold": "confirmation",
+    "question": "As of FY2023Q1, by how many percentage points did Pepsico raise full year guidance in respect of core constant currency EPS growth?",
+    "source": "PEPSICO_2023Q1_EARNINGS",
+    "ideal": "Give both the previous and revised EPS growth forecasts.",
+    "shortestCompleteTokens": 18,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 152,
+        "firstSimilarity": 0.688179,
+        "firstCompletePassageRank": 2,
+        "completePrefix": 2,
+        "source": "PEPSICO_2023Q1_EARNINGS",
+        "textSHA256": "c8dd36136428a6e97a05eed23333707e35feba81459e0aa31c7078d501aa4385"
+      },
+      "sections/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 152,
+        "firstSimilarity": 0.688179,
+        "firstCompletePassageRank": 2,
+        "completePrefix": 2,
+        "source": "PEPSICO_2023Q1_EARNINGS",
+        "textSHA256": "c8dd36136428a6e97a05eed23333707e35feba81459e0aa31c7078d501aa4385"
+      },
+      "sections/256/0.1": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 152,
+        "firstSimilarity": 0.688179,
+        "firstCompletePassageRank": 2,
+        "completePrefix": 2,
+        "source": "PEPSICO_2023Q1_EARNINGS",
+        "textSHA256": "c8dd36136428a6e97a05eed23333707e35feba81459e0aa31c7078d501aa4385"
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 152,
+        "firstSimilarity": 0.688179,
+        "firstCompletePassageRank": 2,
+        "completePrefix": 2,
+        "source": "PEPSICO_2023Q1_EARNINGS",
+        "textSHA256": "c8dd36136428a6e97a05eed23333707e35feba81459e0aa31c7078d501aa4385"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.03854,
+        "tokens": 864,
+        "firstSimilarity": 0.694271,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "PEPSICO_2023Q1_EARNINGS",
+        "textSHA256": "37c29c85b6f4b913c7ad539193626613b126ac4cd558fce0595570681aea6790"
+      }
+    }
+  },
+  "financebench_id_00882": {
+    "domain": "finance",
+    "fold": "confirmation",
+    "question": "As of May 26, 2023, what is the total amount Pepsico may borrow under its unsecured revolving credit agreements?",
+    "source": "PEPSICO_2023_8K_dated-2023-05-30",
+    "ideal": "Identify the distinct 364-day and five-year facilities and both amounts.",
+    "shortestCompleteTokens": 1749,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0.19151,
+        "tokens": 237,
+        "firstSimilarity": 0.756964,
+        "firstCompletePassageRank": null,
+        "completePrefix": 2,
+        "source": "PEPSICO_2023_8K_dated-2023-05-30",
+        "textSHA256": "1e44e0aa0844744bc8b4cbc7680d50781b1bf3290351de3b632f3ae66f7a0f32"
+      },
+      "sections/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0.19151,
+        "tokens": 237,
+        "firstSimilarity": 0.756964,
+        "firstCompletePassageRank": null,
+        "completePrefix": 2,
+        "source": "PEPSICO_2023_8K_dated-2023-05-30",
+        "textSHA256": "1e44e0aa0844744bc8b4cbc7680d50781b1bf3290351de3b632f3ae66f7a0f32"
+      },
+      "sections/256/0.1": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0.19151,
+        "tokens": 237,
+        "firstSimilarity": 0.756964,
+        "firstCompletePassageRank": null,
+        "completePrefix": 2,
+        "source": "PEPSICO_2023_8K_dated-2023-05-30",
+        "textSHA256": "1e44e0aa0844744bc8b4cbc7680d50781b1bf3290351de3b632f3ae66f7a0f32"
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0.216036,
+        "tokens": 206,
+        "firstSimilarity": 0.763136,
+        "firstCompletePassageRank": null,
+        "completePrefix": 2,
+        "source": "PEPSICO_2023_8K_dated-2023-05-30",
+        "textSHA256": "545ae7a6e57f22ad17dc7395f84d8ac309f93fb46869cea85b86540d9e467778"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 216,
+        "firstSimilarity": 0.664987,
+        "firstCompletePassageRank": 3,
+        "completePrefix": 3,
+        "source": "PEPSICO_2023_8K_dated-2023-05-30",
+        "textSHA256": "518693909e6d1c963e285136c60bbbbb4085b160be9d8e4f9f6529c98d0daca7"
+      }
+    }
+  },
+  "62d721f3440bdf296ea704421b953a0a": {
+    "domain": "government",
+    "fold": "confirmation",
+    "question": "My plates have been stolen. Can you please tell me what steps to take? I'm very concerned and don't know what to do.",
+    "source": "Lost, stolen, or destroyed plates#3_0",
+    "ideal": "Keep both branches until the reader states how many plates were stolen.",
+    "shortestCompleteTokens": 276,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 7,
+        "firstSimilarity": 0.639453,
+        "firstCompletePassageRank": null,
+        "completePrefix": 3,
+        "source": "Lost, stolen, or destroyed plates#3_0",
+        "textSHA256": "2fd2ec3f60ccf003da4a142ecd884e0641cd3c3e7aee4e92f910989ee94a4625",
+        "priorExactPassageReview": "Repeats the subject in a heading and gives no action."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0.390365,
+        "tokens": 215,
+        "firstSimilarity": 0.586001,
+        "firstCompletePassageRank": null,
+        "completePrefix": 2,
+        "source": "Lost, stolen, or destroyed plates#3_0",
+        "textSHA256": "8846dc02aa96870eb9b73d7cddc0c8a22e15390e6eb64ba7858bfd98d7eeaa2b"
+      },
+      "sections/256/0.1": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0.390365,
+        "tokens": 215,
+        "firstSimilarity": 0.586001,
+        "firstCompletePassageRank": null,
+        "completePrefix": 2,
+        "source": "Lost, stolen, or destroyed plates#3_0",
+        "textSHA256": "8846dc02aa96870eb9b73d7cddc0c8a22e15390e6eb64ba7858bfd98d7eeaa2b"
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 23,
+        "firstSimilarity": 0.719526,
+        "firstCompletePassageRank": null,
+        "completePrefix": 11,
+        "source": "Lost, stolen, or destroyed plates#3_0",
+        "textSHA256": "71d1f9f0de2f8d1780c07a3c3144a11be2adb594e9a8700447312d5bf2102af3"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.250162,
+        "tokens": 738,
+        "firstSimilarity": 0.575226,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "Lost, stolen, or destroyed plates#3_0",
+        "textSHA256": "dd4f565b3358e99ca365845140238462270eebf8e1f42159b03066a1f788c269"
+      }
+    }
+  },
+  "0c98b8234370373a9ab0b7a4535bf4a1": {
+    "domain": "government",
+    "fold": "confirmation",
+    "question": "I wanted to know if only I can see the information on my mySocial Security account. I'm very concerned about my privacy.",
+    "source": "my Social Security | Create an Account | Social Security Administratio#1_0",
+    "ideal": "Keep the ownership rule and written-permission qualification together.",
+    "shortestCompleteTokens": 62,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.669915,
+        "tokens": 119,
+        "firstSimilarity": 0.620883,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "my Social Security | Create an Account | Social Security Administratio#1_0",
+        "textSHA256": "db9417bc96e32c30aac2f76f9ae4d213dc62d3029be9dc78b6c30c131eee6307",
+        "priorExactPassageReview": "The exclusive-use heading, prohibition on authorized third parties and security context form a self-contained answer."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.669915,
+        "tokens": 119,
+        "firstSimilarity": 0.620883,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "my Social Security | Create an Account | Social Security Administratio#1_0",
+        "textSHA256": "db9417bc96e32c30aac2f76f9ae4d213dc62d3029be9dc78b6c30c131eee6307",
+        "priorExactPassageReview": "The exclusive-use heading, prohibition on authorized third parties and security context form a self-contained answer."
+      },
+      "sections/256/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.669915,
+        "tokens": 119,
+        "firstSimilarity": 0.620883,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "my Social Security | Create an Account | Social Security Administratio#1_0",
+        "textSHA256": "db9417bc96e32c30aac2f76f9ae4d213dc62d3029be9dc78b6c30c131eee6307",
+        "priorExactPassageReview": "The exclusive-use heading, prohibition on authorized third parties and security context form a self-contained answer."
+      },
+      "sections/256/0.4": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.669915,
+        "tokens": 119,
+        "firstSimilarity": 0.620883,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "my Social Security | Create an Account | Social Security Administratio#1_0",
+        "textSHA256": "db9417bc96e32c30aac2f76f9ae4d213dc62d3029be9dc78b6c30c131eee6307",
+        "priorExactPassageReview": "The exclusive-use heading, prohibition on authorized third parties and security context form a self-contained answer."
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.27027,
+        "tokens": 386,
+        "firstSimilarity": 0.582455,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "my Social Security | Create an Account | Social Security Administratio#2_0",
+        "textSHA256": "5d742aabbbc0be31252af1657017cf2a5b8aa4a2f4b9c89c0b97622b2514d3c0",
+        "priorExactPassageReview": "Answers the question after account creation and lengthy credit-freeze instructions."
+      }
+    }
+  },
+  "2036afc9513baa2e07fba8c3c4b8e425": {
+    "domain": "government",
+    "fold": "confirmation",
+    "question": "How can I correct my FAFSA application?",
+    "source": "How to Review and Correct Your FAFSA® Application | Federal Student Aid#1_0",
+    "ideal": "Keep the correction subsection through the sign-in requirement. The published reference should point there.",
+    "shortestCompleteTokens": 191,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.391011,
+        "tokens": 191,
+        "firstSimilarity": 0.724091,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "How to Review and Correct Your FAFSA® Application | Federal Student Aid#1_0",
+        "textSHA256": "c3f1c3d1b50cfa491b240fedb69958e2a93b8630ea901dce84137619cef3a04c",
+        "priorExactPassageReview": "Answers when and how correction works and who can sign in. The subsequent aid-acceptance material is unrelated."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0.503226,
+        "tokens": 37,
+        "firstSimilarity": 0.749563,
+        "firstCompletePassageRank": null,
+        "completePrefix": 4,
+        "source": "How to Review and Correct Your FAFSA® Application | Federal Student Aid#1_0",
+        "textSHA256": "a3890e62309cca49e2cbd1bc65b21d74fe7c802469ed18fcde63834925e71cb8"
+      },
+      "sections/256/0.1": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0.503226,
+        "tokens": 37,
+        "firstSimilarity": 0.749563,
+        "firstCompletePassageRank": null,
+        "completePrefix": 4,
+        "source": "How to Review and Correct Your FAFSA® Application | Federal Student Aid#1_0",
+        "textSHA256": "a3890e62309cca49e2cbd1bc65b21d74fe7c802469ed18fcde63834925e71cb8"
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0.503226,
+        "tokens": 37,
+        "firstSimilarity": 0.749563,
+        "firstCompletePassageRank": null,
+        "completePrefix": 6,
+        "source": "How to Review and Correct Your FAFSA® Application | Federal Student Aid#1_0",
+        "textSHA256": "a3890e62309cca49e2cbd1bc65b21d74fe7c802469ed18fcde63834925e71cb8"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.251809,
+        "tokens": 312,
+        "firstSimilarity": 0.690092,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "How to Review and Correct Your FAFSA® Application | Federal Student Aid#1_0",
+        "textSHA256": "0d9ce6e6281783d50a68075c363d0af54ac7d82a372325617f1d26c9e18a18d6",
+        "priorExactPassageReview": "Contains the procedure plus unrelated award acceptance and disbursement instructions."
+      }
+    }
+  },
+  "032ec9574501c5213a995bb17ba91c20": {
+    "domain": "government",
+    "fold": "confirmation",
+    "question": "Where do I start if I want to make a payment on my federal student loan?",
+    "source": "Make a Student Loan Payment | Federal Student Aid#1_0",
+    "ideal": "Identify the loan servicer as the starting point for making a payment.",
+    "shortestCompleteTokens": 29,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.244103,
+        "tokens": 220,
+        "firstSimilarity": 0.614698,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "Make a Student Loan Payment | Federal Student Aid#1_0",
+        "textSHA256": "712a88df2b3c60c85388c1eeb5791346901af437ff518b0419f32338b6bdd671"
+      },
+      "sections/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.888889,
+        "tokens": 30,
+        "firstSimilarity": 0.735382,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "Make a Student Loan Payment | Federal Student Aid#1_0",
+        "textSHA256": "91db522437df34e8b34e1d5d4bdade267f97a03c72ea0a375cffb5c56276e498"
+      },
+      "sections/256/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.888889,
+        "tokens": 30,
+        "firstSimilarity": 0.735382,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "Make a Student Loan Payment | Federal Student Aid#1_0",
+        "textSHA256": "91db522437df34e8b34e1d5d4bdade267f97a03c72ea0a375cffb5c56276e498"
+      },
+      "sections/256/0.4": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.888889,
+        "tokens": 30,
+        "firstSimilarity": 0.735382,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "Make a Student Loan Payment | Federal Student Aid#1_0",
+        "textSHA256": "91db522437df34e8b34e1d5d4bdade267f97a03c72ea0a375cffb5c56276e498"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.244103,
+        "tokens": 220,
+        "firstSimilarity": 0.614698,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "Make a Student Loan Payment | Federal Student Aid#1_0",
+        "textSHA256": "712a88df2b3c60c85388c1eeb5791346901af437ff518b0419f32338b6bdd671"
+      }
+    }
+  },
+  "e96c4558ac2013c8f787498f67652362": {
+    "domain": "government",
+    "fold": "confirmation",
+    "question": "Is there any option for a borrower to be eligible for debt forgiveness of a federal student loan if the school in question misled the borrower or were engaged in misconduct unbecoming of the school?",
+    "source": "Borrower Defense to Repayment | Federal Student Aid#1_0",
+    "ideal": "Keep the condition and the term borrower defense together.",
+    "shortestCompleteTokens": 65,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.665198,
+        "tokens": 65,
+        "firstSimilarity": 0.731393,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "Borrower Defense to Repayment | Federal Student Aid#1_0",
+        "textSHA256": "0796cf20df5dd4e479d4fee8538f0aff5a34d369942c46f503d3f476756f27ac",
+        "priorExactPassageReview": "Gives both the qualifying circumstance and the name of the relief. The final navigation sentence is dispensable."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.665198,
+        "tokens": 65,
+        "firstSimilarity": 0.731393,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "Borrower Defense to Repayment | Federal Student Aid#1_0",
+        "textSHA256": "0796cf20df5dd4e479d4fee8538f0aff5a34d369942c46f503d3f476756f27ac",
+        "priorExactPassageReview": "Gives both the qualifying circumstance and the name of the relief. The final navigation sentence is dispensable."
+      },
+      "sections/256/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.665198,
+        "tokens": 65,
+        "firstSimilarity": 0.731393,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "Borrower Defense to Repayment | Federal Student Aid#1_0",
+        "textSHA256": "0796cf20df5dd4e479d4fee8538f0aff5a34d369942c46f503d3f476756f27ac",
+        "priorExactPassageReview": "Gives both the qualifying circumstance and the name of the relief. The final navigation sentence is dispensable."
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0.488778,
+        "tokens": 52,
+        "firstSimilarity": 0.729493,
+        "firstCompletePassageRank": null,
+        "completePrefix": 704,
+        "source": "Borrower Defense to Repayment | Federal Student Aid#1_0",
+        "textSHA256": "4b654b5d191871da2af3fdd050e463f4d6da05a898ac04e8fcbab18de97d0269"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.665198,
+        "tokens": 65,
+        "firstSimilarity": 0.731393,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "Borrower Defense to Repayment | Federal Student Aid#1_0",
+        "textSHA256": "0796cf20df5dd4e479d4fee8538f0aff5a34d369942c46f503d3f476756f27ac",
+        "priorExactPassageReview": "Gives both the qualifying circumstance and the name of the relief. The final navigation sentence is dispensable."
+      }
+    }
+  },
+  "b5e61c3593901c5aed1c117e4de1e157": {
+    "domain": "government",
+    "fold": "confirmation",
+    "question": "how the Veterans Pension Eligibility is carried out",
+    "source": "Eligibility For Veterans Pension | Veterans Affairs#1_0",
+    "ideal": "For someone trying to work out eligibility, include the following eligibility section with its conditions and alternatives.",
+    "shortestCompleteTokens": 307,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 46,
+        "firstSimilarity": 0.746107,
+        "firstCompletePassageRank": null,
+        "completePrefix": 98,
+        "source": "Eligibility For Veterans Pension | Veterans Affairs#1_0",
+        "textSHA256": "d6fdd45dc31403ae255650f5aff8769a1ef82f60857dc21b26f09444229b8404",
+        "priorExactPassageReview": "Matches the published citation with a useful overview, but gives no thresholds or concrete service and age/disability criteria."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 46,
+        "firstSimilarity": 0.746107,
+        "firstCompletePassageRank": null,
+        "completePrefix": 131,
+        "source": "Eligibility For Veterans Pension | Veterans Affairs#1_0",
+        "textSHA256": "d6fdd45dc31403ae255650f5aff8769a1ef82f60857dc21b26f09444229b8404",
+        "priorExactPassageReview": "Matches the published citation with a useful overview, but gives no thresholds or concrete service and age/disability criteria."
+      },
+      "sections/256/0.1": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 46,
+        "firstSimilarity": 0.746107,
+        "firstCompletePassageRank": null,
+        "completePrefix": 84,
+        "source": "Eligibility For Veterans Pension | Veterans Affairs#1_0",
+        "textSHA256": "d6fdd45dc31403ae255650f5aff8769a1ef82f60857dc21b26f09444229b8404",
+        "priorExactPassageReview": "Matches the published citation with a useful overview, but gives no thresholds or concrete service and age/disability criteria."
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 36,
+        "firstSimilarity": 0.758327,
+        "firstCompletePassageRank": null,
+        "completePrefix": 916,
+        "source": "Eligibility For Veterans Pension | Veterans Affairs#1_0",
+        "textSHA256": "45e10368a3b6a4b21668f9d3efafa8fef91b664651f30ee97604e1f4292066e4"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 46,
+        "firstSimilarity": 0.746107,
+        "firstCompletePassageRank": null,
+        "completePrefix": 10,
+        "source": "Eligibility For Veterans Pension | Veterans Affairs#1_0",
+        "textSHA256": "d6fdd45dc31403ae255650f5aff8769a1ef82f60857dc21b26f09444229b8404",
+        "priorExactPassageReview": "Matches the published citation with a useful overview, but gives no thresholds or concrete service and age/disability criteria."
+      }
+    }
+  },
+  "ffeb67a61ecd09542b1c53c3e4c3abd4da0496a8": {
+    "domain": "papers",
+    "fold": "confirmation",
+    "question": "How do the authors define a concept map?",
+    "source": "1704.04452",
+    "ideal": "Define concepts as nodes and relationships as edges.",
+    "shortestCompleteTokens": 21,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.348108,
+        "tokens": 184,
+        "firstSimilarity": 0.694191,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1704.04452",
+        "textSHA256": "0c3ad0fc84faa63711aa618135665aa37226f9fa5c6eedf8b21be1a86e3a9edb"
+      },
+      "sections/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.348108,
+        "tokens": 184,
+        "firstSimilarity": 0.694191,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1704.04452",
+        "textSHA256": "0c3ad0fc84faa63711aa618135665aa37226f9fa5c6eedf8b21be1a86e3a9edb"
+      },
+      "sections/256/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.348108,
+        "tokens": 184,
+        "firstSimilarity": 0.694191,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1704.04452",
+        "textSHA256": "0c3ad0fc84faa63711aa618135665aa37226f9fa5c6eedf8b21be1a86e3a9edb"
+      },
+      "sections/256/0.4": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 1,
+        "tokens": 21,
+        "firstSimilarity": 0.797054,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1704.04452",
+        "textSHA256": "894116ddd2801e682eba02949cdf2811e0f797a485052c279e704067cfd85197"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 33,
+        "firstSimilarity": 0.557947,
+        "firstCompletePassageRank": 7,
+        "completePrefix": 7,
+        "source": "1704.04452",
+        "textSHA256": "386566bc15f09033b9bd207b244453d80df18f375e43bc1f149d5f4f7d06d40c"
+      }
+    }
+  },
+  "f225a9f923e4cdd836dd8fe097848da06ec3e0cc": {
+    "domain": "papers",
+    "fold": "confirmation",
+    "question": "On what datasets are experiments performed?",
+    "source": "1910.06036",
+    "ideal": "Use the explicit experimental statement. A citation in the introduction can still be less useful than a methods passage.",
+    "shortestCompleteTokens": 24,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.11658,
+        "tokens": 182,
+        "firstSimilarity": 0.515305,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1910.06036",
+        "textSHA256": "606a108d4d305abacc04942302e488e7b1d42e574eb10606753a708c978e16f1",
+        "priorExactPassageReview": "The same usable answer, with one extra table pointer."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.11658,
+        "tokens": 182,
+        "firstSimilarity": 0.515305,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1910.06036",
+        "textSHA256": "606a108d4d305abacc04942302e488e7b1d42e574eb10606753a708c978e16f1",
+        "priorExactPassageReview": "The same usable answer, with one extra table pointer."
+      },
+      "sections/256/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.123119,
+        "tokens": 172,
+        "firstSimilarity": 0.514729,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1910.06036",
+        "textSHA256": "db92bdebb1edd2cabcab256803c3f9cbf041710d5e27384cc64e7afec64fab0f",
+        "priorExactPassageReview": "Direct experimental assertion, including dataset, scope and splits. The last preprocessing details are optional."
+      },
+      "sections/256/0.4": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.697674,
+        "tokens": 24,
+        "firstSimilarity": 0.57756,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1910.06036",
+        "textSHA256": "4b4c131b0ea67190830a77288a63e97b300bb47c7cea1ebfbfe117f3815c249c"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.123119,
+        "tokens": 172,
+        "firstSimilarity": 0.514729,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1910.06036",
+        "textSHA256": "db92bdebb1edd2cabcab256803c3f9cbf041710d5e27384cc64e7afec64fab0f",
+        "priorExactPassageReview": "Direct experimental assertion, including dataset, scope and splits. The last preprocessing details are optional."
+      }
+    }
+  },
+  "18c5d366b1da8447b5404eab71f4cc658ba12e6f": {
+    "domain": "papers",
+    "fold": "confirmation",
+    "question": "what ner models were evaluated?",
+    "source": "1810.08699",
+    "ideal": "Name all three models and distinguish the baselines.",
+    "shortestCompleteTokens": 437,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0.704403,
+        "tokens": 61,
+        "firstSimilarity": 0.390126,
+        "firstCompletePassageRank": null,
+        "completePrefix": 15,
+        "source": "1810.08699",
+        "textSHA256": "e7ddef6d9c99063a849eb0a89cbfb4a2ef8078451dae58678c776e1a67078c64"
+      },
+      "sections/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0.704403,
+        "tokens": 61,
+        "firstSimilarity": 0.390126,
+        "firstCompletePassageRank": null,
+        "completePrefix": 15,
+        "source": "1810.08699",
+        "textSHA256": "e7ddef6d9c99063a849eb0a89cbfb4a2ef8078451dae58678c776e1a67078c64"
+      },
+      "sections/256/0.1": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0.704403,
+        "tokens": 61,
+        "firstSimilarity": 0.390126,
+        "firstCompletePassageRank": null,
+        "completePrefix": 15,
+        "source": "1810.08699",
+        "textSHA256": "e7ddef6d9c99063a849eb0a89cbfb4a2ef8078451dae58678c776e1a67078c64"
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 16,
+        "firstSimilarity": 0.417146,
+        "firstCompletePassageRank": null,
+        "completePrefix": 30,
+        "source": "1810.08699",
+        "textSHA256": "80a1d3a31e4d8420c171050ce7fd23ccfd8746d6602f60691a386e2865658f32"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 165,
+        "firstSimilarity": 0.354538,
+        "firstCompletePassageRank": 2,
+        "completePrefix": 2,
+        "source": "1810.08699",
+        "textSHA256": "5fc8b77a3aed56ae9c9b0600996cc1192bb8fd12ea55d79deee875c993425691"
+      }
+    }
+  },
+  "b91671715ad4fad56c67c28ce6f29e180fe08595": {
+    "domain": "papers",
+    "fold": "confirmation",
+    "question": "What other tasks do they test their method on?",
+    "source": "1605.03481",
+    "ideal": "Keep the task name, input and what was predicted. The metric sentence is useful but optional.",
+    "shortestCompleteTokens": 24,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 193,
+        "firstSimilarity": 0.270737,
+        "firstCompletePassageRank": 2,
+        "completePrefix": 2,
+        "source": "1605.03481",
+        "textSHA256": "443e35bbac59a01d4061f9feaf0551d8a09be4c08da32d8ccef8b7acfd8be05f",
+        "priorExactPassageReview": "Explains the character model and why Twitter is difficult, without identifying the requested evaluation."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 193,
+        "firstSimilarity": 0.270737,
+        "firstCompletePassageRank": 2,
+        "completePrefix": 2,
+        "source": "1605.03481",
+        "textSHA256": "443e35bbac59a01d4061f9feaf0551d8a09be4c08da32d8ccef8b7acfd8be05f",
+        "priorExactPassageReview": "Explains the character model and why Twitter is difficult, without identifying the requested evaluation."
+      },
+      "sections/256/0.1": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 193,
+        "firstSimilarity": 0.270737,
+        "firstCompletePassageRank": 2,
+        "completePrefix": 2,
+        "source": "1605.03481",
+        "textSHA256": "443e35bbac59a01d4061f9feaf0551d8a09be4c08da32d8ccef8b7acfd8be05f",
+        "priorExactPassageReview": "Explains the character model and why Twitter is difficult, without identifying the requested evaluation."
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 11,
+        "firstSimilarity": 0.316907,
+        "firstCompletePassageRank": 3,
+        "completePrefix": 3,
+        "source": "1605.03481",
+        "textSHA256": "0367b203b9c82ec3bdfa1743e4aebd55c24369c2e09808a60840ea81f55269a8"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.012147,
+        "tokens": 3682,
+        "firstSimilarity": 0.24495,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1605.03481",
+        "textSHA256": "16a23095fa59aac00e415e0745149acef7136ed82059d8c9d6be1c0fb4a524a6"
+      }
+    }
+  },
+  "f4496316ddd35ee2f0ccc6475d73a66abf87b611": {
+    "domain": "papers",
+    "fold": "confirmation",
+    "question": "Which benchmark dataset do the authors use for the entity-relatedness task?",
+    "source": "1702.03342",
+    "ideal": "Identify the entity-relatedness benchmark and its CoNLL 2003 source.",
+    "shortestCompleteTokens": 25,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.131439,
+        "tokens": 247,
+        "firstSimilarity": 0.685235,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1702.03342",
+        "textSHA256": "3703fbdac8302b0e0c389be140fc85756ff738fcef0e5403a3c2a5db4af0c5db"
+      },
+      "sections/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.131439,
+        "tokens": 247,
+        "firstSimilarity": 0.685235,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1702.03342",
+        "textSHA256": "3703fbdac8302b0e0c389be140fc85756ff738fcef0e5403a3c2a5db4af0c5db"
+      },
+      "sections/256/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.131439,
+        "tokens": 247,
+        "firstSimilarity": 0.685235,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1702.03342",
+        "textSHA256": "3703fbdac8302b0e0c389be140fc85756ff738fcef0e5403a3c2a5db4af0c5db"
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 26,
+        "firstSimilarity": 0.627049,
+        "firstCompletePassageRank": 3,
+        "completePrefix": 3,
+        "source": "1702.03342",
+        "textSHA256": "0c8ccca36a8f761118ceaf312021ce85d54e11e0462ac4e99b50551b8ebeb8bb"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.005877,
+        "tokens": 5899,
+        "firstSimilarity": 0.457659,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1702.03342",
+        "textSHA256": "96bdc263e66998ff53a1a73de8fbc586325acef252ffc454d91024f99c4f63b3"
+      }
+    }
+  },
+  "29c014baf99fb9f40b5171aab3e2c7f12a748f79": {
+    "domain": "papers",
+    "fold": "confirmation",
+    "question": "what algorithms did they use?",
+    "source": "1908.04042",
+    "ideal": "Keep the inventory and its three families. Include hybrids in detail only if the reader asks which ones.",
+    "shortestCompleteTokens": 50,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 195,
+        "firstSimilarity": 0.360021,
+        "firstCompletePassageRank": 10,
+        "completePrefix": 10,
+        "source": "1908.04042",
+        "textSHA256": "8ec077e2cd7626f275bb4a3564d0c6675a70dce95b4238f2861277654ca14ec6",
+        "priorExactPassageReview": "Presents hybrid-method results rather than the algorithm inventory."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 195,
+        "firstSimilarity": 0.360021,
+        "firstCompletePassageRank": 11,
+        "completePrefix": 11,
+        "source": "1908.04042",
+        "textSHA256": "8ec077e2cd7626f275bb4a3564d0c6675a70dce95b4238f2861277654ca14ec6",
+        "priorExactPassageReview": "Presents hybrid-method results rather than the algorithm inventory."
+      },
+      "sections/256/0.1": {
+        "completeFirst": 0,
+        "completeFive": 0,
+        "firstF1": 0,
+        "tokens": 195,
+        "firstSimilarity": 0.360021,
+        "firstCompletePassageRank": 11,
+        "completePrefix": 11,
+        "source": "1908.04042",
+        "textSHA256": "8ec077e2cd7626f275bb4a3564d0c6675a70dce95b4238f2861277654ca14ec6",
+        "priorExactPassageReview": "Presents hybrid-method results rather than the algorithm inventory."
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 6,
+        "firstSimilarity": 0.387033,
+        "firstCompletePassageRank": 4,
+        "completePrefix": 4,
+        "source": "1908.04042",
+        "textSHA256": "c6827ef4bc91416d1eab50384163fd1655345bff4b5effc8e2584603b5558fe4"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.019286,
+        "tokens": 4664,
+        "firstSimilarity": 0.258707,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1908.04042",
+        "textSHA256": "27ef8a5a02ff656be7f22fdb4d6849b1bcd36fb8a7a25f2b8c250a2d64067d85"
+      }
+    }
+  },
+  "ed2eb4e54b641b7670ab5a7060c7b16c628699ab": {
+    "domain": "papers",
+    "fold": "confirmation",
+    "question": "Which of the three pretraining tasks is the most helpful?",
+    "source": "2004.01853",
+    "ideal": "Keep the winning task, its comparison and the data-dependent qualification.",
+    "shortestCompleteTokens": 27,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.219212,
+        "tokens": 182,
+        "firstSimilarity": 0.528524,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "2004.01853",
+        "textSHA256": "a53fe564a0b3377cdc3608f40aff879f8097072fdb3ba0380156a642d4ddd205",
+        "priorExactPassageReview": "Gives the sentence-reordering result and the important qualification about combined tasks and training data."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.219212,
+        "tokens": 182,
+        "firstSimilarity": 0.528524,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "2004.01853",
+        "textSHA256": "a53fe564a0b3377cdc3608f40aff879f8097072fdb3ba0380156a642d4ddd205",
+        "priorExactPassageReview": "Gives the sentence-reordering result and the important qualification about combined tasks and training data."
+      },
+      "sections/256/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.219212,
+        "tokens": 182,
+        "firstSimilarity": 0.528524,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "2004.01853",
+        "textSHA256": "a53fe564a0b3377cdc3608f40aff879f8097072fdb3ba0380156a642d4ddd205",
+        "priorExactPassageReview": "Gives the sentence-reordering result and the important qualification about combined tasks and training data."
+      },
+      "sections/256/0.4": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 11,
+        "firstSimilarity": 0.597375,
+        "firstCompletePassageRank": 4,
+        "completePrefix": 4,
+        "source": "2004.01853",
+        "textSHA256": "3f1ffe493f02383357dd7c7ed2feb21f16e8ddce7aa5831bd8c640788733ed38"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 0,
+        "completeFive": 1,
+        "firstF1": 0,
+        "tokens": 682,
+        "firstSimilarity": 0.421422,
+        "firstCompletePassageRank": 4,
+        "completePrefix": 4,
+        "source": "2004.01853",
+        "textSHA256": "d826d9fc46bca9eb7f234aa6a62308ffbc4eb3a13a8eca6be4bf81015cea8d7b"
+      }
+    }
+  },
+  "ee7e9a948ee6888aa5830b1a3d0d148ff656d864": {
+    "domain": "papers",
+    "fold": "confirmation",
+    "question": "What is the size of the Airbnb?",
+    "source": "1806.11432",
+    "ideal": "Keep the count of roughly 40,000 listings with Manhattan and the observation year.",
+    "shortestCompleteTokens": 188,
+    "methods": {
+      "ordinary/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.70993,
+        "tokens": 201,
+        "firstSimilarity": 0.44404,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1806.11432",
+        "textSHA256": "b5c61a4482923a8e2d5aa5e5b7956381a3a9850e5e757b790a8afdeb8f934c61",
+        "priorExactPassageReview": "The data subsection gives the count, geography and dates. Occupancy is secondary."
+      },
+      "sections/256/blocks": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.70993,
+        "tokens": 201,
+        "firstSimilarity": 0.44404,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1806.11432",
+        "textSHA256": "b5c61a4482923a8e2d5aa5e5b7956381a3a9850e5e757b790a8afdeb8f934c61",
+        "priorExactPassageReview": "The data subsection gives the count, geography and dates. Occupancy is secondary."
+      },
+      "sections/256/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.70993,
+        "tokens": 201,
+        "firstSimilarity": 0.44404,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1806.11432",
+        "textSHA256": "b5c61a4482923a8e2d5aa5e5b7956381a3a9850e5e757b790a8afdeb8f934c61",
+        "priorExactPassageReview": "The data subsection gives the count, geography and dates. Occupancy is secondary."
+      },
+      "sections/256/0.4": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.752278,
+        "tokens": 188,
+        "firstSimilarity": 0.462375,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1806.11432",
+        "textSHA256": "5ea6feba5b0095964d41d56d31226881e9263c94c8542f60d62266303d932819"
+      },
+      "ordinary/unlimited/0.1": {
+        "completeFirst": 1,
+        "completeFive": 1,
+        "firstF1": 0.057556,
+        "tokens": 3718,
+        "firstSimilarity": 0.232502,
+        "firstCompletePassageRank": 1,
+        "completePrefix": 1,
+        "source": "1806.11432",
+        "textSHA256": "84e29795f2553734f00a542e23e2af26db43205a09c9614bf46e111b81fc48a9"
+      }
+    }
+  }
+}

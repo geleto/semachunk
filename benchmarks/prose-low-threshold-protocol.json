@@ -1,0 +1,4 @@
+{
+  "thresholds": [-1, 0, 0.05],
+  "reason": "Both original development nominees used the lowest fixed threshold, 0.10. Before inspecting confirmation scores, extend the same experiment to zero, 0.05 and -1 (no cosine veto). Retain the original development nominees. Compare the extension on both folds and apply the same two selection rules to the extended grid."
+}

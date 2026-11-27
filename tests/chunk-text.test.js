@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { chunkText } from '../src/index.js';
+import { chunkText, chunkDocument } from '../src/index.js';
 import { createBatchEmbedder } from '../src/embeddings.js';
 
 function recordingEmbedder(vectorFor = text => [text.length, 1]) {
@@ -14,25 +14,33 @@ function recordingEmbedder(vectorFor = text => [text.length, 1]) {
 
 const pair = 'First topic. Second topic.';
 const sentences = ['First topic.', 'Second topic.'];
+const sentenceOptions = { chunkingStrategy: 'pack', maxChunkSize: 0 };
+const semantic = { chunkingStrategy: 'semantic-blocks' };
 
-test('auto packs without a callback and can still use semantic scoring when final vectors are disabled', async () => {
-    assert.deepEqual(await chunkText(pair), [{ text: pair }]);
+test('omitting the strategy uses blocks in every format, with or without an embedder', async () => {
+    const paragraphs = sentences.join('\n\n');
+    assert.deepEqual(await chunkText(paragraphs), [{ text: paragraphs }]);
     for (const [inputFormat, source] of [
-        ['text', pair], ['html', '<p>First topic.</p><p>Second topic.</p>'], ['markdown', sentences.join('\n\n')]
+        ['text', paragraphs], ['html', '<p>First topic.</p><p>Second topic.</p>'],
+        ['markdown', paragraphs], ['json', JSON.stringify(sentences)]
     ]) {
-        const options = { inputFormat, maxChunkSize: 2048, combineChunksSimilarityThreshold: 0.9 };
-        const packed = await chunkText(source, assert.fail, { ...options, chunkingStrategy: 'pack', returnEmbedding: false });
-        assert.equal(packed.length, 1);
-        assert.deepEqual(await chunkText(source, options), packed);
-        assert.deepEqual(await chunkText(source, undefined, options), packed);
-        const { embed } = recordingEmbedder(s => s === sentences[0] ? [1, 0] : [0, 1]);
-        assert.deepEqual((await chunkText(source, embed, { ...options, returnEmbedding: false })).map(c => c.text), sentences);
+        for (const maxChunkSize of [500, 2048]) {
+            const options = { inputFormat, maxChunkSize };
+            const expected = await chunkText(source, { ...options, chunkingStrategy: 'blocks' });
+            assert.equal(expected.length, inputFormat === 'json' ? 2 : 1);
+            assert.deepEqual(await chunkText(source, options), expected);
+            assert.deepEqual(await chunkText(source, undefined, options), expected);
+            assert.deepEqual(await chunkText(source, assert.fail, { ...options, returnEmbedding: false }), expected);
+            const { embed, batches } = recordingEmbedder();
+            const indexed = await chunkText(source, embed, options);
+            assert.deepEqual(indexed, expected.map(chunk => ({ ...chunk, embedding: [chunk.text.length, 1] })));
+            assert.deepEqual(batches, [expected.map(chunk => chunk.text)]);
+        }
     }
-    assert.deepEqual(await chunkText(pair, null, { combineChunks: false }), sentences.map(text => ({ text })));
 });
 
 test('explicit semantic scoring and output vectors require an embedding callback', async () => {
-    await assert.rejects(chunkText(pair, { chunkingStrategy: 'semantic', returnEmbedding: false }), /embedding callback/i);
+    await assert.rejects(chunkText(pair, { chunkingStrategy: 'semantic-blocks', returnEmbedding: false }), /embedding callback/i);
     await assert.rejects(chunkText(pair, undefined, { returnEmbedding: true }), /embedding callback/i);
     await assert.rejects(chunkText(pair, 42), /embedBatchCallback must be a function/);
 });
@@ -42,7 +50,7 @@ test('omitted size options use the documented target for every format and strate
     const embed = async texts => texts.map(() => [1]);
     for (const inputFormat of ['text', 'html', 'markdown']) {
         const source = inputFormat === 'html' ? '<p>' + body + '</p>' : body;
-        for (const chunkingStrategy of ['auto', 'blocks', 'pack', 'semantic']) {
+        for (const chunkingStrategy of ['blocks', 'pack', 'semantic-blocks']) {
             const run = size => chunkText(source, embed, { inputFormat, chunkingStrategy, returnEmbedding: false, ...size });
             const smaller = await run({ maxChunkSize: 500 });
             const larger = await run({ maxChunkSize: 1024 });
@@ -51,7 +59,7 @@ test('omitted size options use the documented target for every format and strate
             const expected = inputFormat === 'markdown' ? larger : smaller;
             assert.deepEqual(await run(), expected, inputFormat + '/' + chunkingStrategy);
             assert.deepEqual(await run({ maxChunkTokens: 256, countTokens: s => s.trim().split(/\s+/u).length }), expected);
-            if (chunkingStrategy === 'auto') assert.deepEqual(await run({ chunkingStrategy: undefined }), expected);
+            if (chunkingStrategy === 'blocks') assert.deepEqual(await run({ chunkingStrategy: undefined }), expected);
         }
     }
 });
@@ -65,17 +73,16 @@ test('a token cap supplements the default character target and can be used on it
     assert.equal((await pack({ maxChunkSize: Infinity, maxChunkTokens: 6 })).length, 2);
 });
 
-test('explicit strategies select paragraphs, packing or similarity with either legacy combine setting', async () => {
+test('blocks, pack and semantic-blocks apply different boundaries to the same text and HTML', async () => {
     const source = 'One. Two.\n\nRed. Sun.';
     for (const [inputFormat, text] of [['text', source], ['html', '<p>One. <b>Two.</b></p><p>Red.<br>Sun.</p>']]) {
         const run = (strategy, embed, extra) => chunkText(text, embed, { inputFormat, maxChunkSize: 14,
-            combineChunks: false, returnEmbedding: false, chunkingStrategy: strategy, ...extra }).then(rows => rows.map(c => c.text));
-        assert.deepEqual(await run('auto', assert.fail), ['One.', 'Two.', 'Red.', 'Sun.']);
+            returnEmbedding: false, chunkingStrategy: strategy, ...extra }).then(rows => rows.map(c => c.text));
         assert.deepEqual(await run('blocks', assert.fail), ['One. Two.', 'Red. Sun.']);
         assert.deepEqual(await run('blocks', assert.fail, { maxChunkSize: 5 }), ['One.', 'Two.', 'Red.', 'Sun.']);
         assert.deepEqual(await run('pack', assert.fail), ['One. Two. Red.', 'Sun.']);
         const { embed, batches } = recordingEmbedder(s => /One|Two/.test(s) ? [1, 0] : [0, 1]);
-        assert.deepEqual(await run('semantic', embed, { similarityThreshold: 0.9 }), ['One. Two.', 'Red. Sun.']);
+        assert.deepEqual(await run('semantic-blocks', embed, { similarityThreshold: 0.9 }), ['One. Two.', 'Red. Sun.']);
         assert.ok(batches.length);
     }
     const filtered = await chunkText('42.\n\nDr. Smith signed. Fees apply.', assert.fail, {
@@ -90,7 +97,6 @@ test('packing repeats only fitting whole sentences and always advances', async (
         returnEmbedding: false, chunkOverlap, ...extra }).then(rows => rows.map(c => c.text));
     assert.deepEqual(await pack(3), ['One. Two. Red.', 'Sun. End.']);
     assert.deepEqual(await pack(4), ['One. Two. Red.', 'Red. Sun. End.']);
-    assert.deepEqual(await pack(4, { chunkingStrategy: 'auto' }), await pack(4));
     assert.deepEqual(await pack(99), ['One. Two. Red.', 'Two. Red. Sun.', 'Red. Sun. End.']);
     assert.deepEqual(await pack(99, { maxChunkSize: 0 }), ['One.', 'Two.', 'Red.', 'Sun.', 'End.']);
     assert.deepEqual(await pack(99, { maxChunkSize: Infinity }), [text]);
@@ -118,28 +124,41 @@ test('token overlap counts the actual suffix and the prefix still fits every fin
 });
 
 test('invalid strategies and unusable overlap settings fail before embedding', async () => {
-    for (const value of ['recursive', '', null]) {
+    for (const value of ['auto', 'recursive', '', null]) {
         await assert.rejects(chunkText('', assert.fail, { chunkingStrategy: value }), /chunkingStrategy/);
     }
     for (const value of [-1, 0.5, Infinity, NaN, '4']) {
         await assert.rejects(chunkText('', assert.fail, { chunkingStrategy: 'pack', chunkOverlap: value }), /chunkOverlap/);
     }
-    for (const options of [{ chunkingStrategy: 'blocks' }, { chunkingStrategy: 'semantic' }, { combineChunks: false }]) {
+    for (const options of [{}, { chunkingStrategy: 'blocks' }, { chunkingStrategy: 'semantic-blocks' }]) {
         await assert.rejects(chunkText('', assert.fail, { ...options, chunkOverlap: 1 }), /chunkOverlap/);
+    }
+});
+
+test('both chunking APIs reject the retired flat strategy before embedding', async () => {
+    for (const format of ['text', 'html', 'markdown', 'json']) {
+        await assert.rejects(chunkText('[]', assert.fail, { inputFormat: format, chunkingStrategy: 'semantic' }), /strategy/i);
+        await assert.rejects(chunkDocument('[]', { format, strategy: 'semantic', embedBatch: assert.fail }), /strategy/i);
+    }
+});
+
+test('invalid character sizes fail before parsing or embedding', async () => {
+    for (const maxChunkSize of [NaN, -Infinity, -1, 0.5, Number.MAX_SAFE_INTEGER + 1, '2', null]) {
+        await assert.rejects(chunkText('', assert.fail, { maxChunkSize }), /maxChunkSize/);
     }
 });
 
 test('a finite cache retains only the most recent entries between scoring batches', async () => {
     const { embed, batches } = recordingEmbedder(s => Float32Array.of(s.length));
     const cached = createBatchEmbedder(embed, 2, 1);
-    const first = await cached(['A', 'BB', 'CCC', 'A'], ['later']);
+    const first = await cached(['A', 'BB', 'CCC', 'A']);
     assert.deepEqual(first.map(v => v[0]), [1, 2, 3, 1]);
     await cached(['CCC', 'BB']);
     await cached(['BB', 'A']);
     assert.deepEqual(batches, [['A', 'BB'], ['CCC'], ['BB'], ['A']]);
     for (const limit of [0, 1, Infinity]) {
         const { embed } = recordingEmbedder(() => Float32Array.of(3, 4));
-        const chunks = await chunkText('One. Two. Red. Sun.', embed, { maxChunkSize: 9, maxCachedEmbeddings: limit });
+        const chunks = await chunkText('One. Two. Red. Sun.', embed, { ...semantic, maxChunkSize: 9, maxCachedEmbeddings: limit });
         assert.deepEqual(chunks.map(c => c.text), ['One. Two.', 'Red. Sun.']);
         assert.deepEqual(chunks.map(c => c.embedding), [Float32Array.of(3, 4), Float32Array.of(3, 4)]);
     }
@@ -148,16 +167,16 @@ test('a finite cache retains only the most recent entries between scoring batche
 
 test('the requested sentence locale controls abbreviation handling', async () => {
     const text = 'Hable con la Sra. García. Vuelva luego.';
-    const options = { combineChunks: false, returnEmbedding: false };
+    const options = { ...sentenceOptions, returnEmbedding: false };
     const split = async locale => (await chunkText(text, assert.fail, { ...options, locale })).map(c => c.text);
     assert.deepEqual(await split('es'), ['Hable con la Sra. García.', 'Vuelva luego.']);
     assert.deepEqual(await split('en'), ['Hable con la Sra.', 'García.', 'Vuelva luego.']);
     await assert.rejects(chunkText('', assert.fail, { locale: 'bad locale' }), RangeError);
 });
 
-test('the last allowed merge returns a vector for the joined text', async () => {
+test('semantic-blocks embeds the joined output text', async () => {
     const { embed, batches } = recordingEmbedder();
-    const chunks = await chunkText(pair, embed, { maxUncappedPasses: 1 });
+    const chunks = await chunkText(pair, embed, semantic);
     assert.deepEqual(chunks, [{ text: pair, embedding: [pair.length, 1] }]);
     assert.deepEqual(batches, [sentences, [pair]]);
 });
@@ -170,7 +189,7 @@ test('the final batch embeds the prefix even when it is hidden from the output',
     for (const hide of [false, true]) {
         const { embed, batches } = recordingEmbedder();
         const chunks = await chunkText(original.join(' '), embed, {
-            combineChunks: false, chunkPrefix: prefix, excludeChunkPrefixInResults: hide
+            ...sentenceOptions, chunkPrefix: prefix, excludeChunkPrefixInResults: hide
         });
         assert.deepEqual(batches, [prefixed]);
         assert.deepEqual(chunks.map(c => c.text), hide ? original : prefixed);
@@ -180,7 +199,7 @@ test('the final batch embeds the prefix even when it is hidden from the output',
 
 test('a terminal merge embeds only the requested final representation', async () => {
     const { embed, batches } = recordingEmbedder();
-    const options = { chunkPrefix: 'Topic', excludeChunkPrefixInResults: true };
+    const options = { ...semantic, chunkPrefix: 'Topic', excludeChunkPrefixInResults: true };
     const prefixed = 'Topic: ' + pair;
     assert.deepEqual(await chunkText(pair, embed, options), [
         { text: pair, embedding: [prefixed.length, 1] }
@@ -195,7 +214,7 @@ test('a terminal merge embeds only the requested final representation', async ()
 test('size-limited final chunks with a prefix are embedded together', async () => {
     const { embed, batches } = recordingEmbedder();
     const texts = ['One.', 'Two.', 'Red.', 'Sun.'];
-    const chunks = await chunkText(texts.join(' '), embed, { maxChunkSize: 9, chunkPrefix: 'Topic' });
+    const chunks = await chunkText(texts.join(' '), embed, { ...semantic, maxChunkSize: 9, chunkPrefix: 'Topic' });
     const finals = ['Topic: One. Two.', 'Topic: Red. Sun.'];
     assert.deepEqual(chunks, finals.map(text => ({ text, embedding: [text.length, 1] })));
     assert.deepEqual(batches, [texts, finals]);
@@ -205,7 +224,7 @@ test('a repeated sentence and a repeated merged chunk are each embedded once per
     const text = 'An echo. An echo. An echo. An echo.';
     const merged = 'An echo. An echo.';
     const { embed, batches } = recordingEmbedder();
-    const options = { maxChunkSize: merged.length, maxMergesPerPass: 1 };
+    const options = { ...semantic, maxChunkSize: merged.length };
     for (let call = 0; call < 2; call++) {
         const chunks = await chunkText(text, embed, options);
         assert.deepEqual(chunks, Array(2).fill({ text: merged, embedding: [merged.length, 1] }));
@@ -215,7 +234,7 @@ test('a repeated sentence and a repeated merged chunk are each embedded once per
 
 test('deduplication restores source order and preserves typed vectors', async () => {
     const { embed, batches } = recordingEmbedder(s => new Float32Array([s.length]));
-    const chunks = await chunkText('One. Other. One.', embed, { combineChunks: false });
+    const chunks = await chunkText('One. Other. One.', embed, sentenceOptions);
     assert.deepEqual(batches, [['One.', 'Other.']]);
     assert.deepEqual(chunks.map(c => c.text), ['One.', 'Other.', 'One.']);
     assert.deepEqual(chunks.map(c => c.embedding), [4, 6, 4].map(n => new Float32Array([n])));
@@ -231,20 +250,20 @@ test('each callback batch must return complete, finite vectors of a consistent d
         [[[Infinity], [1]], /finite numbers/],
     ];
     for (const [result, message] of invalid) {
-        await assert.rejects(chunkText(pair, async () => result, { combineChunks: false }), message);
+        await assert.rejects(chunkText(pair, async () => result, sentenceOptions), message);
     }
     const changesDimension = async texts => texts.map(() => texts.length === 2 ? [1, 0] : [1]);
-    await assert.rejects(chunkText(pair, changesDimension), /dimension 1.*Expected 2/);
+    await assert.rejects(chunkText(pair, changesDimension, semantic), /dimension 1.*Expected 2/);
 
     const three = 'First topic. Second topic. Third topic.';
-    await assert.rejects(chunkText(three, async texts => texts.length === 3 ? texts.map(() => [1]) : []), /Expected 1, received 0/);
+    await assert.rejects(chunkText(three, async texts => texts.length === 3 ? texts.map(() => [1]) : [], semantic), /Expected 1, received 0/);
 });
 
 test('the Unicode letter filter is optional and runs before embedding', async () => {
     const text = '123. 東京です。';
     const { embed, batches } = recordingEmbedder();
-    const keep = await chunkText(text, embed, { combineChunks: false });
-    const filtered = await chunkText(text, embed, { combineChunks: false, excludeNonLetterSentences: true });
+    const keep = await chunkText(text, embed, sentenceOptions);
+    const filtered = await chunkText(text, embed, { ...sentenceOptions, excludeNonLetterSentences: true });
     assert.deepEqual(keep.map(c => c.text), ['123.', '東京です。']);
     assert.deepEqual(filtered.map(c => c.text), ['東京です。']);
     assert.deepEqual(batches, [['123.', '東京です。'], ['東京です。']]);
@@ -259,36 +278,36 @@ function embedPairAt(cosine) {
 }
 const embedPair = embedPairAt(0.6);
 
-test('ordinary text and HTML merges default to an inclusive 0.05 cutoff', async () => {
-    for (const [cosine, expected] of [[0.049, sentences], [0.05, [pair]]]) {
+test('semantic-blocks uses an inclusive 0.15 cutoff in plain text and HTML', async () => {
+    for (const [cosine, expected] of [[0.149, sentences], [0.15, [pair]]]) {
         const embed = embedPairAt(cosine);
-        assert.deepEqual((await chunkText(pair, embed)).map(c => c.text), expected);
-        assert.deepEqual((await chunkText('<p>' + pair + '</p>', embed, { inputFormat: 'html' })).map(c => c.text), expected);
+        assert.deepEqual((await chunkText(pair, embed, semantic)).map(c => c.text), expected);
+        assert.deepEqual((await chunkText('<p>' + pair + '</p>', embed, { ...semantic, inputFormat: 'html' })).map(c => c.text), expected);
     }
 });
 
-test('document fallback and Markdown scoring use a 0.5 base', async () => {
-    const markdown = sentences.join('\n\n'), large = { inputFormat: 'markdown', chunkingStrategy: 'semantic' };
-    for (const [text, options] of [[pair, { mergeThresholdMode: 'document' }],
-        [markdown, large], [markdown, { ...large, mergeThresholdMode: 'fixed' }]]) {
+test('document calibration falls back to 0.5 with one eligible pair', async () => {
+    const markdown = sentences.join('\n\n'), large = { inputFormat: 'markdown', chunkingStrategy: 'semantic-blocks' };
+    for (const [text, options] of [[pair, { ...semantic, mergeThresholdMode: 'document' }],
+        [markdown, { ...large, mergeThresholdMode: 'document' }]]) {
         assert.equal((await chunkText(text, embedPairAt(0.49), options)).length, 2);
         assert.equal((await chunkText(text, embedPairAt(0.5), options)).length, 1);
     }
 });
 
-test('the base cutoff controls the priority merge and its explicit override wins', async () => {
-    assert.deepEqual((await chunkText(pair, embedPair)).map(c => c.text), [pair]);
-    assert.deepEqual((await chunkText(pair, embedPair, { similarityThreshold: 0.7 })).map(c => c.text), sentences);
-    const options = { similarityThreshold: 0.7, combineChunksSimilarityThreshold: 0.5 };
+test('the hierarchical cutoff accepts an explicit fixed override', async () => {
+    assert.deepEqual((await chunkText(pair, embedPair, semantic)).map(c => c.text), [pair]);
+    assert.deepEqual((await chunkText(pair, embedPair, { ...semantic, similarityThreshold: 0.7 })).map(c => c.text), sentences);
+    const options = { ...semantic, similarityThreshold: 0.7, combineChunksSimilarityThreshold: 0.5 };
     assert.deepEqual((await chunkText(pair, embedPair, options)).map(c => c.text), [pair]);
-    const textOnly = await chunkText(pair, assert.fail, { combineChunks: false, returnEmbedding: false });
+    const textOnly = await chunkText(pair, assert.fail, { ...sentenceOptions, returnEmbedding: false });
     assert.deepEqual(textOnly, sentences.map(text => ({ text })));
 });
 
 test('matching outer sentences stay separate across an unrelated middle sentence', async () => {
     const texts = ['First topic.', 'Other subject.', 'First again.'];
     const { embed, batches } = recordingEmbedder(s => s.startsWith('First') ? [1, 0] : [0, 1]);
-    const chunks = await chunkText(texts.join(' '), embed);
+    const chunks = await chunkText(texts.join(' '), embed, semantic);
     assert.deepEqual(chunks.map(c => c.text), texts);
     assert.deepEqual(batches, [texts]);
 });
@@ -296,7 +315,7 @@ test('matching outer sentences stay separate across an unrelated middle sentence
 test('plain text keeps literal markup, entities and Unicode sentence offsets', async () => {
     const texts = ['Use Array<T> here.', 'Keep <b>these tags</b> &amp; names.', 'ß is a letter.', 'Dr. Jones agrees.'];
     const { embed, batches } = recordingEmbedder();
-    const chunks = await chunkText(texts.join('  \n'), embed, { combineChunks: false });
+    const chunks = await chunkText(texts.join('  \n'), embed, sentenceOptions);
     assert.deepEqual(chunks.map(c => c.text), texts);
     assert.deepEqual(batches, [texts]);
 });
@@ -306,7 +325,7 @@ test('HTML mode extracts each text node once in document order and separates blo
         '<script>Noise.</script><p hidden>Hidden.</p><style>CSS.</style><template>Template.</template>' +
         '<ul><li>One.</li><li>Two.</li></ul>Outro<br>line.';
     const texts = ['Intro.', 'Outer.', 'Inner & more.', 'Tail.', 'One.', 'Two.', 'Outro line.'];
-    const chunks = await chunkText(input, assert.fail, { inputFormat: 'html', combineChunks: false, returnEmbedding: false });
+    const chunks = await chunkText(input, assert.fail, { inputFormat: 'html', ...sentenceOptions, returnEmbedding: false });
     assert.deepEqual(chunks.map(c => c.text), texts);
     await assert.rejects(chunkText(input, assert.fail, { inputFormat: 'xml' }), /inputFormat/);
 });
@@ -314,7 +333,7 @@ test('HTML mode extracts each text node once in document order and separates blo
 test('paragraphs, headings and list items become units while soft line wraps stay together', async () => {
     const text = 'Terms\r\n \t\r\n- First condition\r\n  with a continuation\r\n- Second condition\u2029' +
         '# Payment\n1. Due on receipt\n2. Fees waived\n\nProse with a\nsoft wrap.';
-    const options = { combineChunks: false, returnEmbedding: false };
+    const options = { ...sentenceOptions, returnEmbedding: false };
     assert.deepEqual((await chunkText(text, assert.fail, options)).map(c => c.text), [
         'Terms', '- First condition with a continuation', '- Second condition', '# Payment',
         '1. Due on receipt', '2. Fees waived', 'Prose with a soft wrap.'
@@ -327,7 +346,7 @@ test('paragraphs, headings and list items become units while soft line wraps sta
     assert.deepEqual((await chunkText(pre, assert.fail, { ...options, inputFormat: 'html' })).map(c => c.text),
         ['First line', 'Next line', 'Soft HTML whitespace']);
     const { embed, batches } = recordingEmbedder(() => [1]);
-    assert.deepEqual(await chunkText('Title\n\nRelated details', embed, { returnEmbedding: false }), [{ text: 'Title Related details' }]);
+    assert.deepEqual(await chunkText('Title\n\nRelated details', embed, { ...semantic, returnEmbedding: false }), [{ text: 'Title\n\nRelated details' }]);
     assert.deepEqual(batches, [['Title', 'Related details']]);
 });
 
@@ -336,9 +355,9 @@ test('token fallback checks the prefix, preserves every word and batches final v
     const text = 'red blue green gold silver violet\n\nShort.\n\nEnd.';
     const { embed, batches } = recordingEmbedder(s => [s.length]);
     const chunks = await chunkText(text, embed, {
-        maxChunkTokens: 5, countTokens, chunkPrefix: 'Title', excludeChunkPrefixInResults: true
+        ...semantic, maxChunkTokens: 5, countTokens, chunkPrefix: 'Title', excludeChunkPrefixInResults: true
     });
-    assert.equal(chunks.map(c => c.text).join(' '), text.replaceAll('\n\n', ' '));
+    assert.deepEqual(chunks.flatMap(c => c.text.split(/\s+/u)), text.split(/\s+/u));
     assert.ok(batches.flat().every(s => countTokens(s) <= 5));
     assert.ok(chunks.every(c => countTokens('Title: ' + c.text) <= 5 && c.embedding[0] === ('Title: ' + c.text).length));
     assert.ok(batches.some(batch => batch.length >= 2));
@@ -351,17 +370,17 @@ test('token fallback checks the prefix, preserves every word and batches final v
     assert.deepEqual(unicode.batches, [pieces.map(c => c.text)]);
 });
 
-test('token-limited joins recheck the actual text and batch a newly eligible neighbor', async () => {
+test('hierarchical joins enforce the token limit at a scored boundary', async () => {
     const { embed, batches } = recordingEmbedder(() => [1]);
     const chunks = await chunkText('One. Two. Red.', embed, {
-        maxChunkTokens: 3, countTokens: s => s === 'One. Two.' ? 4 : s.split(' ').length, returnEmbedding: false
+        ...semantic, maxChunkTokens: 3, countTokens: s => s === 'One. Two.' ? 4 : s.split(' ').length, returnEmbedding: false
     });
-    assert.deepEqual(chunks, [{ text: 'One. Two. Red.' }]);
-    assert.deepEqual(batches, [['Two.', 'Red.'], ['Two. Red.', 'One.']]);
+    assert.deepEqual(chunks, [{ text: 'One.' }, { text: 'Two. Red.' }]);
+    assert.deepEqual(batches, [['Two.', 'Red.']]);
 
     const run = recordingEmbedder(() => [1]);
     const limited = await chunkText('One. Two. Red.', run.embed, {
-        maxChunkSize: Infinity, maxChunkTokens: 2, countTokens: s => s.split(' ').length
+        ...semantic, maxChunkSize: Infinity, maxChunkTokens: 2, countTokens: s => s.split(' ').length
     });
     assert.ok(limited.every(c => c.text.split(' ').length <= 2));
     assert.ok(run.batches.flat().every(s => s.split(' ').length <= 2));
@@ -392,7 +411,7 @@ test('callbacks can consume or edit their input array without changing cache key
                 return [s.length];
             });
         };
-        const chunks = await chunkText(texts.join(' '), embed, { combineChunks: false, maxEmbeddingBatchSize: 2 });
+        const chunks = await chunkText(texts.join(' '), embed, { ...sentenceOptions, maxEmbeddingBatchSize: 2 });
         assert.deepEqual(chunks, texts.map(text => ({ text, embedding: [text.length] })));
         assert.deepEqual(batches.flat(), texts.slice(0, 3));
     }
@@ -406,7 +425,7 @@ test('duplicate outputs own their vectors, including Buffers and provider scratc
             return [scratch];
         };
         const texts = ['Echo.', 'Echo.', 'Different.'];
-        const chunks = await chunkText(texts.join(' '), embed, { combineChunks: false, maxEmbeddingBatchSize: 1 });
+        const chunks = await chunkText(texts.join(' '), embed, { ...sentenceOptions, maxEmbeddingBatchSize: 1 });
         assert.deepEqual(chunks.map(c => c.embedding), texts.map(s => make(s.length)));
         chunks[0].embedding[0] = 42;
         assert.deepEqual(chunks[1].embedding, make(texts[1].length));
@@ -425,7 +444,7 @@ test('cosine cutoffs include parallel vectors at any finite scale and handle zer
         [[0, 0], [0, 0], 0.5, false],
         [[0, 0], [1, 1], 0, true],
     ]) {
-        const chunks = await chunkText(pair, async () => [a, b], { similarityThreshold: threshold, returnEmbedding: false });
+        const chunks = await chunkText(pair, async () => [a, b], { ...semantic, similarityThreshold: threshold, returnEmbedding: false });
         assert.deepEqual(chunks.map(c => c.text), joins ? [pair] : sentences);
     }
 });
@@ -440,13 +459,13 @@ test('invalid thresholds and provider limits fail before embedding', async () =>
         await assert.rejects(chunkText(pair, assert.fail, { maxEmbeddingBatchSize: value }), /maxEmbeddingBatchSize/);
     }
     const changing = async ([text]) => [text === sentences[0] ? [1] : [1, 1]];
-    await assert.rejects(chunkText(pair, changing, { maxEmbeddingBatchSize: 1 }), /dimension 2.*Expected 1/);
+    await assert.rejects(chunkText(pair, changing, { ...semantic, maxEmbeddingBatchSize: 1 }), /dimension 2.*Expected 1/);
 });
 
 test('initial merge scoring requests only endpoints of size-eligible boundaries', async () => {
     const texts = ['A long opening.', 'One.', 'Two.', 'A long middle.', 'Red.', 'Sun.', 'A long ending.'];
     const { embed, batches } = recordingEmbedder();
-    const options = { maxChunkSize: 9, returnEmbedding: false };
+    const options = { ...semantic, maxChunkSize: 9, returnEmbedding: false };
     const chunks = await chunkText(texts.join(' '), embed, options);
     assert.deepEqual(chunks.map(c => c.text), [texts[0], 'One. Two.', texts[3], 'Red. Sun.', texts[6]]);
     assert.deepEqual(batches, [['One.', 'Two.', 'Red.', 'Sun.']]);
@@ -457,12 +476,12 @@ test('initial merge scoring requests only endpoints of size-eligible boundaries'
     assert.deepEqual(final.batches, [texts.map(t => 'Doc: ' + t)]);
 });
 
-test('the provider limit applies to initial, intermediate and final vectors with balanced batches', async () => {
+test('the provider limit applies to boundary and output vectors with balanced batches', async () => {
     const texts = Array.from({ length: 65 }, (_, i) => 'Item ' + String(i).padStart(2, '0') + '.');
-    const options = { maxChunkSize: 4 * texts[0].length + 3, candiateMergesPercentageCap: 100, chunkPrefix: 'Doc' };
+    const options = { ...semantic, maxChunkSize: 4 * texts[0].length + 3, chunkPrefix: 'Doc' };
     const unbounded = recordingEmbedder(() => [1]);
     const expected = await chunkText(texts.join(' '), unbounded.embed, options);
-    assert.deepEqual(unbounded.batches.map(batch => batch.length), [65, 32, 17]);
+    assert.deepEqual(unbounded.batches.map(batch => batch.length), [65, 17]);
     for (const cap of [3, 32]) {
         const bounded = recordingEmbedder(() => [1]);
         const chunks = await chunkText(texts.join(' '), bounded.embed, { ...options, maxEmbeddingBatchSize: cap });
@@ -470,24 +489,4 @@ test('the provider limit applies to initial, intermediate and final vectors with
         assert.deepEqual(bounded.batches.flat(), unbounded.batches.flat());
         assert.ok(bounded.batches.every(batch => batch.length >= 2 && batch.length <= cap));
     }
-});
-
-test('known final vectors share spare scoring capacity using their exact output prefix', async () => {
-    const short = ['One.', 'Two.'];
-    const isolated = ['Long isolated first.', 'Long isolated second.', 'Long isolated third.'];
-    const all = [...short, ...isolated];
-    const prefixed = all.map(text => 'Doc: ' + text);
-    const vector = text => text === 'Two.' ? [0, 1] : [text.length, 0];
-    const options = { maxChunkSize: 9, maxEmbeddingBatchSize: 3, chunkPrefix: 'Doc', excludeChunkPrefixInResults: true };
-    const { embed, batches } = recordingEmbedder(vector);
-    const chunks = await chunkText(all.join(' '), embed, options);
-    assert.deepEqual(chunks, all.map((text, i) => ({ text, embedding: vector(prefixed[i]) })));
-    assert.deepEqual(batches, [[...short, prefixed[2]], prefixed.slice(0, 2), prefixed.slice(3)]);
-
-    const full = recordingEmbedder(vector);
-    await chunkText(all.join(' '), full.embed, { ...options, maxEmbeddingBatchSize: 2 });
-    assert.deepEqual(full.batches[0], short);
-    const textOnly = recordingEmbedder(vector);
-    await chunkText(all.join(' '), textOnly.embed, { ...options, returnEmbedding: false });
-    assert.deepEqual(textOnly.batches, [short]);
 });

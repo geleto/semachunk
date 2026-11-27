@@ -6,29 +6,27 @@ import { get_encoding } from 'tiktoken';
 const countTokens = s => s.includes('🌍') ? 100 : s.length;
 const options = { countTokens, maxChunkTokens: 20, chunkPrefix: 'P', excludeChunkPrefixInResults: true };
 const sentences = ['One.', 'Two.', 'Three.', 'Four.'];
-const plain = { scoring: sentences, bodies: ['One. Two.', '🌍', '!', 'Three. Four.'], prefetch: 'P: !' };
+const plain = { scoring: sentences, bodies: ['One. Two.', '🌍', '!', 'Three. Four.'] };
 const formats = [
     { inputFormat: 'text', source: 'One. Two.\n\n🌍!\n\nThree. Four.', ...plain },
     { inputFormat: 'html', source: '<p>One. Two.</p><p>🌍!</p><p>Three. Four.</p>', ...plain },
-    { inputFormat: 'markdown', source: 'One.\n\nTwo.\n\n🌍!\n\nThree.\n\nFour.', scoring: ['One.', 'Two.', '!', 'Three.', 'Four.'],
-        bodies: ['One.\n\nTwo.', '🌍', '!\n\nThree.\n\nFour.'] },
+    { inputFormat: 'markdown', source: 'One.\n\nTwo.\n\n🌍!\n\nThree.\n\nFour.', scoring: sentences,
+        bodies: ['One.\n\nTwo.', '🌍', '!', 'Three.\n\nFour.'] },
     { inputFormat: 'json', source: '["One.","Two.","🌍!","Three.","Four."]', scoring: [],
         bodies: ['"One."', '"Two."', '"', '🌍', '!"', '"Three."', '"Four."'] }
 ];
 
-test('mixed overflow sends exactly the eligible scoring, prefetch and final indexing inputs', async () => {
-    for (const { inputFormat, source, scoring, bodies, prefetch } of formats) {
+test('mixed overflow sends exactly the eligible boundary and final indexing inputs', async () => {
+    for (const { inputFormat, source, scoring, bodies } of formats) {
         for (const maxCachedEmbeddings of [0, 2, Infinity]) for (const returnEmbedding of [false, true]) {
             const called = [];
             const rows = await chunkText(source, inputs => {
                 called.push([...inputs]);
                 return inputs.map(() => [1]);
-            }, { ...options, inputFormat, chunkingStrategy: inputFormat === 'json' ? 'blocks' : 'semantic',
+            }, { ...options, inputFormat, chunkingStrategy: inputFormat === 'json' ? 'blocks' : 'semantic-blocks',
                 combineChunksSimilarityThreshold: 0.5, returnEmbedding, maxCachedEmbeddings });
-            const early = returnEmbedding && maxCachedEmbeddings === Infinity && prefetch;
-            const scoreBatch = early ? [...scoring, early] : scoring;
-            const finalBatch = returnEmbedding ? bodies.filter(s => s !== '🌍').map(s => 'P: ' + s).filter(s => s !== early) : [];
-            assert.deepEqual(called, [scoreBatch, finalBatch].filter(batch => batch.length));
+            const finalBatch = returnEmbedding ? bodies.filter(s => s !== '🌍').map(s => 'P: ' + s) : [];
+            assert.deepEqual(called, [scoring, finalBatch].filter(batch => batch.length));
             assert.deepEqual(rows.map(c => c.text), bodies);
             assert.deepEqual(rows.filter(c => c.tokenLimitExceeded).map(c => c.text), ['🌍']);
             assert.ok(rows.every(c => !!c.embedding === (returnEmbedding && !c.tokenLimitExceeded)));
@@ -99,7 +97,7 @@ test('a space can make a stranded emoji fit a real model token', async () => {
         assert.ok(rows.some(c => c.text === ' 😀'));
         assert.equal(rows.map(c => c.text).join(''), source);
         for (const [inputFormat, text] of [['text', 'Wednesday 😀'], ['html', '<p>Wednesday 😀</p>']]) {
-            for (const chunkingStrategy of ['pack', 'blocks', 'semantic']) {
+            for (const chunkingStrategy of ['pack', 'blocks', 'semantic-blocks']) {
                 const calls = [];
                 const pieces = await chunkText(text, inputs => { calls.push(...inputs); return inputs.map(() => [1]); },
                     { ...opts, inputFormat, chunkingStrategy });

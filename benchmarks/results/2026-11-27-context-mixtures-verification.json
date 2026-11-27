@@ -1,0 +1,24 @@
+{
+  "checks": {
+    "scored_questions": 3720,
+    "layouts_times_documents": 1881
+  },
+  "fixedControls": {
+    "blocks256": 1138,
+    "head256": 1138,
+    "blocksInf": 1138,
+    "tree40": 1138,
+    "sentence40": 1138
+  },
+  "changedControls": {},
+  "mixtureChecks": 1152,
+  "worstAbsoluteCosineError": 1.7881393432617188e-07,
+  "changedNeighborSelections": {
+    "sentence/drop": 28938,
+    "sentence/trim": 28938,
+    "sentence/linked": 26333,
+    "chunk/drop": 30456,
+    "chunk/trim": 30456,
+    "chunk/linked": 27868
+  }
+}

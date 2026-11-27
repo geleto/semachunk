@@ -1,0 +1,957 @@
+{
+  "method": "One qualitative reader (the assistant). Passages were presented with shuffled letter labels and without method names or scores. The reader saw the question and accepted citations. The comparison included each distinct first hit and the shortest indexed passage containing an accepted citation, or the highest-coverage passage when no single passage qualified. Selection used six outcome/length strata and distinct sources within domain. The first document was selected by a salted question-ID hash, preferring new agencies for government. This diagnostic selection does not estimate population preferences.",
+  "cases": [
+    {
+      "id": "ee7e9a948ee6888aa5830b1a3d0d148ff656d864",
+      "domain": "papers",
+      "stratum": "larger complete",
+      "question": "What is the size of the Airbnb?",
+      "source": "1806.11432",
+      "firstHits": {
+        "blocks": {
+          "candidate": "A",
+          "tokens": 201,
+          "completeCitation": true
+        },
+        "semantic512": {
+          "candidate": "A",
+          "tokens": 201,
+          "completeCitation": true
+        },
+        "semanticUnlimited": {
+          "candidate": "B",
+          "tokens": 1194,
+          "completeCitation": true
+        }
+      },
+      "evidenceAlternative": "A",
+      "candidates": {
+        "A": {
+          "source": "1806.11432",
+          "textSHA256": "b5c61a4482923a8e2d5aa5e5b7956381a3a9850e5e757b790a8afdeb8f934c61",
+          "judgment": "The data subsection gives the count, geography and dates. Occupancy is secondary."
+        },
+        "B": {
+          "source": "1806.11432",
+          "textSHA256": "8df50a1931cebdbe9ee1cc922c027253870f68426d8137698741e10167d82eb6",
+          "judgment": "The answer appears after a long GAN introduction, market history and training discussion."
+        }
+      },
+      "preferredAmongRead": "A",
+      "ideal": "Keep the count of roughly 40,000 listings with Manhattan and the observation year."
+    },
+    {
+      "id": "f4496316ddd35ee2f0ccc6475d73a66abf87b611",
+      "domain": "papers",
+      "stratum": "short complete",
+      "question": "What is the benchmark dataset?",
+      "source": "1702.03342",
+      "firstHits": {
+        "blocks": {
+          "candidate": "B",
+          "tokens": 209,
+          "completeCitation": false
+        },
+        "semantic512": {
+          "candidate": "A",
+          "tokens": 50,
+          "completeCitation": true
+        },
+        "semanticUnlimited": {
+          "candidate": "A",
+          "tokens": 50,
+          "completeCitation": true
+        }
+      },
+      "evidenceAlternative": "A",
+      "candidates": {
+        "A": {
+          "source": "1702.03342",
+          "textSHA256": "80d6d7d193a064530d25983e566dd762107d5b563f7f560f3db9a39ae9f9945a",
+          "judgment": "Names the CoNLL-derived benchmark and identifies the entity-relatedness task."
+        },
+        "B": {
+          "source": "1702.03342",
+          "textSHA256": "25915e025780709d4ba57f619917bb1f7d9f69416fe3b18d3318fc3c0facdeb2",
+          "judgment": "Describes the paper's 20 Newsgroups classification benchmark. It answers another plausible interpretation."
+        }
+      },
+      "preferredAmongRead": "A",
+      "ideal": "Name both task and benchmark. The bare question has more than one plausible referent in this paper."
+    },
+    {
+      "id": "ed2eb4e54b641b7670ab5a7060c7b16c628699ab",
+      "domain": "papers",
+      "stratum": "blocks win",
+      "question": "Which of the three pretraining tasks is the most helpful?",
+      "source": "2004.01853",
+      "firstHits": {
+        "blocks": {
+          "candidate": "B",
+          "tokens": 182,
+          "completeCitation": true
+        },
+        "semantic512": {
+          "candidate": "B",
+          "tokens": 182,
+          "completeCitation": true
+        },
+        "semanticUnlimited": {
+          "candidate": "A",
+          "tokens": 26,
+          "completeCitation": false
+        }
+      },
+      "evidenceAlternative": "B",
+      "candidates": {
+        "A": {
+          "source": "2004.01853",
+          "textSHA256": "0a93425e24f481d3adbba1a6764d4592f810d6993168e67a546484d882992f86",
+          "judgment": "Mentions fine-tuning after three tasks but never identifies the best one."
+        },
+        "B": {
+          "source": "2004.01853",
+          "textSHA256": "a53fe564a0b3377cdc3608f40aff879f8097072fdb3ba0380156a642d4ddd205",
+          "judgment": "Gives the sentence-reordering result and the important qualification about combined tasks and training data."
+        }
+      },
+      "preferredAmongRead": "B",
+      "ideal": "Keep the winning task, its comparison and the data-dependent qualification."
+    },
+    {
+      "id": "b91671715ad4fad56c67c28ce6f29e180fe08595",
+      "domain": "papers",
+      "stratum": "semantic win",
+      "question": "What other tasks do they test their method on?",
+      "source": "1605.03481",
+      "firstHits": {
+        "blocks": {
+          "candidate": "B",
+          "tokens": 193,
+          "completeCitation": false
+        },
+        "semantic512": {
+          "candidate": "A",
+          "tokens": 70,
+          "completeCitation": true
+        },
+        "semanticUnlimited": {
+          "candidate": "A",
+          "tokens": 70,
+          "completeCitation": true
+        }
+      },
+      "evidenceAlternative": "A",
+      "candidates": {
+        "A": {
+          "source": "1605.03481",
+          "textSHA256": "41ef89b5a43032d3fb66bfbbfcac15ae96505b8592395e49df30146fde23f10a",
+          "judgment": "Names held-out hashtag prediction and explains how the model variants were evaluated."
+        },
+        "B": {
+          "source": "1605.03481",
+          "textSHA256": "443e35bbac59a01d4061f9feaf0551d8a09be4c08da32d8ccef8b7acfd8be05f",
+          "judgment": "Explains the character model and why Twitter is difficult, without identifying the requested evaluation."
+        }
+      },
+      "preferredAmongRead": "A",
+      "ideal": "Keep the task name, input and what was predicted. The metric sentence is useful but optional."
+    },
+    {
+      "id": "29c014baf99fb9f40b5171aab3e2c7f12a748f79",
+      "domain": "papers",
+      "stratum": "no complete",
+      "question": "what algorithms did they use?",
+      "source": "1908.04042",
+      "firstHits": {
+        "blocks": {
+          "candidate": "D",
+          "tokens": 195,
+          "completeCitation": false
+        },
+        "semantic512": {
+          "candidate": "C",
+          "tokens": 213,
+          "completeCitation": false
+        },
+        "semanticUnlimited": {
+          "candidate": "A",
+          "tokens": 21,
+          "completeCitation": false
+        }
+      },
+      "evidenceAlternative": "B",
+      "candidates": {
+        "A": {
+          "source": "1908.04042",
+          "textSHA256": "3fe4d6c17517c0cbb6524310384553460eeeed3c647ebc98978511d962bc1a9c",
+          "judgment": "Describes only three popularity variants and has unresolved formula names."
+        },
+        "B": {
+          "source": "1908.04042",
+          "textSHA256": "7ec7a232cf27c2863c89151154eccbd978d69849e669097596f5833ad949de9d",
+          "judgment": "Summarizes the 19 algorithms and three families. The metric discussion can be shortened."
+        },
+        "C": {
+          "source": "1908.04042",
+          "textSHA256": "88842ca180c5a567037cb8a5383dbf7642e8deaee56ed2c22f90d9adae2f4e45",
+          "judgment": "Describes only the hybrid family and leaves formula placeholders."
+        },
+        "D": {
+          "source": "1908.04042",
+          "textSHA256": "8ec077e2cd7626f275bb4a3564d0c6675a70dce95b4238f2861277654ca14ec6",
+          "judgment": "Presents hybrid-method results rather than the algorithm inventory."
+        }
+      },
+      "preferredAmongRead": "B",
+      "ideal": "Keep the inventory and its three families. Include hybrids in detail only if the reader asks which ones."
+    },
+    {
+      "id": "f225a9f923e4cdd836dd8fe097848da06ec3e0cc",
+      "domain": "papers",
+      "stratum": "ordinary co-win",
+      "question": "On what datasets are experiments performed?",
+      "source": "1910.06036",
+      "firstHits": {
+        "blocks": {
+          "candidate": "B",
+          "tokens": 182,
+          "completeCitation": true
+        },
+        "semantic512": {
+          "candidate": "A",
+          "tokens": 172,
+          "completeCitation": true
+        },
+        "semanticUnlimited": {
+          "candidate": "A",
+          "tokens": 172,
+          "completeCitation": true
+        }
+      },
+      "evidenceAlternative": "C",
+      "candidates": {
+        "A": {
+          "source": "1910.06036",
+          "textSHA256": "db92bdebb1edd2cabcab256803c3f9cbf041710d5e27384cc64e7afec64fab0f",
+          "judgment": "Direct experimental assertion, including dataset, scope and splits. The last preprocessing details are optional."
+        },
+        "B": {
+          "source": "1910.06036",
+          "textSHA256": "606a108d4d305abacc04942302e488e7b1d42e574eb10606753a708c978e16f1",
+          "judgment": "The same usable answer, with one extra table pointer."
+        },
+        "C": {
+          "source": "1910.06036",
+          "textSHA256": "092695871f7d82a5f97256e197e38fa31969033d1fba08cc39370f656331653f",
+          "judgment": "Gives SQuAD as an example of reading-comprehension material. This is weaker evidence of the actual experiments."
+        }
+      },
+      "preferredAmongRead": "A",
+      "ideal": "Use the explicit experimental statement. A citation in the introduction can still be less useful than a methods passage."
+    },
+    {
+      "id": "vue-4",
+      "domain": "faq",
+      "stratum": "larger complete",
+      "question": "My app must run in Internet Explorer 11. How does that affect the choice between Vue 2 and Vue 3?",
+      "source": "vue",
+      "firstHits": {
+        "blocks": {
+          "candidate": "B",
+          "tokens": 252,
+          "completeCitation": true
+        },
+        "semantic512": {
+          "candidate": "C",
+          "tokens": 494,
+          "completeCitation": true
+        },
+        "semanticUnlimited": {
+          "candidate": "A",
+          "tokens": 1576,
+          "completeCitation": true
+        }
+      },
+      "evidenceAlternative": "B",
+      "candidates": {
+        "A": {
+          "source": "vue",
+          "textSHA256": "13ad8c584232aa5955007244601e40ec084a69d088dfcbdcd829c349ba6c954f",
+          "judgment": "Contains a direct browser-compatibility answer, surrounded by governance, licensing and performance FAQs."
+        },
+        "B": {
+          "source": "vue",
+          "textSHA256": "1cc8c1b4498bb19a367cdd9e55fc0339e3b086983f83b5f9ffd03069b3578d65",
+          "judgment": "Contains the IE11 condition and version choice. Most of the general API comparison is optional."
+        },
+        "C": {
+          "source": "vue",
+          "textSHA256": "5ceb97425734fb837291669357a0e7ae14c8c98afd8a59cc0304eca359710b91",
+          "judgment": "Also answers, with project history and other version details."
+        }
+      },
+      "preferredAmongRead": "B",
+      "ideal": "Use the browser compatibility subsection or the IE11 bullet with its Vue 2 context."
+    },
+    {
+      "id": "ruff-111",
+      "domain": "faq",
+      "stratum": "short complete",
+      "question": "How do I see the effective Ruff settings for one specific Python file?",
+      "source": "ruff",
+      "firstHits": {
+        "blocks": {
+          "candidate": "A",
+          "tokens": 96,
+          "completeCitation": true
+        },
+        "semantic512": {
+          "candidate": "C",
+          "tokens": 96,
+          "completeCitation": false
+        },
+        "semanticUnlimited": {
+          "candidate": "B",
+          "tokens": 40,
+          "completeCitation": true
+        }
+      },
+      "evidenceAlternative": "B",
+      "candidates": {
+        "A": {
+          "source": "ruff",
+          "textSHA256": "0fc6562506c944e31cec961621d831d082fda8d0c863fb0d5b25004ee2e707c6",
+          "judgment": "Contains the exact command, preceded by an independent preview-mode FAQ."
+        },
+        "B": {
+          "source": "ruff",
+          "textSHA256": "9c445c79ad1f2a9886a0f0fa5411b25dd0cb3aa2e6263fb925c9c89758c19404",
+          "judgment": "One heading and one executable command identify the file argument and settings flag."
+        },
+        "C": {
+          "source": "ruff",
+          "textSHA256": "f78c2d6a87e8c5c22878dd57a40eeae8fb9c65addf426a8d3a940184b249cc34",
+          "judgment": "Answers which Python versions Ruff supports."
+        }
+      },
+      "preferredAmongRead": "B",
+      "ideal": "The question heading plus the single command is sufficient."
+    },
+    {
+      "id": "pandoc-51",
+      "domain": "faq",
+      "stratum": "blocks win",
+      "question": "What is the ConTeXt command in the Pandoc FAQ for generating an archival PDF?",
+      "source": "pandoc",
+      "firstHits": {
+        "blocks": {
+          "candidate": "C",
+          "tokens": 224,
+          "completeCitation": true
+        },
+        "semantic512": {
+          "candidate": "B",
+          "tokens": 347,
+          "completeCitation": true
+        },
+        "semanticUnlimited": {
+          "candidate": "A",
+          "tokens": 596,
+          "completeCitation": false
+        }
+      },
+      "evidenceAlternative": "C",
+      "candidates": {
+        "A": {
+          "source": "pandoc",
+          "textSHA256": "8bc73953f621ec3520ccc1145acd5f171af4dbdb8be1d236288b2ee550671c86",
+          "judgment": "Discusses several other Pandoc questions, including converting from PDF."
+        },
+        "B": {
+          "source": "pandoc",
+          "textSHA256": "db7d263140ef2ac5fc4bdb0df756131d3e779e2629732aebece6d287c15b1fb7",
+          "judgment": "Provides the command after an unrelated BibTeX answer, then gives other engines."
+        },
+        "C": {
+          "source": "pandoc",
+          "textSHA256": "217ddaecdb408842f3095663dee26413c427d0a59be1d539851c981bf5766d65",
+          "judgment": "Starts at the right PDF/A heading and gives the exact command. The two other engines are optional here."
+        }
+      },
+      "preferredAmongRead": "C",
+      "ideal": "Keep the PDF/A heading and the ConTeXt invocation together."
+    },
+    {
+      "id": "poetry-13",
+      "domain": "faq",
+      "stratum": "semantic win",
+      "question": "What risks do I take by setting or omitting a maximum dependency version for a Poetry library?",
+      "source": "poetry",
+      "firstHits": {
+        "blocks": {
+          "candidate": "D",
+          "tokens": 167,
+          "completeCitation": false
+        },
+        "semantic512": {
+          "candidate": "C",
+          "tokens": 465,
+          "completeCitation": false
+        },
+        "semanticUnlimited": {
+          "candidate": "A",
+          "tokens": 579,
+          "completeCitation": true
+        }
+      },
+      "evidenceAlternative": "B",
+      "candidates": {
+        "A": {
+          "source": "poetry",
+          "textSHA256": "e5fa3bc1488fbb7ecf7f3abca485bd1bcb6766740b44747056f0f52f86d3ae33",
+          "judgment": "Contains both risks and the library-specific advice about unnecessary conflicts, after unrelated Poetry release-policy material."
+        },
+        "B": {
+          "source": "poetry",
+          "textSHA256": "ad3d75904d330c7bae850059032368d66d70ea8a7ec9c01972be7caad6e85993",
+          "judgment": "Explains both risks clearly, but stops before the specific library recommendation."
+        },
+        "C": {
+          "source": "poetry",
+          "textSHA256": "13b691407a0233b83d7f6f87e052ae0558865dbcfe60d18e4aca693ed393a7d2",
+          "judgment": "Explains incompatible supported Python versions and resolver behavior."
+        },
+        "D": {
+          "source": "poetry",
+          "textSHA256": "e9b621c81dddaa95801cbf9629e880a31eb610914af012f950df564d7f11d750",
+          "judgment": "Gives a Python-version locking workaround rather than the maintenance tradeoff."
+        }
+      },
+      "preferredAmongRead": "A",
+      "ideal": "Keep the unbounded-constraints FAQ through the library recommendation. The material before that FAQ can go."
+    },
+    {
+      "id": "cargo-1",
+      "domain": "faq",
+      "stratum": "no complete",
+      "question": "Which registry does Cargo use, and can a crate still depend directly on a Git repository?",
+      "source": "cargo",
+      "firstHits": {
+        "blocks": {
+          "candidate": "A",
+          "tokens": 138,
+          "completeCitation": false
+        },
+        "semantic512": {
+          "candidate": "A",
+          "tokens": 138,
+          "completeCitation": false
+        },
+        "semanticUnlimited": {
+          "candidate": "A",
+          "tokens": 138,
+          "completeCitation": false
+        }
+      },
+      "evidenceAlternative": "B",
+      "candidates": {
+        "A": {
+          "source": "cargo",
+          "textSHA256": "9efeced68a82bad3b80c0fc37ba5460e82b63a27c767622f4417f9c735de9e19",
+          "judgment": "Substantively answers both parts with crates.io and support for GitHub downloads, although less directly."
+        },
+        "B": {
+          "source": "cargo",
+          "textSHA256": "336e309ca8942fdff6bbccc8863a8278aa3fcb787d97145c8d2646a6708c4bb9",
+          "judgment": "Explicitly names crates.io and commits to Git repositories as a supported source."
+        }
+      },
+      "preferredAmongRead": "B",
+      "ideal": "Keep both halves of the answer. The neighboring FAQ is also a defensible citation."
+    },
+    {
+      "id": "docker-15",
+      "domain": "faq",
+      "stratum": "ordinary co-win",
+      "question": "How do I isolate two deployments of the same Docker Compose project on one machine?",
+      "source": "docker",
+      "firstHits": {
+        "blocks": {
+          "candidate": "A",
+          "tokens": 171,
+          "completeCitation": true
+        },
+        "semantic512": {
+          "candidate": "B",
+          "tokens": 352,
+          "completeCitation": true
+        },
+        "semanticUnlimited": {
+          "candidate": "B",
+          "tokens": 352,
+          "completeCitation": true
+        }
+      },
+      "evidenceAlternative": "A",
+      "candidates": {
+        "A": {
+          "source": "docker",
+          "textSHA256": "0c9a1e76a43c3bf1c8f45f62c58c2b45c122b1911a38b7d11c980490f5742bab",
+          "judgment": "Gives the project-name mechanism, flag and environment variable, then adds an unrelated JSON example."
+        },
+        "B": {
+          "source": "docker",
+          "textSHA256": "e36fb7abad58ab6191794778075c1a2c5121f93914229e30f16fcc475320cf04",
+          "judgment": "Adds the same JSON example and a separate discussion of image copies and volumes."
+        }
+      },
+      "preferredAmongRead": "A",
+      "ideal": "Stop after the project-name instructions. Both candidate passages include an extra FAQ."
+    },
+    {
+      "id": "0c98b8234370373a9ab0b7a4535bf4a1",
+      "domain": "government",
+      "stratum": "larger complete",
+      "question": "I wanted to know if only I can see the information on my mySocial Security account. I'm very concerned about my privacy.",
+      "source": "my Social Security | Create an Account | Social Security Administratio#1_0",
+      "firstHits": {
+        "blocks": {
+          "candidate": "B",
+          "tokens": 119,
+          "completeCitation": true
+        },
+        "semantic512": {
+          "candidate": "A",
+          "tokens": 386,
+          "completeCitation": true
+        },
+        "semanticUnlimited": {
+          "candidate": "A",
+          "tokens": 386,
+          "completeCitation": true
+        }
+      },
+      "evidenceAlternative": "B",
+      "candidates": {
+        "A": {
+          "source": "my Social Security | Create an Account | Social Security Administratio#2_0",
+          "textSHA256": "5d742aabbbc0be31252af1657017cf2a5b8aa4a2f4b9c89c0b97622b2514d3c0",
+          "judgment": "Answers the question after account creation and lengthy credit-freeze instructions."
+        },
+        "B": {
+          "source": "my Social Security | Create an Account | Social Security Administratio#1_0",
+          "textSHA256": "db9417bc96e32c30aac2f76f9ae4d213dc62d3029be9dc78b6c30c131eee6307",
+          "judgment": "The exclusive-use heading, prohibition on authorized third parties and security context form a self-contained answer."
+        }
+      },
+      "preferredAmongRead": "B",
+      "ideal": "Keep the ownership rule and written-permission qualification together."
+    },
+    {
+      "id": "b5e61c3593901c5aed1c117e4de1e157",
+      "domain": "government",
+      "stratum": "short complete",
+      "question": "how the Veterans Pension Eligibility is carried out",
+      "source": "Eligibility For Veterans Pension | Veterans Affairs#1_0",
+      "firstHits": {
+        "blocks": {
+          "candidate": "A",
+          "tokens": 46,
+          "completeCitation": true
+        },
+        "semantic512": {
+          "candidate": "A",
+          "tokens": 46,
+          "completeCitation": true
+        },
+        "semanticUnlimited": {
+          "candidate": "A",
+          "tokens": 46,
+          "completeCitation": true
+        }
+      },
+      "evidenceAlternative": "A",
+      "candidates": {
+        "A": {
+          "source": "Eligibility For Veterans Pension | Veterans Affairs#1_0",
+          "textSHA256": "d6fdd45dc31403ae255650f5aff8769a1ef82f60857dc21b26f09444229b8404",
+          "judgment": "Matches the published citation with a useful overview, but gives no thresholds or concrete service and age/disability criteria."
+        }
+      },
+      "preferredAmongRead": "none",
+      "ideal": "For someone trying to work out eligibility, include the following eligibility section with its conditions and alternatives."
+    },
+    {
+      "id": "032ec9574501c5213a995bb17ba91c20",
+      "domain": "government",
+      "stratum": "blocks win",
+      "question": "What does it mean to make a student loan payment?",
+      "source": "Make a Student Loan Payment | Federal Student Aid#1_0",
+      "firstHits": {
+        "blocks": {
+          "candidate": "A",
+          "tokens": 220,
+          "completeCitation": true
+        },
+        "semantic512": {
+          "candidate": "B",
+          "tokens": 205,
+          "completeCitation": false
+        },
+        "semanticUnlimited": {
+          "candidate": "B",
+          "tokens": 205,
+          "completeCitation": false
+        }
+      },
+      "evidenceAlternative": "A",
+      "candidates": {
+        "A": {
+          "source": "Make a Student Loan Payment | Federal Student Aid#1_0",
+          "textSHA256": "712a88df2b3c60c85388c1eeb5791346901af437ff518b0419f32338b6bdd671",
+          "judgment": "Answers how to make a payment via the servicer. The named-servicer and autopay details are longer than the opening request."
+        },
+        "B": {
+          "source": "Loans | Federal Student Aid#1_0",
+          "textSHA256": "2522a47589cd110a5f78cc209d946fd3fdee526242bc502634e987298687405a",
+          "judgment": "Explains what paying on time means under the repayment plan. This is defensible if the user meant the obligation."
+        }
+      },
+      "preferredAmongRead": "conditional",
+      "ideal": "The query is ambiguous between payment procedure and repayment obligation. Identify the intended meaning before treating one page as uniquely correct."
+    },
+    {
+      "id": "62d721f3440bdf296ea704421b953a0a",
+      "domain": "government",
+      "stratum": "semantic win",
+      "question": "My plates have been stolen. Can you please tell me what steps to take? I'm very concerned and don't know what to do.",
+      "source": "Lost, stolen, or destroyed plates#3_0",
+      "firstHits": {
+        "blocks": {
+          "candidate": "C",
+          "tokens": 7,
+          "completeCitation": false
+        },
+        "semantic512": {
+          "candidate": "A",
+          "tokens": 299,
+          "completeCitation": true
+        },
+        "semanticUnlimited": {
+          "candidate": "A",
+          "tokens": 299,
+          "completeCitation": true
+        }
+      },
+      "evidenceAlternative": "B",
+      "candidates": {
+        "A": {
+          "source": "Lost, stolen, or destroyed plates#3_0",
+          "textSHA256": "a5816f8fc9a204e2a7b8db4efb6b1a8f86b708b218ffb6907a5b19cf2bada90e",
+          "judgment": "Explains both the all-plates and one-of-two-plates cases, police documentation and surrender. The exception is important here."
+        },
+        "B": {
+          "source": "Lost, stolen, or destroyed plates#3_0",
+          "textSHA256": "9655df0923e4e532d8281f6a5d4e4d7f2a73bc6c61fcf65dbfc34f72ce265f48",
+          "judgment": "Useful for the all-plates scenario but stops before the one-of-two-plates exception."
+        },
+        "C": {
+          "source": "Lost, stolen, or destroyed plates#3_0",
+          "textSHA256": "2fd2ec3f60ccf003da4a142ecd884e0641cd3c3e7aee4e92f910989ee94a4625",
+          "judgment": "Repeats the subject in a heading and gives no action."
+        }
+      },
+      "preferredAmongRead": "A",
+      "ideal": "Keep both branches until the reader states how many plates were stolen."
+    },
+    {
+      "id": "2036afc9513baa2e07fba8c3c4b8e425",
+      "domain": "government",
+      "stratum": "no complete",
+      "question": "How can I correct my FAFSA application?",
+      "source": "How to Review and Correct Your FAFSA® Application | Federal Student Aid#1_0",
+      "firstHits": {
+        "blocks": {
+          "candidate": "A",
+          "tokens": 191,
+          "completeCitation": false
+        },
+        "semantic512": {
+          "candidate": "C",
+          "tokens": 312,
+          "completeCitation": false
+        },
+        "semanticUnlimited": {
+          "candidate": "C",
+          "tokens": 312,
+          "completeCitation": false
+        }
+      },
+      "evidenceAlternative": "B",
+      "candidates": {
+        "A": {
+          "source": "How to Review and Correct Your FAFSA® Application | Federal Student Aid#1_0",
+          "textSHA256": "c3f1c3d1b50cfa491b240fedb69958e2a93b8630ea901dce84137619cef3a04c",
+          "judgment": "Answers when and how correction works and who can sign in. The subsequent aid-acceptance material is unrelated."
+        },
+        "B": {
+          "source": "How to Review and Correct Your FAFSA® Application | Federal Student Aid#1_0",
+          "textSHA256": "d8dfd030cd690c4c53d1d7a336fc8a6bdf2c752fb3104930634c19ae0da4fb52",
+          "judgment": "The cited introductory passage promises next steps but gives no correction procedure."
+        },
+        "C": {
+          "source": "How to Review and Correct Your FAFSA® Application | Federal Student Aid#1_0",
+          "textSHA256": "0d9ce6e6281783d50a68075c363d0af54ac7d82a372325617f1d26c9e18a18d6",
+          "judgment": "Contains the procedure plus unrelated award acceptance and disbursement instructions."
+        }
+      },
+      "preferredAmongRead": "A",
+      "ideal": "Keep the correction subsection through the sign-in requirement. The published reference should point there."
+    },
+    {
+      "id": "e96c4558ac2013c8f787498f67652362",
+      "domain": "government",
+      "stratum": "ordinary co-win",
+      "question": "Is there any option for a borrower to be eligible for debt forgiveness of a federal student loan if the school in question misled the borrower or were engaged in misconduct unbecoming of the school?",
+      "source": "Borrower Defense to Repayment | Federal Student Aid#1_0",
+      "firstHits": {
+        "blocks": {
+          "candidate": "A",
+          "tokens": 65,
+          "completeCitation": true
+        },
+        "semantic512": {
+          "candidate": "A",
+          "tokens": 65,
+          "completeCitation": true
+        },
+        "semanticUnlimited": {
+          "candidate": "A",
+          "tokens": 65,
+          "completeCitation": true
+        }
+      },
+      "evidenceAlternative": "A",
+      "candidates": {
+        "A": {
+          "source": "Borrower Defense to Repayment | Federal Student Aid#1_0",
+          "textSHA256": "0796cf20df5dd4e479d4fee8538f0aff5a34d369942c46f503d3f476756f27ac",
+          "judgment": "Gives both the qualifying circumstance and the name of the relief. The final navigation sentence is dispensable."
+        }
+      },
+      "preferredAmongRead": "A",
+      "ideal": "Keep the condition and the term borrower defense together."
+    },
+    {
+      "id": "financebench_id_01091",
+      "domain": "finance",
+      "stratum": "larger complete",
+      "question": "Has Boeing reported any materially important ongoing legal battles from FY2022?",
+      "source": "BOEING_2022_10K",
+      "firstHits": {
+        "blocks": {
+          "candidate": "B",
+          "tokens": 223,
+          "completeCitation": true
+        },
+        "semantic512": {
+          "candidate": "A",
+          "tokens": 489,
+          "completeCitation": true
+        },
+        "semanticUnlimited": {
+          "candidate": "A",
+          "tokens": 489,
+          "completeCitation": true
+        }
+      },
+      "evidenceAlternative": "B",
+      "candidates": {
+        "A": {
+          "source": "BOEING_2022_10K",
+          "textSHA256": "ecc5305d1a8b6fe367b3dbd83df248dbca0a3fa7035d70fa3f080750bc1a0e7f",
+          "judgment": "Names the crash litigation and a separate arbitration. Its extra dispute may be relevant if the user wants a broader inventory."
+        },
+        "B": {
+          "source": "BOEING_2022_10K",
+          "textSHA256": "faf2eae95be32744eb8e94e6a4ef30bf908070ad7b11b98b0e33cf42f9eb583e",
+          "judgment": "Answers the yes/no question with the crashes, proceedings, settlements and status of remaining cases."
+        }
+      },
+      "preferredAmongRead": "B",
+      "ideal": "For the short question use the specific case and its status. A request for all disputes would justify the additional arbitration."
+    },
+    {
+      "id": "financebench_id_01490",
+      "domain": "finance",
+      "stratum": "blocks win",
+      "question": "What is the amount of the gain accruing to JnJ as a result of the separation of its Consumer Health business segment, as of August 30, 2023?",
+      "source": "JOHNSON_JOHNSON_2023_8K_dated-2023-08-30",
+      "firstHits": {
+        "blocks": {
+          "candidate": "B",
+          "tokens": 100,
+          "completeCitation": true
+        },
+        "semantic512": {
+          "candidate": "C",
+          "tokens": 195,
+          "completeCitation": false
+        },
+        "semanticUnlimited": {
+          "candidate": "A",
+          "tokens": 1916,
+          "completeCitation": true
+        }
+      },
+      "evidenceAlternative": "B",
+      "candidates": {
+        "A": {
+          "source": "JOHNSON_JOHNSON_2023_8K_dated-2023-08-30",
+          "textSHA256": "ff90699549ed32dca32cb4f8c6b63437e385df03fba7236620ab4a7766ac6461",
+          "judgment": "Contains the figure in a much longer release, alongside other figures such as cash proceeds that could be mistaken for the gain."
+        },
+        "B": {
+          "source": "JOHNSON_JOHNSON_2023_8K_dated-2023-08-30",
+          "textSHA256": "146e50acf664b116ae0eed952ab078714721116da7653512717f0b347a64c7b2",
+          "judgment": "Clearly identifies the separation, the approximate $20 billion gain and the quarter."
+        },
+        "C": {
+          "source": "JOHNSON_JOHNSON_2023_8K_dated-2023-08-30",
+          "textSHA256": "cbcd37740fa855ef22451644f7074dc216174d530c0dc88c30f70c826153348f",
+          "judgment": "A financial guidance table and disclaimer do not give the separation gain."
+        }
+      },
+      "preferredAmongRead": "B",
+      "ideal": "Keep the transaction and accounting gain together. Distinguish the gain from cash proceeds."
+    },
+    {
+      "id": "financebench_id_01198",
+      "domain": "finance",
+      "stratum": "semantic win",
+      "question": "What drove revenue change as of the FY22 for AMD?",
+      "source": "AMD_2022_10K",
+      "firstHits": {
+        "blocks": {
+          "candidate": "A",
+          "tokens": 243,
+          "completeCitation": false
+        },
+        "semantic512": {
+          "candidate": "A",
+          "tokens": 243,
+          "completeCitation": false
+        },
+        "semanticUnlimited": {
+          "candidate": "C",
+          "tokens": 1075,
+          "completeCitation": true
+        }
+      },
+      "evidenceAlternative": "B",
+      "candidates": {
+        "A": {
+          "source": "AMD_2022_10K",
+          "textSHA256": "1f9a93779b2b798a59df3b57b7bde8043b474af4ea998c7e7a37c152d46157f8",
+          "judgment": "Names acquisitions and describes strategy, but does not give the set of revenue drivers."
+        },
+        "B": {
+          "source": "AMD_2022_10K",
+          "textSHA256": "3cc4951de1c51ecbe00fba4bd29882833f98d0ae5e838771c4cdf74870b3b957",
+          "judgment": "Gives the server, gaming and embedded drivers and the client offset. Its gross-margin tail is secondary."
+        },
+        "C": {
+          "source": "AMD_2022_10K",
+          "textSHA256": "9604260eaa0cc792dd21d47568ab6ffc20a2887ecd286b47e97fbcaa0a434c93",
+          "judgment": "Contains all the drivers but adds strategy, liquidity and repurchases."
+        }
+      },
+      "preferredAmongRead": "B",
+      "ideal": "Use the revenue explanation and its offset, with the reporting period."
+    },
+    {
+      "id": "financebench_id_01474",
+      "domain": "finance",
+      "stratum": "no complete",
+      "question": "As of FY2023Q1, why did Pepsico raise full year guidance for FY2023?",
+      "source": "PEPSICO_2023Q1_EARNINGS",
+      "firstHits": {
+        "blocks": {
+          "candidate": "A",
+          "tokens": 156,
+          "completeCitation": false
+        },
+        "semantic512": {
+          "candidate": "B",
+          "tokens": 225,
+          "completeCitation": false
+        },
+        "semanticUnlimited": {
+          "candidate": "D",
+          "tokens": 205,
+          "completeCitation": false
+        }
+      },
+      "evidenceAlternative": "C",
+      "candidates": {
+        "A": {
+          "source": "PEPSICO_2023Q1_EARNINGS",
+          "textSHA256": "270084bbe7d9d12ea2763c2d36f0a147e0b333a2d0d4e8b89862a1e0f6e2a3d4",
+          "judgment": "A non-GAAP glossary and guidance footnote has the query vocabulary but supplies no reason for the raise."
+        },
+        "B": {
+          "source": "PEPSICO_2023Q1_EARNINGS",
+          "textSHA256": "5627884068c6c1ef98cc6715b10128175abeca6446ca59b7c08fc4a6979446c6",
+          "judgment": "Strategy commitments and disclosure language do not explain the revision."
+        },
+        "C": {
+          "source": "PEPSICO_2023Q1_EARNINGS",
+          "textSHA256": "ea37f628efb8ae48f8640fe267afb33b14ce264479706d2e819ec9863425f1e6",
+          "judgment": "Contains the reason and revised forecast. It begins without the issuer and ends mid-attribution."
+        },
+        "D": {
+          "source": "PEPSICO_2023Q1_EARNINGS",
+          "textSHA256": "3df848a29a2c2fb1305d38be47d8739ebfd15680ca4be8e3fa2b264f677f2a0b",
+          "judgment": "Strategy and the explanatory footnote again omit the reason."
+        }
+      },
+      "preferredAmongRead": "C",
+      "ideal": "Use the dateline and complete CEO quotation. This preserves the retrieval cues and gives a clean citation boundary."
+    },
+    {
+      "id": "financebench_id_02049",
+      "domain": "finance",
+      "stratum": "ordinary co-win",
+      "question": "Looking at VaR, did the risk that JPM faced in the second fiscal quarter of 2023 decrease compared to the same period in the prior year?",
+      "source": "JPMORGAN_2023Q2_10Q",
+      "firstHits": {
+        "blocks": {
+          "candidate": "A",
+          "tokens": 146,
+          "completeCitation": true
+        },
+        "semantic512": {
+          "candidate": "A",
+          "tokens": 146,
+          "completeCitation": true
+        },
+        "semanticUnlimited": {
+          "candidate": "A",
+          "tokens": 146,
+          "completeCitation": true
+        }
+      },
+      "evidenceAlternative": "A",
+      "candidates": {
+        "A": {
+          "source": "JPMORGAN_2023Q2_10Q",
+          "textSHA256": "b8425fcc5ea22ad3b1ee7fe0db2517b3118f96aca2eda13ecc35d30ace9888d4",
+          "judgment": "The year-over-year column gives the decrease and amount. The adjacent quarter-over-quarter column helps avoid confusing two comparisons."
+        }
+      },
+      "preferredAmongRead": "A",
+      "ideal": "Retain the period labels and the year-over-year change. This text-labeled question is rendered as two columns."
+    }
+  ]
+}
