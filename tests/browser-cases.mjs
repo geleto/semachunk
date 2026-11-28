@@ -18,6 +18,11 @@ export async function exerciseChunker(chunkText,chunkDocument,createDocumentInde
         html: await chunkText('<h2>A &amp; B</h2><p>One <em>paragraph</em>.</p>', {
             inputFormat: 'html', chunkingStrategy: 'blocks'
         }),
+        htmlStructure: await chunkDocument('<section><h2>Mass</h2><table><tr><th>Fruit</th><th>Weight</th></tr>' +
+            '<tr><td>Lime</td><td>130 g</td></tr><tr><td>Pear</td><td>200 g</td></tr></table>' +
+            '<pre>  x &lt; y\n    z</pre></section>',{
+            format:'html',includeHierarchy:true,sizeUnit:'tokens',maxChunkSize:7,countTokens:t=>t.trim().split(/\s+/u).length
+        }),
         markdown: await chunkText('# A &amp; B\n\nFirst. Next.\n\n| X | Y |\n|---|---|\n| 1 | 2 |', {
             inputFormat: 'markdown', chunkingStrategy: 'blocks'
         }),

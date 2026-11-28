@@ -3,84 +3,7 @@ import { collapseRuns } from './offsets.js';
 import { lineChildren, sectionTree } from './hierarchy.js';
 import { chunkHierarchy } from './semantic-blocks.js';
 import { splitSpans } from './token-limit.js';
-import { alignWhitespace, joinViews, literal, sliceView } from './citations.js';
-
-const blockElements = new Set(
-    'address article aside blockquote caption dd details dialog div dl dt fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 header hgroup hr li main menu nav ol p pre section summary table tbody td th tr ul'.split(' ')
-);
-const hiddenElements = new Set(['head', 'script', 'style', 'template', 'noscript', 'title']);
-const htmlContainers = new Set(['article', 'section', 'blockquote', 'ul', 'ol', 'li']);
-
-async function htmlToText(html, blocks, visible) {
-    const { parse, defaultTreeAdapter } = await import('parse5').catch(error => {
-        if (error.code === 'ERR_MODULE_NOT_FOUND' && error.message.includes("package 'parse5'")) {
-            throw new Error("HTML input requires the optional parse5 package. Install it with npm install parse5.", { cause: error });
-        }
-        throw error;
-    });
-    const locations = visible && await (await import('./html-citations.js')).locatedHtml(html, defaultTreeAdapter);
-    const pending = [parse(html, locations ? {treeAdapter: locations.treeAdapter, sourceCodeLocationInfo:true} : {})];
-    const parts = [];
-    const blockEnd = {}, preEnd = {}, headingEnd = {}, sectionEnd = {};
-    let preDepth = 0, headingDepth = 0, scope;
-
-    function flush() {
-        const text = parts.join('');
-        parts.length = 0;
-        if (headingDepth) {
-            if (text.trim()) blocks.push({ text: text.trim(), depth: headingDepth, scope });
-        } else {
-            for (const paragraph of textBlocks(text, '\n')) blocks.push({ text: paragraph, scope });
-        }
-    }
-
-    while (pending.length) {
-        const node = pending.pop();
-        if (node === blockEnd || node === preEnd || node === headingEnd || node === sectionEnd) {
-            parts.push('\u2029');
-            if (node === preEnd) preDepth--;
-            if (node === headingEnd || node === sectionEnd) {
-                flush();
-                if (node === headingEnd) headingDepth = 0;
-                else scope = scope.scope;
-            }
-            continue;
-        }
-        if (node.nodeName === '#text') {
-            if (locations) visible.push(locations.visible(node));
-            parts.push(preDepth ? node.value : node.value.replace(/\s+/g, ' '));
-            continue;
-        }
-        if (!node.childNodes || hiddenElements.has(node.tagName) || node.attrs?.some(attr => attr.name === 'hidden')) {
-            continue;
-        }
-        if (node.tagName === 'br') {
-            parts.push('\n');
-            continue;
-        }
-        if (blockElements.has(node.tagName)) {
-            let close = blockEnd;
-            if (node.tagName === 'pre') { preDepth++; close = preEnd; }
-            else if (blocks && /^h[1-6]$/.test(node.tagName)) {
-                flush();
-                headingDepth = Number(node.tagName[1]);
-                close = headingEnd;
-            } else if (blocks && htmlContainers.has(node.tagName)) {
-                flush();
-                scope = { scope, kind: ({ol:'list',ul:'list',li:'listItem'})[node.tagName] ?? node.tagName, structural:true, children: [], omitWhenEmpty: true };
-                blocks.push(scope);
-                close = sectionEnd;
-            }
-            parts.push('\u2029');
-            pending.push(close);
-        }
-        for (let i = node.childNodes.length - 1; i >= 0; i--) {
-            pending.push(node.childNodes[i]);
-        }
-    }
-    if (blocks) flush();
-    else return parts.join('');
-}
+import { alignWhitespace, literal, sliceView } from './citations.js';
 
 // A single newline often wraps prose. Blank lines, explicit headings and new
 // list items start units of their own; continuation lines stay with their item.
@@ -168,7 +91,6 @@ function textHierarchy(blocks, locale, filter) {
     }
     for (const block of blocks) {
         block.start = block.end = position;
-        if (block.text === undefined) continue; // An explicit HTML section starts at its first content.
         const lines = block.text.split(/[\r\n\u2028\u2029]+/u).map(line => line.trim().replace(/\s+/gu, ' ')).filter(Boolean).join('\n');
         const body = lines.replaceAll('\n', ' ');
         block.end += body.length;
@@ -193,14 +115,13 @@ function textHierarchy(blocks, locale, filter) {
 
 export async function parseText(text, options, embed, capture) {
     const { inputFormat, excludeNonLetterSentences, strategy } = options;
-    if (inputFormat !== 'text' && inputFormat !== 'html') throw new TypeError("inputFormat must be 'text', 'html', 'markdown' or 'json'.");
+    if (inputFormat !== 'text') throw new TypeError("inputFormat must be 'text', 'html', 'markdown' or 'json'.");
     if (strategy === 'pack') {
         const locale = sentenceLocale(options.locale);
-        const body = inputFormat === 'html' ? await htmlToText(text) : text;
-        if (!capture) return splitSentences(body, locale, excludeNonLetterSentences);
+        if (!capture) return splitSentences(text, locale, excludeNonLetterSentences);
         const tree = await parseTextTree(text, options, true);
         capture.tree?.(tree);
-        const all = splitSentences(body, locale, false).filter(Boolean);
+        const all = splitSentences(text, locale, false).filter(Boolean);
         const flat = alignWhitespace(tree.view, all.join(' '));
         let offset = 0;
         capture.sentences = [];
@@ -219,16 +140,16 @@ export async function parseText(text, options, embed, capture) {
     return units.map(({ start, end }) => source.slice(start, end));
 }
 
-export async function parseTextTree(text, { inputFormat, excludeNonLetterSentences, locale: tag, fits }, locate = false) {
+export async function parseTextTree(text, options, locate = false) {
+    const {inputFormat,excludeNonLetterSentences,locale:tag,fits} = options;
     const locale = sentenceLocale(tag);
-    const blocks = [];
-    const visible = locate && inputFormat === 'html' ? [] : undefined;
     if (inputFormat === 'html') {
-        await htmlToText(text, blocks, visible);
-    } else {
-        for (const body of textBlocks(text, '\n')) {
-            blocks.push({ text: body, depth: /^(#{1,6})\s/u.exec(body)?.[1].length });
-        }
+        const {parseHtml} = await import('./html.js');
+        return (await parseHtml(text,locate)).tree(options);
+    }
+    const blocks = [];
+    for (const body of textBlocks(text, '\n')) {
+        blocks.push({text:body,depth:/^(#{1,6})\s/u.exec(body)?.[1].length});
     }
     const { source, roots, children } = textHierarchy(blocks, locale, excludeNonLetterSentences);
     function splitLeaf(node) {
@@ -236,5 +157,5 @@ export async function parseTextTree(text, { inputFormat, excludeNonLetterSentenc
         return splitSpans(source, node.start, node.end, (a, b) => fits(source.slice(a, b)), { keepWhitespace: false })
             .map(([start, end]) => ({ start, end }));
     }
-    return { source, roots, children, splitLeaf, view: locate ? alignWhitespace(visible ? joinViews(visible) : literal(text), source) : undefined };
+    return { source, roots, children, splitLeaf, view: locate ? alignWhitespace(literal(text), source) : undefined };
 }

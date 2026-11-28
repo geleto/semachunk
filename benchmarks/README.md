@@ -449,6 +449,14 @@ The neighbor threshold study crosses hierarchical split cutoffs with vector weig
 
 The passage placement study sweeps 16 cutoffs with a 512-token reading budget and compares semantic centres with equally many evenly spaced centres. [Cutoff curves and matched placement results](results/2026-11-27-passage-placement.md)
 
+The Mastra comparison measures native chunk retrieval, then tests paragraph scoring, neighbour context and two-layout search against the Semachunk combined index on the same questions. [Head-to-head results and reproduction](results/2026-11-27-mastra-comparison.md)
+
+The government HTML experiment compares the same pages before and after Turndown conversion in both systems and isolates the effect of paragraph scoring. [HTML versus Markdown results](results/2026-11-28-html-markdown.md)
+
+The native HTML follow-up tests heading passages, grouping short sections and ranking their returned text. It reports the full validation scores with each HTML change and the Semachunk–Mastra comparison with raw HTML excluded. [HTML handling and overall scores](results/2026-11-28-html-handling.md)
+
+The production parser study measures HTML and Markdown through their shared chunking pipeline with the original ranking weights. It includes an independent four-site search and a replay of all non-HTML validation layouts. [Parser results and reproduction](results/2026-11-28-html-parser.md)
+
 ## Measure embedding cache memory
 
 `npm run benchmark:memory` compares the default cache with a 256-vector cache on 4,096 sentences and 1,536-dimensional Float32 embeddings. Each policy runs in its own Node process. The report records live ArrayBuffer bytes above baseline after garbage collection at provider entry, the number of texts embedded and the output boundary checksum. These samples measure vector storage between batches. Allocations inside a batch and other JavaScript heap objects also contribute to process memory.

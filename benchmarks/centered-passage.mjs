@@ -3,8 +3,8 @@ import {chunkContextParts,passageFits} from '../src/document.js';
 
 // Assemble virtual left/right neighbours, then use the production section clipping,
 // exact token ceiling and parser-unit selection. The core is always retained.
-export function centeredPassage(doc, tokens) {
-    const virtual = {...doc,chunks:[]}, fits = passageFits(doc);
+export function centeredPassage(doc, tokens, countTokens) {
+    const virtual = {...doc,chunks:[]}, fits = passageFits(doc,countTokens);
     function neighbor(start,end) {
         const chunks = doc.chunks.slice(start,end);
         if (chunks.length<2) return chunks[0];

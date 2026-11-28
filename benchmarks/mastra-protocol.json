@@ -1,0 +1,15 @@
+{
+  "package": "@mastra/rag@2.8.2",
+  "model": "text-embedding-3-small",
+  "dimensions": 1536,
+  "encoding": "cl100k_base",
+  "families": ["recursive", "sentence", "token", "character", "format", "format-semantic"],
+  "sizes": [128, 256, 384, 512],
+  "overlapPercent": [0, 25, 50],
+  "extra512OverlapPercent": [75],
+  "passageTokens": 512,
+  "treatments": ["native", "context", "structure", "structure-near"],
+  "selection": "Use development only. Maximize the equal-domain average of complete evidence at one and within five. Within 0.15 percentage points of the highest average prefer fewer layouts, fewer scoring features, less overlap, then fewer retrieval candidates. Nominate one native single layout, one enhanced single layout, and the overall winner. Allow a two-layout index made from the best single per family and treatment on development. Keep its top-five overlap suppression the same as Semachunk's. Freeze before evaluating the three validation question sets in their five search settings.",
+  "references": ["combined/0.15/one", "tuned"],
+  "validation": "Average domains equally within scope. Weight confirmation, replication and later holdout equally. For each of the latter two average original and all-document search, which reuse the same questions."
+}

@@ -128,7 +128,8 @@ export async function createDocumentIndex(documents, embedBatch, {
                 if ((!details.has(node.type) && !sectionKeys.has(id)) || !node.text ||
                     covers(spans[id],chunkSpans) || !fits(node.text)) continue;
                 if (branchTypes.has(node.type) && !fitsStructure(node.text)) continue;
-                const childKey = intern(node.text);
+                const heading = node.type === 'paragraph' ? node.headingPath?.at(-1)?.trim() : undefined;
+                const childKey = intern(heading ? heading + '\n\n' + node.text : node.text);
                 children.push({node,key:childKey,upper:sectionKeys.has(id) && !details.has(node.type)});
                 nodeEntry(node,childKey);
             }

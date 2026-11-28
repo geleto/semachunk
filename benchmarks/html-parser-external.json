@@ -1,0 +1,345 @@
+{
+  "baseRevision": "b29a2c22f46d792efcfce6b31440281816735c11",
+  "sources": [
+    {
+      "id": "bisect",
+      "url": "https://docs.python.org/release/3.13.8/library/bisect.html",
+      "elementId": "module-bisect",
+      "htmlHash": "cc1115efc0582d23419e4ad5b46e3c2d7a3ec181df9a65d5d66214f1e1157487",
+      "sourceHash": "b6e504bcd15e8dcc8c95a9955a67936e5c041126813b4ffc4e31a23b26fec486",
+      "questions": [
+        {
+          "id": "bisect-1",
+          "text": "Which comparison operation finds where a value belongs, and is equality tested?",
+          "references": [
+            [
+              [
+                571,
+                600
+              ],
+              [
+                669,
+                698
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "bisect-2",
+          "text": "Why does insertion at the correct position still take linear time?",
+          "references": [
+            [
+              [
+                3177,
+                3237
+              ]
+            ],
+            [
+              [
+                3814,
+                3874
+              ]
+            ],
+            [
+              [
+                4204,
+                4274
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "bisect-3",
+          "text": "When searching records with a key extractor, is the probe value transformed too?",
+          "references": [
+            [
+              [
+                2074,
+                2116
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "bisect-4",
+          "text": "Which two options avoid repeated expensive calculations when searching the same array?",
+          "references": [
+            [
+              [
+                4540,
+                4574
+              ],
+              [
+                4632,
+                4670
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "bisect-5",
+          "text": "Which thresholds and grade sequence does the sample lookup use?",
+          "references": [
+            [
+              [
+                6271,
+                6315
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "headers",
+      "url": "https://www.w3.org/WAI/tutorials/tables/two-headers/",
+      "elementId": "main",
+      "htmlHash": "1ef8f6e26d25ed06e1f3d3e9792d4556e476140f3d31319aa0fdda5381fb7a4f",
+      "sourceHash": "cdeb62d76a59fbebafdac8314a9a1cbbef6256469baa49a28e77674f1fdb05c5",
+      "questions": [
+        {
+          "id": "headers-1",
+          "text": "How are the vertical and horizontal relationships declared in a simple two-header table?",
+          "references": [
+            [
+              [
+                1183,
+                1264
+              ],
+              [
+                1292,
+                1351
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "headers-2",
+          "text": "On which weekdays can deliveries be scheduled from 9 to 11 in the morning?",
+          "references": [
+            [
+              [
+                1616,
+                1660
+              ],
+              [
+                1662,
+                1711
+              ]
+            ],
+            [
+              [
+                1936,
+                2081
+              ],
+              [
+                2093,
+                2203
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "headers-3",
+          "text": "When the row label is in the second column, which neighbouring data cells does it identify?",
+          "references": [
+            [
+              [
+                2744,
+                2810
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "headers-4",
+          "text": "Which person corresponds to identifier 215 in the example table?",
+          "references": [
+            [
+              [
+                2925,
+                2934
+              ]
+            ],
+            [
+              [
+                3104,
+                3142
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "headers-5",
+          "text": "Why do isolated open and closed labels fail to describe a delivery slot?",
+          "references": [
+            [
+              [
+                1523,
+                1587
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "eclipses",
+      "url": "https://science.nasa.gov/eclipses/types/",
+      "elementId": "post-107530",
+      "htmlHash": "0d9e59dd1668d7e25ce6ec69e0ac8ea637d413982b44ffc2de631c81a9987b86",
+      "sourceHash": "49e12a70de10630761f2816399985c18a1697d69b258463b74b4fdf0168e4dbe",
+      "questions": [
+        {
+          "id": "eclipses-1",
+          "text": "Why does the Moon not block the Sun every month, and how often do eclipse seasons occur?",
+          "references": [
+            [
+              [
+                679,
+                745
+              ],
+              [
+                790,
+                832
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "eclipses-2",
+          "text": "Why does a ring of sunlight remain visible in an annular eclipse?",
+          "references": [
+            [
+              [
+                2709,
+                2803
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "eclipses-3",
+          "text": "What makes a solar eclipse switch between annular and total along its path?",
+          "references": [
+            [
+              [
+                3330,
+                3355
+              ],
+              [
+                3370,
+                3457
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "eclipses-4",
+          "text": "Who experiences totality when the lunar shadow reaches Earth?",
+          "references": [
+            [
+              [
+                1960,
+                2060
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "eclipses-5",
+          "text": "Which part of the Sun can become visible during totality?",
+          "references": [
+            [
+              [
+                2187,
+                2221
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sqlite",
+      "url": "https://www.sqlite.org/whentouse.html",
+      "elementId": null,
+      "htmlHash": "0a2ce48f1d23bb36f61718f4b6cdce86a08534df673a4814e8205e8c09f49077",
+      "sourceHash": "fe5b4beedfd0b75de8dcc19dfb3255ddd30fd985768f7953af124ffb81dbe6bf",
+      "questions": [
+        {
+          "id": "sqlite-1",
+          "text": "How many writers can a database file accept at once, and how do typical short transactions coexist?",
+          "references": [
+            [
+              [
+                14085,
+                14123
+              ],
+              [
+                14195,
+                14233
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "sqlite-2",
+          "text": "How does a local cache help when the central server or connection is unavailable?",
+          "references": [
+            [
+              [
+                4856,
+                4925
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "sqlite-3",
+          "text": "What two problems arise when clients open a database directly over a shared network filesystem?",
+          "references": [
+            [
+              [
+                10780,
+                10828
+              ],
+              [
+                10867,
+                10937
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "sqlite-4",
+          "text": "What size and write-load conditions are given for choosing device-local storage?",
+          "references": [
+            [
+              [
+                15018,
+                15102
+              ]
+            ]
+          ]
+        },
+        {
+          "id": "sqlite-5",
+          "text": "How can the host filesystem impose a lower upper bound on database size?",
+          "references": [
+            [
+              [
+                11902,
+                11939
+              ],
+              [
+                11944,
+                11992
+              ]
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

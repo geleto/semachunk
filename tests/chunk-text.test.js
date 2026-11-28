@@ -56,7 +56,7 @@ test('omitted size options use the documented target for every format and strate
             const larger = await run({ maxChunkSize: 1024 });
             assert.equal(smaller.length, 3);
             assert.equal(larger.length, 1);
-            const expected = inputFormat === 'markdown' ? larger : smaller;
+            const expected = inputFormat === 'text' ? smaller : larger;
             assert.deepEqual(await run(), expected, inputFormat + '/' + chunkingStrategy);
             assert.deepEqual(await run({ maxChunkTokens: 256, countTokens: s => s.trim().split(/\s+/u).length }), expected);
             if (chunkingStrategy === 'blocks') assert.deepEqual(await run({ chunkingStrategy: undefined }), expected);
@@ -80,7 +80,8 @@ test('blocks, pack and semantic-blocks apply different boundaries to the same te
             returnEmbedding: false, chunkingStrategy: strategy, ...extra }).then(rows => rows.map(c => c.text));
         assert.deepEqual(await run('blocks', assert.fail), ['One. Two.', 'Red. Sun.']);
         assert.deepEqual(await run('blocks', assert.fail, { maxChunkSize: 5 }), ['One.', 'Two.', 'Red.', 'Sun.']);
-        assert.deepEqual(await run('pack', assert.fail), ['One. Two. Red.', 'Sun.']);
+        assert.deepEqual(await run('pack', assert.fail), inputFormat === 'html'
+            ? ['One. Two.', 'Red. Sun.'] : ['One. Two. Red.', 'Sun.']);
         const { embed, batches } = recordingEmbedder(s => /One|Two/.test(s) ? [1, 0] : [0, 1]);
         assert.deepEqual(await run('semantic-blocks', embed, { similarityThreshold: 0.9 }), ['One. Two.', 'Red. Sun.']);
         assert.ok(batches.length);
@@ -341,10 +342,10 @@ test('paragraphs, headings and list items become units while soft line wraps sta
     const html = '<h2>Terms</h2><ul><li>First <em>condition</em></li><li>Second condition</li></ul>' +
         '<p>Soft<br>wrap<br><br>New paragraph</p>';
     assert.deepEqual((await chunkText(html, assert.fail, { ...options, inputFormat: 'html' })).map(c => c.text),
-        ['Terms', 'First condition', 'Second condition', 'Soft wrap', 'New paragraph']);
+        ['Terms\n\nFirst condition', 'Second condition', 'Soft wrap', 'New paragraph']);
     const pre = '<pre>First <code>line</code>\n\nNext line</pre><p>Soft\n\nHTML whitespace</p>';
     assert.deepEqual((await chunkText(pre, assert.fail, { ...options, inputFormat: 'html' })).map(c => c.text),
-        ['First line', 'Next line', 'Soft HTML whitespace']);
+        ['First line\n\nNext line', 'Soft HTML whitespace']);
     const { embed, batches } = recordingEmbedder(() => [1]);
     assert.deepEqual(await chunkText('Title\n\nRelated details', embed, { ...semantic, returnEmbedding: false }), [{ text: 'Title\n\nRelated details' }]);
     assert.deepEqual(batches, [['Title', 'Related details']]);

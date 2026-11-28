@@ -10,7 +10,7 @@ export { createDocumentIndex } from './document-index.js';
 
 function defaultCharacterTarget(format) {
 	if (format === 'json') return DEFAULT_CONFIG.JSON_MAX_CHUNK_SIZE;
-	return format === 'markdown' ? DEFAULT_CONFIG.MARKDOWN_MAX_CHUNK_SIZE : DEFAULT_CONFIG.MAX_CHUNK_SIZE;
+	return format === 'markdown' || format === 'html' ? DEFAULT_CONFIG.MARKDOWN_MAX_CHUNK_SIZE : DEFAULT_CONFIG.MAX_CHUNK_SIZE;
 }
 
 function validateStrategy(strategy, inputFormat, chunkOverlap) {
@@ -165,9 +165,11 @@ async function runChunking(text, embedBatchCallback, options, capture) {
 			})
 		]);
 		output = chunkJsonRecords(text, maxChunkSize, fits, locale, parser, capture, fitsStructure);
-	} else if (inputFormat === 'markdown') {
-		const { chunkMarkdown } = await import('./markdown-merge.js');
-		output = await chunkMarkdown(text, embedBatch, { ...parsing, fitsOverlap }, capture);
+	} else if (inputFormat === 'markdown' || inputFormat === 'html') {
+		const { chunkStructured } = await import('./structured-chunks.js');
+		const parse = inputFormat === 'html' ? (await import('./html.js')).parseHtml :
+			(await import('./markdown-units.js')).parseMarkdownDocument;
+		output = await chunkStructured(await parse(text, !!capture), embedBatch, { ...parsing, fitsOverlap }, capture);
 	} else {
 		let chunks = await parseText(text, { ...parsing, inputFormat }, embedBatch, capture);
 		if (chunks.length === 0) return [];

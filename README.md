@@ -32,7 +32,7 @@ To return vectors as well, call `chunkText(source, embedBatch, options)`. The ca
 
 | Document option | Characters | Tokens with `countTokens` |
 |---|---:|---:|
-| `maxChunkSize` for `blocks` and `pack` | 500 for text and HTML, 1,024 for Markdown and JSON | 256 |
+| `maxChunkSize` for `blocks` and `pack` | 500 for text, 1,024 for HTML, Markdown and JSON | 256 |
 | `maxChunkSize` for `semantic-blocks` | The passage ceiling | The passage ceiling |
 | `maxStructuralSize`, the limit on a whole branch or a run across blocks | 1,024 UTF-16 units | 256 |
 | `maxPassageSize`, the hard ceiling on a displayed passage including neighbors | 2,048 UTF-16 units | 512 |
@@ -58,7 +58,9 @@ const [hit] = await index.search(question, { sectionWeight: 0.15 });
 // hit.chunk is the ranked chunk. hit.context supplies the reading text and citations.
 ```
 
-`createDocumentIndex` is an exact, in-memory retriever. The example builds one index from two chunk layouts of the same source revision. Give both layouts the same `sourceId`. `index.stats` reports source, layout, chunk and distinct embedding counts. One query embedding scores every distinct indexing text. By default each chunk receives equal weight from its own cosine score and its highest-scoring complete, strictly contained paragraph. A chunk with no such paragraph receives its own score. Equal text shares a stored vector across layouts and documents. Every result retains its own source occurrence. Semantic splitting can also compute sentence embeddings while choosing boundaries. The default retrieval index stores chunk and paragraph vectors.
+`createDocumentIndex` is an exact, in-memory retriever. The example builds one index from two chunk layouts of the same source revision. Give both layouts the same `sourceId`. `index.stats` reports source, layout, chunk and distinct embedding counts. One query embedding scores every distinct indexing text. By default each chunk receives equal weight from its own cosine score and its highest-scoring complete, strictly contained paragraph. A chunk with no such paragraph receives its own score. The default retrieval index stores chunk and paragraph vectors. Semantic splitting can also compute sentence embeddings while choosing boundaries.
+
+Each indexed paragraph embeds its nearest heading, two newlines and the paragraph text. A paragraph without a heading embeds its text alone. Identical embedding inputs share a vector across layouts and documents, so the same wording under different headings can rank differently. Both `search` and `searchNodes` return the original paragraph text and citations for a paragraph match. [Heading and paragraph retrieval benchmark](benchmarks/results/2026-11-28-html-parser.md#what-transfers-across-formats)
 
 To add individual sentence keys, pass `detailTypes: ['paragraph', 'sentence']` to `createDocumentIndex`. For fewer keys, pass `sentenceGrouping: { maxSentences: 3 }`. This adds consecutive complete sentences from the same paragraph inside each candidate. Groups share one embedding of their actual text. Setting `minSimilarity: 0.25` in the grouping options requires adjacent sentences to meet that cosine threshold. This mode uses temporary sentence vectors to decide joins. A group match includes the original sentence node IDs and source citations. These options work with either layout or with both in one index.
 
@@ -78,9 +80,9 @@ The default strategy keeps a whole document or section together when it fits. Wh
 
 ### `pack`
 
-`pack` fills each chunk from left to right. In text and HTML it appends whole sentences, so a chunk can span paragraphs. With a plain-text `separator` it packs whole records. In Markdown it appends consecutive prose from the same section until the next unit would exceed a size limit. A new heading, table, code block or thematic break ends the run.
+`pack` fills each chunk from left to right. In plain text it appends whole sentences, so a chunk can span paragraphs. With a plain-text `separator` it packs whole records. In HTML and Markdown it appends consecutive prose from the same section until the next unit would exceed a size limit. A new heading, table, code block or thematic break ends the run.
 
-Use `chunkOverlap` to repeat whole units from the end of the previous chunk. They must fit the overlap limit and leave room for a new unit. The overlap is measured in UTF-16 code units, or in tokens when `maxChunkTokens` is finite. To get individual text or HTML sentences, use `pack` with `maxChunkSize: 0`.
+Use `chunkOverlap` to repeat whole units from the end of the previous chunk. They must fit the overlap limit and leave room for a new unit. The overlap is measured in UTF-16 code units, or in tokens when `maxChunkTokens` is finite. To get individual plain-text sentences, use `pack` with `maxChunkSize: 0`.
 
 ```javascript
 const chunks = await chunkText('Add water. Stir well. Serve hot.', {
@@ -101,11 +103,15 @@ chunks.map(chunk => chunk.text); // ['Add water. Stir well.', 'Stir well. Serve 
 
 `inputFormat` defaults to `'text'`. Text, Markdown and HTML support all three strategies. JSON uses `blocks`.
 
-### Text and HTML
+### Text
 
 Plain text keeps strings such as `Array<T>` and `&amp;` literal. Blank lines start paragraphs, `#` through `######` introduce sections, and bulleted or numbered items start new blocks. A single newline inside a sentence wraps the same paragraph. When subdividing an oversized paragraph, `blocks` prefers line endings that coincide with sentence boundaries.
 
-Pass `inputFormat: 'html'` to extract readable text, decode entities and preserve inline word continuity. The structural strategies recognize `h1` through `h6`, paragraphs, articles, sections, lists and block quotations. They separate blocks with a blank line.
+### HTML
+
+Pass `format: 'html'` to `chunkDocument`, or `inputFormat: 'html'` to `chunkText`. The HTML parser builds a visible-text outline from headings, paragraphs, nested lists, quotations, tables and preformatted code. A section wrapper around a heading contributes one section to the outline. Inline links retain their labels, and code preserves indentation and line breaks.
+
+HTML and Markdown use the same structure builder, chunking strategies and retrieval rules. The budgets measure each input's rendered passage. HTML returns decoded text with rows and cells separated by newlines and tabs. Oversized tables can repeat their column headers, with each repetition citing the original cells. Use `includeHierarchy: true` to retrieve heading paths and source spans for individual nodes. A title-only document returns citable headings.
 
 ### Delimited text
 
@@ -133,11 +139,11 @@ Markdown, JSON and delimited text return `sourceRanges`. For each `{ start, end,
 
 If you set `chunkPrefix` and `excludeChunkPrefixInResults: true`, these formats also return `embeddingText` with the exact prefixed text used for indexing.
 
-For HTML articles whose links, tables or heading paths need to survive chunking, convert the article body to Markdown first. PDF and LaTeX sources can also be converted before chunking. The ranges refer to the converted input. Keep original page or heading identifiers alongside it for citations.
+Direct HTML citations refer to offsets in the original markup, including the full spelling of decoded entities. Applications that convert HTML, PDF or LaTeX to Markdown first receive ranges in the converted input. Retain a source map when citations must point back to the original.
 
 ## Chunk size limits
 
-- `maxChunkSize` is a soft target in UTF-16 code units. It includes separators between units and excludes `chunkPrefix`. The default is 500 for text and HTML and 1,024 for Markdown and JSON. A single sentence, protected block or JSON scalar can exceed it.
+- `maxChunkSize` is a soft target in UTF-16 code units. It includes separators between units and excludes `chunkPrefix`. The default is 500 for text and 1,024 for HTML, Markdown and JSON. A single sentence, protected block or JSON scalar can exceed it.
 - `maxChunkTokens` is a token target per chunk and a hard ceiling for each embedding input, including its prefix. It defaults to `Infinity`. A finite limit requires a synchronous `countTokens(text)` callback.
 
 ### Fitting an embedding model’s input
@@ -200,7 +206,7 @@ Store the document URL or ID, `text`, `headingPath` and `sourceRanges` with each
 |---|---|---|
 | `inputFormat` | `'text'` | Split plain text, extract text from `'html'`, preserve sections in `'markdown'`, or split records in `'json'`. |
 | `chunkingStrategy` | `'blocks'` | Select `'blocks'`, `'pack'` or `'semantic-blocks'`. JSON supports `'blocks'`. |
-| `maxChunkSize` | 1,024 in Markdown and JSON, 500 in text and HTML | Soft per-chunk target in UTF-16 code units, including source or join separators. A single sentence, protected block or JSON scalar can exceed it. The caller prefix is excluded. |
+| `maxChunkSize` | 1,024 in HTML, Markdown and JSON, 500 in text | Soft per-chunk target in UTF-16 code units, including source or join separators. A single sentence, protected block or JSON scalar can exceed it. The caller prefix is excluded. |
 | `maxChunkTokens` | `Infinity` | Token target per chunk and hard ceiling for every embedding input, including its prefix. An indivisible over-limit fragment is returned with `tokenLimitExceeded: true` and no vector. |
 | `countTokens` | — | Synchronous tokenizer callback required for a finite token budget. Returns a nonnegative safe integer. |
 | `locale` | `'en'` | Language tag for sentence segmentation, including long JSON strings. |

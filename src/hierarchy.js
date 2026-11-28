@@ -1,15 +1,13 @@
-// Parsers provide nodes in source order. Headings nest by depth within their HTML scope, if any.
+// Parsers provide nodes in source order. A bounded outline ends at its enclosing element.
 // Compute subtree spans and propagate omissions once, before a size budget is applied.
 export function sectionTree(blocks) {
-    const root = { children: [] }, scopes = new Map();
+    const root = {children:[]}, headings = [];
     for (const block of blocks) {
-        const scope = block.scope ?? root;
-        if (!scopes.has(scope)) scopes.set(scope, []);
-        const headings = scopes.get(scope);
+        while (headings.at(-1)?.scopeEnd <= block.start) headings.pop();
         if (block.depth) {
             while (headings.length && headings.at(-1).depth >= block.depth) headings.pop();
         }
-        (headings.at(-1) ?? scope).children.push(block);
+        (headings.at(-1) ?? root).children.push(block);
         if (block.depth) headings.push(block);
     }
     for (let i = blocks.length - 1; i >= 0; i--) {

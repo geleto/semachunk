@@ -161,6 +161,52 @@ test('the index deduplicates vectors, keeps citations for each source, and embed
     await assert.rejects(index.search([1,2,3]),/dimension/);
 });
 
+test('paragraph searches distinguish identical text by its nearest heading and cite the winning occurrence',async()=>{
+    const body='Pay the deposit.';
+    const markdown='# Guide\n\n## Opening\n\n'+body+'\n\nSend a form.\n\n## Renewals\n\n'+body+'\n\nKeep a receipt.';
+    const html='<h1>Guide</h1><h2>Opening</h2><p>'+body+'</p><p>Send a form.</p><h2>Renewals</h2><p>'+body+'</p><p>Keep a receipt.</p>';
+    const sources={markdown,html,text:markdown};
+    const documents=[];
+    for (const [format,raw] of Object.entries(sources)) {
+        for (const strategy of ['blocks','semantic-blocks']) {
+            documents.push(await chunkDocument(raw,{...hierarchy,format,sourceId:format,strategy,maxChunkSize:54,
+                embedBatch:embed,returnEmbedding:false,similarityThreshold:-1}));
+        }
+    }
+    const inputs=[];
+    const query=[1,0], renewal='Renewals\n\n'+body;
+    const index=await createDocumentIndex(documents,async texts=>{
+        inputs.push(...texts);
+        return texts.map(t=>t===renewal?query:[0,1]);
+    });
+    for (const key of [renewal,'Opening\n\n'+body]) assert.equal(inputs.filter(t=>t===key).length,1);
+    assert.ok(!inputs.includes(body));
+    const hits=await index.search(query,{neighbors:0,limit:3});
+    const nodes=await index.searchNodes(query,{types:['paragraph'],limit:3});
+    assert.deepEqual(new Set(hits.map(h=>h.sourceId)),new Set(Object.keys(sources)));
+    const nodeBySource=new Map(nodes.map(h=>[h.sourceId,h.node]));
+    for (const {sourceId,score,match,chunk,context} of hits) {
+        assert.equal(score,.5);
+        assert.deepEqual(match,nodeBySource.get(sourceId));
+        assert.equal(match.text,body);
+        assert.deepEqual(match.headingPath,['Guide','Renewals']);
+        const start=sources[sourceId].lastIndexOf(body);
+        assert.deepEqual(match.citations,[{start,end:start+body.length,outputStart:0,outputEnd:body.length}]);
+        assert.equal(context.text,chunk.text);
+    }
+});
+
+test('a saved paragraph without a heading uses its own text for retrieval',async()=>{
+    const doc=JSON.parse(JSON.stringify(await chunkDocument('Unheaded.\n\nMore detail.',hierarchy)));
+    const [first,second]=doc.nodes.filter(n=>n.type==='paragraph');
+    delete first.headingPath;
+    second.headingPath=['  '];
+    const inputs=[];
+    const index=await createDocumentIndex([doc],texts=>{inputs.push(...texts);return embed(texts);});
+    assert.deepEqual(new Set(inputs),new Set([doc.chunks[0].text,first.text,second.text]));
+    assert.equal((await index.searchNodes([1,0],{types:['paragraph']})).length,2);
+});
+
 test('section and whole-document keys can be searched directly or used to rank cited passages',async()=>{
     const d=await chunkDocument('# First\n\nRed.\n\nBlue.\n\n# Second\n\nWhite.\n\nBlack.',{...hierarchy,maxChunkSize:8});
     const index=await createDocumentIndex([d],embed,{includeSections:true,includeDocuments:true});
