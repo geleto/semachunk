@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import {mkdir,readFile,rename,writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {gzipSync,gunzipSync} from 'node:zlib';
-import {chunkDocument,getChunkContext} from '../src/index.js';
+import {getChunkContext} from '../src/index.js';
+import {studyLayout as chunkDocument} from './study-layouts.mjs';
 import {covers,sourceSpans} from '../src/citations.js';
 import {cache,sha256} from './corpora.mjs';
 import {dimension,model,openReplay} from './encoder.mjs';
@@ -24,7 +25,7 @@ for(const cutoff of protocol.semanticCutoffs) tree(512,256,cutoff,true);
 for(const args of protocol.otherTrees) tree(...args);
 tree(512,256,'cal',true);
 const version=sha256(Buffer.concat(await Promise.all(['./paragraph-ranking-index.mjs','./paragraph-ranking-protocol.json',
-    './bounded-source.mjs','../src/semantic-blocks.js','../src/document.js','../src/hierarchy.js'].map(p=>readFile(new URL(p,import.meta.url))))));
+    './bounded-source.mjs','../src/semantic.js','../src/document.js','../src/hierarchy.js'].map(p=>readFile(new URL(p,import.meta.url))))));
 const spanLength=rs=>rs.reduce((n,[a,b])=>n+b-a,0);
 
 async function build(key,i,doc,bank) {

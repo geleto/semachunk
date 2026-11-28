@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { chunkText } from '../src/index.js';
+import {studyPassages as chunkText} from './study-layouts.mjs';
 import { sha256 } from './corpora.mjs';
 import { openTokenizer } from './encoder.mjs';
 

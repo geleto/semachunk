@@ -17,7 +17,7 @@ export function semachunkLayout(doc,blocks,keyFor,addView,count,semantic) {
         const section=sections.find(n=>covers(spans[n.id],core) && !covers(core,spans[n.id]) && !covers(spans[n.id],spans[0]));
         const parts=chunkContextParts(doc,j,1,fits);
         const display=joinViews((centered?centered(j,'budget').parts:parts).filter(p=>p?.text),'\n\n');
-        return {v:keyFor(c.text),pa:c.nodeIds.filter(n=>paragraphs.has(n) && !covers(spans[n],core)).map(n=>keyFor(blocks.nodes[n].text)),
+        return {v:keyFor(c.text),pa:c.nodeIds.filter(n=>paragraphs.has(n) && !covers(spans[n],core)).map(n=>keyFor(blocks.nodes[n].text,blocks.nodes[n])),
             section:section?keyFor(section.text):-1,bare:addView(c),win:addView(display),
             near:semantic?[0,2].filter(side=>parts[side]?.text).map(side=>j+side-1):[]};
     });

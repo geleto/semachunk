@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { chunkText } from '../src/index.js';
+import {studyPassages as chunkText} from './study-layouts.mjs';
 import { tokenBudget } from '../src/token-limit.js';
 import { alignPlain } from './delivered-context.mjs';
 import { cache, here } from './corpora.mjs';

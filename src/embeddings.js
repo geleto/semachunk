@@ -1,4 +1,4 @@
-// One cache per chunkText call, shared by boundary scoring and output batches.
+// One cache per chunk call, shared by boundary scoring and output batches.
 export function createBatchEmbedder(embedBatchCallback, maxEmbeddingBatchSize = Infinity, maxCachedEmbeddings = Infinity) {
     if (maxEmbeddingBatchSize !== Infinity && !(Number.isSafeInteger(maxEmbeddingBatchSize) && maxEmbeddingBatchSize > 0)) {
         throw new RangeError('maxEmbeddingBatchSize must be a positive integer or Infinity.');

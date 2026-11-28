@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { chunkText } from '../src/index.js';
+import {studyPassages as chunkText} from './study-layouts.mjs';
 import { treeLayout } from './tree-policy.mjs';
 
 const texts = rows => rows.map(r => r.text);

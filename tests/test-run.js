@@ -1,4 +1,4 @@
-import { chunkText } from '../src/index.js';
+import { chunk } from '../src/index.js';
 
 // This is a very basic and non-preactical test
 
@@ -42,15 +42,15 @@ console.log('Starting chunking...');
 async function runTest() {
 	try {
 		// 1. Verify Initial State
-		const initialSentences = await chunkText(testText, mockBatchEmbed, { chunkingStrategy: 'pack', maxChunkSize: 0, returnEmbedding: false });
+		const {chunks:initialSentences} = await chunk(testText, {embedBatch:mockBatchEmbed, strategy: 'pack', maxChunkSize: 0, returnEmbedding: false });
 		console.log(`Initial sentences: ${initialSentences.length}`);
 		if (initialSentences.length !== 7) {
 			throw new Error(`Expected 7 initial sentences, found ${initialSentences.length}`);
 		}
 
 		// 2. Run Chunking
-		const chunks = await chunkText(testText, mockBatchEmbed, {
-			chunkingStrategy: 'semantic-blocks', similarityThreshold: 0.5
+		const {chunks} = await chunk(testText, {embedBatch:mockBatchEmbed,
+			strategy: 'semantic', similarityThreshold: 0.5
 		});
 
 		console.log('Generated chunks:', chunks.length);
@@ -60,11 +60,12 @@ async function runTest() {
 		});
 
 		// 3. Verify Final State
-		if (chunks.length !== 3) {
-			throw new Error(`Expected 3 final chunks, found ${chunks.length}`);
+		const structural = chunks.filter(c=>c.layout==='blocks'), semantic = chunks.filter(c=>c.layout==='semantic');
+		if (structural.length !== 1 || semantic.length !== 3) {
+			throw new Error(`Expected 1 structural and 3 semantic passages, found ${structural.length} and ${semantic.length}`);
 		}
 
-		console.log('\n✅ TEST PASSED: 7 Sentences -> 3 Chunks');
+		console.log('\nVerified both layouts for the seven sentences');
 
 	} catch (error) {
 		console.error('❌ TEST FAILED:', error);

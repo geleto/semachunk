@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { chunkText } from '../src/index.js';
+import {splitPassages} from '../src/passages.js';
 
 const options = { inputFormat: 'markdown', chunkingStrategy: 'pack', returnEmbedding: false };
 const length = text => [...text].length;
 
 async function chunks(source, extra = {}) {
-    const output = await chunkText(source, assert.fail, { ...options, ...extra });
+    const output = await splitPassages(source, assert.fail, { ...options, ...extra });
     for (const chunk of output) {
         assert.ok(chunk.text.isWellFormed());
         let previous = 0;
@@ -36,7 +36,7 @@ test('explicit Markdown strategies keep their distinct boundaries at different s
         assert.deepEqual(asText(await chunks(source, { chunkingStrategy: 'pack', maxChunkSize })), [source]);
         const batches = [];
         const embed = texts => { batches.push(texts); return texts.map(s => s === 'Other' ? [0, 1] : [1, 0]); };
-        const rows = await chunkText(source, embed, { ...options, chunkingStrategy: 'semantic-blocks', maxChunkSize,
+        const rows = await splitPassages(source, embed, { ...options, chunkingStrategy: 'semantic', maxChunkSize,
             combineChunksSimilarityThreshold: 0.9 });
         assert.deepEqual(asText(rows), ['Alpha\n\nBeta', 'Other']);
         assert.deepEqual(batches, [['Alpha', 'Beta', 'Other']]);
@@ -58,7 +58,7 @@ test('Markdown counts CRLF in the overlap, batches only final bodies and keeps r
     const source = ['aa', 'bb', 'aa', 'cc', 'dd'].join('\r\n\r\n');
     const batches = [], countTokens = text => text.match(/\S+/g)?.length ?? 0;
     const embed = texts => { batches.push([...texts]); return texts.map(t => [countTokens(t)]); };
-    const rows = await chunkText(source, embed, { inputFormat: 'markdown', chunkingStrategy: 'pack', maxChunkSize: Infinity,
+    const rows = await splitPassages(source, embed, { inputFormat: 'markdown', chunkingStrategy: 'pack', maxChunkSize: Infinity,
         chunkOverlap: 2, countTokens, maxChunkTokens: 4, chunkPrefix: 'P', maxEmbeddingBatchSize: 2 });
     const expected = [['aa', 'bb', 'aa'], ['bb', 'aa', 'cc'], ['aa', 'cc', 'dd']].map(a => 'P: ' + a.join('\r\n\r\n'));
     assert.deepEqual(rows.map(c => c.text), expected);
@@ -84,7 +84,7 @@ test('section occurrences, active heading text and omitted blocks use original U
     assert.deepEqual(duplicates.map(c => c.sectionId), [0, 10]);
     assert.equal((await chunks('---\nnot closed\nstill prose'))[0].text, 'not closed\nstill prose');
     for (const input of ['', ' \r\n', '\uFEFF---\ninvalid: [:\n---', '# A\n## B', '[p]: /private', '[^empty]:']) {
-        assert.deepEqual(await chunkText(input, assert.fail, { inputFormat: 'markdown' }), []);
+        assert.deepEqual(await splitPassages(input, assert.fail, { inputFormat: 'markdown' }), []);
     }
     const nonadditive = await chunks('# A\n## B\nBody', { maxChunkTokens: 1, countTokens: t => t === '## B\nBody' ? 2 : 1 });
     assert.equal(nonadditive[0].text, '# A\n## B\nBody');
@@ -218,7 +218,7 @@ test('prefix visibility, batching and vector ownership preserve identical occurr
             maxCachedEmbeddings: 0, maxEmbeddingBatchSize: 2, maxPasses: 0 };
         const rows = await chunks(source, limits);
         const batches = [];
-        const result = await chunkText(source, texts => { batches.push(texts); return texts.map(t => [t.length]); },
+        const result = await splitPassages(source, texts => { batches.push(texts); return texts.map(t => [t.length]); },
             { inputFormat: 'markdown', ...limits });
         assert.deepEqual(batches, [['P: same', 'P: last']]);
         assert.deepEqual(result.map(({ embedding, ...chunk }) => chunk), rows);

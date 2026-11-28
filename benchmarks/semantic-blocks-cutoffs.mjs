@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { chunkText } from '../src/index.js';
+import {studyPassages as chunkText} from './study-layouts.mjs';
 import { here } from './corpora.mjs';
 import { model, openEncoder, openReplay } from './encoder.mjs';
 import { manifest, markdownCorpora } from './markdown-corpora.mjs';

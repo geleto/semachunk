@@ -1,5 +1,5 @@
 import { fromMarkdown } from 'mdast-util-from-markdown';
-import { chunkText } from '../src/index.js';
+import {studyPassages as chunkText} from './study-layouts.mjs';
 import { createBatchEmbedder } from '../src/embeddings.js';
 import { markdownResult, parseMarkdown } from '../src/markdown.js';
 import { fitsMarkdownJoin } from '../src/markdown-merge.js';

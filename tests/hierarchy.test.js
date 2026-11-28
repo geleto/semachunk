@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { chunkText } from '../src/index.js';
+import {splitPassages} from '../src/passages.js';
 import { loadMarkdownParser } from '../src/markdown-units.js';
 
-const blocks = (source, inputFormat, options) => chunkText(source, { inputFormat, chunkingStrategy: 'blocks', ...options });
+const blocks = (source, inputFormat, options) => splitPassages(source, undefined, { inputFormat, chunkingStrategy: 'blocks', ...options });
 const bodies = chunks => chunks.map(chunk => chunk.text);
 
 test('the parser supplies nested spans before the traversal measures any token candidate', async () => {

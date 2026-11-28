@@ -12,11 +12,10 @@ test('a browser consumer can bundle a plain-text install with all optional parse
         await cp(new URL('../' + name, import.meta.url), join(directory, name), { recursive: true });
     }
     const { outputFiles } = await build({
-        stdin: { contents: "export { chunkText } from '.'", resolveDir: directory },
+        stdin: { contents: "export { chunk } from '.'", resolveDir: directory },
         bundle: true, platform: 'browser', format: 'esm', write: false
     });
-    const { chunkText } = await import('data:text/javascript;base64,' + Buffer.from(outputFiles[0].contents).toString('base64'));
-    assert.deepEqual(await chunkText('Dr. Silva left. Next.', { chunkingStrategy: 'pack', maxChunkSize: 0 }), [
-        { text: 'Dr. Silva left.' }, { text: 'Next.' }
-    ]);
+    const { chunk } = await import('data:text/javascript;base64,' + Buffer.from(outputFiles[0].contents).toString('base64'));
+    const doc = await chunk('Dr. Silva left. Next.', {strategy:'pack',maxChunkSize:0});
+    assert.deepEqual(doc.chunks.map(c=>c.text), ['Dr. Silva left.','Next.']);
 });

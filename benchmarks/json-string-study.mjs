@@ -4,7 +4,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseTree } from 'jsonc-parser';
-import { chunkText } from '../src/index.js';
+import {studyPassages as chunkText} from './study-layouts.mjs';
 import { packedRanges } from '../src/packing.js';
 import { sentenceEnds } from '../src/sentences.js';
 import { splitSpans } from '../src/token-limit.js';

@@ -1,225 +1,72 @@
-import { parseText, sentenceLocale } from './sentences.js';
-import { copyEmbedding, createBatchEmbedder } from './embeddings.js';
-import { chunkDelimited, packSentences } from './packing.js';
 import { DEFAULT_CONFIG } from '../config.js';
-import { tokenBudget } from './token-limit.js';
-import { sliceView } from './citations.js';
 import { documentNodes, finishDocument, orderedSectionRanges } from './document.js';
+import { prepareDocument } from './document-index.js';
+import { createBatchEmbedder } from './embeddings.js';
+import { defaultCharacterTarget, embedPassages, splitPassages, validateStrategy } from './passages.js';
 export { getChunkContext } from './document.js';
-export { createDocumentIndex } from './document-index.js';
+export { createDocumentIndex, search } from './document-index.js';
+export { _printVersion } from './passages.js';
 
-function defaultCharacterTarget(format) {
-	if (format === 'json') return DEFAULT_CONFIG.JSON_MAX_CHUNK_SIZE;
-	return format === 'markdown' || format === 'html' ? DEFAULT_CONFIG.MARKDOWN_MAX_CHUNK_SIZE : DEFAULT_CONFIG.MAX_CHUNK_SIZE;
-}
-
-function validateStrategy(strategy, inputFormat, chunkOverlap) {
-	if (!['blocks', 'pack', 'semantic-blocks'].includes(strategy)) {
-		throw new TypeError("chunkingStrategy must be 'blocks', 'pack' or 'semantic-blocks'.");
-	}
-	if (!Number.isSafeInteger(chunkOverlap) || chunkOverlap < 0) {
-		throw new RangeError('chunkOverlap must be a nonnegative safe integer.');
-	}
-	if (inputFormat === 'json' && strategy !== 'blocks') throw new TypeError("JSON input requires the 'blocks' strategy.");
-	if (chunkOverlap && strategy !== 'pack') throw new RangeError("chunkOverlap requires the 'pack' strategy.");
-}
-
-/**
- * Chunk text by structure, size or embedding similarity.
- * @param {string} text - Input text to chunk
- * @param {Function|Object} [embedBatchCallback] - Batch embedding callback or chunking options
- * @param {Object} [options] - Chunking options when using the callback position
- * @returns {Promise<Array>} Chunks with text, optional embeddings and format metadata
- */
-export async function chunkText(text, embedBatchCallback, options) {
-	if (options === undefined && typeof embedBatchCallback === 'object' && !Array.isArray(embedBatchCallback)) {
-		options = embedBatchCallback;
-		embedBatchCallback = undefined;
-	}
-	return runChunking(text, embedBatchCallback, options);
-}
-
-export async function chunkDocument(text, options = {}) {
-	const { sourceId, format = 'text', strategy = 'blocks', sizeUnit = 'characters', embedBatch,
-		countTokens, includeHierarchy = false, sectionRanges, maxStructuralSize = sizeUnit === 'tokens' ?
-			DEFAULT_CONFIG.DOCUMENT_STRUCTURAL_TOKENS : DEFAULT_CONFIG.DOCUMENT_STRUCTURAL_CHARACTERS, maxPassageSize = sizeUnit === 'tokens' ?
-			DEFAULT_CONFIG.DOCUMENT_PASSAGE_TOKENS : DEFAULT_CONFIG.DOCUMENT_PASSAGE_CHARACTERS, ...rest } = options;
-	if (sizeUnit !== 'characters' && sizeUnit !== 'tokens') throw new TypeError("sizeUnit must be 'characters' or 'tokens'.");
-	if (sizeUnit === 'tokens' && typeof countTokens !== 'function') throw new TypeError('Token sizing requires countTokens.');
-	if (!Number.isSafeInteger(maxPassageSize) || maxPassageSize<1) throw new RangeError('maxPassageSize must be a positive safe integer.');
-	if (maxStructuralSize !== Infinity && (!Number.isSafeInteger(maxStructuralSize) || maxStructuralSize < 1)) {
-		throw new RangeError('maxStructuralSize must be a positive safe integer or Infinity.');
-	}
-	if (sourceId !== undefined && typeof sourceId !== 'string') throw new TypeError('sourceId must be a string.');
-	if (sectionRanges !== undefined && !includeHierarchy) throw new TypeError('sectionRanges requires includeHierarchy.');
-	const sections = sectionRanges === undefined ? [] : orderedSectionRanges(sectionRanges,text?.length);
-	if ('maxChunkTokens' in rest) throw new TypeError('Use maxChunkSize and sizeUnit for document inputs.');
-	if (rest.joinParagraphs && strategy !== 'semantic-blocks') throw new TypeError('joinParagraphs requires semantic-blocks.');
-	const capture = {characterCeiling: sizeUnit === 'characters' ? maxPassageSize : undefined};
-	let nodes;
-	if (includeHierarchy) capture.tree = tree => { nodes = documentNodes(text,tree,format); };
-	const semanticTree = strategy === 'semantic-blocks';
-	const target = rest.maxChunkSize ?? (semanticTree ? maxPassageSize : sizeUnit === 'tokens' ?
-		DEFAULT_CONFIG.DOCUMENT_STRUCTURAL_TOKENS : defaultCharacterTarget(format));
-	if (target !== Infinity && (!Number.isSafeInteger(target) || target < (sizeUnit === 'tokens' ? 1 : 0))) {
-		throw new RangeError('Invalid maxChunkSize for the selected sizeUnit.');
-	}
-	const sizing = sizeUnit === 'tokens' ? {maxChunkSize:Infinity,maxChunkTokens:Math.min(target,maxPassageSize),countTokens}
-		: {maxChunkSize:target};
-	const structuralLimit = Math.min(maxStructuralSize,maxPassageSize);
-	if ((semanticTree || strategy === 'blocks') && structuralLimit < Math.min(target,maxPassageSize)) {
-		capture.structuralLimit = structuralLimit;
-	}
-	const chunks = await runChunking(text,embedBatch,{...rest,...sizing,inputFormat:format,chunkingStrategy:strategy,
-		joinParagraphs:rest.joinParagraphs ?? semanticTree},capture);
-	for (const c of chunks) {
-		if (!c.citations) c.citations = c.sourceRanges.map(r=>({...r, outputEnd:r.outputStart+r.end-r.start}));
-		if (sourceId !== undefined) c.sourceId = sourceId;
-	}
-	if (!includeHierarchy) return chunks;
-	return finishDocument(sourceId,format,chunks,nodes ?? documentNodes(text,{roots:[],children:()=>[]},format),sections,sizeUnit,maxPassageSize,countTokens,structuralLimit);
-}
-
-async function runChunking(text, embedBatchCallback, options, capture) {
-	const {
-		logging = DEFAULT_CONFIG.LOGGING,
-		inputFormat = DEFAULT_CONFIG.INPUT_FORMAT,
-		chunkingStrategy: strategy = DEFAULT_CONFIG.CHUNKING_STRATEGY,
-		separator,
-		chunkOverlap = DEFAULT_CONFIG.CHUNK_OVERLAP,
-		locale = DEFAULT_CONFIG.LOCALE,
-		maxChunkSize = defaultCharacterTarget(inputFormat),
-		maxChunkTokens = DEFAULT_CONFIG.MAX_CHUNK_TOKENS,
-		countTokens,
-		maxEmbeddingBatchSize = DEFAULT_CONFIG.MAX_EMBEDDING_BATCH_SIZE,
-		maxCachedEmbeddings = DEFAULT_CONFIG.MAX_CACHED_EMBEDDINGS,
-		mergeThresholdMode = DEFAULT_CONFIG.MERGE_THRESHOLD_MODE,
-		similarityThreshold = mergeThresholdMode === 'document' ? DEFAULT_CONFIG.SIMILARITY_THRESHOLD : DEFAULT_CONFIG.SEMANTIC_BLOCKS_SIMILARITY_THRESHOLD,
-		excludeNonLetterSentences = DEFAULT_CONFIG.EXCLUDE_NON_LETTER_SENTENCES,
-		combineChunksSimilarityThreshold = similarityThreshold,
-		returnEmbedding = embedBatchCallback != null && DEFAULT_CONFIG.RETURN_EMBEDDING,
-		chunkPrefix = DEFAULT_CONFIG.CHUNK_PREFIX,
-		excludeChunkPrefixInResults = DEFAULT_CONFIG.EXCLUDE_CHUNK_PREFIX_IN_RESULTS
-	} = options ?? {};
-
-	if (typeof text !== 'string') {
-		throw new TypeError('Input must be a string');
-	}
-	validateStrategy(strategy, inputFormat, chunkOverlap);
-	const usesSimilarity = strategy === 'semantic-blocks';
-	for (const [name, value] of Object.entries({ similarityThreshold, combineChunksSimilarityThreshold })) {
-		if (!Number.isFinite(value)) throw new RangeError(`${name} must be finite.`);
-	}
-	if (maxChunkSize !== Infinity && !(Number.isSafeInteger(maxChunkSize) && maxChunkSize >= 0)) {
-		throw new RangeError('maxChunkSize must be a nonnegative safe integer or Infinity.');
-	}
-	if (mergeThresholdMode !== 'fixed' && mergeThresholdMode !== 'document') {
-		throw new TypeError("mergeThresholdMode must be 'fixed' or 'document'.");
-	}
-	if (maxChunkTokens !== Infinity && !(Number.isSafeInteger(maxChunkTokens) && maxChunkTokens > 0)) {
-		throw new RangeError('maxChunkTokens must be a positive safe integer or Infinity.');
-	}
-	if ((maxChunkTokens !== Infinity || countTokens !== undefined) && typeof countTokens !== 'function') {
-		throw new TypeError('A finite maxChunkTokens requires a countTokens function.');
-	}
-	if (separator !== undefined) {
-		if (typeof separator !== 'string' || !separator.length) throw new TypeError('separator must be a nonempty string.');
-		if (inputFormat !== 'text' || usesSimilarity || excludeNonLetterSentences) {
-			throw new TypeError("separator requires plain text, 'blocks' or 'pack', and no sentence filtering.");
-		}
-		sentenceLocale(locale);
-	}
-	const embedBatch = createBatchEmbedder(embedBatchCallback, maxEmbeddingBatchSize, maxCachedEmbeddings);
-	if (!embedBatch && (usesSimilarity || returnEmbedding)) {
-		throw new TypeError("An embedding callback is required for 'semantic-blocks' or returnEmbedding: true.");
-	}
-	if (logging) await _printVersion();
-	const prefix = chunkPrefix?.trim() ? chunkPrefix + ': ' : '';
-	const fits = capture?.characterCeiling === undefined ? tokenBudget(maxChunkTokens,countTokens,prefix) :
-		tokenBudget(capture.characterCeiling,text=>text.length,prefix);
-	const fitsStructure = capture?.structuralLimit === undefined ? undefined :
-		tokenBudget(capture.structuralLimit,capture.characterCeiling === undefined ? countTokens : text=>text.length,prefix);
-	const fitsOverlap = chunkOverlap > 0 && (maxChunkTokens === Infinity
-		? text => text.length <= chunkOverlap : tokenBudget(chunkOverlap, countTokens, ''));
-	const parsing = {
-		strategy, fits, fitsStructure, locale, excludeNonLetterSentences, maxChunkSize,
-		joinParagraphs:options?.joinParagraphs, combineChunksSimilarityThreshold,
-		calibrate: mergeThresholdMode === 'document' && options?.combineChunksSimilarityThreshold === undefined
-	};
-	let output;
-	if (separator !== undefined) {
-		output = chunkDelimited(text, separator, { ...parsing, fitsOverlap });
-		if (capture?.tree) {
-			const records = chunkDelimited(text,separator,{strategy:'blocks',maxChunkSize:Infinity});
-			capture.tree({roots:records.map(c=>({...c.sourceRanges[0],kind:'record'})),children:()=>[]});
-		}
-	} else if (inputFormat === 'json') {
-		if (excludeNonLetterSentences) throw new TypeError('JSON input does not support sentence filtering.');
-		const [{ chunkJsonRecords }, parser] = await Promise.all([
-			import('./json-records.js'),
-			import('jsonc-parser').catch(error => {
-				if (error.code === 'ERR_MODULE_NOT_FOUND' && error.message.includes("package 'jsonc-parser'")) {
-					throw new Error('JSON input requires jsonc-parser. Run npm install --include=optional.', { cause: error });
-				}
-				throw error;
-			})
-		]);
-		output = chunkJsonRecords(text, maxChunkSize, fits, locale, parser, capture, fitsStructure);
-	} else if (inputFormat === 'markdown' || inputFormat === 'html') {
-		const { chunkStructured } = await import('./structured-chunks.js');
-		const parse = inputFormat === 'html' ? (await import('./html.js')).parseHtml :
-			(await import('./markdown-units.js')).parseMarkdownDocument;
-		output = await chunkStructured(await parse(text, !!capture), embedBatch, { ...parsing, fitsOverlap }, capture);
-	} else {
-		let chunks = await parseText(text, { ...parsing, inputFormat }, embedBatch, capture);
-		if (chunks.length === 0) return [];
-		if (logging) console.log('Initial chunks', chunks.map(chunk => chunk.slice(0, 50)));
-
-		const flat = capture?.flat;
-		if (strategy === 'pack') {
-			if (capture) capture.chunks = [];
-			chunks = packSentences(chunks, maxChunkSize, fits, fitsOverlap,
-				flat && ((a,b)=>capture.chunks.push(sliceView(flat,a,b))));
-		}
-		output = capture?.chunks ?? chunks.map(text => ({ text }));
-	}
-	if (!prefix && !returnEmbedding && !fits) return output;
-	const indexed = [], pending = [];
-	for (const chunk of output) {
-		const text = prefix + chunk.text;
-		if (fits && !fits(chunk.text)) {
-			if (capture?.characterCeiling !== undefined) chunk.sizeLimitExceeded = true;
-			else chunk.tokenLimitExceeded = true;
-		}
-		else if (returnEmbedding) {
-			indexed.push(text);
-			pending.push(chunk);
-		}
-		if (prefix && !excludeChunkPrefixInResults) {
-			chunk.text = text;
-			for (const range of chunk.sourceRanges ?? []) range.outputStart += prefix.length;
-			for (const range of chunk.citations ?? []) { range.outputStart += prefix.length; range.outputEnd += prefix.length; }
-		} else if (prefix && (chunk.sourceRanges || capture)) chunk.embeddingText = text;
-	}
-	if (pending.length) {
-		const embeddings = await embedBatch(indexed);
-		const seen = new Set();
-		pending.forEach((chunk, i) => {
-			const vector = embeddings[i];
-			chunk.embedding = seen.has(vector) ? copyEmbedding(vector) : vector;
-			seen.add(vector);
-		});
-	}
-	return output;
-}
-
-export async function _printVersion() {
-	const { default: { version } } = await import('../package.json', { with: { type: 'json' } }).catch(error => {
-		// Earlier Node ESM loaders use the import assertion spelling.
-		if (error.code !== 'ERR_IMPORT_ASSERTION_TYPE_MISSING') throw error;
-		return import('../package.json', { assert: { type: 'json' } });
-	});
-	const versionText = `-- semachunk v${version} --`;
-	const lineLength = versionText.length;
-	console.log(`\n${'-'.repeat(lineLength)}\n${versionText}\n${'-'.repeat(lineLength)}`);
+/** Split one source into citable passages and retain its hierarchy for retrieval. */
+export async function chunk(text, options = {}) {
+    if (typeof text !== 'string') throw new TypeError('Input must be a string');
+    if (!options || typeof options !== 'object' || Array.isArray(options) || arguments.length > 2) {
+        throw new TypeError('Use chunk(text, options) and pass the embedding callback as embedBatch.');
+    }
+    const {
+        sourceId, format = 'text', strategy = 'blocks', sizeUnit = 'characters', embedBatch, countTokens,
+        sectionRanges = [], maxChunkSize, maxStructuralSize = sizeUnit === 'tokens' ?
+            DEFAULT_CONFIG.DOCUMENT_STRUCTURAL_TOKENS : DEFAULT_CONFIG.DOCUMENT_STRUCTURAL_CHARACTERS,
+        maxPassageSize = sizeUnit === 'tokens' ? DEFAULT_CONFIG.DOCUMENT_PASSAGE_TOKENS : DEFAULT_CONFIG.DOCUMENT_PASSAGE_CHARACTERS,
+        index = false, returnEmbedding = embedBatch != null, joinParagraphs = strategy === 'semantic', ...rest
+    } = options;
+    if (!['text','markdown','html','json'].includes(format)) throw new TypeError('Invalid document format.');
+    validateStrategy(strategy,format,rest.chunkOverlap === undefined ? DEFAULT_CONFIG.CHUNK_OVERLAP : rest.chunkOverlap);
+    if (rest.separator !== undefined && strategy === 'semantic') throw new TypeError("separator requires 'blocks' or 'pack'.");
+    if ('inputFormat' in rest || 'chunkingStrategy' in rest) throw new TypeError('Use format and strategy in chunk options.');
+    if ('maxChunkTokens' in rest) throw new TypeError('Use maxChunkSize and sizeUnit to size chunks.');
+    if (sizeUnit !== 'characters' && sizeUnit !== 'tokens') throw new TypeError("sizeUnit must be 'characters' or 'tokens'.");
+    if (sizeUnit === 'tokens' && typeof countTokens !== 'function') throw new TypeError('Token sizing requires countTokens.');
+    if (!Number.isSafeInteger(maxPassageSize) || maxPassageSize < 1) throw new RangeError('maxPassageSize must be a positive safe integer.');
+    if (maxStructuralSize !== Infinity && (!Number.isSafeInteger(maxStructuralSize) || maxStructuralSize < 1)) {
+        throw new RangeError('maxStructuralSize must be a positive safe integer or Infinity.');
+    }
+    if (sourceId !== undefined && typeof sourceId !== 'string') throw new TypeError('sourceId must be a string.');
+    if (typeof index !== 'boolean') throw new TypeError('index must be a boolean.');
+    if (joinParagraphs && strategy !== 'semantic') throw new TypeError('joinParagraphs requires semantic.');
+    const blockTarget = sizeUnit === 'tokens' ? DEFAULT_CONFIG.DOCUMENT_STRUCTURAL_TOKENS : defaultCharacterTarget(format);
+    const target = maxChunkSize ?? (strategy === 'semantic' ? maxPassageSize : blockTarget);
+    if (target !== Infinity && (!Number.isSafeInteger(target) || target < (sizeUnit === 'tokens' ? 1 : 0))) {
+        throw new RangeError('Invalid maxChunkSize.');
+    }
+    const sections = orderedSectionRanges(sectionRanges,text.length);
+    const embed = createBatchEmbedder(embedBatch,rest.maxEmbeddingBatchSize,rest.maxCachedEmbeddings);
+    if (!embed && (index || returnEmbedding || strategy === 'semantic')) throw new TypeError('An embedBatch callback is required.');
+    let nodes;
+    const capture = {embed, characterCeiling:sizeUnit === 'characters' ? maxPassageSize : undefined,
+        tree(tree) {nodes = documentNodes(text,tree,format);}};
+    const structuralLimit = Math.min(maxStructuralSize,maxPassageSize);
+    const chunks = [];
+    for (const layout of strategy === 'semantic' ? ['blocks','semantic'] : [strategy]) {
+        const limit = layout === 'blocks' && strategy === 'semantic' ? Math.min(blockTarget,target) : target;
+        const sizing = sizeUnit === 'tokens' ? {maxChunkSize:Infinity,maxChunkTokens:Math.min(limit,maxPassageSize),countTokens} :
+            {maxChunkSize:limit};
+        capture.structuralLimit = layout !== 'pack' && structuralLimit < Math.min(limit,maxPassageSize) ? structuralLimit : undefined;
+        const passages = await splitPassages(text,embedBatch,{...rest,...sizing,logging:rest.logging && !nodes,
+            inputFormat:format,chunkingStrategy:layout,joinParagraphs:layout === 'semantic' && joinParagraphs,returnEmbedding:false},capture);
+        for (const c of passages) {
+            c.layout = layout;
+            c.citations ??= c.sourceRanges.map(r=>({...r,outputEnd:r.outputStart+r.end-r.start}));
+            if (sourceId !== undefined) c.sourceId = sourceId;
+            chunks.push(c);
+        }
+        capture.tree = undefined;
+    }
+    if (returnEmbedding) {
+        const eligible = chunks.filter(c=>!c.sizeLimitExceeded && !c.tokenLimitExceeded);
+        if (eligible.length) await embedPassages(eligible,embed);
+    }
+    const doc = finishDocument(sourceId,format,chunks,nodes ?? documentNodes(text,{roots:[],children:()=>[]},format),
+        sections,sizeUnit,maxPassageSize,countTokens,structuralLimit,strategy);
+    return prepareDocument(doc,{index,embed,embedBatch,maxEmbeddingBatchSize:rest.maxEmbeddingBatchSize});
 }

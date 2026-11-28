@@ -12,65 +12,43 @@ A normal install supports all four input formats. The optional parsers load on d
 
 ## Usage
 
-Call `chunkText(source)` to split a document with the default `blocks` strategy. Pass options as the second argument to set the chunk size or select another strategy.
-
-```javascript
-import { chunkText } from 'semachunk';
-
-const text = 'Heat the stock.\n\nAdd the rice. Stir gently.';
-const chunks = await chunkText(text, { maxChunkSize: 30 });
-// [{ text: 'Heat the stock.' }, { text: 'Add the rice. Stir gently.' }]
-```
-
-To return vectors as well, call `chunkText(source, embedBatch, options)`. The callback receives an array of strings and returns one vector per string.
-
-### Citable documents and search
-
-`chunkDocument(text, options?)` returns chunks with citations into the original input, including plain text and HTML. Pass `includeHierarchy: true` to get `{ sourceId, format, nodes, chunks }`. Each node has an ID, parent ID, type, text, heading path and citations. Chunks identify their enclosing parent and the complete nodes they contain. IDs are local to the document. Citation offsets are half-open UTF-16 ranges in both strings. For example, the displayed `&` in `<p>A &amp; B</p>` maps to input `[5,10)` and output `[2,3)`.
-
-`format` selects the parser and `strategy` selects the splitter. The defaults are `text` and `blocks`. All size limits use the selected `sizeUnit`.
-
-| Document option | Characters | Tokens with `countTokens` |
-|---|---:|---:|
-| `maxChunkSize` for `blocks` and `pack` | 500 for text, 1,024 for HTML, Markdown and JSON | 256 |
-| `maxChunkSize` for `semantic-blocks` | The passage ceiling | The passage ceiling |
-| `maxStructuralSize`, the limit on a whole branch or a run across blocks | 1,024 UTF-16 units | 256 |
-| `maxPassageSize`, the hard ceiling on a displayed passage including neighbors | 2,048 UTF-16 units | 512 |
-
-`blocks` and `semantic-blocks` descend into oversized sections, lists and other branches. Whole branches and cross-paragraph joins must fit `maxStructuralSize`. Sentences within one paragraph can use the larger core budget. For example, semantic-blocks can keep one coherent 350-token paragraph intact. A 350-token section containing several paragraphs is divided at its children. The document strategy uses a 0.15 fixed similarity cutoff by default and joins adjacent sibling paragraphs when their shared edge fits. Pass `joinParagraphs: false` to preserve semantic cuts at paragraph boundaries. Both layouts retain the individual paragraph nodes for search and citation.
-
-`maxPassageSize` must be a positive finite integer. It also bounds the core. Set `maxStructuralSize: Infinity` to allow branches to use the full core budget. Token mode counts the actual text, including separators. Character mode uses UTF-16 length directly. A fragment or caller prefix that cannot fit the hard limit is flagged at ingestion with `sizeLimitExceeded` in character mode or `tokenLimitExceeded` in token mode. Search indexes fitting cores.
-
 ```js
-import { chunkDocument, createDocumentIndex } from 'semachunk';
+import { chunk } from 'semachunk';
 
-const source = { sourceId: 'guide-v1', format: 'markdown', includeHierarchy: true,
-    sizeUnit: 'tokens', countTokens };
-const blocks = await chunkDocument(markdown, source);
-const semantic = await chunkDocument(markdown, {
-    ...source, strategy: 'semantic-blocks', embedBatch, returnEmbedding: false
-});
-const index = await createDocumentIndex([blocks, semantic], embedBatch, {
-    includeSections: true
-});
-const [hit] = await index.search(question, { sectionWeight: 0.15 });
-// hit.match contains the winning paragraph or the fallback chunk.
-// hit.chunk is the ranked chunk. hit.context supplies the reading text and citations.
+const doc = await chunk('Heat the stock.\n\nAdd the rice. Stir gently.', { maxChunkSize: 30 });
+doc.chunks.map(c => c.text); // ['Heat the stock.', 'Add the rice. Stir gently.']
 ```
 
-`createDocumentIndex` is an exact, in-memory retriever. The example builds one index from two chunk layouts of the same source revision. Give both layouts the same `sourceId`. `index.stats` reports source, layout, chunk and distinct embedding counts. One query embedding scores every distinct indexing text. By default each chunk receives equal weight from its own cosine score and its highest-scoring complete, strictly contained paragraph. A chunk with no such paragraph receives its own score. The default retrieval index stores chunk and paragraph vectors. Semantic splitting can also compute sentence embeddings while choosing boundaries.
+`chunk(text, options?)` returns one document with a parsed hierarchy and citable passages in `doc.chunks`.
 
-Each indexed paragraph embeds its nearest heading, two newlines and the paragraph text. A paragraph without a heading embeds its text alone. Identical embedding inputs share a vector across layouts and documents, so the same wording under different headings can rank differently. Both `search` and `searchNodes` return the original paragraph text and citations for a paragraph match. [Heading and paragraph retrieval benchmark](benchmarks/results/2026-11-28-html-parser.md#what-transfers-across-formats)
+### Strategies
 
-To add individual sentence keys, pass `detailTypes: ['paragraph', 'sentence']` to `createDocumentIndex`. For fewer keys, pass `sentenceGrouping: { maxSentences: 3 }`. This adds consecutive complete sentences from the same paragraph inside each candidate. Groups share one embedding of their actual text. Setting `minSimilarity: 0.25` in the grouping options requires adjacent sentences to meet that cosine threshold. This mode uses temporary sentence vectors to decide joins. A group match includes the original sentence node IDs and source citations. These options work with either layout or with both in one index.
+| `strategy` | Description |
+| --- | --- |
+| `blocks` (default) | Keep fitting structural units together and descend into oversized ones. |
+| `pack` | Append consecutive sentences or records up to the limit, with optional overlap. |
+| `semantic` | Build structural and similarity-based passages from the same document and search both layouts together. Requires `embedBatch`. |
 
-`includeSections` indexes authored sections containing at least two paragraphs. `sectionWeight` gives the nearest strictly enclosing section a share of the passage score. A title covering the entire document falls under document weighting. `useContainedSections: true` also lets fitting sections inside a chunk compete with paragraph matches. `includeDocuments` adds whole-source vectors for direct document retrieval or optional `documentWeight` in passage ranking. Both weights default to zero. A large section or document can help rank a bounded passage. Direct `searchNodes` lookups return section and document text that fits the structural and passage limits. To retrieve complete sources of any size explicitly, use `index.searchNodes(question, { types: ['document'], includeOversized: true })` on an index created with `includeDocuments: true`. The embedding callback receives the complete text of each requested key. A provider with an input limit needs a length-aware callback. Search accepts either a question string or its embedding.
+### Formats
 
-If an importer supplies an outline for flattened text, pass `sectionRanges` to `chunkDocument` with `includeHierarchy: true`. Each `{ start, end, headingPath? }` gives the half-open UTF-16 interval of a complete section in the supplied string. Ranges can nest. The resulting nodes have `retrievalOnly: true` and provide scoring and citation metadata. The original parser hierarchy determines the chunk cuts and reading windows.
+| `format` | Structure |
+| --- | --- |
+| `text` (default) | Blank-line paragraphs, headings, list items, lines and sentences. |
+| `markdown` | Headings, paragraphs, lists, tables and code blocks with original Markdown ranges. |
+| `html` | Visible text and authored structure with citations into the original markup. |
+| `json` | Records, objects, arrays and scalar values. Supports `blocks`. |
 
-Reading context includes up to one neighboring chunk on either side, inside the authored section or record and the passage ceiling. The core stays intact. If the full window is too large, the renderer grows outward using the nearest complete parser units that fit, checking the joined text each time. Neighbors carry **zero ranking weight**. They contribute display text and can affect which overlapping hits are suppressed. Introductions identify the source headings and list lead-ins associated with the core. `getChunkContext(document, chunkIndex)` also works independently of search. Pass `neighbors: 0` to display just the core. Search suppresses same-source windows that overlap by at least 75% of the shorter window. Set `distinct: false` to inspect overlapping hits.
+### Size limits
 
-Token-sized documents retain their tokenizer in memory. After a JSON round trip, supply the same `countTokens` to `createDocumentIndex` or `getChunkContext`. Snapshots keep their recorded passage budget. Snapshots without any sizing metadata use the default character ceiling. An oversized legacy core requires rechunking the original source to build its bounded candidates. [Structural limits and comparison of strategies](benchmarks/results/2026-11-27-structural-limits.md) · [Sentence-group experiments](benchmarks/results/2026-11-27-bounded-passages.md)
+All limits use `sizeUnit: 'characters'` by default. For tokens, pass `sizeUnit: 'tokens'` and the embedding model's synchronous `countTokens` function.
+
+| Option | Characters (UTF-16) | Tokens |
+| --- | --- | --- |
+| `maxChunkSize` | 500 for plain text or 1,024 for structured formats | 256 |
+| `maxStructuralSize` | 1,024 | 256 |
+| `maxPassageSize` | 2,048 | 512 |
+
+In `semantic` mode the similarity-based layout targets `maxPassageSize` by default. Its structural layout uses the ordinary `blocks` target. An explicit `maxChunkSize` sets the semantic target and can lower the structural target. `maxStructuralSize` limits whole branches and joins across paragraphs. `maxPassageSize` bounds every returned passage including context. An indivisible fragment or prefix that exceeds the ceiling is flagged with `sizeLimitExceeded` or `tokenLimitExceeded` and skipped by the search index.
 
 ## Chunking strategies
 
@@ -82,54 +60,101 @@ The default strategy keeps a whole document or section together when it fits. Wh
 
 `pack` fills each chunk from left to right. In plain text it appends whole sentences, so a chunk can span paragraphs. With a plain-text `separator` it packs whole records. In HTML and Markdown it appends consecutive prose from the same section until the next unit would exceed a size limit. A new heading, table, code block or thematic break ends the run.
 
-Use `chunkOverlap` to repeat whole units from the end of the previous chunk. They must fit the overlap limit and leave room for a new unit. The overlap is measured in UTF-16 code units, or in tokens when `maxChunkTokens` is finite. To get individual plain-text sentences, use `pack` with `maxChunkSize: 0`.
+Use `chunkOverlap` to repeat whole units from the end of the previous chunk. They must fit the overlap limit and leave room for a new unit. The overlap is measured in UTF-16 code units, or in tokens with `sizeUnit: 'tokens'`. To get individual plain-text sentences, use `pack` with `maxChunkSize: 0`.
 
 ```javascript
-const chunks = await chunkText('Add water. Stir well. Serve hot.', {
-    chunkingStrategy: 'pack',
+const { chunks } = await chunk('Add water. Stir well. Serve hot.', {
+    strategy: 'pack',
     maxChunkSize: 21,
     chunkOverlap: 10
 });
 chunks.map(chunk => chunk.text); // ['Add water. Stir well.', 'Stir well. Serve hot.']
 ```
 
-### `semantic-blocks`
+### `semantic`
 
-`semantic-blocks` scores adjacent siblings whose combined text fits the size limits, from sentences within a paragraph to top-level sections. A score below the cutoff forces a split even when the parent fits. The chunker then keeps whole nodes and groups consecutive siblings that fit between those splits. Related Markdown subsections can share a chunk. A table or code block can also share a chunk with related prose.
+One call builds a structural layout followed by a similarity-based layout. Both refer to the same hierarchy and source. In `doc.chunks` each passage has `layout: 'blocks'` or `layout: 'semantic'`. The two layouts can cover the same source text.
 
-`semantic-blocks` requires an embedding callback, including when `returnEmbedding: false`. With `blocks` or `pack`, embeddings are used only for the requested output vectors.
+The semantic layout scores adjacent siblings from sentences to sections. A similarity below the default cutoff of 0.15 creates a boundary even within a fitting parent. Adjacent sibling paragraphs can rejoin within the structural limit. Pass `joinParagraphs: false` to preserve those cuts. `embedBatch` is required for boundary scoring even with `returnEmbedding: false`.
 
-## Supported formats
+## What chunk returns
 
-`inputFormat` defaults to `'text'`. Text, Markdown and HTML support all three strategies. JSON uses `blocks`.
+`chunk(text, options?)` returns a `Promise<ChunkedDocument>`. The document contains `chunks`, the parsed hierarchy in `nodes`, the `format`, `strategy`, `sizeUnit`, `maxStructuralSize` and `maxPassageSize`. Pass `sourceId` to identify the source in citations and search results.
 
-### Text
+`DocumentChunk` is the TypeScript type of **one passage** in `doc.chunks`. For example, `await chunk('Heat the stock.', { sourceId: 'recipe' })` returns a document whose first chunk is
 
-Plain text keeps strings such as `Array<T>` and `&amp;` literal. Blank lines start paragraphs, `#` through `######` introduce sections, and bulleted or numbered items start new blocks. A single newline inside a sentence wraps the same paragraph. When subdividing an oversized paragraph, `blocks` prefers line endings that coincide with sentence boundaries.
+```js
+{
+    text: 'Heat the stock.', sourceId: 'recipe', layout: 'blocks',
+    parentId: 2, nodeIds: [1, 2],
+    citations: [{ start: 0, end: 15, outputStart: 0, outputEnd: 15 }]
+}
+```
+
+`parentId` and `nodeIds` address `doc.nodes`. Markdown chunks also carry `headingPath` and `sectionId`, and JSON chunks carry `jsonPointer`. With `embedBatch`, each fitting chunk includes its core `embedding` by default. Use `index: true` to store the retrieval vectors for the whole document.
+
+## Search and citations
+
+```js
+import { chunk, search } from 'semachunk';
+
+const options = {
+    format: 'markdown', strategy: 'semantic', index: true, embedBatch, returnEmbedding: false
+};
+const handbook = await chunk(handbookMarkdown, { ...options, sourceId: 'handbook' });
+const [hit] = await search(handbook, 'When does coverage start?');
+
+const docs = [handbook];
+docs.push(await chunk(policyMarkdown, { ...options, sourceId: 'policy' }));
+const [questionVector] = await embedBatch(['When does coverage start?']);
+const hits = await search(docs, questionVector, { limit: 3 });
+```
+
+`search(docOrDocs, query, options?)` returns a promise of ranked hits. The default `limit` is five across the collection. `docs[hit.documentIndex].chunks[hit.chunkIndex]` is the exact passage in `hit.chunk`. For a single document, `documentIndex` is zero. `hit.score` is the passage score. `hit.match` gives the best matching indexed detail or, when there is none, the core passage. Display `hit.context.text` and use `hit.context.citations` to cite it.
+
+With `index: true`, `chunk` stores the distinct passage, paragraph and eligible section vectors in `doc.index`. Appending another indexed document reuses the vectors already prepared. When a source changes, replace its document in the array with a fresh `chunk` result. Set `returnEmbedding: false` to omit the extra copy of the core vector on each chunk. For a document created without an index, `search` can prepare the missing vectors on first use with `embedBatch` and reuse them in memory.
+
+Use the same embedding model for every document and query. A text query is embedded once for the collection. Live documents remember their callback. To search indexed documents loaded from JSON, pass a query vector, or pass a string and `{ embedBatch }`. For token-sized documents loaded from storage, also pass the original `{ countTokens }` so the returned context respects its budget.
+
+Chunk scoring blends the core and the best contained paragraph equally. Paragraphs are embedded with their nearest heading. Semantic-layout cores mix 70% of their vector with 30% from eligible immediately adjacent chunks in that layout, within the authored section. A single eligible neighbour gets the full 30%. Both layouts of a semantic document give an eligible enclosing section 15% of the score by default. Search suppresses results from the same source that overlap by at least 75% of the shorter passage. [Retrieval benchmark](benchmarks/results/2026-11-28-mastra-finalists.md)
+
+The displayed context keeps the core intact and adds fitting source units inside the same section or record. Structural and packed passages draw from one chunk on each side. Semantic passages can draw from multiple neighbouring chunks up to the same passage ceiling. Use `neighbors: 0` to display the core alone. `getChunkContext(doc, chunkIndex)` returns the same reading passage, including its cited headings and list introductions.
+
+Citation offsets are half-open UTF-16 ranges in both the input and the displayed text. The displayed `&` in `<p>A &amp; B</p>` maps from output `[2,3)` to input `[5,10)`. Search returns original paragraph text and citations even when its embedding includes a heading.
+
+### Custom indexes and node lookup
+
+Use `const index = await createDocumentIndex(docOrDocs, embedBatch, options)` for direct node lookup, custom detail types or index statistics. It shares equal embedding inputs across documents. `index.search(query)` uses the same passage scorer as `search`. `index.stats` reports sources, layouts, candidate chunks and distinct embeddings. Pass `detailTypes: ['paragraph','sentence']` to index sentences, or `sentenceGrouping: {maxSentences: 3, minSimilarity: 0.25}` to index groups of adjacent sentences in a paragraph. `index.searchNodes(query, { types: ['paragraph'] })` returns the matching nodes and their citations.
+
+`includeSections` controls section indexing and `sectionWeight` overrides the default score share. For standalone `blocks` and `pack` documents the default share is zero. `includeDocuments` enables whole-source keys, with explicit `documentWeight` for passage ranking. `useContainedSections` lets fitting sections inside a chunk compete with paragraph matches. The top-level `search` can also take these weights and uses `embedBatch` for any extra keys they require. `searchNodes` ordinarily returns sections or whole documents that fit the structural limit. To request full nodes of any size, pass `includeOversized: true`. A provider with a per-input limit needs a length-aware callback for large routing nodes.
+
+To supply an outline for flattened text, pass `sectionRanges` to `chunk` with original `{start, end, headingPath?}` intervals. These add retrieval nodes while preserving the parser's chunk boundaries. `createDocumentIndex` and `getChunkContext` also accept `countTokens` for restored documents.
+
+## Format details
 
 ### HTML
 
-Pass `format: 'html'` to `chunkDocument`, or `inputFormat: 'html'` to `chunkText`. The HTML parser builds a visible-text outline from headings, paragraphs, nested lists, quotations, tables and preformatted code. A section wrapper around a heading contributes one section to the outline. Inline links retain their labels, and code preserves indentation and line breaks.
+Pass `{ format: 'html' }` to `chunk`. The HTML parser builds a visible-text outline from headings, paragraphs, nested lists, quotations, tables and preformatted code. A section wrapper around a heading contributes one section to the outline. Inline links retain their labels, and code preserves indentation and line breaks.
 
-HTML and Markdown use the same structure builder, chunking strategies and retrieval rules. The budgets measure each input's rendered passage. HTML returns decoded text with rows and cells separated by newlines and tabs. Oversized tables can repeat their column headers, with each repetition citing the original cells. Use `includeHierarchy: true` to retrieve heading paths and source spans for individual nodes. A title-only document returns citable headings.
+HTML and Markdown use the same structure builder, chunking strategies and retrieval rules. The budgets measure each input's rendered passage. HTML returns decoded text with rows and cells separated by newlines and tabs. Oversized tables can repeat their column headers, with each repetition citing the original cells. The document nodes retain heading paths and source spans. A title-only document returns citable headings.
 
 ### Delimited text
 
-For newline-delimited logs or JSON Lines, pass `{ separator: '\n' }`. With `blocks`, each trimmed, nonblank record is a chunk unless the token cap requires a split. With `pack`, consecutive records can share a chunk with their original separators and can overlap in whole records. Delimiters are literal strings. LF and CRLF match each other.
+For newline-delimited logs or JSON Lines, pass `{ separator: '\n' }`. With `blocks`, each trimmed, nonblank record is a chunk unless the passage budget requires a split. With `pack`, consecutive records can share a chunk with their original separators and can overlap in whole records. Delimiters are literal strings. LF and CRLF match each other.
 
 For CSV with quoted multiline cells, parse the CSV first. Pass the rows as serialized JSON to keep record boundaries. For duplicate column names, keep the headers and values in positional arrays.
 
 ### JSON
 
-Pass `{ inputFormat: 'json' }` with a serialized JSON string. Each item of a nonempty root array is a separate record. Every other root, including `[]`, starts as one record. Fitting records stay whole. Inside an oversized object or array, consecutive fields or items from the same parent share a chunk while they fit.
+Pass `{ format: 'json' }` with a serialized JSON string. Each item of a nonempty root array is a separate record. Every other root, including `[]`, starts as one record. Fitting records stay whole. Inside an oversized object or array, consecutive fields or items from the same parent share a chunk while they fit.
 
-Long strings split by line and then by sentence within an oversized line. A single sentence or an uninterrupted ASCII identifier can exceed the soft character target. A hard token cap can split scalar values while preserving Unicode code points and raw JSON escapes. With `maxChunkSize: 0`, each scalar and empty container is a separate unit before token splitting.
+Long strings split by line and then by sentence within an oversized line. A single sentence or an uninterrupted ASCII identifier can exceed the soft character target. A hard token cap can split scalar values while preserving Unicode code points and raw JSON escapes. With `maxChunkSize: 0`, each scalar and empty container is a separate unit before budget-driven splitting.
 
 Each chunk's `jsonPointer` identifies the value or, for a group of siblings, their parent. Duplicate keys can share a pointer. Use `sourceRanges` to cite the exact occurrence.
 
 ### Markdown
 
-Pass `{ inputFormat: 'markdown' }` to preserve source spelling, whitespace and heading hierarchy. Oversized lists can split by item and tables by row, repeating the header when it fits. Code stays intact until a hard token cap requires splitting. Closed leading YAML front matter, link definitions, standalone HTML comments and empty sections are omitted.
+Pass `{ format: 'markdown' }` to preserve source spelling, whitespace and heading hierarchy. Oversized lists can split by item and tables by row, repeating the header when it fits. Code stays intact until a hard token cap requires splitting. Closed leading YAML front matter, link definitions, standalone HTML comments and empty sections are omitted.
 
 Each chunk carries a `headingPath` of visible titles and a `sectionId` giving the heading's UTF-16 offset. A chunk spanning sibling sections carries their common parent's heading path. At the document root the path is `[]` and the ID is `null`.
 
@@ -141,32 +166,13 @@ If you set `chunkPrefix` and `excludeChunkPrefixInResults: true`, these formats 
 
 Direct HTML citations refer to offsets in the original markup, including the full spelling of decoded entities. Applications that convert HTML, PDF or LaTeX to Markdown first receive ranges in the converted input. Retain a source map when citations must point back to the original.
 
-## Chunk size limits
-
-- `maxChunkSize` is a soft target in UTF-16 code units. It includes separators between units and excludes `chunkPrefix`. The default is 500 for text and 1,024 for HTML, Markdown and JSON. A single sentence, protected block or JSON scalar can exceed it.
-- `maxChunkTokens` is a token target per chunk and a hard ceiling for each embedding input, including its prefix. It defaults to `Infinity`. A finite limit requires a synchronous `countTokens(text)` callback.
-
-### Fitting an embedding model’s input
-
-Supply the embedding model's tokenizer, including any special tokens the provider counts. Both the raw and prefixed text must fit. Oversized sentences split at whitespace where possible and then at Unicode code points. A fragment that still exceeds the cap is returned with `tokenLimitExceeded: true` and no embedding.
-
-Both size limits apply when both are finite. Set `maxChunkSize: Infinity` to size by tokens alone.
-
-```javascript
-const chunks = await chunkText(text, {
-    maxChunkSize: Infinity,
-    maxChunkTokens: 256,
-    countTokens: text => tokenizer.encode(text).length
-});
-```
-
 ## Embeddings
 
 Pass a batch callback to use your embedding provider. This example uses the `openai` SDK (`npm install openai`) and reads `OPENAI_API_KEY` from the environment.
 
 ```javascript
 import OpenAI from 'openai';
-import { chunkText } from 'semachunk';
+import { chunk } from 'semachunk';
 
 const openai = new OpenAI();
 
@@ -175,8 +181,8 @@ async function embedBatch(texts) {
     return response.data.map(item => item.embedding);
 }
 
-const chunks = await chunkText('Heat the stock. Add the rice. Stir gently.', embedBatch, {
-    chunkingStrategy: 'semantic-blocks'
+const { chunks } = await chunk('Heat the stock. Add the rice. Stir gently.', {
+    strategy: 'semantic', embedBatch
 });
 ```
 
@@ -188,30 +194,24 @@ Pass your application's embedding model to Casai's `create.Embedder` and adapt i
 
 ```javascript
 import { create } from 'casai';
-import { chunkText } from 'semachunk';
+import { chunk } from 'semachunk';
 
 const embedder = create.Embedder({ model: embeddingModel });
-const chunks = await chunkText(markdown, async texts => (await embedder(texts)).embeddings, {
-    inputFormat: 'markdown'
+const { chunks } = await chunk(markdown, {
+    format: 'markdown', embedBatch: async texts => (await embedder(texts)).embeddings
 });
 ```
 
-Store the document URL or ID, `text`, `headingPath` and `sourceRanges` with each vector so retrieved passages can cite the original document.
+Store the document ID, text and citations with external vector records so a retrieved passage can point back to the original input.
 
 ## Configuration
 
-### Shared options
-
 | Option | Default | Description |
-|---|---|---|
-| `inputFormat` | `'text'` | Split plain text, extract text from `'html'`, preserve sections in `'markdown'`, or split records in `'json'`. |
-| `chunkingStrategy` | `'blocks'` | Select `'blocks'`, `'pack'` or `'semantic-blocks'`. JSON supports `'blocks'`. |
-| `maxChunkSize` | 1,024 in HTML, Markdown and JSON, 500 in text | Soft per-chunk target in UTF-16 code units, including source or join separators. A single sentence, protected block or JSON scalar can exceed it. The caller prefix is excluded. |
-| `maxChunkTokens` | `Infinity` | Token target per chunk and hard ceiling for every embedding input, including its prefix. An indivisible over-limit fragment is returned with `tokenLimitExceeded: true` and no vector. |
-| `countTokens` | — | Synchronous tokenizer callback required for a finite token budget. Returns a nonnegative safe integer. |
+| --- | --- | --- |
 | `locale` | `'en'` | Language tag for sentence segmentation, including long JSON strings. |
 | `excludeNonLetterSentences` | `false` | Skip sentences containing no Unicode letters in text, HTML and Markdown. Applies when parsing sentences. JSON and delimited records reject this option when enabled. |
-| `returnEmbedding` | `true` with a callback, otherwise `false` | Include a vector for each output chunk that fits the token limit. |
+| `returnEmbedding` | `true` with a callback, otherwise `false` | Include a vector for each output chunk that fits the passage budget. |
+| `index` | `false` | Store the vectors used by `search` on the returned document. Requires `embedBatch`. |
 | `maxEmbeddingBatchSize` | `Infinity` | Maximum distinct texts per provider request. Use a positive integer to set a limit. |
 | `maxCachedEmbeddings` | `Infinity` | Maximum cached vectors between stages, in insertion order. Zero disables reuse between stages. |
 | `chunkPrefix` | `''` | Prefix added to the final text and included in its embedding. |
@@ -223,7 +223,7 @@ Store the document URL or ID, `text`, `headingPath` and `sourceRanges` with each
 | Option | Applies to | Default | Description |
 |---|---|---|---|
 | `separator` | `blocks`, `pack` on plain text | omitted | Literal record delimiter. Record edges are trimmed and blank records are skipped. |
-| `chunkOverlap` | `pack` | 0 | Maximum suffix to repeat in whole units, measured in tokens with a finite token limit or UTF-16 code units otherwise. Accepts a nonnegative safe integer. |
+| `chunkOverlap` | `pack` | 0 | Maximum suffix to repeat in whole units, measured in tokens with token sizing or UTF-16 code units otherwise. Accepts a nonnegative safe integer. |
 
 ### Choosing a similarity threshold
 
@@ -237,7 +237,7 @@ To require a specific minimum cosine, set `mergeThresholdMode: 'fixed'` and `sim
 
 ## Browser usage
 
-Browser applications can bundle the same `import { chunkText } from 'semachunk'` used in Node. Use a browser with `Intl.Segmenter`. When bundling Markdown for a Web Worker, enable the `worker` package export condition. For esbuild, set `platform: 'browser', conditions: ['worker']` for the worker bundle.
+Browser applications can bundle the same `import { chunk, search } from 'semachunk'` used in Node. Use a browser with `Intl.Segmenter`. When bundling Markdown for a Web Worker, enable the `worker` package export condition. For esbuild, set `platform: 'browser', conditions: ['worker']` for the worker bundle.
 
 From a source checkout, install the test browsers with `npx playwright install chromium firefox`, then run `npm run test:browser`.
 

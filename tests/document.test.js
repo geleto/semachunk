@@ -1,49 +1,48 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {chunkDocument,chunkText,createDocumentIndex,getChunkContext} from '../src/index.js';
+import {chunk,createDocumentIndex,getChunkContext} from '../src/index.js';
 
 const embed = async texts => texts.map(t=>[t.length,1]);
-const hierarchy = {includeHierarchy:true};
 
 test('upper branches and paragraph joins have a smaller budget than a single prose block',async()=>{
     const prose='Red beans simmer. They soften slowly.';
     const raw='# Care\n\n'+prose+'\n\nWash rice.\n\nCover pan.';
     const html='<section><h1>Care</h1><p>'+prose+'</p><p>Wash rice.</p><p>Cover pan.</p></section>';
-    const characterDefaults=await chunkDocument(raw,hierarchy);
-    const tokenDefaults=await chunkDocument(raw,{...hierarchy,sizeUnit:'tokens',countTokens:s=>s.length});
+    const characterDefaults=await chunk(raw);
+    const tokenDefaults=await chunk(raw,{sizeUnit:'tokens',countTokens:s=>s.length});
     assert.deepEqual([characterDefaults.maxStructuralSize,characterDefaults.maxPassageSize],[1024,2048]);
     assert.deepEqual([tokenDefaults.maxStructuralSize,tokenDefaults.maxPassageSize],[256,512]);
-    for(const strategy of ['blocks','semantic-blocks']) {
+    for(const strategy of ['blocks','semantic']) {
         for(const format of ['text','markdown','html']) {
             for(const sizing of [{},{sizeUnit:'tokens',countTokens:s=>s.length}]) {
                 const source=format==='html'?html:raw;
-                const options={...hierarchy,...sizing,format,strategy,maxChunkSize:100,maxPassageSize:100,maxStructuralSize:18,
-                    embedBatch:async ts=>ts.map(()=>[1]),joinParagraphs:strategy==='semantic-blocks',returnEmbedding:false};
-                const d=await chunkDocument(source,options);
-                assert.deepEqual(d.chunks.map(c=>c.text),[format==='html'?'Care':'# Care',prose,'Wash rice.','Cover pan.']);
+                const options={...sizing,format,strategy,maxChunkSize:100,maxPassageSize:100,maxStructuralSize:18,
+                    embedBatch:async ts=>ts.map(()=>[1]),joinParagraphs:strategy==='semantic',returnEmbedding:false};
+                const d=await chunk(source,options);
+                assert.deepEqual(d.chunks.filter(c=>c.layout===strategy).map(c=>c.text),[format==='html'?'Care':'# Care',prose,'Wash rice.','Cover pan.']);
                 assert.ok(d.chunks.every(c=>c.citations.every(r=>source.slice(r.start,r.end)===c.text.slice(r.outputStart,r.outputEnd))));
                 assert.ok(d.chunks.every((_,i)=>getChunkContext(d,i).text.length<=100));
-                const relaxed=await chunkDocument(source,{...options,maxStructuralSize:Infinity});
-                assert.equal(relaxed.chunks.length,1);
+                const relaxed=await chunk(source,{...options,maxStructuralSize:Infinity});
+                assert.equal(relaxed.chunks.filter(c=>c.layout===strategy).length,1);
             }
         }
     }
-    const nested=await chunkDocument('# A\n\n## B\n\n'+prose,{...hierarchy,format:'markdown',maxChunkSize:100,maxStructuralSize:9});
+    const nested=await chunk('# A\n\n## B\n\n'+prose,{format:'markdown',maxChunkSize:100,maxStructuralSize:9});
     assert.deepEqual(nested.chunks.map(c=>c.text),['# A','## B',prose]);
     assert.deepEqual(nested.chunks.map(c=>c.headingPath),[['A'],['A','B'],['A','B']]);
-    const json=await chunkDocument('{"a":{"x":111,"y":222},"b":"one value remains long"}',
-        {...hierarchy,format:'json',maxChunkSize:80,maxStructuralSize:18});
+    const json=await chunk('{"a":{"x":111,"y":222},"b":"one value remains long"}',
+        {format:'json',maxChunkSize:80,maxStructuralSize:18});
     assert.deepEqual(json.chunks.map(c=>c.jsonPointer),['/a','/b']);
-    const nonadditive=await chunkDocument('Wash rice.\n\nCover pan.',{sizeUnit:'tokens',maxChunkSize:100,
+    const nonadditive=await chunk('Wash rice.\n\nCover pan.',{sizeUnit:'tokens',maxChunkSize:100,
         maxStructuralSize:5,countTokens:s=>s.includes('rice.\n\nCover')?50:s.split(/\s+/u).length});
-    assert.equal(nonadditive.length,2);
-    for(const bad of [0,-1,NaN,2.5]) await assert.rejects(chunkDocument(raw,{maxStructuralSize:bad}),/maxStructuralSize/);
+    assert.equal(nonadditive.chunks.length,2);
+    for(const bad of [0,-1,NaN,2.5]) await assert.rejects(chunk(raw,{maxStructuralSize:bad}),/maxStructuralSize/);
 });
 
 test('large routing nodes rank passages and require an explicit full-node lookup',async()=>{
     const raw='# Guide\n\nFirst paragraph.\n\nSecond paragraph.\n\n# End\n\nTiny.\n\nFin.';
-    const options={...hierarchy,sourceId:'guide',sizeUnit:'tokens',countTokens:s=>s.length,maxStructuralSize:22,maxPassageSize:45};
-    const d=await chunkDocument(raw,options);
+    const options={sourceId:'guide',sizeUnit:'tokens',countTokens:s=>s.length,maxStructuralSize:22,maxPassageSize:45};
+    const d=await chunk(raw,options);
     const saved=JSON.parse(JSON.stringify(d));
     const index=await createDocumentIndex([saved],embed,{includeSections:true,includeDocuments:true,countTokens:options.countTokens});
     assert.deepEqual((await index.searchNodes([1,0],{types:['section']})).map(h=>h.node.headingPath),[['End']]);
@@ -53,7 +52,7 @@ test('large routing nodes rank passages and require an explicit full-node lookup
     assert.equal(full.node.text,raw);
     const hits=await index.search([1,0],{sectionWeight:.15,documentWeight:.10,useContainedSections:true});
     assert.ok(hits.length && hits.every(h=>h.context.text.length<=45));
-    const large=await chunkDocument(raw,{...options,maxStructuralSize:90,maxPassageSize:100});
+    const large=await chunk(raw,{...options,maxStructuralSize:90,maxPassageSize:100});
     for (const docs of [[large,saved],[saved,large]]) {
         const shared=await createDocumentIndex(docs,embed,{includeDocuments:true,countTokens:options.countTokens});
         assert.deepEqual(await shared.searchNodes([1,0],{types:['document']}),[]);
@@ -62,11 +61,10 @@ test('large routing nodes rank passages and require an explicit full-node lookup
 
 test('document strategies preserve legacy text and citation occurrence through normalization', async () => {
     const raw = '  Same.\r\n\r\nSame.\r\n\r\nLast   word.  ';
-    for (const strategy of ['blocks','pack','semantic-blocks']) {
+    for (const strategy of ['blocks','pack','semantic']) {
         const opts = {strategy,sourceId:'repeat',maxChunkSize:8,embedBatch:embed,returnEmbedding:false};
-        const chunks = await chunkDocument(raw,opts);
-        const legacy = await chunkText(raw,embed,{chunkingStrategy:strategy,maxChunkSize:8,returnEmbedding:false});
-        assert.deepEqual(chunks.map(x=>x.text),legacy.map(x=>x.text));
+        const {chunks} = await chunk(raw,opts);
+        assert.deepEqual(chunks.filter(c=>c.layout===strategy).map(c=>c.text),['Same.','Same.','Last word.']);
         assert.deepEqual(chunks.slice(0,2).map(c=>c.citations[0].start),[2,11]);
         assert.ok(chunks.every(c=>c.sourceId==='repeat'));
         const last = chunks.at(-1);
@@ -76,39 +74,39 @@ test('document strategies preserve legacy text and citation occurrence through n
 
 test('overlap, hard token splits and displayed/indexed prefixes retain their own coordinates',async()=>{
     const raw='One. One. One. One.';
-    const chunks=await chunkDocument(raw,{strategy:'pack',maxChunkSize:9,chunkOverlap:4,chunkPrefix:'P'});
+    const {chunks}=await chunk(raw,{strategy:'pack',maxChunkSize:9,chunkOverlap:4,chunkPrefix:'P'});
     assert.deepEqual(chunks.map(c=>c.citations[0].start),[0,5,10]);
     for(const c of chunks) assert.equal(c.citations[0].outputStart,3);
-    const small=await chunkDocument('αβγδαβγδ',{strategy:'pack',sizeUnit:'tokens',maxChunkSize:4,countTokens:t=>t.length});
-    assert.deepEqual(small.map(c=>c.citations[0].start),[0,4]);
-    const [prefixed]=await chunkDocument('Body.',{chunkPrefix:'Heading',excludeChunkPrefixInResults:true});
+    const small=await chunk('αβγδαβγδ',{strategy:'pack',sizeUnit:'tokens',maxChunkSize:4,countTokens:t=>t.length});
+    assert.deepEqual(small.chunks.map(c=>c.citations[0].start),[0,4]);
+    const {chunks:[prefixed]}=await chunk('Body.',{chunkPrefix:'Heading',excludeChunkPrefixInResults:true});
     assert.equal(prefixed.text,'Body.');
     assert.equal(prefixed.embeddingText,'Heading: Body.');
-    await assert.rejects(chunkDocument('body',{sizeUnit:'tokens'}),/countTokens/);
-    await assert.rejects(chunkDocument('body',{maxChunkTokens:5}),/sizeUnit/);
+    await assert.rejects(chunk('body',{sizeUnit:'tokens'}),/countTokens/);
+    await assert.rejects(chunk('body',{maxChunkTokens:5}),/sizeUnit/);
 });
 
 test('HTML citations refer to visible original text, normalized whitespace and complete entities',async()=>{
     const html='<p hidden>A &amp; B</p><p>A &amp; B</p><p>A &amp; B</p>';
-    for (const strategy of ['blocks','semantic-blocks','pack']) {
-        const doc=await chunkDocument(html,{...hierarchy,format:'html',strategy,embedBatch:embed,maxChunkSize:5,returnEmbedding:false});
-        assert.deepEqual(doc.chunks.map(c=>c.text),['A & B','A & B']);
-        const offsets=doc.chunks.map(c=>c.citations.find(r=>r.outputStart===2));
+    for (const strategy of ['blocks','semantic','pack']) {
+        const doc=await chunk(html,{format:'html',strategy,embedBatch:embed,maxChunkSize:5,returnEmbedding:false});
+        assert.deepEqual(doc.chunks.filter(c=>c.layout===strategy).map(c=>c.text),['A & B','A & B']);
+        const offsets=doc.chunks.filter(c=>c.layout===strategy).map(c=>c.citations.find(r=>r.outputStart===2));
         assert.deepEqual(offsets.map(r=>[r.start,r.end,r.outputEnd]),[[28,33,3],[44,49,3]]);
     }
-    const foster=await chunkDocument('<table>First<tr><td>Cell</td></tr>Second</table>',{...hierarchy,format:'html'});
+    const foster=await chunk('<table>First<tr><td>Cell</td></tr>Second</table>',{format:'html'});
     assert.equal(foster.nodes[0].text,'FirstSecond\n\nCell');
     assert.equal(foster.nodes[0].citations.length,3);
-    const [body]=await chunkDocument('<p>X\0\uFFFD</p>',{format:'html'});
+    const {chunks:[body]}=await chunk('<p>X\0\uFFFD</p>',{format:'html'});
     assert.equal(body.text,'X\uFFFD');
     assert.equal(body.citations.at(-1).start,5);
-    const [area]=await chunkDocument('<textarea>\0\uFFFD</textarea>',{format:'html'});
+    const {chunks:[area]}=await chunk('<textarea>\0\uFFFD</textarea>',{format:'html'});
     assert.equal(area.text,'\uFFFD\uFFFD');
 });
 
 test('Markdown exposes nested authored sections, headings, list introductions and hidden-source gaps',async()=>{
     const raw='---\nsecret: private\n---\n\n# Topic\n\nItems:\n\n- Red\n- Blue\n\n## Nested\n\nBody.\n\n[unused]: /hidden\n';
-    const d=await chunkDocument(raw,{...hierarchy,sourceId:'notes',format:'markdown',maxChunkSize:11});
+    const d=await chunk(raw,{sourceId:'notes',format:'markdown',maxChunkSize:11});
     const [topic,nested]=d.nodes.filter(n=>n.type==='section');
     assert.equal(nested.parentId,topic.id);
     assert.deepEqual(nested.headingPath,['Topic','Nested']);
@@ -126,7 +124,7 @@ test('Markdown exposes nested authored sections, headings, list introductions an
 
 test('context clips a neighbor that spans a sibling heading, and keeps whole center passages',async()=>{
     const raw='# A\n\nAlpha one.\n\nAlpha two.\n\n# B\n\nBeta one.\n\nBeta two.';
-    const d=await chunkDocument(raw,{...hierarchy,strategy:'pack',maxChunkSize:21});
+    const d=await chunk(raw,{strategy:'pack',maxChunkSize:21});
     const crossing=d.chunks.findIndex(c=>c.text.includes('Alpha two.') && c.text.includes('# B'));
     assert.ok(crossing>=0);
     const left=getChunkContext(d,crossing-1), center=getChunkContext(d,crossing);
@@ -134,7 +132,7 @@ test('context clips a neighbor that spans a sibling heading, and keeps whole cen
     assert.match(center.text,/# B/); assert.match(center.text,/Alpha two\./);
     assert.equal(getChunkContext(d,crossing,{neighbors:0}).text,d.chunks[crossing].text);
     for (const [format,source,opts] of [['json','[{"v":1},{"v":2}]',{}],['text','red|blue',{separator:'|'}]]) {
-        const doc=await chunkDocument(source,{...hierarchy,format,...opts});
+        const doc=await chunk(source,{format,...opts});
         assert.equal(getChunkContext(doc,0).text,doc.chunks[0].text);
         assert.equal(getChunkContext(doc,1).text,doc.chunks[1].text);
     }
@@ -142,8 +140,8 @@ test('context clips a neighbor that spans a sibling heading, and keeps whole cen
 
 test('the index deduplicates vectors, keeps citations for each source, and embeds a query once',async()=>{
     const raw='Iris grows. Roses bloom.\n\nWater the iris.';
-    const a=await chunkDocument(raw,{...hierarchy,sourceId:'a'});
-    const b=await chunkDocument(raw,{...hierarchy,sourceId:'b'});
+    const a=await chunk(raw,{sourceId:'a'});
+    const b=await chunk(raw,{sourceId:'b'});
     const values=new Map([[a.chunks[0].text,[0,1]],['Water the iris.',[1,0]],['which?',[1,0]]]);
     const calls=[];
     const provider=async ts=>{calls.push(...ts);return ts.map(t=>values.get(t)??[-1,0]);};
@@ -168,8 +166,8 @@ test('paragraph searches distinguish identical text by its nearest heading and c
     const sources={markdown,html,text:markdown};
     const documents=[];
     for (const [format,raw] of Object.entries(sources)) {
-        for (const strategy of ['blocks','semantic-blocks']) {
-            documents.push(await chunkDocument(raw,{...hierarchy,format,sourceId:format,strategy,maxChunkSize:54,
+        for (const strategy of ['blocks','semantic']) {
+            documents.push(await chunk(raw,{format,sourceId:format,strategy,maxChunkSize:54,
                 embedBatch:embed,returnEmbedding:false,similarityThreshold:-1}));
         }
     }
@@ -197,7 +195,7 @@ test('paragraph searches distinguish identical text by its nearest heading and c
 });
 
 test('a saved paragraph without a heading uses its own text for retrieval',async()=>{
-    const doc=JSON.parse(JSON.stringify(await chunkDocument('Unheaded.\n\nMore detail.',hierarchy)));
+    const doc=JSON.parse(JSON.stringify(await chunk('Unheaded.\n\nMore detail.')));
     const [first,second]=doc.nodes.filter(n=>n.type==='paragraph');
     delete first.headingPath;
     second.headingPath=['  '];
@@ -208,7 +206,7 @@ test('a saved paragraph without a heading uses its own text for retrieval',async
 });
 
 test('section and whole-document keys can be searched directly or used to rank cited passages',async()=>{
-    const d=await chunkDocument('# First\n\nRed.\n\nBlue.\n\n# Second\n\nWhite.\n\nBlack.',{...hierarchy,maxChunkSize:8});
+    const d=await chunk('# First\n\nRed.\n\nBlue.\n\n# Second\n\nWhite.\n\nBlack.',{maxChunkSize:8});
     const index=await createDocumentIndex([d],embed,{includeSections:true,includeDocuments:true});
     const sections=await index.searchNodes([1,0],{types:['section']});
     assert.equal(sections.length,2);
@@ -223,30 +221,30 @@ test('section and whole-document keys can be searched directly or used to rank c
 test('semantic paragraph joins preserve internal cuts, section boundaries, source positions and both budget modes',async()=>{
     const input = '# A\n\nAlpha. Berry.\n\nCedar. Delta.\n\n# B\n\nElm.';
     const directions = async ts=>ts.map((_,i)=>Array.from({length:ts.length},(_,j)=>Number(i===j)));
-    const opts={...hierarchy,strategy:'semantic-blocks',embedBatch:directions,similarityThreshold:1,
+    const opts={strategy:'semantic',embedBatch:directions,similarityThreshold:1,
         maxChunkSize:Infinity,returnEmbedding:false};
     for (const format of ['text','markdown']) {
-        const base=await chunkDocument(input,{...opts,format,joinParagraphs:false});
-        assert.ok(base.chunks.every(c=>!c.text.includes('Berry.\n\nCedar.')));
-        const d=await chunkDocument(input,{...opts,format,joinParagraphs:true});
-        const joined=d.chunks.find(c=>c.text.includes('Berry.\n\nCedar.'));
+        const base=await chunk(input,{...opts,format,joinParagraphs:false});
+        assert.ok(base.chunks.filter(c=>c.layout==='semantic').every(c=>!c.text.includes('Berry.\n\nCedar.')));
+        const d=await chunk(input,{...opts,format,joinParagraphs:true});
+        const joined=d.chunks.filter(c=>c.layout==='semantic').find(c=>c.text.includes('Berry.\n\nCedar.'));
         assert.ok(joined); assert.doesNotMatch(joined.text,/Alpha|Delta|# B/);
         assert.equal(input.slice(joined.citations[0].start,joined.citations.at(-1).end),joined.text);
         assert.ok(d.nodes.some(n=>n.type==='paragraph' && n.text==='Alpha. Berry.'));
         for (const sizing of [{maxChunkSize:10},{sizeUnit:'tokens',countTokens:s=>s.length,maxChunkSize:10}]) {
-            const limited=await chunkDocument(input,{...opts,format,joinParagraphs:true,...sizing});
+            const limited=await chunk(input,{...opts,format,joinParagraphs:true,...sizing});
             assert.ok(limited.chunks.every(c=>!c.text.includes('Berry.\n\nCedar.')));
         }
     }
-    await assert.rejects(chunkDocument(input,{joinParagraphs:true}),/semantic-blocks/);
+    await assert.rejects(chunk(input,{joinParagraphs:true}),/semantic/);
 });
 
 test('source-outline ranges rank original chunks independently of chunk and reading boundaries',async()=>{
     const raw='Forecast.\r\n\r\nInsurance\r\n\r\nAuto cover.\r\n\r\nLife cover.';
-    const plain=await chunkDocument(raw,{...hierarchy,maxChunkSize:9});
+    const plain=await chunk(raw,{maxChunkSize:9});
     const start=raw.indexOf('Insurance');
     const range={start,end:raw.length,headingPath:['Insurance']};
-    const doc=await chunkDocument(raw,{...hierarchy,maxChunkSize:9,sectionRanges:[range,range]});
+    const doc=await chunk(raw,{maxChunkSize:9,sectionRanges:[range,range]});
     assert.deepEqual(doc.chunks.map(c=>c.text),plain.chunks.map(c=>c.text));
     for(const [i] of doc.chunks.entries()) assert.deepEqual(getChunkContext(doc,i),getChunkContext(plain,i));
     const section=doc.nodes.find(n=>n.retrievalOnly);
@@ -260,15 +258,15 @@ test('source-outline ranges rank original chunks independently of chunk and read
     const routed=await index.search([1,0],{sectionWeight:.15,distinct:false,neighbors:0});
     assert.equal(baseline.find(h=>h.chunk.text==='Auto cover.').score,1);
     assert.equal(routed.find(h=>h.chunk.text==='Auto cover.').score,.85);
-    await assert.rejects(chunkDocument(raw,{...hierarchy,sectionRanges:[{start:0,end:15},{start:10,end:20}]}),/disjoint or nested/);
-    await assert.rejects(chunkDocument(raw,{sectionRanges:[range]}),/includeHierarchy/);
+    await assert.rejects(chunk(raw,{sectionRanges:[{start:0,end:15},{start:10,end:20}]}),/disjoint or nested/);
+    assert.ok((await chunk(raw,{sectionRanges:[range]})).nodes.some(n=>n.retrievalOnly));
 });
 
 test('a shared hard passage budget keeps both the complete core and the cited part of each neighbor',async()=>{
     const raw='Left far. Left near.\n\nCenter here.\n\nRight near. Right far.';
     const countTokens=s=>s.length;
-    for (const strategy of ['blocks','semantic-blocks','pack']) {
-        const d=await chunkDocument(raw,{...hierarchy,strategy,embedBatch:embed,returnEmbedding:false,
+    for (const strategy of ['blocks','semantic','pack']) {
+        const d=await chunk(raw,{strategy,embedBatch:embed,returnEmbedding:false,
             similarityThreshold:-1,sizeUnit:'tokens',countTokens,maxChunkSize:21,maxPassageSize:37});
         const index=await createDocumentIndex([d],embed);
         const hits=await index.search('near',{limit:100,distinct:false});
@@ -292,23 +290,23 @@ test('a shared hard passage budget keeps both the complete core and the cited pa
 
 test('large unbroken text, prefixes and nonadditive tokenizers respect the finite passage ceiling',async()=>{
     const raw='ab'.repeat(6000);
-    for(const strategy of ['blocks','semantic-blocks','pack']) {
-        const d=await chunkDocument(raw,{...hierarchy,strategy,embedBatch:embed,returnEmbedding:false,
+    for(const strategy of ['blocks','semantic','pack']) {
+        const d=await chunk(raw,{strategy,embedBatch:embed,returnEmbedding:false,
             maxChunkSize:Infinity,maxPassageSize:220,chunkPrefix:'Title'});
         assert.ok(d.chunks.length>1);
-        assert.equal(d.chunks.map(c=>c.text.slice('Title: '.length)).join(''),raw);
+        assert.equal(d.chunks.filter(c=>c.layout===strategy).map(c=>c.text.slice('Title: '.length)).join(''),raw);
         assert.ok(d.chunks.every(c=>c.text.length<=220));
         assert.ok(d.chunks.every((_,i)=>getChunkContext(d,i).text.length<=220));
     }
-    await assert.rejects(chunkDocument('X',{maxPassageSize:Infinity}),/maxPassageSize/);
-    const tiny=await chunkDocument('😀',{...hierarchy,maxPassageSize:1});
+    await assert.rejects(chunk('X',{maxPassageSize:Infinity}),/maxPassageSize/);
+    const tiny=await chunk('😀',{maxPassageSize:1});
     assert.equal(tiny.chunks[0].sizeLimitExceeded,true);
     assert.deepEqual(await (await createDocumentIndex([tiny],embed)).search('x'),[]);
     assert.throws(()=>getChunkContext(tiny,0),/budget/);
     const countTokens=s=>s.length+(s.includes('One.\n\nTwo.')?100:0);
-    const doc=await chunkDocument('One.\n\nTwo.\n\nThree.',{...hierarchy,sizeUnit:'tokens',countTokens,maxChunkSize:6,maxPassageSize:20});
+    const doc=await chunk('One.\n\nTwo.\n\nThree.',{sizeUnit:'tokens',countTokens,maxChunkSize:6,maxPassageSize:20});
     for(const [i] of doc.chunks.entries()) assert.ok(countTokens(getChunkContext(doc,i).text)<=20);
-    const legacy=await chunkDocument('Old passage.',hierarchy);
+    const legacy=await chunk('Old passage.');
     delete legacy.maxPassageSize;
     delete legacy.sizeUnit;
     const legacyIndex=await createDocumentIndex([legacy],embed);
@@ -317,7 +315,7 @@ test('large unbroken text, prefixes and nonadditive tokenizers respect the finit
 
 test('sentence keys are optional, and grouped keys preserve paragraph, chunk and citation identity',async()=>{
     const text='Green one. Green two. Blue one. Blue two.\n\nBlue three. Blue four.';
-    const docs=await Promise.all(['blocks','semantic-blocks'].map(strategy=>chunkDocument(text,{...hierarchy,
+    const docs=await Promise.all(['blocks','semantic'].map(strategy=>chunk(text,{
         sourceId:'colors',strategy,embedBatch:embed,returnEmbedding:false,similarityThreshold:-1,maxChunkSize:1000})));
     const ask=async texts=>texts.map(t=>t.startsWith('Green')?[1,0]:[0,1]);
     const defaults=await createDocumentIndex(docs,ask);
@@ -338,7 +336,7 @@ test('sentence keys are optional, and grouped keys preserve paragraph, chunk and
     assert.ok((await fixed.searchNodes([1,0],{types:['sentenceGroup']})).some(h=>h.node.nodeIds.length===3));
     const individual=await createDocumentIndex(docs,ask,{detailTypes:['paragraph','sentence']});
     assert.equal((await individual.searchNodes([1,0],{types:['sentence'],limit:10})).length,6);
-    const small=await chunkDocument(text,{...hierarchy,maxChunkSize:22});
+    const small=await chunk(text,{maxChunkSize:22});
     const short=await createDocumentIndex([small],ask,{sentenceGrouping:{maxSentences:3}});
     assert.ok((await short.searchNodes([1,0],{types:['sentenceGroup']})).every(h=>small.chunks.some(c=>c.text.includes(h.node.text))));
     await assert.rejects(createDocumentIndex(docs,ask,{sentenceGrouping:{minSimilarity:1.1}}),/minSimilarity/);

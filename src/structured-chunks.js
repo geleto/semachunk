@@ -1,5 +1,5 @@
 import { structuredResult } from './structured-units.js';
-import { chunkHierarchy } from './semantic-blocks.js';
+import { chunkHierarchy } from './semantic.js';
 import { packedRanges } from './packing.js';
 
 export async function chunkStructured(document, embed, options, capture) {
@@ -8,7 +8,7 @@ export async function chunkStructured(document, embed, options, capture) {
     const tree = (strategy !== 'pack' || capture) && document.tree(options);
     if (tree) capture?.tree?.(tree);
     let passages;
-    if (strategy === 'blocks' || strategy === 'semantic-blocks') {
+    if (strategy === 'blocks' || strategy === 'semantic') {
         const { roots, children, splitLeaf, renderUnits } = tree;
         passages = renderUnits(await chunkHierarchy(source, roots, { ...options, children, splitLeaf }, embed));
     } else {

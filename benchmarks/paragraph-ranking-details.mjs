@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {mkdir,readFile,writeFile,rename} from 'node:fs/promises';
 import {join} from 'node:path';
 import {gzipSync,gunzipSync} from 'node:zlib';
-import {chunkDocument} from '../src/index.js';
+import {studyLayout as chunkDocument} from './study-layouts.mjs';
 import {covers,sourceSpans} from '../src/citations.js';
 import {chunkSentences,sentenceGroups} from '../src/sentence-groups.js';
 import {vectorDirection} from '../src/similarity.js';

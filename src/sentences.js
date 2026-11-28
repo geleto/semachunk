@@ -1,7 +1,7 @@
 import { abbreviations } from './abbreviations.js';
 import { collapseRuns } from './offsets.js';
 import { lineChildren, sectionTree } from './hierarchy.js';
-import { chunkHierarchy } from './semantic-blocks.js';
+import { chunkHierarchy } from './semantic.js';
 import { splitSpans } from './token-limit.js';
 import { alignWhitespace, literal, sliceView } from './citations.js';
 
@@ -132,9 +132,11 @@ export async function parseText(text, options, embed, capture) {
         capture.flat = capture.sentences.length === all.length ? flat : joinViews(capture.sentences,' ');
         return capture.sentences.map(s=>s.text);
     }
-    const tree = await parseTextTree(text, options, !!capture);
+    const tree = capture?.parsed ?? await parseTextTree(text, options, !!capture);
+    if (capture) capture.parsed = tree;
     capture?.tree?.(tree);
-    const { source, roots, children, splitLeaf } = tree;
+    const { source, roots, children } = tree;
+    const splitLeaf = node => splitTextLeaf(source,node,options.fits);
     const units = await chunkHierarchy(source, roots, { ...options, children, splitLeaf }, embed);
     if (capture) capture.chunks = units.map(({start,end})=>sliceView(tree.view,start,end));
     return units.map(({ start, end }) => source.slice(start, end));
@@ -152,10 +154,12 @@ export async function parseTextTree(text, options, locate = false) {
         blocks.push({text:body,depth:/^(#{1,6})\s/u.exec(body)?.[1].length});
     }
     const { source, roots, children } = textHierarchy(blocks, locale, excludeNonLetterSentences);
-    function splitLeaf(node) {
-        if (!fits) return [node];
-        return splitSpans(source, node.start, node.end, (a, b) => fits(source.slice(a, b)), { keepWhitespace: false })
-            .map(([start, end]) => ({ start, end }));
-    }
+    const splitLeaf = node => splitTextLeaf(source,node,fits);
     return { source, roots, children, splitLeaf, view: locate ? alignWhitespace(literal(text), source) : undefined };
+}
+
+function splitTextLeaf(source,node,fits) {
+    if (!fits) return [node];
+    return splitSpans(source,node.start,node.end,(a,b)=>fits(source.slice(a,b)),{keepWhitespace:false})
+        .map(([start,end])=>({start,end}));
 }

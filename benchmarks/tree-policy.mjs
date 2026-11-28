@@ -1,6 +1,6 @@
 import { loadMarkdownParser } from '../src/markdown-units.js';
 import { parseTextTree } from '../src/sentences.js';
-import { chunkHierarchy } from '../src/semantic-blocks.js';
+import { chunkHierarchy } from '../src/semantic.js';
 import { hierarchicalBlocks } from '../src/hierarchy.js';
 
 // Experiments use the production parser, rendered citations, size guards and hierarchy packer.
@@ -45,7 +45,7 @@ export async function treeLayout(raw, format, budget, method, embed, visit, sepa
     // A constant direction accepts every scoreable pair. Token guards and the shared root are intact.
     const units = method === 'independent-roots' ? hierarchicalBlocks(source,roots,{...budget,children,splitLeaf:tree.splitLeaf})
         : await chunkHierarchy(source,roots,{ ...budget, children, splitLeaf:tree.splitLeaf,
-        strategy:method === 'blocks' ? 'blocks' : 'semantic-blocks', calibrate:false,
+        strategy:method === 'blocks' ? 'blocks' : 'semantic', calibrate:false,
         combineChunksSimilarityThreshold:method === 'paragraph' ? .15 : method.startsWith('paragraph/') ? Number(method.split('/')[1])
             : method === 'tree' ? -2 : Number(method)
     }, method === 'tree' ? async texts => texts.map(() => [1]) : embed);

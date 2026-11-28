@@ -6,7 +6,7 @@ import { fromMarkdown } from 'mdast-util-from-markdown';
 import { parse, parseFragment } from 'parse5';
 import { parseTextTree } from '../src/sentences.js';
 import { loadMarkdownParser } from '../src/markdown-units.js';
-import { chunkHierarchy } from '../src/semantic-blocks.js';
+import { chunkHierarchy } from '../src/semantic.js';
 import { cache, here, sha256 } from './corpora.mjs';
 
 export const dataDir = join(cache, 'tree-corpus');

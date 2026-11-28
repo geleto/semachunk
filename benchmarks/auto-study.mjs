@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { chunkText } from '../src/index.js';
+import {studyPassages as chunkText} from './study-layouts.mjs';
 import { alignDocument, cache, here, sha256 } from './corpora.mjs';
 import { denseRanker, indexedChunks, split as sentences, vocabulary } from './chunking.mjs';
 import { dimension, model, encodingName, openReplay } from './encoder.mjs';

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { chunkText } from '../src/index.js';
+import {studyPassages as chunkText} from './study-layouts.mjs';
 import { denseRanker, indexedChunks } from './chunking.mjs';
 import { alignDocument, answerSpan, compact, joinParts } from './corpora.mjs';
 import { retrieval, segmentation, windowDiff } from './quality.mjs';

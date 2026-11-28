@@ -1,5 +1,5 @@
 import { parseTree } from 'jsonc-parser';
-import { chunkText } from '../src/index.js';
+import {studyPassages as chunkText} from './study-layouts.mjs';
 import { jsonValueSpans, splitJsonSpans } from '../src/json.js';
 import { splitSpans } from '../src/token-limit.js';
 import { sha256 } from './corpora.mjs';

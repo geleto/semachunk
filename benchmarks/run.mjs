@@ -1,3 +1,4 @@
+import { loadStudyPassages } from './study-layouts.mjs';
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
@@ -46,7 +47,7 @@ async function main() {
     const root = resolve(options.implementation), startedUTC = new Date().toISOString();
     const output = resolve(options.output ?? join(here, 'results', suite + '-' + startedUTC.replace(/[-:.]/g, '') + '.json'));
     if (existsSync(output)) throw new Error('Result already exists: ' + output);
-    const { chunkText } = await import(pathToFileURL(join(root, 'src', 'index.js')));
+    const chunkText = await loadStudyPassages(pathToFileURL(join(root,'src','index.js')));
     const tasks = !rag || !options.task || options.task === 'all' ? Object.keys(rag ? ragTasks : qualityTasks) : [options.task];
     if (rag && tasks.some(t => !Object.hasOwn(ragTasks, t))) throw new Error('Unknown RAG task ' + options.task);
     let plans = rag ? ragPlans() : qualityPlans();
@@ -57,7 +58,7 @@ async function main() {
     const { devDependencies: libraries } = JSON.parse(await readFile(join(here, '..', 'package.json'), 'utf8'));
     const report = { startedUTC, implementationSHA256: await digest(root, ['config.js', ...(await readdir(join(root, 'src')))
         .filter(f => f.endsWith('.js')).map(f => 'src/' + f)]),
-        harnessSHA256: await digest(here, ['run.mjs', 'chunking.mjs', 'corpora.mjs', 'encoder.mjs', suite + '.mjs']),
+        harnessSHA256: await digest(here, ['run.mjs', 'chunking.mjs', 'study-layouts.mjs', 'corpora.mjs', 'encoder.mjs', suite + '.mjs']),
         node: process.version, platform: process.platform + '-' + process.arch, libraries,
         embedding: { provider: 'OpenAI', model, dimensions: dimension, encoding: encodingName, maxInputTokens: modelInputTokens },
         artifactsSHA256: Object.fromEntries(tasks.map(task => [assets[task].name, assets[task].checksum])),

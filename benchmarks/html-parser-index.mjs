@@ -12,14 +12,14 @@ import {semachunkLayout} from './html-retrieval-layout.mjs';
 const external = process.argv.includes('--external'), legacy = process.argv.includes('--legacy');
 assert.ok(!legacy || external);
 const moduleRoot = legacy ? './.cache/html-parser/base/src/' : '../src/';
-const {chunkDocument} = await import(moduleRoot+'index.js');
+const chunkDocument = legacy ? (await import(moduleRoot+'index.js')).chunkDocument : (await import('./study-layouts.mjs')).studyLayout;
 const {parseTextTree} = await import(moduleRoot+'sentences.js');
 const output = join(cache,'html-parser',legacy?'legacy':'current');
 const zipped = async file => JSON.parse(gunzipSync(await readFile(file)));
 const edition = JSON.parse(await readFile(join(here,'results/2026-11-27-prose-reviewed-data.json')));
 const inputs = external ? [['external-html',{sha256:null}]] :
     Object.entries(edition.sets).filter(([key])=>/^government-(development|confirmation)-reviewed-\w+-html$/u.test(key));
-const files = ['index.js','sentences.js','hierarchy.js','html-citations.js','markdown-units.js','markdown-merge.js','document.js','semantic-blocks.js','citations.js','token-limit.js'];
+const files = ['index.js','sentences.js','hierarchy.js','html-citations.js','markdown-units.js','markdown-merge.js','document.js',legacy?'semantic-blocks.js':'semantic.js','citations.js','token-limit.js'];
 if (!legacy) files.push('html.js','structured-units.js','structured-chunks.js');
 const version = sha256(Buffer.concat(await Promise.all([import.meta.url,'./html-retrieval-layout.mjs','./centered-passage.mjs',
     ...files.map(f=>moduleRoot+f)].map(f=>readFile(new URL(f,import.meta.url))))));

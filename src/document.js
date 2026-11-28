@@ -25,7 +25,7 @@ function trimmed(view) {
 }
 
 // Snapshot parser structure before the semantic traversal marks weak edges.
-// Materialize only on request, independently of the chosen chunk layout.
+// Materialize once for the document, independently of the chosen chunk layout.
 export function documentNodes(raw, tree, format) {
     const source = tree.view ?? literal(raw);
     const root = {id:0, parentId:null, type:'document', headingPath:[]};
@@ -99,8 +99,8 @@ export function orderedSectionRanges(ranges, inputLength) {
     return sections;
 }
 
-export function finishDocument(sourceId, format, chunks, nodes, sections, sizeUnit, maxPassageSize, countTokens, maxStructuralSize) {
-    const document = {format, nodes, chunks, sizeUnit, maxPassageSize, maxStructuralSize};
+export function finishDocument(sourceId, format, chunks, nodes, sections, sizeUnit, maxPassageSize, countTokens, maxStructuralSize, strategy) {
+    const document = {format, strategy, nodes, chunks, sizeUnit, maxPassageSize, maxStructuralSize};
     if (sizeUnit === 'tokens') documentTokenizers.set(document,countTokens);
     for (const section of sections) {
         const view = clip(nodes[0],section.start,section.end);
@@ -192,9 +192,9 @@ function contextEdges(doc, chunk, view, left) {
     return [...cuts].sort((a,b)=>left ? b-a : a-b);
 }
 
-function boundedWindow(doc, index, core, left, right, fits) {
+function boundedWindow(doc, before, after, core, left, right, fits) {
     const sides = [left,right].map((view,i)=>view?.text ? {
-        view, cuts:contextEdges(doc,doc.chunks[index+(i?1:-1)],view,!i), next:0, text:''
+        view, cuts:contextEdges(doc,i ? after : before,view,!i), next:0, text:''
     } : null);
     // Grow from the center. Give the shorter accepted side the next unit.
     for (;;) {
@@ -214,7 +214,21 @@ function boundedWindow(doc, index, core, left, right, fits) {
         r?.text ? sliceView(right,0,r.cut) : undefined];
 }
 
-export function chunkContextParts(doc, chunkIndex, neighbors, fits) {
+function neighbor(doc,index,step,measure) {
+    const first = index+step, adjacent = doc.chunks[first], layout = doc.chunks[index].layout;
+    if (!adjacent || adjacent.layout !== layout) return;
+    if (!measure) return adjacent;
+    let last = first, length = measure(adjacent.text);
+    while (length < doc.maxPassageSize && doc.chunks[last+step] && doc.chunks[last+step].layout === layout) {
+        last += step;
+        length += measure(doc.chunks[last].text);
+    }
+    if (first===last) return adjacent;
+    const run = doc.chunks.slice(Math.min(first,last), Math.max(first,last)+1);
+    return {...joinViews(run,'\n\n'),nodeIds:[...new Set(run.flatMap(c=>c.nodeIds))]};
+}
+
+export function chunkContextParts(doc, chunkIndex, neighbors, fits, measure) {
     if (neighbors !== 0 && neighbors !== 1) throw new RangeError('neighbors must be 0 or 1.');
     const chunk = doc.chunks[chunkIndex];
     if (!chunk) throw new RangeError('Unknown chunk index.');
@@ -222,10 +236,11 @@ export function chunkContextParts(doc, chunkIndex, neighbors, fits) {
         throw new RangeError('The core exceeds its passage budget. Rechunk the original input with a fitting maxChunkSize and prefix.');
     }
     const spans = sourceSpans(chunk);
-    let beforeView, afterView;
+    let before, after, beforeView, afterView;
     if (neighbors && spans.length) {
         const left = spans[0][0], right = spans.at(-1)[1], runs = scopesFor(doc);
-        const before = doc.chunks[chunkIndex-1], after = doc.chunks[chunkIndex+1];
+        before = neighbor(doc,chunkIndex,-1,measure);
+        after = neighbor(doc,chunkIndex,1,measure);
         if (before) {
             const scope = runs.find(r=>r.start<=left && left<r.end);
             beforeView = clip(before,scope.start,left);
@@ -237,11 +252,13 @@ export function chunkContextParts(doc, chunkIndex, neighbors, fits) {
     }
     const full = [beforeView,chunk,afterView].filter(v=>v?.text);
     return full.length===1 || fits(full.map(v=>v.text).join('\n\n')) ? [beforeView,chunk,afterView] :
-        boundedWindow(doc,chunkIndex,chunk,beforeView,afterView,fits);
+        boundedWindow(doc,before,after,chunk,beforeView,afterView,fits);
 }
 
 export function getChunkContext(doc, chunkIndex, {neighbors = 1, countTokens} = {}) {
-    const parts = chunkContextParts(doc,chunkIndex,neighbors,passageFits(doc,countTokens));
+    const wide = doc.strategy === 'semantic' && doc.chunks[chunkIndex]?.layout === 'semantic';
+    const measure = doc.sizeUnit === 'tokens' ? documentTokenizers.get(doc) ?? countTokens : s=>s.length;
+    const parts = chunkContextParts(doc,chunkIndex,neighbors,passageFits(doc,countTokens),wide ? measure : undefined);
     const result = joinViews(parts.filter(v=>v?.text),'\n\n');
     const chunk = doc.chunks[chunkIndex];
     if (doc.sourceId !== undefined) result.sourceId = doc.sourceId;

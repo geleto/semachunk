@@ -154,7 +154,7 @@ export async function buildMastraLayouts(doc,structure,canonical,bank,labels,vie
                 const section=sections.find(n=>n.a<=c.a&&c.b<=n.b&&(n.a<c.a||c.b<n.b));
                 const para=[];
                 for(let h=lowerBound(ps,c.a,n=>n.a);h<ps.length&&ps[h].a<c.b;h++) {
-                    if(ps[h].b<=c.b && (ps[h].a!==c.a||ps[h].b!==c.b)) para.push(keyFor(ps[h].node.text));
+                    if(ps[h].b<=c.b && (ps[h].a!==c.a||ps[h].b!==c.b)) para.push(keyFor(ps[h].node.text,ps[h].node));
                 }
                 return {v:keyFor(c.text),pa:para,section:section?keyFor(section.node.text):-1,
                     bare:view(c.a,c.b,bank.countTokens(c.text)),win:view(w.a,w.b,w.tokens),near:w.near.map(delta=>j+delta)};

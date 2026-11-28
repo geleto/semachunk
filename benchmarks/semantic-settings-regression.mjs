@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { access, mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { chunkText } from '../src/index.js';
+import {studyPassages as chunkText} from './study-layouts.mjs';
 import { alignPlain } from './delivered-context.mjs';
 import { model, openEncoder, openReplay } from './encoder.mjs';
 import { manifest, markdownCorpora } from './markdown-corpora.mjs';

@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { createInterface } from 'node:readline';
 import { parseArgs } from 'node:util';
 import { gzipSync, gunzipSync } from 'node:zlib';
-import { chunkText } from '../src/index.js';
+import {studyPassages as chunkText} from './study-layouts.mjs';
 import { asset, assets, cache, here, sha256 } from './corpora.mjs';
 import { denseRanker } from './chunking.mjs';
 import { deliver } from './delivered-context.mjs';

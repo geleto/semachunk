@@ -3,7 +3,7 @@ import { access, mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { setTimeout as delay } from 'node:timers/promises';
-import { chunkText } from '../src/index.js';
+import {studyPassages as chunkText} from './study-layouts.mjs';
 import { denseRanker, vocabulary } from './chunking.mjs';
 import { here, sha256 } from './corpora.mjs';
 import { deliver, goldReference } from './delivered-context.mjs';

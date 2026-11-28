@@ -7,7 +7,7 @@ import OpenAI from 'openai';
 import { cachedVectors, dimension, embeddingBatches, model, openReplay, openTokenizer, sendEmbeddingBatch } from './encoder.mjs';
 import { retrieval } from './quality.mjs';
 import { prepare } from './rag.mjs';
-import { chunkText } from '../src/index.js';
+import {studyPassages as chunkText} from './study-layouts.mjs';
 
 test('embedding batches respect per-input and total token limits and balance the tail', () => {
     const short = Array(257).fill(1);

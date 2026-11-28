@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {mkdir,readFile,rename,writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {gzipSync,gunzipSync} from 'node:zlib';
-import {chunkDocument} from '../src/index.js';
+import {studyLayout as chunkDocument} from './study-layouts.mjs';
 import {sourceSpans} from '../src/citations.js';
 import {semachunkLayout} from './html-retrieval-layout.mjs';
 import {canonicalMapper,sourceOptions} from './bounded-source.mjs';
@@ -24,7 +24,7 @@ for(const [dir,name,version] of [[root,'turndown','7.2.5'],[root,'turndown-plugi
     assert.equal((await readJSON(join(dir,'deps/node_modules',name,'package.json'))).version,version);
 }
 const revision=sha256(Buffer.concat(await Promise.all([import.meta.url,'./html-markdown-source.mjs','./html-retrieval-layout.mjs','./mastra-layouts.mjs','./mastra-protocol.json',
-    './bounded-source.mjs','./centered-passage.mjs','../src/semantic-blocks.js','../src/document.js','../src/sentences.js',
+    './bounded-source.mjs','./centered-passage.mjs','../src/semantic.js','../src/document.js','../src/sentences.js',
     '../src/hierarchy.js','../src/markdown-units.js'].map(f=>readFile(new URL(f,import.meta.url))))));
 
 async function archived(stem) {

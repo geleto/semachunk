@@ -3,7 +3,7 @@ import {mkdir, readFile, rename, writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {gzipSync, gunzipSync} from 'node:zlib';
 import {buildMastraLayouts} from './mastra-layouts.mjs';
-import {chunkDocument} from '../src/index.js';
+import {studyLayout as chunkDocument} from './study-layouts.mjs';
 import {canonicalMapper, sourceOptions} from './bounded-source.mjs';
 import {cache, sha256} from './corpora.mjs';
 import {encodingName, dimension, model, openReplay} from './encoder.mjs';

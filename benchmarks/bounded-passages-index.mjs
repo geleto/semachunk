@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {mkdir, readFile, writeFile, rename} from 'node:fs/promises';
 import {join} from 'node:path';
 import {gunzipSync,gzipSync} from 'node:zlib';
-import {chunkDocument} from '../src/index.js';
+import {studyLayout as chunkDocument} from './study-layouts.mjs';
 import {chunkContextParts} from '../src/document.js';
 import {covers,joinViews,sourceSpans} from '../src/citations.js';
 import {vectorDirection} from '../src/similarity.js';
@@ -50,7 +50,7 @@ if (upperControls) {
 const groupings={pair:{maxSentences:2},triple:{maxSentences:3},
     cos25:{maxSentences:3,threshold:.25},cos40:{maxSentences:3,threshold:.40},cos55:{maxSentences:3,threshold:.55}};
 const fileHash=sha256(Buffer.concat(await Promise.all(['./bounded-passages-index.mjs','./bounded-source.mjs','./structural-limits-protocol.json',
-    '../src/hierarchy.js','../src/markdown-units.js','../src/sentences.js','../src/sentence-groups.js','../src/document.js','../src/semantic-blocks.js']
+    '../src/hierarchy.js','../src/markdown-units.js','../src/sentences.js','../src/sentence-groups.js','../src/document.js','../src/semantic.js']
     .map(p=>readFile(new URL(p,import.meta.url))))));
 
 async function build(key,i,doc,bank) {

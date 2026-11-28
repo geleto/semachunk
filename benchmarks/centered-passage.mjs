@@ -8,7 +8,7 @@ export function centeredPassage(doc, tokens, countTokens) {
     function neighbor(start,end) {
         const chunks = doc.chunks.slice(start,end);
         if (chunks.length<2) return chunks[0];
-        return {...joinViews(chunks,'\n\n'),nodeIds:[...new Set(chunks.flatMap(c => c.nodeIds))]};
+        return {...joinViews(chunks,'\n\n'),layout:chunks[0].layout,nodeIds:[...new Set(chunks.flatMap(c => c.nodeIds))]};
     }
     return (index,radius) => {
         let lo=index, hi=index+1;

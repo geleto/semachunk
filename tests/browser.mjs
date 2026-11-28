@@ -5,20 +5,20 @@ import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import { chromium, firefox } from 'playwright';
-import { chunkText, chunkDocument, createDocumentIndex } from '../src/index.js';
+import { chunk, createDocumentIndex, search } from '../src/index.js';
 import { exerciseChunker } from './browser-cases.mjs';
 
 const root = new URL('../', import.meta.url);
 const { version } = JSON.parse(await readFile(new URL('package.json', root), 'utf8'));
-const expected = await exerciseChunker(chunkText,chunkDocument,createDocumentIndex);
+const expected = await exerciseChunker(chunk,createDocumentIndex,search);
 
 async function browserBundle(worker) {
     const result = await build({
         stdin: {
             resolveDir: fileURLToPath(root),
-            contents: `import { chunkText, chunkDocument, createDocumentIndex } from '.';
+            contents: `import { chunk, createDocumentIndex, search } from '.';
                 import { exerciseChunker } from './tests/browser-cases.mjs';
-                export const chunks = await exerciseChunker(chunkText,chunkDocument,createDocumentIndex);
+                export const chunks = await exerciseChunker(chunk,createDocumentIndex,search);
                 ${worker ? 'postMessage(chunks);' : ''}`
         },
         platform: 'browser', conditions: worker ? ['worker'] : [],

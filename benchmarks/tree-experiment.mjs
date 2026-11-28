@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile, writeFile, mkdir, rename, access } from 'node:fs/promises';
 import { join } from 'node:path';
-import { chunkText } from '../src/index.js';
+import {studyPassages as chunkText} from './study-layouts.mjs';
 import { ordinals, prepareBoundaries, projectPlain, scores } from './tree-evidence.mjs';
 import { treeLayout } from './tree-policy.mjs';
 import { deliver, goldReference } from './delivered-context.mjs';

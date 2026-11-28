@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile,writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {gunzipSync} from 'node:zlib';
-import {chunkDocument} from '../src/index.js';
+import {studyLayout as chunkDocument} from './study-layouts.mjs';
 import {sourceSpans,joinViews} from '../src/citations.js';
 import {chunkContextParts,passageFits} from '../src/document.js';
 import {chunkDocument as baseChunkDocument} from './.cache/html-parser/base/src/index.js';

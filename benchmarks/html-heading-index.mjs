@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {mkdir, readFile, rename, writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {gzipSync, gunzipSync} from 'node:zlib';
-import {chunkDocument} from '../src/index.js';
+import {studyLayout as chunkDocument} from './study-layouts.mjs';
 import {parseTextTree} from '../src/sentences.js';
 import {sliceView, sourceSpans} from '../src/citations.js';
 import {canonicalMapper} from './bounded-source.mjs';
@@ -15,7 +15,7 @@ const previous = join(cache, 'html-markdown');
 const edition = JSON.parse(await readFile(join(here, 'results/2026-11-27-prose-reviewed-data.json')));
 const revision = sha256(Buffer.concat(await Promise.all([
     import.meta.url, '../src/index.js', '../src/sentences.js', '../src/hierarchy.js',
-    '../src/citations.js', '../src/html-citations.js', '../src/semantic-blocks.js', './bounded-source.mjs'
+    '../src/citations.js', '../src/html-citations.js', '../src/semantic.js', './bounded-source.mjs'
 ].map(file => readFile(new URL(file, import.meta.url))))));
 const limit = 512;
 const groupingTarget = 256;

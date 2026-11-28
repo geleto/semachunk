@@ -21,7 +21,7 @@
   "scripts": {
     "test": "npm run test:types && node --test",
     "test:browser": "node tests/browser.mjs",
-    "test:types": "tsc --noEmit --strict --exactOptionalPropertyTypes --target es2022 --module nodenext tests/types/chunk-text.ts",
+    "test:types": "tsc --noEmit --strict --exactOptionalPropertyTypes --target es2022 --module nodenext tests/types/chunk.ts",
     "benchmark": "node benchmarks/run.mjs quality",
     "benchmark:rag": "node benchmarks/run.mjs rag",
     "benchmark:merge": "node benchmarks/merge-performance.mjs",

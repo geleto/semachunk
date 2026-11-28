@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { chunkText } from '../src/index.js';
+import {studyPassages as chunkText} from './study-layouts.mjs';
 import { assets, here, sha256 } from './corpora.mjs';
 import { dimension, model, openEncoder } from './encoder.mjs';
 import { groupInterval } from './markdown-decisions.mjs';

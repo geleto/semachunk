@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {mkdir, readFile, rename, writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {gzipSync, gunzipSync} from 'node:zlib';
-import {chunkDocument} from '../src/index.js';
+import {studyLayout as chunkDocument} from './study-layouts.mjs';
 import {covers, joinViews, sourceSpans} from '../src/citations.js';
 import {chunkContextParts, passageFits} from '../src/document.js';
 import {canonicalMapper, sourceOptions} from './bounded-source.mjs';
@@ -25,7 +25,7 @@ const budget = process.argv.includes('--budget');
 const wider = budget || process.argv.includes('--windows');
 const extension = budget ? '.budget' : '.windows';
 const revision = sha256(Buffer.concat(await Promise.all([
-    import.meta.url, './bounded-source.mjs', '../src/index.js', '../src/semantic-blocks.js',
+    import.meta.url, './bounded-source.mjs', '../src/index.js', '../src/semantic.js',
     '../src/document.js', '../src/hierarchy.js', '../src/citations.js','./centered-passage.mjs',
     ...(placement?['./placement-lattice.mjs']:[])
 ].map(file => readFile(new URL(file,import.meta.url))))));

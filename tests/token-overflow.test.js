@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { chunkText } from '../src/index.js';
+import {splitPassages} from '../src/passages.js';
 import { get_encoding } from 'tiktoken';
 
 const countTokens = s => s.includes('🌍') ? 100 : s.length;
@@ -20,10 +20,10 @@ test('mixed overflow sends exactly the eligible boundary and final indexing inpu
     for (const { inputFormat, source, scoring, bodies } of formats) {
         for (const maxCachedEmbeddings of [0, 2, Infinity]) for (const returnEmbedding of [false, true]) {
             const called = [];
-            const rows = await chunkText(source, inputs => {
+            const rows = await splitPassages(source, inputs => {
                 called.push([...inputs]);
                 return inputs.map(() => [1]);
-            }, { ...options, inputFormat, chunkingStrategy: inputFormat === 'json' ? 'blocks' : 'semantic-blocks',
+            }, { ...options, inputFormat, chunkingStrategy: inputFormat === 'json' ? 'blocks' : 'semantic',
                 combineChunksSimilarityThreshold: 0.5, returnEmbedding, maxCachedEmbeddings });
             const finalBatch = returnEmbedding ? bodies.filter(s => s !== '🌍').map(s => 'P: ' + s) : [];
             assert.deepEqual(called, [scoring, finalBatch].filter(batch => batch.length));
@@ -38,10 +38,10 @@ test('callback-free and embedded structural layouts agree on text, overflow and 
     for (const { inputFormat, source } of formats) {
         for (const chunkingStrategy of inputFormat === 'json' ? ['blocks'] : ['blocks', 'pack']) {
             const opts = { ...options, inputFormat, chunkingStrategy };
-            const layout = await chunkText(source, opts);
-            assert.deepEqual(await chunkText(source, assert.fail, { ...opts, returnEmbedding: false }), layout);
+            const layout = await splitPassages(source, undefined, opts);
+            assert.deepEqual(await splitPassages(source, assert.fail, { ...opts, returnEmbedding: false }), layout);
             const calls = [];
-            const rows = await chunkText(source, inputs => { calls.push(...inputs); return inputs.map(() => [1]); }, opts);
+            const rows = await splitPassages(source, inputs => { calls.push(...inputs); return inputs.map(() => [1]); }, opts);
             assert.deepEqual(rows.map(({ embedding, ...chunk }) => chunk), layout);
             const fitting = layout.filter(c => !c.tokenLimitExceeded).map(c => 'P: ' + c.text);
             assert.deepEqual(calls, [...new Set(fitting)]);
@@ -57,13 +57,13 @@ test('each format checks both the raw body and the exact prefixed input', async 
     ]) {
         const opts = { inputFormat, chunkingStrategy: 'blocks', maxChunkTokens: 2,
             chunkPrefix: 'P', excludeChunkPrefixInResults: true };
-        const blocked = await chunkText(source, assert.fail, { ...opts, countTokens: s => s.length });
+        const blocked = await splitPassages(source, assert.fail, { ...opts, countTokens: s => s.length });
         assert.deepEqual(blocked.map(c => [c.text, c.tokenLimitExceeded, c.embedding]),
             [['11', true, undefined], ['222', true, undefined]], inputFormat);
 
         // Adding the prefix reduces the count to one. The raw body "222" still needs a cut.
         const calls = [];
-        const rows = await chunkText(source, inputs => {
+        const rows = await splitPassages(source, inputs => {
             calls.push(...inputs);
             return inputs.map(() => [1]);
         }, { ...opts, countTokens: s => s.startsWith(prefix) && s !== prefix ? 1 : s.length });
@@ -77,14 +77,14 @@ test('each format checks both the raw body and the exact prefixed input', async 
 test('a long prefix keeps each source unit once and tokenizer exceptions propagate', async () => {
     const source = 'a'.repeat(8192);
     const options = { separator: '|', chunkingStrategy: 'pack', chunkPrefix: 'large', maxChunkTokens: 1, countTokens: s => s.length };
-    const [over] = await chunkText(source, assert.fail, options);
+    const [over] = await splitPassages(source, assert.fail, options);
     assert.equal(over.text, 'large: ' + source);
     assert.equal(over.tokenLimitExceeded, true);
     assert.deepEqual(over.sourceRanges, [{ start: 0, end: source.length, outputStart: 7 }]);
-    const [ok] = await chunkText('x', { ...options, countTokens: s => ['x', 'large: x'].includes(s) ? 1 : 5 });
+    const [ok] = await splitPassages('x', undefined, { ...options, countTokens: s => ['x', 'large: x'].includes(s) ? 1 : 5 });
     assert.equal(ok.tokenLimitExceeded, undefined);
     const error = new RangeError('caller counter');
-    await assert.rejects(chunkText('x', { ...options, countTokens: () => { throw error; } }), e => e === error);
+    await assert.rejects(splitPassages('x', undefined, { ...options, countTokens: () => { throw error; } }), e => e === error);
 });
 
 test('a space can make a stranded emoji fit a real model token', async () => {
@@ -92,14 +92,14 @@ test('a space can make a stranded emoji fit a real model token', async () => {
     try {
         const source = '"Wednesday 😀"';
         const opts = { maxChunkTokens: 1, countTokens: s => tok.encode_ordinary(s).length };
-        const rows = await chunkText(source, { inputFormat: 'json', ...opts });
+        const rows = await splitPassages(source, undefined, { inputFormat: 'json', ...opts });
         assert.ok(rows.every(c => !c.tokenLimitExceeded && opts.countTokens(c.text) <= 1));
         assert.ok(rows.some(c => c.text === ' 😀'));
         assert.equal(rows.map(c => c.text).join(''), source);
         for (const [inputFormat, text] of [['text', 'Wednesday 😀'], ['html', '<p>Wednesday 😀</p>']]) {
-            for (const chunkingStrategy of ['pack', 'blocks', 'semantic-blocks']) {
+            for (const chunkingStrategy of ['pack', 'blocks', 'semantic']) {
                 const calls = [];
-                const pieces = await chunkText(text, inputs => { calls.push(...inputs); return inputs.map(() => [1]); },
+                const pieces = await splitPassages(text, inputs => { calls.push(...inputs); return inputs.map(() => [1]); },
                     { ...opts, inputFormat, chunkingStrategy });
                 assert.deepEqual(calls, ['Wednesday', ' 😀']);
                 assert.deepEqual(pieces, calls.map(text => ({ text, embedding: [1] })));
@@ -109,7 +109,7 @@ test('a space can make a stranded emoji fit a real model token', async () => {
 });
 
 test('a discarded space can rescue the left fragment and belongs to only one piece', async () => {
-    const pieces = await chunkText('😀 😀', { chunkingStrategy: 'blocks', maxChunkTokens: 1,
+    const pieces = await splitPassages('😀 😀', undefined, { chunkingStrategy: 'blocks', maxChunkTokens: 1,
         countTokens: s => ['😀 ', ' 😀'].includes(s) ? 1 : 2 });
     assert.deepEqual(pieces, [{ text: '😀 ' }, { text: '😀', tokenLimitExceeded: true }]);
 });
@@ -119,7 +119,7 @@ test('a fitting JSON piece can rescue its over-limit neighbor across a soft cut'
     t.after(() => tok.free());
     const source = '"? ⇒"', countTokens = s => tok.encode_ordinary(s).length;
     const calls = [];
-    const rows = await chunkText(source, inputs => { calls.push(...inputs); return inputs.map(() => [1]); }, {
+    const rows = await splitPassages(source, inputs => { calls.push(...inputs); return inputs.map(() => [1]); }, {
         inputFormat: 'json', maxChunkSize: 3, maxChunkTokens: 2, countTokens
     });
     assert.deepEqual(calls, ['"? ⇒', '"']);
@@ -131,7 +131,7 @@ test('a fitting JSON piece can rescue its over-limit neighbor across a soft cut'
 
 test('two individually over-limit neighbors get a join attempt before a longer overflow run is emitted', async () => {
     const calls = [];
-    const rows = await chunkText('ABC', texts => { calls.push(...texts); return texts.map(() => [1]); }, {
+    const rows = await splitPassages('ABC', texts => { calls.push(...texts); return texts.map(() => [1]); }, {
         chunkingStrategy: 'blocks', separator: '|', maxChunkTokens: 1, countTokens: text => text === 'AB' ? 1 : 2
     });
     assert.deepEqual(calls, ['AB']);
@@ -145,7 +145,7 @@ test('a stranded piece is indexed when its completed neighbor makes one model to
     assert.ok(countTokens('합') > 1);
     assert.equal(countTokens('합니다'), 1);
     const calls = [];
-    const rows = await chunkText(source, inputs => {
+    const rows = await splitPassages(source, inputs => {
         calls.push(...inputs);
         return inputs.map(() => [1]);
     }, { inputFormat: 'json', maxChunkTokens: 1, countTokens });
@@ -158,9 +158,9 @@ test('a stranded piece is indexed when its completed neighbor makes one model to
 test('a grouped overflow can fit with its left neighbor while two fitting soft spans stay separate', async () => {
     const options = { inputFormat: 'json', maxChunkTokens: 1,
         countTokens: s => ['"', '"abc'].includes(s) ? 1 : 2 };
-    assert.deepEqual((await chunkText('"abc"', options)).map(c => c.text), ['"abc', '"']);
+    assert.deepEqual((await splitPassages('"abc"', undefined, options)).map(c => c.text), ['"abc', '"']);
     const source = '"One. Two."';
-    const soft = await chunkText(source, { inputFormat: 'json', maxChunkSize: 5 });
+    const soft = await splitPassages(source, undefined, { inputFormat: 'json', maxChunkSize: 5 });
     assert.equal(soft.length, 2);
-    assert.deepEqual(await chunkText(source, { ...options, maxChunkSize: 5, countTokens: () => 1 }), soft);
+    assert.deepEqual(await splitPassages(source, undefined, { ...options, maxChunkSize: 5, countTokens: () => 1 }), soft);
 });

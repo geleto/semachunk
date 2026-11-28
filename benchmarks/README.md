@@ -457,6 +457,8 @@ The native HTML follow-up tests heading passages, grouping short sections and ra
 
 The production parser study measures HTML and Markdown through their shared chunking pipeline with the original ranking weights. It includes an independent four-site search and a replay of all non-HTML validation layouts. [Parser results and reproduction](results/2026-11-28-html-parser.md)
 
+The retrieval finalists were rerun on 1,759 questions with the current parser and heading-aware paragraph scoring available to both systems. [Semachunk and Mastra retrieval results](results/2026-11-28-mastra-finalists.md)
+
 ## Measure embedding cache memory
 
 `npm run benchmark:memory` compares the default cache with a 256-vector cache on 4,096 sentences and 1,536-dimensional Float32 embeddings. Each policy runs in its own Node process. The report records live ArrayBuffer bytes above baseline after garbage collection at provider entry, the number of texts embedded and the output boundary checksum. These samples measure vector storage between batches. Allocations inside a batch and other JavaScript heap objects also contribute to process memory.

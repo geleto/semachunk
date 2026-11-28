@@ -22,7 +22,7 @@ LABELS = [f"{family}/{size}/{overlap}" for family in PROTOCOL["families"] for si
 RESULT = HERE / "results/2026-11-27-mastra-comparison.json.gz"
 
 
-def load_groups(fold):
+def load_groups(fold, index_root=ROOT):
     split = fold.removeprefix("shared-")
     folder = LIB["ROOT"]/"holdout-data" if split == "holdout" else HERE/".cache/context-mixtures"/("audited-data" if split == "fresh" else "data")
     groups, all_docs = [], []
@@ -31,7 +31,7 @@ def load_groups(fold):
             continue
         docs = []
         for i, src in enumerate(json.loads((folder/(key+".json")).read_bytes())["docs"]):
-            stem = ROOT/key/str(i)
+            stem = index_root/key/str(i)
             ix = PRIOR["zipped"](stem.with_suffix(".json.gz"))
             assert ix["id"] == src["id"] and ix["model"] == PROTOCOL["model"]
             ordinals = EV.ordinals(src["source"])
@@ -84,8 +84,8 @@ def scores_for(pool, layout, treatments):
                arrays["bare"] if t=="native" or t.endswith("-bare") else arrays["win"]) for t in treatments}
 
 
-def score(fold, configs):
-    groups, docs = load_groups(fold)
+def score(fold, configs, index_root=ROOT):
+    groups, docs = load_groups(fold, index_root)
     requested = collections.defaultdict(set)
     for config in configs:
         for arm in config.split("+"):
@@ -108,7 +108,8 @@ def score(fold, configs):
             signatures,arrays,aliases = {}, {}, {}
             for layout,treatments in requested.items():
                 # Format routing is identical to recursive on plain text.
-                signature=tuple(tuple((c["v"],c["bare"],c["win"]) for c in d["ix"]["layouts"][layout]) for d in group)
+                signature=tuple(tuple((c["v"],c["bare"],c["win"],tuple(c["pa"]),c["section"],tuple(c["near"]))
+                                      for c in d["ix"]["layouts"][layout]) for d in group)
                 key=(signature,tuple(sorted(treatments)))
                 if key not in signatures:
                     signatures[key]=layout

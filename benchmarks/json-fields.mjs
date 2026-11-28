@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { writeFile } from 'node:fs/promises';
-import { chunkText } from '../src/index.js';
+import {studyPassages as chunkText} from './study-layouts.mjs';
 import { sha256 } from './corpora.mjs';
 import { denseRanker } from './chunking.mjs';
 import { deliver } from './delivered-context.mjs';

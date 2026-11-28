@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { chunkText } from '../src/index.js';
+import {studyPassages as chunkText} from './study-layouts.mjs';
 import { hotpotQuestion, hotpotSource, indexedHits, scoreQuestion, visibleHits } from './json-evidence.mjs';
 import { layouts, measureLayouts } from './json-layouts.mjs';
 

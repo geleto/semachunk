@@ -1,4 +1,5 @@
-// Measure the public chunkText path with cheap, deterministic batched vectors.
+// Compare single-layout splitting with deterministic batched vectors.
+import { loadStudyPassages } from './study-layouts.mjs';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -17,7 +18,7 @@ if (values.compare) roots.reference = resolve(values.compare);
 const implementations = {};
 const sourceHashes = {};
 for (const [label, root] of Object.entries(roots)) {
-    implementations[label] = (await import(pathToFileURL(join(root, 'src/index.js')))).chunkText;
+    implementations[label] = await loadStudyPassages(pathToFileURL(join(root,'src/index.js')));
     const hash = createHash('sha256');
     const files = readdirSync(join(root, 'src')).filter(s => s.endsWith('.js')).map(s => 'src/' + s);
     for (const path of ['config.js', ...files.sort()]) {

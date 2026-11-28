@@ -24,7 +24,7 @@ export async function chunkHierarchy(source, roots, options, embed) {
         start: roots[0].start, end: roots.at(-1).end, children: roots, structural:true, headingPath: [], sectionId: null,
         blocked: roots.some(child => child.skip || child.blocked)
     };
-    if (options.strategy !== 'semantic-blocks') return hierarchicalBlocks(source, [root], options);
+    if (options.strategy !== 'semantic') return hierarchicalBlocks(source, [root], options);
     const { children, maxChunkSize, fits } = options;
     const parents = [], stack = [root], edges = [], inputs = new Map();
     const seams = options.joinParagraphs && new Map();

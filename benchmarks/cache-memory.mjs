@@ -5,7 +5,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { chunkText } from '../src/index.js';
+import {studyPassages as chunkText} from './study-layouts.mjs';
 
 if (!global.gc) throw new Error('Run this benchmark with node --expose-gc');
 const { values } = parseArgs({ options: { output: { type: 'string' }, 'cache-limit': { type: 'string' } } });
