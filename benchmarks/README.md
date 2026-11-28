@@ -2,6 +2,8 @@
 
 The quality suite scores short-answer retrieval and editorial boundaries. The RAG suite searches complete contracts, research papers and collections of related and distracting passages. The Node performance suite measures batching and library time on large documents. Each run writes a new JSON file under `benchmarks/results/`. [Results and change log](LOG.md)
 
+The standalone `blocks` study compares section scoring, adjacent-chunk vectors and reading windows on the same 256-token structural chunks. It also measures the selected reader inside the combined `semantic` index. [Results and reproduction](results/2026-11-28-blocks-retrieval.md)
+
 ### Replaying results for the retired flat strategy
 
 Historical studies label the flat priority merger `semantic` and the hierarchical splitter `semantic-blocks`. The measured results and cached scores keep those names. To regenerate flat-strategy indexes or run the historical comparisons, prepare a **separate checkout** of this revision. In that checkout, the following commands restore the flat implementation from Git and its integration with the citable document API. [Replay patch](baselines/2026-11-27-flat-semantic.patch)

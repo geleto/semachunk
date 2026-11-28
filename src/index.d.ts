@@ -153,7 +153,7 @@ export function getChunkContext(doc:DocumentSnapshot<Embedding>, chunkIndex:numb
     options?:{neighbors?:0|1,countTokens?:(text:string)=>number}):ReadingPassage;
 export interface DocumentSearchOptions {
     limit?:number;
-    /** Use section-bounded reading context (1, default) or the core alone (0). */
+    /** Use bounded reading context (1, default) or the core alone (0). Structural context can span several chunks. */
     neighbors?:0|1;
     /** Suppress windows sharing at least 75% of the shorter source span. Default true. */
     distinct?:boolean;

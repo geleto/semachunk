@@ -256,11 +256,19 @@ export function chunkContextParts(doc, chunkIndex, neighbors, fits, measure) {
 }
 
 export function getChunkContext(doc, chunkIndex, {neighbors = 1, countTokens} = {}) {
-    const wide = doc.strategy === 'semantic' && doc.chunks[chunkIndex]?.layout === 'semantic';
-    const measure = doc.sizeUnit === 'tokens' ? documentTokenizers.get(doc) ?? countTokens : s=>s.length;
-    const parts = chunkContextParts(doc,chunkIndex,neighbors,passageFits(doc,countTokens),wide ? measure : undefined);
-    const result = joinViews(parts.filter(v=>v?.text),'\n\n');
     const chunk = doc.chunks[chunkIndex];
+    const measure = doc.sizeUnit === 'tokens' ? documentTokenizers.get(doc) ?? countTokens : s=>s.length;
+    const fits = passageFits(doc,countTokens);
+    function read(measureNeighbor) {
+        const parts = chunkContextParts(doc,chunkIndex,neighbors,fits,measureNeighbor);
+        return joinViews(parts.filter(v=>v?.text),'\n\n');
+    }
+    let result = read(doc.strategy==='semantic' && chunk?.layout==='semantic' ? measure : undefined);
+    if (neighbors && (chunk.layout ?? doc.strategy)==='blocks' && (chunkIndex>1 || chunkIndex+2<doc.chunks.length)) {
+        // A wider window can displace a nearby sentence on the other side of the core.
+        const wider = read(measure);
+        if (covers(sourceSpans(wider),sourceSpans(result))) result = wider;
+    }
     if (doc.sourceId !== undefined) result.sourceId = doc.sourceId;
     const introductions = new Set();
     for (let id = chunk.parentId; id != null; id = doc.nodes[id].parentId) {

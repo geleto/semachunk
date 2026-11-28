@@ -40,10 +40,10 @@ test('semantic search uses within-layout neighbors, bounded reading windows and 
         assert.ok(hits.every(h=>h.documentIndex===0 && h.chunk===d.chunks[h.chunkIndex]));
         assert.equal(at(2).score,0);
         assert.ok(Math.abs(at(7).score-.3/Math.hypot(.7,.3))<1e-12);
-        assert.equal(at(2).context.text,'B.\n\nC.\n\nD.');
+        assert.equal(at(2).context.text,text);
         assert.equal(at(7).context.text,text);
         assert.equal(getChunkContext(d,7,{countTokens,neighbors:0}).text,'C.');
-        assert.equal(at(4).context.text,'D.\n\nE.');
+        assert.equal(at(4).context.text,text);
         assert.deepEqual(at(7).context,getChunkContext(d,7,{countTokens}));
         const distinct=await index.search([1,0]);
         assert.ok(distinct.length<hits.length);

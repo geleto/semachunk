@@ -1,11 +1,42 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {chunk, createDocumentIndex, search} from '../src/index.js';
+import {chunk, createDocumentIndex, getChunkContext, search} from '../src/index.js';
 
 function vectorFor(text) {
     return Float32Array.of(1 + (text.match(/pump/gi)?.length ?? 0) * 4,
         1 + (text.match(/rose/gi)?.length ?? 0) * 4, text.length / 100);
 }
+
+test('structural reading windows extend within a section or record and preserve the immediate citations',async()=>{
+    const countTokens=text=>text.length;
+    const raw='# North\n\nA.\n\nB.\n\nC.\n\nD.\n\n# South\n\nX.';
+    const more='Extra.\n\nLeft.\n\nCore.\n\nRed. Blue. Green.\n\nAfter.';
+    for (const sizing of [{sizeUnit:'characters'},{sizeUnit:'tokens',countTokens}]) {
+        const doc=await chunk(raw,{...sizing,format:'markdown',maxChunkSize:3,maxStructuralSize:3,maxPassageSize:64});
+        const view=getChunkContext(doc,0);
+        assert.equal(view.text,'A.\n\nB.\n\nC.\n\nD.');
+        for (const c of view.citations) assert.equal(raw.slice(c.start,c.end),view.text.slice(c.outputStart,c.outputEnd));
+        assert.equal(getChunkContext(doc,0,{neighbors:0}).text,'A.');
+        assert.equal(getChunkContext(doc,doc.chunks.length-1).text,'X.');
+
+        // Extending left would replace the nearby sentence "Green." with "Extra.".
+        const guarded=await chunk(more,{...sizing,maxChunkSize:20,maxStructuralSize:3,maxPassageSize:32,
+            index:true,embedBatch:async ts=>ts.map(t=>t==='Core.'?[1,0]:[0,1])});
+        const saved=JSON.parse(JSON.stringify(guarded));
+        const [hit]=await search(saved,[1,0],{limit:1,countTokens});
+        assert.equal(hit.chunk.text,'Core.');
+        assert.equal(hit.context.text,'Left.\n\nCore.\n\nRed. Blue. Green.');
+        assert.deepEqual(hit.context,getChunkContext(guarded,hit.chunkIndex));
+        assert.ok(hit.context.citations.some(c=>c.start<=more.indexOf('Green.') && c.end>=more.indexOf('Green.')+6));
+    }
+    const records='[{"a":"One","b":"Two","c":"Three","d":"Same"},{"d":"Same"}]';
+    const json=await chunk(records,{format:'json',maxChunkSize:0,maxPassageSize:100});
+    const first=getChunkContext(json,0), last=getChunkContext(json,json.chunks.length-1);
+    assert.equal(first.text,'"a":"One"\n\n"b":"Two"\n\n"c":"Three"\n\n"d":"Same"');
+    assert.equal(last.text,'"d":"Same"');
+    assert.equal(first.citations.at(-1).start,records.indexOf('"d"'));
+    assert.equal(last.citations[0].start,records.lastIndexOf('"d"'));
+});
 
 test('prepared documents can be appended and reordered with one query embedding for the entire collection',async()=>{
     const calls = [];
